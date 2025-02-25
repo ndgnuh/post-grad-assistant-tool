@@ -148,18 +148,21 @@ _$HocVienImpl _$$HocVienImplFromJson(Map<String, dynamic> json) =>
       hocPhanDuocMien: json['hocPhanDuocMien'] as String?,
       nganhDaoTaoThacSi: json['nganhDaoTaoThacSi'] as String?,
       dienThoai: json['dienThoai'] as String?,
-      trangThai: json['trangThai'] as String,
+      maTrangThai: json['maTrangThai'] as String,
       deTaiLuanVanTiengViet: json['deTaiLuanVanTiengViet'] as String?,
       deTaiLuanVanTiengAnh: json['deTaiLuanVanTiengAnh'] as String?,
-      ngayGiaoDeTai: json['ngayGiaoDeTai'] as String?,
+      ngayGiaoDeTai:
+          const DateSerializer().fromJson(json['ngayGiaoDeTai'] as String?),
       soQuyetDinhGiao: json['soQuyetDinhGiao'] as String?,
-      ngayBaoVe: json['ngayBaoVe'] as String?,
+      ngayBaoVe: const DateSerializer().fromJson(json['ngayBaoVe'] as String?),
       soQuyetDinhBaoVe: (json['soQuyetDinhBaoVe'] as num?)?.toInt(),
-      ngayKyQuyetDinhBaoVe: json['ngayKyQuyetDinhBaoVe'] as String?,
+      ngayKyQuyetDinhBaoVe: const DateSerializer()
+          .fromJson(json['ngayKyQuyetDinhBaoVe'] as String?),
       idGiangVienHuongDan: (json['idGiangVienHuongDan'] as num?)?.toInt(),
-      hanBaoVe: json['hanBaoVe'] as String?,
+      hanBaoVe: const DateSerializer().fromJson(json['hanBaoVe'] as String?),
       lanGiaHan: (json['lanGiaHan'] as num?)?.toInt() ?? 0,
       idTieuBanXetTuyen: (json['idTieuBanXetTuyen'] as num?)?.toInt(),
+      idDienTuyenSinh: json['idDienTuyenSinh'] as String?,
       thanhToanXetTuyen: (json['thanhToanXetTuyen'] as num?)?.toInt() ?? 0,
     );
 
@@ -184,18 +187,20 @@ Map<String, dynamic> _$$HocVienImplToJson(_$HocVienImpl instance) =>
       'hocPhanDuocMien': instance.hocPhanDuocMien,
       'nganhDaoTaoThacSi': instance.nganhDaoTaoThacSi,
       'dienThoai': instance.dienThoai,
-      'trangThai': instance.trangThai,
+      'maTrangThai': instance.maTrangThai,
       'deTaiLuanVanTiengViet': instance.deTaiLuanVanTiengViet,
       'deTaiLuanVanTiengAnh': instance.deTaiLuanVanTiengAnh,
-      'ngayGiaoDeTai': instance.ngayGiaoDeTai,
+      'ngayGiaoDeTai': const DateSerializer().toJson(instance.ngayGiaoDeTai),
       'soQuyetDinhGiao': instance.soQuyetDinhGiao,
-      'ngayBaoVe': instance.ngayBaoVe,
+      'ngayBaoVe': const DateSerializer().toJson(instance.ngayBaoVe),
       'soQuyetDinhBaoVe': instance.soQuyetDinhBaoVe,
-      'ngayKyQuyetDinhBaoVe': instance.ngayKyQuyetDinhBaoVe,
+      'ngayKyQuyetDinhBaoVe':
+          const DateSerializer().toJson(instance.ngayKyQuyetDinhBaoVe),
       'idGiangVienHuongDan': instance.idGiangVienHuongDan,
-      'hanBaoVe': instance.hanBaoVe,
+      'hanBaoVe': const DateSerializer().toJson(instance.hanBaoVe),
       'lanGiaHan': instance.lanGiaHan,
       'idTieuBanXetTuyen': instance.idTieuBanXetTuyen,
+      'idDienTuyenSinh': instance.idDienTuyenSinh,
       'thanhToanXetTuyen': instance.thanhToanXetTuyen,
     };
 
@@ -361,4 +366,16 @@ Map<String, dynamic> _$$TrangThaiHocVienImplToJson(
     <String, dynamic>{
       'maTrangThai': instance.maTrangThai,
       'tenTrangThai': instance.tenTrangThai,
+    };
+
+_$DienTuyenSinhImpl _$$DienTuyenSinhImplFromJson(Map<String, dynamic> json) =>
+    _$DienTuyenSinhImpl(
+      id: json['id'] as String,
+      ten: json['ten'] as String,
+    );
+
+Map<String, dynamic> _$$DienTuyenSinhImplToJson(_$DienTuyenSinhImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'ten': instance.ten,
     };

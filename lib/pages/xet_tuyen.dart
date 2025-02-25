@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../custom_widgets.dart';
 import '../datamodels.dart';
 import '../business/tuyen_sinh.dart';
+import '../sqlbuilder/sqlbuilder.dart';
 
 part 'xet_tuyen_state.dart';
 
@@ -198,7 +199,6 @@ class _PanelThemHocVien extends StatelessWidget {
                       return EzDropdown(
                         width: constraints.maxWidth,
                         label: "Giới tính",
-                        values: ["Nam", "Nữ"],
                         controller: formState.gioiTinh,
                       );
                     },
@@ -251,7 +251,6 @@ class _PanelThemHocVien extends StatelessWidget {
                     builder: (context, constraint) {
                       return EzDropdown(
                         width: constraint.maxWidth,
-                        values: ["Khá", "Giỏi", "Xuất sắc"],
                         label: "Xếp loại tốt nghiệp đại học",
                         controller: formState.xepLoaiTotNghiepDaiHoc,
                       );
@@ -276,10 +275,9 @@ class _PanelThemHocVien extends StatelessWidget {
                       return _PageWidget<List<TieuBanXetTuyen>>(
                         selector: (_, model) => model.allTieuBanXetTuyen,
                         builder: (_, allTieuBanXetTuyen, __) {
-                          return EzDropdown<TieuBanXetTuyen>(
+                          return EzDropdown<TieuBanXetTuyen?>(
                             width: constraint.maxWidth,
                             label: "Tiểu ban xét tuyển",
-                            values: allTieuBanXetTuyen,
                             controller: pageState.tieuBanXetTuyen,
                           );
                         },
@@ -291,6 +289,12 @@ class _PanelThemHocVien extends StatelessWidget {
                   title: EzTextInput(
                     label: "Học phần được miễn",
                     controller: formState.hocPhanDuocMien,
+                  ),
+                ),
+                ListTile(
+                  title: EzDropdown.fullWidth(
+                    label: "Diện tuyển sinh",
+                    controller: formState.dienTuyenSinh,
                   ),
                 ),
                 ListTile(
@@ -390,7 +394,10 @@ class _PanelThemHocVien extends StatelessWidget {
                 ListTile(
                   title: _PageWidget<(List<HocVien>?, String?)>(
                     selector: (_, model) {
-                      return (model.listCandidate, model.saveDirectory.value);
+                      return (
+                        model.candidatesXetTuyen,
+                        model.saveDirectory.value
+                      );
                     },
                     builder: (_, data, __) => ElevatedButton(
                       onPressed: switch (data) {

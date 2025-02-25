@@ -110,7 +110,7 @@ mixin _Where<R, TX> on Query<R, TX> {
         joinedList.add(_operators[i].toQueryString);
       }
     }
-    return joinedList.join(' ');
+    return [for (final cond in joinedList) "($cond)"].join(' AND ');
   }
 }
 

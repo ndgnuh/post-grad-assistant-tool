@@ -52,13 +52,88 @@ final databasePath = p.join(p.current, "fami.sqlite3");
 
 Future<T> dbSession<T>(Future<T> Function(Database) callback,
     {bool ro = false}) async {
-  final db = await openDatabase(databasePath);
+  final db = await openDatabase(databasePath, singleInstance: false);
   final ret = await callback(db);
   await db.close();
   return ret;
 }
 
+enum AssignedMode {
+  all,
+  notAssigned,
+  assigned,
+}
+
 class Repository {
+  static Future<List<DienTuyenSinh>> allDienTuyenSinh() async {
+    return await dbSession(ro: true, (Database db) async {
+      final rows = await db.query(DienTuyenSinh.table);
+      return [for (final json in rows) DienTuyenSinh.fromJson(json)];
+    });
+  }
+
+  static Future<List<NienKhoa>> allNienKhoa() async {
+    return await dbSession((Database db) async {
+      final rows = await db.query(NienKhoa.table);
+      return [for (final json in rows) NienKhoa.fromJson(json)];
+    });
+  }
+
+  static Future<List<HocVien>> searchHocVien({
+    String? hoTen,
+    bool? coGvhd,
+    bool? dangHoc,
+    bool? xetTuyen,
+    String? nienKhoa,
+  }) async {
+    var query = SelectQuery()
+      ..selectAll()
+      ..from("HocVien");
+
+    switch (hoTen) {
+      case "":
+        ;
+      case String hoTen:
+        query = query..where("hoTen like ?", ["%$hoTen%"]);
+    }
+
+    switch (coGvhd) {
+      case true:
+        query.where("idGiangVienHuongDan is not null");
+      case false:
+        query.where("idGiangVienHuongDan is null");
+      default:
+    }
+
+    switch (dangHoc) {
+      case true:
+        query = query..where("maTrangThai in ('bt', 'hoc')");
+      case false:
+        query = query..where("maTrangThai in ('tn', nghi')");
+      default:
+    }
+
+    switch (nienKhoa) {
+      case String nienKhoa:
+        query.where("nienKhoa = ?", [nienKhoa]);
+      default:
+    }
+
+    if (xetTuyen ?? false) {
+      query.where("maTrangThai in ('xt')");
+    }
+
+    final sql = query.build();
+    print(sql);
+    return await dbSession(
+      ro: true,
+      (Database db) async {
+        final rows = await db.rawQuery(sql);
+        return [for (final json in rows) HocVien.fromJson(json)];
+      },
+    );
+  }
+
   static Future<List<TieuBanXetTuyen>> allTieuBanXetTuyen() async {
     return await dbSession((Database db) async {
       final rows = await db.query(TieuBanXetTuyen.table);
@@ -66,9 +141,10 @@ class Repository {
     });
   }
 
-  static Future<List<GiangVien>> listGiangVien({
+  static Future<List<GiangVien>> searchGiangVien({
     String? searchHoTen,
     String? searchEmail,
+    bool? trongTruong,
   }) async {
     final query = SelectQuery()
       ..from(GiangVien.table)
@@ -79,6 +155,13 @@ class Repository {
     }
     if (searchEmail != null) {
       query.where("email like ?", ['%$searchEmail%']);
+    }
+    switch (trongTruong) {
+      case true:
+        query.where("email like '%@hust.edu.vn'");
+      case false:
+        query.where("email not like '%@hust.edu.vn'");
+      default:
     }
     final sql = query.build();
 
@@ -263,54 +346,6 @@ Future<List<NhomChuyenMon>> fetchNhomChuyenMon() async {
   return ret;
 }
 
-class NienKhoa {
-  String nienKhoa;
-  NienKhoa(this.nienKhoa);
-
-  static Future<List<NienKhoa>> all() async {
-    final db = await openDatabase(databasePath, readOnly: true);
-    final rows = await db.query(
-      "NienKhoa",
-      columns: ["nienKhoa"],
-      orderBy: "nienKhoa DESC",
-    );
-
-    await db.close();
-    return [
-      for (final {
-            "nienKhoa": nienKhoa as String,
-          } in rows)
-        NienKhoa(nienKhoa),
-    ];
-  }
-}
-
-class TrangThaiHocVien {
-  String maTrangThai;
-  String tenTrangThai;
-  TrangThaiHocVien(this.maTrangThai, this.tenTrangThai);
-
-  static Future<List<TrangThaiHocVien>> all() async {
-    final db = await openDatabase(
-      databasePath,
-      readOnly: true,
-    );
-    final rows = await db.query(
-      "TrangThaiHocVien",
-      columns: ["maTrangThai", "tenTrangThai"],
-    );
-
-    await db.close();
-    return [
-      for (final {
-            "maTrangThai": maTrangThai as String,
-            "tenTrangThai": tenTrangThai as String,
-          } in rows)
-        TrangThaiHocVien(maTrangThai, tenTrangThai),
-    ];
-  }
-}
-
 DateTime? tryParseDate(String s, {String delim = "/"}) {
   try {
     final parts = s.split(delim);
@@ -385,6 +420,24 @@ extension HocVienCrud on HocVien {
     });
   }
 
+  Future<DienTuyenSinh?> get dienTuyenSinh async {
+    if (idDienTuyenSinh == null) return null;
+    return await dbSession<DienTuyenSinh?>(
+      (Database db) async {
+        final rows = await db.query(
+          DienTuyenSinh.table,
+          where: "id = ?",
+          whereArgs: [idDienTuyenSinh],
+        );
+        if (rows.isEmpty) {
+          return null;
+        } else {
+          return DienTuyenSinh.fromJson(rows.first);
+        }
+      },
+    );
+  }
+
   Future<TieuBanXetTuyen?> get tieuBanXetTuyen async {
     if (idTieuBanXetTuyen == null) {
       return null;
@@ -399,6 +452,14 @@ extension HocVienCrud on HocVien {
         return TieuBanXetTuyen.fromJson(rows.first);
       },
     );
+  }
+
+  Future<GiangVien?> get giangVienHuongDan async {
+    if (idGiangVienHuongDan == null) {
+      return null;
+    } else {
+      return Repository.getGiangVien(id: idGiangVienHuongDan as int);
+    }
   }
 }
 

@@ -12,26 +12,38 @@ class _FormState extends ChangeNotifier {
   EzController<DateTime> ngaySinh = EzController.forDateTime(
     dateFormat: dateFormat,
   );
-  EzController<String> ngaySinhCtrl = EzController();
-  EzController<String> soHoSo = EzController();
-  EzController<String> hoTen = EzController();
-  EzController<String> dienThoai = EzController();
-  EzController<String> email = EzController();
-  EzController<String> gioiTinh = EzController<String>();
-  EzController<String> noiSinh = EzController();
-  EzController<String> truongTotNghiepDaiHoc = EzController();
-  EzController<String> nganhTotNghiepDaiHoc = EzController();
-  EzController<String> heTotNghiepDaiHoc = EzController();
-  EzController xepLoaiTotNghiepDaiHoc = EzController<String>();
+  TextEditingController soHoSo = TextEditingController();
+  TextEditingController hoTen = TextEditingController();
+  TextEditingController dienThoai = TextEditingController();
+  TextEditingController email = TextEditingController();
+  EzSelectionController<String?> gioiTinh = EzSelectionController(
+    values: ["Nam", "Nữ"],
+  );
+  TextEditingController noiSinh = TextEditingController();
+  TextEditingController truongTotNghiepDaiHoc = TextEditingController();
+  TextEditingController nganhTotNghiepDaiHoc = TextEditingController();
+  TextEditingController heTotNghiepDaiHoc = TextEditingController();
+  EzSelectionController<String?> xepLoaiTotNghiepDaiHoc = EzSelectionController(
+    values: ["Khá", "Giỏi", "Xuất sắc"],
+  );
   EzController<DateTime> ngayTotNghiepDaiHoc = EzController.forDateTime(
     dateFormat: dateFormat,
   );
-  EzController<String> dinhHuongChuyenSau = EzController();
-  EzController<String> hocPhanDuocMien = EzController();
-  EzController<String> nganhDaoTaoThacSi = EzController();
-  EzController<String> hoiDongTuyenSinh = EzController();
+  TextEditingController dinhHuongChuyenSau = TextEditingController();
+  TextEditingController hocPhanDuocMien = TextEditingController();
+  TextEditingController nganhDaoTaoThacSi = TextEditingController();
+  TextEditingController hoiDongTuyenSinh = TextEditingController();
+  EzSelectionController<DienTuyenSinh> dienTuyenSinh = EzSelectionController();
   EzController<String> idTieuBanXetTuyen = EzController();
   _FormMode mode = _FormMode.create;
+
+  _FormState() {
+    Repository.allDienTuyenSinh().then((data) {
+      dienTuyenSinh.values = data;
+      dienTuyenSinh.value = data.isEmpty ? null : data.first;
+      notifyListeners();
+    });
+  }
 
   void toUpdateMode() {
     mode = _FormMode.create;
@@ -43,41 +55,28 @@ class _FormState extends ChangeNotifier {
     notifyListeners();
   }
 
-  String? get ngaySinhText {
-    return switch (ngaySinh) {
-      DateTime d => DateFormat("dd/MM/yyyy").format(d),
-      _ => null,
-    };
-  }
-
-  String? get ngaySinhDb {
-    return switch (ngaySinh) {
-      DateTime d => DateFormat("yyyy/MM/dd").format(d),
-      _ => null,
-    };
-  }
-
   static of(BuildContext context, {bool listen = false}) {
     return Provider.of<_FormState>(context, listen: listen);
   }
 
   void edit(HocVien hv) async {
     student = hv;
-    soHoSo.value = hv.soHoSo ?? "";
-    hoTen.value = hv.hoTen;
+    soHoSo.text = hv.soHoSo ?? "";
+    hoTen.text = hv.hoTen;
     ngaySinh.value = hv.ngaySinh;
-    dienThoai.value = hv.dienThoai ?? "";
-    email.value = hv.email ?? "";
+    dienThoai.text = hv.dienThoai ?? "";
+    email.text = hv.email ?? "";
     gioiTinh.value = hv.gioiTinh ?? "";
-    noiSinh.value = hv.noiSinh ?? "";
-    truongTotNghiepDaiHoc.value = hv.truongTotNghiepDaiHoc ?? "";
-    nganhTotNghiepDaiHoc.value = hv.nganhTotNghiepDaiHoc ?? "";
-    heTotNghiepDaiHoc.value = hv.heTotNghiepDaiHoc ?? "";
+    noiSinh.text = hv.noiSinh ?? "";
+    truongTotNghiepDaiHoc.text = hv.truongTotNghiepDaiHoc ?? "";
+    nganhTotNghiepDaiHoc.text = hv.nganhTotNghiepDaiHoc ?? "";
+    heTotNghiepDaiHoc.text = hv.heTotNghiepDaiHoc ?? "";
     xepLoaiTotNghiepDaiHoc.value = hv.xepLoaiTotNghiepDaiHoc ?? "";
     ngayTotNghiepDaiHoc.value = hv.ngayTotNghiepDaiHoc;
-    dinhHuongChuyenSau.value = hv.dinhHuongChuyenSau ?? "";
-    hocPhanDuocMien.value = hv.hocPhanDuocMien ?? "";
-    nganhDaoTaoThacSi.value = hv.nganhDaoTaoThacSi ?? "";
+    dinhHuongChuyenSau.text = hv.dinhHuongChuyenSau ?? "";
+    hocPhanDuocMien.text = hv.hocPhanDuocMien ?? "";
+    nganhDaoTaoThacSi.text = hv.nganhDaoTaoThacSi ?? "";
+    dienTuyenSinh.value = await hv.dienTuyenSinh;
     mode = _FormMode.update;
     notifyListeners();
   }
@@ -85,43 +84,49 @@ class _FormState extends ChangeNotifier {
   Future<void> updateHocVien(TieuBanXetTuyen tb) async {
     final data = {
       "ngaySinh": ngaySinh.value?.toYmd(),
-      "soHoSo": soHoSo.value,
-      "hoTen": hoTen.value,
-      "dienThoai": dienThoai.value,
-      "email": email.value,
+      "soHoSo": soHoSo.text,
+      "hoTen": hoTen.text,
+      "dienThoai": dienThoai.text,
+      "email": email.text,
       "gioiTinh": gioiTinh.value,
-      "noiSinh": noiSinh.value,
-      "truongTotNghiepDaiHoc": truongTotNghiepDaiHoc.value,
-      "nganhTotNghiepDaiHoc": nganhTotNghiepDaiHoc.value,
-      "nganhDaoTaoThacSi": nganhDaoTaoThacSi.value,
-      "heTotNghiepDaiHoc": heTotNghiepDaiHoc.value,
+      "noiSinh": noiSinh.text,
+      "truongTotNghiepDaiHoc": truongTotNghiepDaiHoc.text,
+      "nganhTotNghiepDaiHoc": nganhTotNghiepDaiHoc.text,
+      "nganhDaoTaoThacSi": nganhDaoTaoThacSi.text,
+      "heTotNghiepDaiHoc": heTotNghiepDaiHoc.text,
       "xepLoaiTotNghiepDaiHoc": xepLoaiTotNghiepDaiHoc.value,
       "ngayTotNghiepDaiHoc": ngayTotNghiepDaiHoc.value?.toYmd(),
-      "dinhHuongChuyenSau": dinhHuongChuyenSau.value,
-      "hocPhanDuocMien": hocPhanDuocMien.value,
+      "dinhHuongChuyenSau": dinhHuongChuyenSau.text,
+      "hocPhanDuocMien": hocPhanDuocMien.text,
+      "idDienTuyenSinh": dienTuyenSinh.value?.id,
       "idTieuBanXetTuyen": tb.id,
     };
-    data.removeWhere((key, value) => value == null);
+    for (final key in data.keys) {
+      assert(data[key] is! TextEditingValue);
+      data[key] = switch (data[key]) {
+        "" => null,
+        _ => data[key],
+      };
+    }
     await student?.update(data);
   }
 
   void reset() {
-    ngaySinhCtrl.value = null;
-    soHoSo.value = null;
-    hoTen.value = null;
-    dienThoai.value = null;
-    email.value = null;
+    soHoSo.text = "";
+    hoTen.text = "";
+    dienThoai.text = "";
+    email.text = "";
     gioiTinh.value = null;
-    noiSinh.value = null;
-    truongTotNghiepDaiHoc.value = null;
-    nganhTotNghiepDaiHoc.value = null;
-    heTotNghiepDaiHoc.value = null;
+    noiSinh.text = "";
+    truongTotNghiepDaiHoc.text = "";
+    nganhTotNghiepDaiHoc.text = "";
+    heTotNghiepDaiHoc.text = "";
     xepLoaiTotNghiepDaiHoc.value = null;
     ngaySinh.value = null;
     ngayTotNghiepDaiHoc.value = null;
-    dinhHuongChuyenSau.value = null;
-    hocPhanDuocMien.value = null;
-    nganhDaoTaoThacSi.value = null;
+    dinhHuongChuyenSau.text = "";
+    hocPhanDuocMien.text = "";
+    nganhDaoTaoThacSi.text = "";
     mode = _FormMode.create;
   }
 
@@ -131,44 +136,60 @@ class _FormState extends ChangeNotifier {
 
   Future<(int, String?)> themHocVien() async {
     // Validate
-    if ((hoTen?.value ?? "") == "") {
-      return (0, "Chưa điền họ tên");
-    }
-    if (ngaySinhDb == null) {
-      return (0, "Chưa chọn ngày sinh");
-    }
+    if (hoTen.text.isEmpty) return (0, "Chưa điền họ tên");
+    if (soHoSo.text.isEmpty) return (0, "Chưa điền số hồ sơ");
+    if (gioiTinh.value == null) return (0, "Chưa chọn giới tính");
+    if (hoTen.text.isEmpty) return (0, "Chưa điền họ tên");
+    if (hoTen.text.isEmpty) return (0, "Chưa điền họ tên");
+    if (hoTen.text.isEmpty) return (0, "Chưa điền họ tên");
     final db = await openDatabase(databasePath);
-    final numAffected = await db.insert(
-      tables.hocVien,
-      {
-        "soHoSo": soHoSo.value,
-        "hoTen": hoTen.value,
-        "dienThoai": dienThoai.value,
-        "noiSinh": noiSinh.value,
-        "email": email.value,
+
+    // Try adding data
+    try {
+      final data = {
+        "soHoSo": soHoSo.text,
+        "hoTen": hoTen.text,
+        "dienThoai": dienThoai.text,
+        "email": email.text,
         "gioiTinh": gioiTinh.value,
-        "trangThai": "xt",
-      },
-    );
-    await db.close();
-    return (numAffected, null);
+        "noiSinh": noiSinh.text,
+        "truongTotNghiepDaiHoc": truongTotNghiepDaiHoc.text,
+        "nganhTotNghiepDaiHoc": nganhTotNghiepDaiHoc.text,
+        "heTotNghiepDaiHoc": heTotNghiepDaiHoc.text,
+        "xepLoaiTotNghiepDaiHoc": xepLoaiTotNghiepDaiHoc.value,
+        "ngaySinh": ngaySinh.value?.toYmd(),
+        "ngayTotNghiepDaiHoc": ngayTotNghiepDaiHoc.value?.toYmd(),
+        "dinhHuongChuyenSau": dinhHuongChuyenSau.text,
+        "hocPhanDuocMien": hocPhanDuocMien.text,
+        "nganhDaoTaoThacSi": nganhDaoTaoThacSi.text,
+        "idDienTuyenSinh": dienTuyenSinh.value?.id,
+        "maTrangThai": "xt",
+      };
+      for (final key in data.keys) {
+        data[key] = switch (data[key]) {
+          "" => null,
+          _ => data[key],
+        };
+      }
+
+      final query = InsertQuery()
+        ..into("HocVien")
+        ..insertAll([data]);
+      final sql = query.build();
+      print(sql);
+
+      final numAffected = await db.insert(tables.hocVien, data);
+      await db.close();
+      return (numAffected, null);
+    } catch (e, stacktrace) {
+      print(e);
+      print(stacktrace);
+      return (0, "Xảy ra lỗi ở DB");
+    } finally {
+      mode = _FormMode.create;
+      notifyListeners();
+    }
   }
-
-  _FormState();
-}
-
-Future<List<HocVien>> getListCandidate() async {
-  final db = await openDatabase(databasePath, readOnly: true);
-  final rows = await db.query(
-    "HocVien",
-    where: "trangThai = ?",
-    whereArgs: ["xt"],
-  );
-  final listHv = [
-    for (final row in rows) HocVien.fromJson(row),
-  ];
-  await db.close();
-  return listHv;
 }
 
 class _State extends ChangeNotifier {
@@ -179,27 +200,33 @@ class _State extends ChangeNotifier {
   List<TieuBanXetTuyen> allTieuBanXetTuyen = [];
   List<HocVien> listCandidate = [];
   EzController<String> saveDirectory = EzController();
-  EzController<TieuBanXetTuyen> tieuBanXetTuyen = EzController();
-  Future<List<HocVien>> futureListCandidate = getListCandidate();
+  EzSelectionController<TieuBanXetTuyen?> tieuBanXetTuyen =
+      EzSelectionController(
+    labelFormatter: (TieuBanXetTuyen? tb) {
+      switch (tb) {
+        case TieuBanXetTuyen t:
+          return "Tiểu ban năm ${t.nam}";
+        default:
+          return "";
+      }
+    },
+  );
+  Future<List<HocVien>> futureListCandidate = Repository.searchHocVien(
+    xetTuyen: true,
+  );
 
   _State() {
-    tieuBanXetTuyen = EzController<TieuBanXetTuyen>(
-      labelFormatter: (TieuBanXetTuyen? tb) {
-        switch (tb) {
-          case TieuBanXetTuyen t:
-            return "Tiểu ban năm ${t.nam}";
-          default:
-            return "";
-        }
-      },
-    );
     futureListCandidate.then((data) {
       listCandidate = data;
       notifyListeners();
     });
     Repository.allTieuBanXetTuyen().then((data) {
-      allTieuBanXetTuyen = data;
-      tieuBanXetTuyen.value = data.last;
+      tieuBanXetTuyen.values = data;
+      if (data.isNotEmpty) {
+        tieuBanXetTuyen.value = data.last;
+      } else {
+        tieuBanXetTuyen.value = null;
+      }
       notifyListeners();
     });
   }
@@ -209,8 +236,15 @@ class _State extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<HocVien> get candidatesXetTuyen {
+    return [
+      for (final c in listCandidate)
+        if (c.idDienTuyenSinh != "xt") c
+    ];
+  }
+
   Future<void> refresh() async {
-    futureListCandidate = getListCandidate();
+    futureListCandidate = Repository.searchHocVien(xetTuyen: true);
     listCandidate = await futureListCandidate;
     notifyListeners();
   }

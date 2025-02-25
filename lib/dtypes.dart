@@ -162,18 +162,19 @@ class HocVien with _$HocVien {
     String? hocPhanDuocMien,
     String? nganhDaoTaoThacSi,
     String? dienThoai,
-    required String trangThai,
+    required String maTrangThai,
     String? deTaiLuanVanTiengViet,
     String? deTaiLuanVanTiengAnh,
-    String? ngayGiaoDeTai,
+    @DateSerializer() DateTime? ngayGiaoDeTai,
     String? soQuyetDinhGiao,
-    String? ngayBaoVe,
+    @DateSerializer() DateTime? ngayBaoVe,
     int? soQuyetDinhBaoVe,
-    String? ngayKyQuyetDinhBaoVe,
+    @DateSerializer() DateTime? ngayKyQuyetDinhBaoVe,
     int? idGiangVienHuongDan,
-    String? hanBaoVe,
+    @DateSerializer() DateTime? hanBaoVe,
     @Default(0) int lanGiaHan,
     int? idTieuBanXetTuyen,
+    String? idDienTuyenSinh,
     @Default(0) int thanhToanXetTuyen,
   }) = _HocVien;
 
@@ -307,4 +308,21 @@ class TrangThaiHocVien with _$TrangThaiHocVien {
 
   factory TrangThaiHocVien.fromJson(Map<String, dynamic> json) =>
       _$TrangThaiHocVienFromJson(json);
+}
+
+@freezed
+class DienTuyenSinh with _$DienTuyenSinh {
+  static const table = "DienTuyenSinh";
+  const factory DienTuyenSinh({
+    required String id,
+    required String ten,
+  }) = _DienTuyenSinh;
+
+  const DienTuyenSinh._();
+
+  @override
+  String toString() => ten;
+
+  factory DienTuyenSinh.fromJson(Map<String, dynamic> json) =>
+      _$DienTuyenSinhFromJson(json);
 }

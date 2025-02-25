@@ -87,7 +87,8 @@ class Helper {
 }
 
 void ezNotify(BuildContext context, String text) {
-  ScaffoldMessenger.of(context).showSnackBar(
+  final sm = ScaffoldMessenger.of(context);
+  sm.showSnackBar(
     SnackBar(
       content: Text(text),
     ),

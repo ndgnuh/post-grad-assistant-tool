@@ -120,7 +120,7 @@ Future<pw.Document> buildBang2DanhSachThiSinh({
           pw.Expanded(child: pw.SizedBox.shrink()),
           pw.Column(
             children: [
-              pw.Text("Hà Nội, ngày ..... tháng ..... năm ........."),
+              pw.Text("Hà Nội, ngày ..... tháng ..... năm $year"),
               pw.BoldText("TRƯỞNG TIỂU BAN"),
             ],
           ),
@@ -350,12 +350,12 @@ Future<pw.Document> buildBang3NhanXet({
           pw.Expanded(child: pw.SizedBox.shrink()),
           pw.Column(
             children: [
-              pw.ItalicText("Hà Nội, ngày ..... tháng ..... năm ........."),
+              pw.ItalicText("Hà Nội, ngày ..... tháng ..... năm $year"),
               pw.BoldText("NGƯỜI ĐÁNH GIÁ"),
               pw.Divider(
                   height: 1.5 * PdfPageFormat.cm,
                   borderStyle: pw.BorderStyle.none),
-              pw.BoldText(gv.hoTen),
+              pw.BoldText(gv.hoTenChucDanh),
             ],
           ),
         ],
@@ -509,9 +509,10 @@ Future<pw.Document> buildBang4TongHopKq({
           "Chuyên ngành,\nchương trình đào tạo",
           "Định hướng chuyên sâu\n(nếu có)",
           pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
             children: [
               pw.EzTable<String>(
-                headers: ["Điểm đánh giá của các thành viên tiểu ban				"],
+                headers: ["Điểm đánh giá của các thành viên tiểu ban"],
                 data: <String>[],
                 rowBuilder: (i, _) => <String>[],
               ),

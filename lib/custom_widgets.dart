@@ -26,7 +26,14 @@ import 'datamodels.dart' show toSqliteDate;
 class EzController<T> extends ChangeNotifier {
   final TextEditingController formatController;
   final String Function(T?)? _labelFormatter;
+  final bool useFormatController = true;
   T? _value;
+
+  @override
+  void dispose() {
+    super.dispose();
+    formatController.dispose();
+  }
 
   EzController({
     labelFormatter,
@@ -46,20 +53,19 @@ class EzController<T> extends ChangeNotifier {
     DateTime? date,
     DateFormat? dateFormat,
   }) {
+    dateFormat ??= DateFormat("dd/MM/yyyy");
     return EzController(
       value: date,
-      labelFormatter: switch (dateFormat) {
-        DateFormat dateFormat => (DateTime? date) {
-            return switch (date) {
-              DateTime date => dateFormat.format(date),
-              _ => "",
-            };
-          },
-        null => null,
+      labelFormatter: (DateTime? date) {
+        return switch (date) {
+          DateTime date => dateFormat?.format(date) ?? date.toString(),
+          _ => "",
+        };
       },
     );
   }
 
+  // If
   T? get value {
     return _value;
   }
@@ -68,13 +74,25 @@ class EzController<T> extends ChangeNotifier {
     return _labelFormatter;
   }
 
-  set value(T? newValue) {
+  rawSetValue(T? newValue) {
     _value = newValue;
     switch (_labelFormatter) {
       case String Function(T?) format:
         formatController.text = format(_value);
       default:
         formatController.text = _value?.toString() ?? "";
+    }
+  }
+
+  set value(T? newValue) {
+    _value = newValue;
+    if (useFormatController) {
+      switch (_labelFormatter) {
+        case String Function(T?) format:
+          formatController.text = format(_value);
+        default:
+          formatController.text = _value?.toString() ?? "";
+      }
     }
     notifyListeners();
   }
@@ -84,7 +102,7 @@ class EzDatePicker extends StatelessWidget {
   final String? label;
   final DateTime? value;
   final ValueChanged<DateTime?>? onSelected;
-  final EzController<DateTime>? controller;
+  final EzController<DateTime?>? controller;
   final bool enabled;
   final bool readOnly;
 
@@ -143,6 +161,51 @@ class EzDatePicker extends StatelessWidget {
   }
 }
 
+class EzCheckBox extends StatefulWidget {
+  final String label;
+  final bool triState;
+  final EzController<bool>? controller;
+  final ValueChanged<bool?>? onChanged;
+
+  const EzCheckBox({
+    super.key,
+    required this.label,
+    this.onChanged,
+    this.controller,
+    this.triState = false,
+  });
+
+  @override
+  State<EzCheckBox> createState() => _EzCheckBoxState();
+}
+
+class _EzCheckBoxState extends State<EzCheckBox> {
+  @override
+  Widget build(BuildContext context) {
+    final value = widget.controller?.value;
+    final valueFormatter = widget.controller?.labelFormatter;
+    final desc = switch (valueFormatter) {
+      Function(bool?) format => Text(format(value)),
+      _ => null,
+    };
+    return CheckboxListTile(
+      title: Text(widget.label),
+      subtitle: desc,
+      tristate: widget.triState,
+      value: value,
+      onChanged: (bool? value) {
+        widget.controller?.value = value;
+        switch (widget.onChanged) {
+          case ValueChanged<bool?> callback:
+            callback(value);
+        }
+        // trigger rebuild
+        setState(() {});
+      },
+    );
+  }
+}
+
 class EzTextInput extends StatelessWidget {
   final String? label;
   final String? placeholder;
@@ -150,7 +213,7 @@ class EzTextInput extends StatelessWidget {
   final ValueChanged<String?>? onSubmitted;
   final ValueChanged<String?>? onChanged;
   final bool multiline;
-  final EzController<String>? controller;
+  final TextEditingController? controller;
   final TextInputType? keyboardType;
   final bool enabled;
   final bool readOnly;
@@ -171,23 +234,21 @@ class EzTextInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fmtController = controller?.formatController;
     return TextField(
+      onSubmitted: onSubmitted,
       enabled: enabled,
       readOnly: readOnly,
       maxLines: multiline ? null : 1,
       keyboardType: multiline ? TextInputType.multiline : keyboardType,
-      onSubmitted: onSubmitted,
-      onChanged: (text) {
+      controller: controller,
+      onChanged: (String? text) {
         Future.delayed(Duration.zero, () {
           switch (onChanged) {
-            case ValueChanged<String> callback:
+            case ValueChanged<String?> callback:
               callback(text);
           }
         });
       },
-      controller:
-          value == null ? fmtController : TextEditingController(text: value),
       decoration: InputDecoration(
         hintText: placeholder,
         labelText: label,
@@ -263,54 +324,146 @@ Flex HBox({List<int>? flex, required List<Widget> children}) {
   );
 }
 
+String defaultFormatter(Object? obj) {
+  return obj?.toString() ?? "";
+}
+
+class EzSelectionController<T> extends ChangeNotifier {
+  List<T> _values;
+  T? _value;
+  final String Function(T?) _labelFormatter;
+  final TextEditingController labelController;
+
+  EzSelectionController({
+    List<T> values = const [],
+    T? initialSelection,
+    labelFormatter = defaultFormatter,
+  })  : _values = values,
+        _value = initialSelection,
+        _labelFormatter = labelFormatter,
+        labelController = TextEditingController(
+          text: labelFormatter(initialSelection),
+        );
+
+  @override
+  void dispose() {
+    super.dispose();
+    labelController.dispose();
+  }
+
+  List<T> get values {
+    return _values;
+  }
+
+  List<String> get labels {
+    return [for (final opt in _values) _labelFormatter(opt)];
+  }
+
+  T? get value {
+    return _value;
+  }
+
+  String get label {
+    return _labelFormatter(_value);
+  }
+
+  set value(T? value) {
+    _value = value;
+    labelController.text = _labelFormatter(_value);
+    notifyListeners();
+  }
+
+  set values(List<T> values) {
+    _values = values;
+    notifyListeners();
+  }
+}
+
 /// Quickly create a [DropdownMenu] from a list of [labels] and [values]
 /// If [labels] is [null] then [labels] is converted from [values] with [toString()].
-class EzDropdown<T> extends StatelessWidget {
-  final List<T> values;
+class EzDropdown<T> extends StatefulWidget {
   final String Function(T?)? labelFormat;
   final double? width;
   final String? label;
   final T? initialSelection;
-  final EzController<T>? controller;
+  final EzSelectionController<T> controller;
   final ValueChanged<T?>? onSelected;
 
   const EzDropdown({
     super.key,
-    required this.values,
+    required this.controller,
     this.labelFormat,
     this.width,
     this.label,
     this.initialSelection,
-    this.controller,
     this.onSelected,
   });
 
+  static Widget fullWidth<T>({
+    required controller,
+    labelFormat,
+    width,
+    label,
+    initialSelection,
+    onSelected,
+  }) {
+    return LayoutBuilder(
+      builder: (context, constraint) {
+        return EzDropdown<T>(
+          width: constraint.maxWidth,
+          controller: controller,
+          labelFormat: labelFormat,
+          label: label,
+          initialSelection: initialSelection,
+          onSelected: onSelected,
+        );
+      },
+    );
+  }
+
+  @override
+  State<StatefulWidget> createState() => _EzDropdownState<T>();
+}
+
+class _EzDropdownState<T> extends State<EzDropdown<T>> {
+  @override
+  void initState() {
+    widget.controller.addListener(
+      () {
+        setState(() {});
+      },
+    );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return DropdownMenu<T>(
-      controller: controller?.formatController,
+    final values = widget.controller.values;
+    final labels = widget.controller.labels;
+    final entries = [
+      for (final (i, value) in values.indexed)
+        DropdownMenuEntry(value: value, label: labels[i])
+    ];
+    return DropdownMenu<T?>(
+      controller: widget.controller.labelController,
       onSelected: (T? value) {
-        controller?.value = value;
-        switch (onSelected) {
+        widget.controller.value = value;
+        switch (widget.onSelected) {
           case ValueChanged<T?> callback:
             callback(value);
         }
       },
-      initialSelection: initialSelection,
-      width: width,
-      label: label == null ? null : Text(label as String),
-      enableFilter: false,
-      enableSearch: false,
-      dropdownMenuEntries: [
-        for (final value in values)
-          DropdownMenuEntry(
-            value: value,
-            label: switch (labelFormat ?? controller?.labelFormatter) {
-              String Function(T?) format => format(value),
-              _ => value.toString()
-            },
-          )
-      ],
+      initialSelection: widget.initialSelection,
+      width: widget.width,
+      label: widget.label == null ? null : Text(widget.label as String),
+      enableFilter: true,
+      dropdownMenuEntries: entries,
     );
   }
 }
@@ -508,6 +661,97 @@ class EzFilePicker extends StatelessWidget {
             callback(path);
         }
       },
+    );
+  }
+}
+
+extension ScaffoldMessengerEzMesage on ScaffoldMessengerState {
+  void showMessage(String text) {
+    showSnackBar(
+      SnackBar(
+        content: Text(text),
+      ),
+    );
+  }
+}
+
+class EzTable<T> extends StatelessWidget {
+  final List<Object?> headers;
+  final List<TextAlign>? textAligns;
+  final TableBorder? border;
+  final EdgeInsetsGeometry padding;
+  final bool dataWrap;
+  final bool headerWrap;
+  final List<T> data;
+  final List<Object?> Function(int, T) rowBuilder;
+  final Color? headerForeground;
+
+  const EzTable({
+    super.key,
+    required this.data,
+    required this.rowBuilder,
+    required this.headers,
+    this.textAligns,
+    this.border,
+    this.padding = const EdgeInsetsDirectional.symmetric(
+      vertical: 5,
+      horizontal: 3,
+    ),
+    this.dataWrap = false,
+    this.headerWrap = false,
+    this.headerForeground,
+  });
+
+  List<Widget> _headers(BuildContext context) {
+    return [
+      for (final (i, header) in headers.indexed)
+        (header is Widget)
+            ? header
+            : Container(
+                padding: padding,
+                alignment: Alignment.center,
+                child: Text(
+                  header?.toString() ?? "",
+                  textAlign: textAligns?[i] ?? TextAlign.center,
+                  softWrap: headerWrap,
+                  style: TextStyle(
+                    color: headerForeground,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Table(
+      border: border ?? TableBorder.all(),
+      children: [
+        // Headers
+        TableRow(
+          children: _headers(context),
+        ),
+        // Data rows
+        for (final (rowCount, row) in data.indexed)
+          TableRow(
+            children: [
+              for (final (colCount, data) in rowBuilder(rowCount, row).indexed)
+                switch (data) {
+                  Widget widget => widget,
+                  _ => Container(
+                      padding: padding,
+                      alignment: Alignment.center,
+                      child: Text(
+                        data?.toString() ?? "",
+                        softWrap: dataWrap,
+                        textAlign: textAligns?[colCount] ?? TextAlign.center,
+                      ),
+                    )
+                }
+            ],
+          ),
+      ],
     );
   }
 }

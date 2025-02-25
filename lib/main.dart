@@ -30,7 +30,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Repository.listGiangVien(searchHoTen: "Hùng").then(print);
     return MultiProvider(
       providers: [
         Provider<Helper>(create: (BuildContext context) => Helper(context)),
@@ -40,7 +39,7 @@ class MyApp extends StatelessWidget {
         ),
         FutureProvider<List<NienKhoa>>(
           initialData: [],
-          create: (context) => NienKhoa.all(),
+          create: (context) => Repository.allNienKhoa(),
         ),
         ChangeNotifierProvider(
           create: (context) => AppState(),
