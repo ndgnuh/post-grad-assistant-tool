@@ -1,14 +1,13 @@
-// TODO: move this file to "logic_tuyensinh";
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:dio/dio.dart';
 import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 import 'package:path/path.dart' as p;
-import 'dtypes.dart';
-import 'pdfbuilder/heplers.dart' as ph;
-import 'datamodels.dart' show DateTimeConvert;
+
+import '../dtypes.dart';
+import '../datamodels.dart' show DateTimeConvert;
+import '../pdfbuilder/heplers.dart' as pw;
 
 final dio = Dio();
 const baseTuyenSinhUrl = "https://sdh.hust.edu.vn/AnhTuyenSinh";
@@ -91,7 +90,7 @@ Future<pw.Document> buildBang2DanhSachThiSinh({
   required String saveDirectory,
   required year,
 }) async {
-  final theme = await ph.defaultTheme(baseSize: 9.0);
+  final theme = await pw.defaultTheme(baseSize: 9.0);
   final doc = pw.Document(
     pageMode: PdfPageMode.fullscreen,
     theme: theme,
@@ -108,10 +107,10 @@ Future<pw.Document> buildBang2DanhSachThiSinh({
       marginAll: 0.25 * PdfPageFormat.inch,
     ),
     build: (context) {
-      final header = ph.EzTopHeader.fami().flushLeft();
+      final header = pw.EzTopHeader.fami().flushLeft();
 
       final title = pw.Center(
-        child: ph.BoldText(
+        child: pw.BoldText(
           "DANH SÁCH THÍ SINH XÉT TUYỂN THẠC SĨ THEO ĐỊNH HƯỚNG NGHIÊN CỨU NĂM $year",
         ),
       );
@@ -122,7 +121,7 @@ Future<pw.Document> buildBang2DanhSachThiSinh({
           pw.Column(
             children: [
               pw.Text("Hà Nội, ngày ..... tháng ..... năm ........."),
-              ph.BoldText("TRƯỞNG TIỂU BAN"),
+              pw.BoldText("TRƯỞNG TIỂU BAN"),
             ],
           ),
         ],
@@ -309,7 +308,7 @@ Future<pw.Document> buildBang3NhanXet({
   required String role,
   required String year,
 }) async {
-  final theme = await ph.defaultTheme(baseSize: 9.0);
+  final theme = await pw.defaultTheme(baseSize: 9.0);
   final doc = pw.Document(
     pageMode: PdfPageMode.fullscreen,
     theme: theme,
@@ -326,10 +325,10 @@ Future<pw.Document> buildBang3NhanXet({
       marginAll: 0.25 * PdfPageFormat.inch,
     ),
     build: (context) {
-      final header = ph.EzTopHeader.fami().flushLeft();
+      final header = pw.EzTopHeader.fami().flushLeft();
 
       final title = pw.Center(
-        child: ph.BoldText(
+        child: pw.BoldText(
           "BẢNG ĐÁNH GIÁ CỦA THÀNH VIÊN TIỂU BAN XÉT TUYỂN CAO HỌC THEO ĐỊNH HƯỚNG NGHIÊN CỨU NĂM $year",
           fontSize: 11,
         ),
@@ -351,12 +350,12 @@ Future<pw.Document> buildBang3NhanXet({
           pw.Expanded(child: pw.SizedBox.shrink()),
           pw.Column(
             children: [
-              ph.ItalicText("Hà Nội, ngày ..... tháng ..... năm ........."),
-              ph.BoldText("NGƯỜI ĐÁNH GIÁ"),
+              pw.ItalicText("Hà Nội, ngày ..... tháng ..... năm ........."),
+              pw.BoldText("NGƯỜI ĐÁNH GIÁ"),
               pw.Divider(
                   height: 1.5 * PdfPageFormat.cm,
                   borderStyle: pw.BorderStyle.none),
-              ph.BoldText(gv.hoTen),
+              pw.BoldText(gv.hoTen),
             ],
           ),
         ],
@@ -378,7 +377,7 @@ Future<pw.Document> buildBang3NhanXet({
         "Tổng điểm",
       ];
 
-      final tbl = ph.EzTable<HocVien>(
+      final tbl = pw.EzTable<HocVien>(
         headers: headers,
         data: candidates,
         rowBuilder: (i, hv) {
@@ -436,7 +435,7 @@ Future<pw.Document> buildBang4TongHopKq({
   required String saveDirectory,
   required String year,
 }) async {
-  final theme = await ph.defaultTheme(baseSize: 9.0);
+  final theme = await pw.defaultTheme(baseSize: 9.0);
   final doc = pw.Document(
     pageMode: PdfPageMode.fullscreen,
     theme: theme,
@@ -452,10 +451,10 @@ Future<pw.Document> buildBang4TongHopKq({
       marginAll: 0.25 * PdfPageFormat.inch,
     ),
     build: (context) {
-      final header = ph.EzTopHeader.fami().flushLeft();
+      final header = pw.EzTopHeader.fami().flushLeft();
 
       final title = pw.Center(
-        child: ph.BoldText(
+        child: pw.BoldText(
           "TỔNG HỢP KẾT QUẢ XÉT TUYỂN CAO HỌC THEO ĐỊNH HƯỚNG NGHIÊN CỨU NĂM $year",
           fontSize: 11,
         ),
@@ -466,8 +465,8 @@ Future<pw.Document> buildBang4TongHopKq({
           pw.Expanded(child: pw.SizedBox.shrink()),
           pw.Column(
             children: [
-              ph.ItalicText("Hà Nội, ngày ..... tháng ..... năm $year"),
-              ph.BoldText("TRƯỞNG TIỂU BAN"),
+              pw.ItalicText("Hà Nội, ngày ..... tháng ..... năm $year"),
+              pw.BoldText("TRƯỞNG TIỂU BAN"),
               pw.Divider(
                 height: 1.5 * PdfPageFormat.cm,
                 borderStyle: pw.BorderStyle.none,
@@ -484,7 +483,7 @@ Future<pw.Document> buildBang4TongHopKq({
         "Ủy viên 2",
         "Ủy viên 3"
       ];
-      final tbl = ph.EzTable<HocVien>(
+      final tbl = pw.EzTable<HocVien>(
         data: candidates,
         rowBuilder: (i, HocVien hv) => [
           (i + 1).toString(),
@@ -494,7 +493,7 @@ Future<pw.Document> buildBang4TongHopKq({
           hv.gioiTinh,
           hv.nganhDaoTaoThacSi,
           hv.dinhHuongChuyenSau,
-          ph.EzTable<String>(
+          pw.EzTable<String>(
             headerForeground: PdfColorGrey(1, 0),
             headers: subheaders,
             data: <String>[],
@@ -511,12 +510,12 @@ Future<pw.Document> buildBang4TongHopKq({
           "Định hướng chuyên sâu\n(nếu có)",
           pw.Column(
             children: [
-              ph.EzTable<String>(
+              pw.EzTable<String>(
                 headers: ["Điểm đánh giá của các thành viên tiểu ban				"],
                 data: <String>[],
                 rowBuilder: (i, _) => <String>[],
               ),
-              ph.EzTable<String>(
+              pw.EzTable<String>(
                 headers: subheaders,
                 data: <String>[],
                 rowBuilder: (i, _) => <String>[],

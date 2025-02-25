@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../custom_widgets.dart';
 import '../datamodels.dart';
-import '../printers.dart';
+import '../business/tuyen_sinh.dart';
 
 part 'xet_tuyen_state.dart';
 
