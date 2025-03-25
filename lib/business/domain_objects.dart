@@ -496,6 +496,28 @@ class TieuBanXetTuyen with _$TieuBanXetTuyen {
   factory TieuBanXetTuyen.fromJson(Map<String, dynamic> json) =>
       _$TieuBanXetTuyenFromJson(json);
 
+  static Future<List<TieuBanXetTuyen>> all() async {
+    return dbSession((db) async {
+      final rows = await db.query(table, orderBy: "nam DESC");
+      return [for (final json in rows) TieuBanXetTuyen.fromJson(json)];
+    });
+  }
+
+  static Future<TieuBanXetTuyen?> getById(id) async {
+    return dbSession((db) async {
+      final rows = await db.query(table, where: "id = ?", whereArgs: [id]);
+      if (rows.isEmpty) {
+        return null;
+      } else {
+        final json = rows.single;
+        return TieuBanXetTuyen.fromJson(json);
+      }
+    });
+  }
+
+  @override
+  String toString() => "Tiểu ban xét tuyển năm $nam";
+
   Future<GiangVien> get chuTich async {
     return await GiangVien.getById(idChuTich) as GiangVien;
   }

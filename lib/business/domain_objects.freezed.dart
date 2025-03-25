@@ -4232,8 +4232,7 @@ class __$$TieuBanXetTuyenImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$TieuBanXetTuyenImpl extends _TieuBanXetTuyen
-    with DiagnosticableTreeMixin {
+class _$TieuBanXetTuyenImpl extends _TieuBanXetTuyen {
   const _$TieuBanXetTuyenImpl(
       {required this.id,
       required this.nam,
@@ -4261,25 +4260,6 @@ class _$TieuBanXetTuyenImpl extends _TieuBanXetTuyen
   final int idUyVien2;
   @override
   final int idUyVien3;
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'TieuBanXetTuyen(id: $id, nam: $nam, idChuTich: $idChuTich, idThuKy: $idThuKy, idUyVien1: $idUyVien1, idUyVien2: $idUyVien2, idUyVien3: $idUyVien3)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'TieuBanXetTuyen'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('nam', nam))
-      ..add(DiagnosticsProperty('idChuTich', idChuTich))
-      ..add(DiagnosticsProperty('idThuKy', idThuKy))
-      ..add(DiagnosticsProperty('idUyVien1', idUyVien1))
-      ..add(DiagnosticsProperty('idUyVien2', idUyVien2))
-      ..add(DiagnosticsProperty('idUyVien3', idUyVien3));
-  }
 
   @override
   bool operator ==(Object other) {

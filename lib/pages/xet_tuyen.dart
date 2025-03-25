@@ -3,24 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../custom_widgets.dart';
-import '../datamodels.dart';
-import '../services/sqlbuilder/sqlbuilder.dart';
 
+import '../business/domain_objects.dart';
 import '../business/tuyen_sinh.dart';
 import '../business/tuyen_sinh.dart' as domain;
 
-part 'xet_tuyen_state.dart';
-
 const xetTuyenStoragePath = "/xt/storage/path";
 
-typedef _FormWidget<T> = Selector<_FormState, T>;
-typedef _PageWidget<T> = Selector<_State, T>;
 const listXepLoai = ["Khá", "Giỏi", "Xuất sắc"];
-typedef _DateCtl = EzController<DateTime>;
-typedef _SelCtl = EzSelectionController<DateTime>;
-typedef _TextCtl = TextEditingController;
-
-class _EditState extends ChangeNotifier {}
+final dateFormat = DateFormat("dd/MM/yyyy");
 
 class _PageState extends ChangeNotifier {
   /// Chỉ mục
@@ -45,9 +36,12 @@ class _PageState extends ChangeNotifier {
   final editHocPhanDuocMien = TextEditingController();
   final editNganhDaoTaoThacSi = TextEditingController();
   final editDienTuyenSinh = EzSelectionController(values: DienTuyenSinh.values);
+  final editTieuBanXetTuyen = EzSelectionController<TieuBanXetTuyen?>();
+
+  final exportSaveDirectory = EzController<String>();
 
   /// Cập nhật GUI: đang chỉnh sửa học viên
-  edit(HocVien hv) {
+  edit(HocVien hv) async {
     editHocVien = hv;
     editSoHoSo.text = hv.soHoSo ?? "";
     editHoTen.text = hv.hoTen;
@@ -65,6 +59,8 @@ class _PageState extends ChangeNotifier {
     editHocPhanDuocMien.text = hv.hocPhanDuocMien ?? "";
     editNganhDaoTaoThacSi.text = hv.nganhDaoTaoThacSi ?? "";
     editDienTuyenSinh.value = hv.dienTuyenSinh;
+    editTieuBanXetTuyen.value =
+        await TieuBanXetTuyen.getById(hv.idTieuBanXetTuyen);
     notifyListeners();
   }
 
@@ -107,6 +103,7 @@ class _PageState extends ChangeNotifier {
       ngayTotNghiepDaiHoc: editNgayTotNghiepDaiHoc.value,
       dinhHuongChuyenSau: editDinhHuongChuyenSau.text,
       hocPhanDuocMien: editHocPhanDuocMien.text,
+      idTieuBanXetTuyen: editTieuBanXetTuyen.value?.id,
       nganhDaoTaoThacSi: editNganhDaoTaoThacSi.text,
       idDienTuyenSinh: editDienTuyenSinh.value,
       maTrangThai: TrangThaiHocVien.xetTuyen,
@@ -138,6 +135,7 @@ class _PageState extends ChangeNotifier {
   /// Khởi tạo, constructor không được async, nên...
   _initAsync() async {
     listCandidate = await domain.fetchCandidates();
+    editTieuBanXetTuyen.values = await TieuBanXetTuyen.all();
     notifyListeners();
   }
 
@@ -202,7 +200,7 @@ class _PanelListCandidateState extends State<_PanelListCandidate> {
         DataCell(Text(hv.email ?? "")),
         DataCell(Text(hv.dienThoai ?? "")),
         DataCell(Text(hv.noiSinh ?? "")),
-        DataCell(Text(hv.ngaySinh?.toDmy() ?? "")),
+        DataCell(Text(hv.ngaySinh?.toString() ?? "")),
         DataCell(
           Checkbox(
             value: (hv.dienTuyenSinh == DienTuyenSinh.tichHop),
@@ -220,7 +218,6 @@ class _PanelListCandidateState extends State<_PanelListCandidate> {
 
   @override
   Widget build(BuildContext context) {
-    final model = _State.of(context, listen: true);
     final state = Provider.of<_PageState>(context);
     return Expanded(
       child: SingleChildScrollView(
@@ -290,52 +287,10 @@ class _EditPanelAction extends StatelessWidget {
 }
 
 class _EditPanel extends StatelessWidget {
-  Future<void> callbackThemHocVien({
-    required scaffoldMessenger,
-    required formState,
-    required pageState,
-  }) async {
-    final (rowAffected, errors) = await formState.themHocVien();
-    if (errors != null) {
-      scaffoldMessenger.showSnackBar(SnackBar(
-        content: Text(errors),
-      ));
-    } else {
-      scaffoldMessenger.showSnackBar(SnackBar(
-        content: Text("Thêm học viên thành công"),
-      ));
-      formState.reset();
-      pageState.refresh();
-    }
-  }
-
-  Future<void> callbackUpdateHocVien({
-    required formState,
-    required pageState,
-    required scaffoldMessenger,
-  }) async {
-    final (rowAffected, errors) = await formState.updateHocVien();
-    if (errors != null) {
-      scaffoldMessenger.showSnackBar(SnackBar(
-        content: Text(errors),
-      ));
-    } else {
-      scaffoldMessenger.showSnackBar(SnackBar(
-        content: Text("Cập nhật học viên thành công"),
-      ));
-      formState.reset();
-      pageState.refresh();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final model = Provider.of<_PageState>(context);
     final editHocVien = model.editHocVien;
-    final _FormState formState = _FormState.of(context, listen: true);
-    final pageState = _State.of(context);
-
-    final scaffoldMessenger = getMessenger(context);
     return EzFixed(
       margin: EdgeInsets.all(0),
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -420,7 +375,7 @@ class _EditPanel extends StatelessWidget {
         ),
         EzDropdown.fullWidth<TieuBanXetTuyen?>(
           label: "Tiểu ban xét tuyển",
-          controller: pageState.tieuBanXetTuyen,
+          controller: model.editTieuBanXetTuyen,
         ),
         EzTextInput(
           label: "Học phần được miễn",
@@ -438,30 +393,28 @@ class _EditPanel extends StatelessWidget {
 class _ActionPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final formState = _FormState.of(context, listen: true);
-    final pageState = _State.of(context, listen: true);
+    final pageState = Provider.of<_PageState>(context);
     return EzFixed(
       direction: Axis.vertical,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       margin: EdgeInsets.all(0),
       children: [
         EzFilePicker(
-          controller: pageState.saveDirectory,
+          controller: pageState.exportSaveDirectory,
           isDirectory: true,
           label: "Thư mục lưu",
           onSelected: (value) async {
-            pageState.refresh();
             final prefs = await SharedPreferences.getInstance();
             prefs.setString(xetTuyenStoragePath, value);
           },
         ),
         FilledButton.icon(
-          onPressed: null,
+          onPressed: null, // TODO
           icon: Icon(Icons.download),
           label: Text("Export biểu mẫu tuyển sinh"),
         ),
         FilledButton.icon(
-          onPressed: null,
+          onPressed: null, // TODO
           icon: Icon(Icons.download),
           label: Text("Download hồ sơ xét tuyển"),
         ),
@@ -487,8 +440,6 @@ class PageXetTuyen extends StatelessWidget {
           ChangeNotifierProvider(
             create: (_) => _PageState(),
           ),
-          ChangeNotifierProvider(create: (_) => _FormState()),
-          ChangeNotifierProvider(create: (_) => _State()),
         ],
         builder: (context, _) {
           return EzFlex(
