@@ -3,9 +3,96 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart' as p;
+import '../datamodels.dart' show dbSession;
 
-part 'dtypes.freezed.dart';
-part 'dtypes.g.dart';
+import '../services/sqlbuilder/sqlbuilder.dart';
+
+part 'domain_objects.freezed.dart';
+part 'domain_objects.g.dart';
+
+@JsonEnum(valueField: "value")
+enum TrangThaiLopTinChi {
+  huy(1),
+  binhThuong(0);
+
+  final int value;
+  const TrangThaiLopTinChi(this.value);
+
+  @override
+  toString() => switch (this) {
+        TrangThaiLopTinChi.huy => "Hủy",
+        TrangThaiLopTinChi.binhThuong => "Bình thường",
+      };
+}
+
+@JsonEnum(valueField: "value")
+enum TrangThaiHocVien {
+  xetTuyen('xt', 'Xét tuyển'),
+  dangHoc('hoc', 'Đang học'),
+  nghiHoc('nghi', 'Thôi học'),
+  totNghiep('tn', 'Đã tốt nghiệp');
+
+  final String value;
+  final String label;
+  const TrangThaiHocVien(this.value, this.label);
+
+  @override
+  toString() => label;
+}
+
+mixin EnumWithLabel {
+  String get label;
+
+  @override
+  toString() => label;
+}
+
+@JsonEnum(valueField: "value")
+enum KhoiKienThuc with EnumWithLabel {
+  khac('khac', 'Khác'),
+  cn('cn', 'Cử nhân'),
+  daiCuongThs('dc-ths', 'Đại cương'),
+  nganhRong('nganh-rong', 'Kiến thức ngành (rộng)'),
+  nganhNangCao('nganh-nangcao', 'Kiến thức ngành (nâng cao)'),
+  tuChonBatBuoc('tc-batbuoc', 'Tự chọn bắt buộc'),
+  tcChonTuDo('tc-tudo', 'Tự chọn tự do');
+
+  static const String table = "KhoiKienThuc";
+  final String value;
+  final String label;
+  const KhoiKienThuc(this.value, this.label);
+}
+
+@JsonEnum(valueField: "value")
+enum GioiTinh {
+  nam(value: "M", label: "Nam"),
+  nu(value: "F", label: "Nữ");
+
+  final String value;
+  final String label;
+  const GioiTinh({required this.value, required this.label});
+
+  @override
+  toString() => label;
+}
+
+@JsonEnum(valueField: "value")
+enum DienTuyenSinh {
+  tichHop(value: "cn-ths", label: "Tích hợp Cử nhân - Thạc sĩ"),
+  xetTuyen(value: "xt", label: "Xét tuyển");
+
+  final String value;
+  final String label;
+  static const table = "DienTuyenSinh";
+  const DienTuyenSinh({required this.value, required this.label});
+
+  @override
+  toString() => label;
+}
 
 class DateSerializer implements JsonConverter<DateTime?, String?> {
   const DateSerializer();
@@ -35,23 +122,65 @@ class DateSerializer implements JsonConverter<DateTime?, String?> {
   }
 }
 
+Future<void> _commitValue<T>({
+  required String table,
+  required String idField,
+  required Map<String, Object?> Function() toJson,
+}) async {
+  final data = toJson();
+  final id = data[idField];
+  data.remove(idField);
+  return dbSession((db) async {
+    db.update(
+      table,
+      data,
+      where: "$idField = ?",
+      whereArgs: [id],
+    );
+  });
+}
+
+Future<void> _create<T>({
+  required String table,
+  required String idField,
+  required Map<String, Object?> Function() toJson,
+}) async {
+  final data = toJson();
+  data.remove(idField);
+  return dbSession((db) async {
+    db.insert(table, data);
+  });
+}
+
+Future<void> _delete<T>({
+  required String table,
+  required String idField,
+  required Map<String, Object?> Function() toJson,
+}) async {
+  final id = toJson()[idField];
+  return dbSession((db) async {
+    db.delete(table, where: "$idField = ?", whereArgs: [id]);
+  });
+}
+
 @freezed
 class GiangVien with _$GiangVien {
   static const table = "GiangVien";
+  const GiangVien._();
   factory GiangVien({
     required int id,
     required String hoTen,
     String? maCanBo,
     String? donVi,
     String? chuyenNganh,
-    String? gioiTinh,
+    GioiTinh? gioiTinh,
     String? hocHam,
     String? hocVi,
     int? namNhanTs,
     String? sdt,
     String? email,
     String? cccd,
-    String? ngaySinh,
+    @DateSerializer() DateTime? ngaySinh,
     String? stk,
     String? nganHang,
     String? mst,
@@ -62,8 +191,24 @@ class GiangVien with _$GiangVien {
   factory GiangVien.fromJson(Map<String, dynamic> json) =>
       _$GiangVienFromJson(json);
 
-  // Added constructor. Must not have any parameter
-  const GiangVien._();
+  // Tìm giảng viên theo ID trong DB
+  static Future<GiangVien?> getById(id) async {
+    final query = SelectQuery()
+      ..from(GiangVien.table)
+      ..where("id = ?", [id])
+      ..selectAll();
+    final sql = query.build();
+    return dbSession((Database db) async {
+      final rows = await db.rawQuery(sql);
+      if (rows.isEmpty) {
+        return null;
+      } else {
+        return GiangVien.fromJson(rows.single);
+      }
+    });
+  }
+
+  // Họ tên, học hàm, học vị
   String get hoTenChucDanh {
     return switch ((hocHam, hocVi)) {
       (String a, String b) => "$a. $b. $hoTen",
@@ -102,6 +247,7 @@ class HocHam with _$HocHam {
 @freezed
 class HocKy with _$HocKy {
   static const table = "HocKy";
+  const HocKy._();
   const factory HocKy({
     required String hocKy,
     required String moDangKy,
@@ -112,22 +258,29 @@ class HocKy with _$HocKy {
   }) = _HocKy;
 
   factory HocKy.fromJson(Map<String, dynamic> json) => _$HocKyFromJson(json);
+
+  @override
+  String toString() => hocKy;
 }
 
 @freezed
 class HocPhan with _$HocPhan {
   static const table = "HocPhan";
+  const HocPhan._();
   const factory HocPhan({
     required String maHocPhan,
     required String tenTiengViet,
     required String tenTiengAnh,
     required int soTinChi,
-    required String khoiKienThuc,
+    required KhoiKienThuc khoiKienThuc,
     required String khoiLuong,
   }) = _HocPhan;
 
   factory HocPhan.fromJson(Map<String, dynamic> json) =>
       _$HocPhanFromJson(json);
+
+  @override
+  toString() => "$maHocPhan $tenTiengViet ($soTinChi TC)";
 }
 
 @freezed
@@ -143,6 +296,8 @@ class HocVi with _$HocVi {
 
 @freezed
 class HocVien with _$HocVien {
+  static const table = "HocVien";
+  const HocVien._();
   const factory HocVien({
     required int id,
     String? soHoSo,
@@ -150,7 +305,7 @@ class HocVien with _$HocVien {
     String? maHocVien,
     required String hoTen,
     @DateSerializer() DateTime? ngaySinh,
-    String? gioiTinh,
+    GioiTinh? gioiTinh,
     String? noiSinh,
     String? email,
     String? truongTotNghiepDaiHoc,
@@ -162,7 +317,7 @@ class HocVien with _$HocVien {
     String? hocPhanDuocMien,
     String? nganhDaoTaoThacSi,
     String? dienThoai,
-    required String maTrangThai,
+    required TrangThaiHocVien maTrangThai,
     String? deTaiLuanVanTiengViet,
     String? deTaiLuanVanTiengAnh,
     @DateSerializer() DateTime? ngayGiaoDeTai,
@@ -174,9 +329,21 @@ class HocVien with _$HocVien {
     @DateSerializer() DateTime? hanBaoVe,
     @Default(0) int lanGiaHan,
     int? idTieuBanXetTuyen,
-    String? idDienTuyenSinh,
+    DienTuyenSinh? idDienTuyenSinh,
     @Default(0) int thanhToanXetTuyen,
   }) = _HocVien;
+
+  // We left these field in the constructor
+  // so that it maps nicely to the database.
+  DienTuyenSinh? get dienTuyenSinh => idDienTuyenSinh;
+  TrangThaiHocVien? get trangThai => maTrangThai;
+
+  Future<void> create() =>
+      _create(table: HocVien.table, idField: "id", toJson: toJson);
+  Future<void> update() =>
+      _commitValue(table: HocVien.table, idField: "id", toJson: toJson);
+  Future<void> delete() =>
+      _delete(table: HocVien.table, idField: "id", toJson: toJson);
 
   factory HocVien.fromJson(Map<String, dynamic> json) =>
       _$HocVienFromJson(json);
@@ -205,20 +372,9 @@ class HoiDongLVTS with _$HoiDongLVTS {
 }
 
 @freezed
-class KhoiKienThuc with _$KhoiKienThuc {
-  static const table = "KhoiKienThuc";
-  const factory KhoiKienThuc({
-    required String khoiKienThuc,
-    required String tenKhoiKienThuc,
-  }) = _KhoiKienThuc;
-
-  factory KhoiKienThuc.fromJson(Map<String, dynamic> json) =>
-      _$KhoiKienThucFromJson(json);
-}
-
-@freezed
 class LopTinChi with _$LopTinChi {
   static const table = "LopTinChi";
+  const LopTinChi._();
   const factory LopTinChi({
     required int id,
     String? maLopHoc,
@@ -231,11 +387,53 @@ class LopTinChi with _$LopTinChi {
     int? ngayHoc,
     int? tietBatDau,
     int? tietKetThuc,
-    @Default(0) int trangThai,
+    @Default(TrangThaiLopTinChi.binhThuong) TrangThaiLopTinChi trangThai,
   }) = _LopTinChi;
 
   factory LopTinChi.fromJson(Map<String, dynamic> json) =>
       _$LopTinChiFromJson(json);
+
+  Future<void> commitValue() => _commitValue(
+        table: LopTinChi.table,
+        idField: "id",
+        toJson: toJson,
+      );
+
+  Future<HocKy> get hocKyObject async {
+    return dbSession((db) async {
+      final rows = await db.query(
+        HocKy.table,
+        where: "hocKy = ?",
+        whereArgs: [hocKy],
+      );
+      return HocKy.fromJson(rows[0]);
+    });
+  }
+
+  Future<HocPhan> get hocPhan async {
+    return dbSession((db) async {
+      final rows = await db.query(
+        "HocPhan",
+        where: "maHocPhan = ?",
+        whereArgs: [maHocPhan],
+      );
+      return HocPhan.fromJson(rows[0]);
+    });
+  }
+
+  Future<GiangVien?> get giangVien async {
+    if (idGiangVien == null) {
+      return null;
+    }
+    return dbSession((db) async {
+      final rows = await db.query(
+        GiangVien.table,
+        where: "id = ?",
+        whereArgs: [idGiangVien],
+      );
+      return GiangVien.fromJson(rows[0]);
+    });
+  }
 }
 
 @freezed
@@ -284,6 +482,7 @@ class NienKhoa with _$NienKhoa {
 @freezed
 class TieuBanXetTuyen with _$TieuBanXetTuyen {
   static const table = "TieuBanXetTuyen";
+  const TieuBanXetTuyen._();
   const factory TieuBanXetTuyen({
     required int id,
     required String nam,
@@ -296,33 +495,40 @@ class TieuBanXetTuyen with _$TieuBanXetTuyen {
 
   factory TieuBanXetTuyen.fromJson(Map<String, dynamic> json) =>
       _$TieuBanXetTuyenFromJson(json);
+
+  Future<GiangVien> get chuTich async {
+    return await GiangVien.getById(idChuTich) as GiangVien;
+  }
+
+  Future<GiangVien> get thuKy async {
+    return await GiangVien.getById(idThuKy) as GiangVien;
+  }
+
+  Future<GiangVien> get uyVien1 async {
+    return await GiangVien.getById(idUyVien1) as GiangVien;
+  }
+
+  Future<GiangVien> get uyVien2 async {
+    return await GiangVien.getById(idUyVien2) as GiangVien;
+  }
+
+  Future<GiangVien> get uyVien3 async {
+    return await GiangVien.getById(idUyVien3) as GiangVien;
+  }
 }
 
 @freezed
-class TrangThaiHocVien with _$TrangThaiHocVien {
-  static const table = "TrangThaiHocVien";
-  const factory TrangThaiHocVien({
-    required String maTrangThai,
-    required String tenTrangThai,
-  }) = _TrangThaiHocVien;
+class DeTaiThacSi with _$DeTaiThacSi {
+  const DeTaiThacSi._();
 
-  factory TrangThaiHocVien.fromJson(Map<String, dynamic> json) =>
-      _$TrangThaiHocVienFromJson(json);
-}
+  static const table = "DeTaiThacSi";
+  const factory DeTaiThacSi({
+    int? id,
+    required int idGiangVien,
+    required String tenTiengViet,
+    required String tenTiengAnh,
+  }) = _DeTaiThacSi;
 
-@freezed
-class DienTuyenSinh with _$DienTuyenSinh {
-  static const table = "DienTuyenSinh";
-  const factory DienTuyenSinh({
-    required String id,
-    required String ten,
-  }) = _DienTuyenSinh;
-
-  const DienTuyenSinh._();
-
-  @override
-  String toString() => ten;
-
-  factory DienTuyenSinh.fromJson(Map<String, dynamic> json) =>
-      _$DienTuyenSinhFromJson(json);
+  factory DeTaiThacSi.fromJson(Map<String, dynamic> json) =>
+      _$DeTaiThacSiFromJson(json);
 }

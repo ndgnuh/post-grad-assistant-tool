@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'dtypes.dart';
+part of 'domain_objects.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -13,14 +13,14 @@ _$GiangVienImpl _$$GiangVienImplFromJson(Map<String, dynamic> json) =>
       maCanBo: json['maCanBo'] as String?,
       donVi: json['donVi'] as String?,
       chuyenNganh: json['chuyenNganh'] as String?,
-      gioiTinh: json['gioiTinh'] as String?,
+      gioiTinh: $enumDecodeNullable(_$GioiTinhEnumMap, json['gioiTinh']),
       hocHam: json['hocHam'] as String?,
       hocVi: json['hocVi'] as String?,
       namNhanTs: (json['namNhanTs'] as num?)?.toInt(),
       sdt: json['sdt'] as String?,
       email: json['email'] as String?,
       cccd: json['cccd'] as String?,
-      ngaySinh: json['ngaySinh'] as String?,
+      ngaySinh: const DateSerializer().fromJson(json['ngaySinh'] as String?),
       stk: json['stk'] as String?,
       nganHang: json['nganHang'] as String?,
       mst: json['mst'] as String?,
@@ -35,20 +35,25 @@ Map<String, dynamic> _$$GiangVienImplToJson(_$GiangVienImpl instance) =>
       'maCanBo': instance.maCanBo,
       'donVi': instance.donVi,
       'chuyenNganh': instance.chuyenNganh,
-      'gioiTinh': instance.gioiTinh,
+      'gioiTinh': _$GioiTinhEnumMap[instance.gioiTinh],
       'hocHam': instance.hocHam,
       'hocVi': instance.hocVi,
       'namNhanTs': instance.namNhanTs,
       'sdt': instance.sdt,
       'email': instance.email,
       'cccd': instance.cccd,
-      'ngaySinh': instance.ngaySinh,
+      'ngaySinh': const DateSerializer().toJson(instance.ngaySinh),
       'stk': instance.stk,
       'nganHang': instance.nganHang,
       'mst': instance.mst,
       'note': instance.note,
       'ncm': instance.ncm,
     };
+
+const _$GioiTinhEnumMap = {
+  GioiTinh.nam: 'M',
+  GioiTinh.nu: 'F',
+};
 
 _$DangKyHocImpl _$$DangKyHocImplFromJson(Map<String, dynamic> json) =>
     _$DangKyHocImpl(
@@ -102,7 +107,7 @@ _$HocPhanImpl _$$HocPhanImplFromJson(Map<String, dynamic> json) =>
       tenTiengViet: json['tenTiengViet'] as String,
       tenTiengAnh: json['tenTiengAnh'] as String,
       soTinChi: (json['soTinChi'] as num).toInt(),
-      khoiKienThuc: json['khoiKienThuc'] as String,
+      khoiKienThuc: $enumDecode(_$KhoiKienThucEnumMap, json['khoiKienThuc']),
       khoiLuong: json['khoiLuong'] as String,
     );
 
@@ -112,9 +117,19 @@ Map<String, dynamic> _$$HocPhanImplToJson(_$HocPhanImpl instance) =>
       'tenTiengViet': instance.tenTiengViet,
       'tenTiengAnh': instance.tenTiengAnh,
       'soTinChi': instance.soTinChi,
-      'khoiKienThuc': instance.khoiKienThuc,
+      'khoiKienThuc': _$KhoiKienThucEnumMap[instance.khoiKienThuc]!,
       'khoiLuong': instance.khoiLuong,
     };
+
+const _$KhoiKienThucEnumMap = {
+  KhoiKienThuc.khac: 'khac',
+  KhoiKienThuc.cn: 'cn',
+  KhoiKienThuc.daiCuongThs: 'dc-ths',
+  KhoiKienThuc.nganhRong: 'nganh-rong',
+  KhoiKienThuc.nganhNangCao: 'nganh-nangcao',
+  KhoiKienThuc.tuChonBatBuoc: 'tc-batbuoc',
+  KhoiKienThuc.tcChonTuDo: 'tc-tudo',
+};
 
 _$HocViImpl _$$HocViImplFromJson(Map<String, dynamic> json) => _$HocViImpl(
       hocVi: json['hocVi'] as String,
@@ -135,7 +150,7 @@ _$HocVienImpl _$$HocVienImplFromJson(Map<String, dynamic> json) =>
       maHocVien: json['maHocVien'] as String?,
       hoTen: json['hoTen'] as String,
       ngaySinh: const DateSerializer().fromJson(json['ngaySinh'] as String?),
-      gioiTinh: json['gioiTinh'] as String?,
+      gioiTinh: $enumDecodeNullable(_$GioiTinhEnumMap, json['gioiTinh']),
       noiSinh: json['noiSinh'] as String?,
       email: json['email'] as String?,
       truongTotNghiepDaiHoc: json['truongTotNghiepDaiHoc'] as String?,
@@ -148,7 +163,7 @@ _$HocVienImpl _$$HocVienImplFromJson(Map<String, dynamic> json) =>
       hocPhanDuocMien: json['hocPhanDuocMien'] as String?,
       nganhDaoTaoThacSi: json['nganhDaoTaoThacSi'] as String?,
       dienThoai: json['dienThoai'] as String?,
-      maTrangThai: json['maTrangThai'] as String,
+      maTrangThai: $enumDecode(_$TrangThaiHocVienEnumMap, json['maTrangThai']),
       deTaiLuanVanTiengViet: json['deTaiLuanVanTiengViet'] as String?,
       deTaiLuanVanTiengAnh: json['deTaiLuanVanTiengAnh'] as String?,
       ngayGiaoDeTai:
@@ -162,7 +177,8 @@ _$HocVienImpl _$$HocVienImplFromJson(Map<String, dynamic> json) =>
       hanBaoVe: const DateSerializer().fromJson(json['hanBaoVe'] as String?),
       lanGiaHan: (json['lanGiaHan'] as num?)?.toInt() ?? 0,
       idTieuBanXetTuyen: (json['idTieuBanXetTuyen'] as num?)?.toInt(),
-      idDienTuyenSinh: json['idDienTuyenSinh'] as String?,
+      idDienTuyenSinh:
+          $enumDecodeNullable(_$DienTuyenSinhEnumMap, json['idDienTuyenSinh']),
       thanhToanXetTuyen: (json['thanhToanXetTuyen'] as num?)?.toInt() ?? 0,
     );
 
@@ -174,7 +190,7 @@ Map<String, dynamic> _$$HocVienImplToJson(_$HocVienImpl instance) =>
       'maHocVien': instance.maHocVien,
       'hoTen': instance.hoTen,
       'ngaySinh': const DateSerializer().toJson(instance.ngaySinh),
-      'gioiTinh': instance.gioiTinh,
+      'gioiTinh': _$GioiTinhEnumMap[instance.gioiTinh],
       'noiSinh': instance.noiSinh,
       'email': instance.email,
       'truongTotNghiepDaiHoc': instance.truongTotNghiepDaiHoc,
@@ -187,7 +203,7 @@ Map<String, dynamic> _$$HocVienImplToJson(_$HocVienImpl instance) =>
       'hocPhanDuocMien': instance.hocPhanDuocMien,
       'nganhDaoTaoThacSi': instance.nganhDaoTaoThacSi,
       'dienThoai': instance.dienThoai,
-      'maTrangThai': instance.maTrangThai,
+      'maTrangThai': _$TrangThaiHocVienEnumMap[instance.maTrangThai]!,
       'deTaiLuanVanTiengViet': instance.deTaiLuanVanTiengViet,
       'deTaiLuanVanTiengAnh': instance.deTaiLuanVanTiengAnh,
       'ngayGiaoDeTai': const DateSerializer().toJson(instance.ngayGiaoDeTai),
@@ -200,9 +216,21 @@ Map<String, dynamic> _$$HocVienImplToJson(_$HocVienImpl instance) =>
       'hanBaoVe': const DateSerializer().toJson(instance.hanBaoVe),
       'lanGiaHan': instance.lanGiaHan,
       'idTieuBanXetTuyen': instance.idTieuBanXetTuyen,
-      'idDienTuyenSinh': instance.idDienTuyenSinh,
+      'idDienTuyenSinh': _$DienTuyenSinhEnumMap[instance.idDienTuyenSinh],
       'thanhToanXetTuyen': instance.thanhToanXetTuyen,
     };
+
+const _$TrangThaiHocVienEnumMap = {
+  TrangThaiHocVien.xetTuyen: 'xt',
+  TrangThaiHocVien.dangHoc: 'hoc',
+  TrangThaiHocVien.nghiHoc: 'nghi',
+  TrangThaiHocVien.totNghiep: 'tn',
+};
+
+const _$DienTuyenSinhEnumMap = {
+  DienTuyenSinh.tichHop: 'cn-ths',
+  DienTuyenSinh.xetTuyen: 'xt',
+};
 
 _$HoiDongLVTSImpl _$$HoiDongLVTSImplFromJson(Map<String, dynamic> json) =>
     _$HoiDongLVTSImpl(
@@ -236,18 +264,6 @@ Map<String, dynamic> _$$HoiDongLVTSImplToJson(_$HoiDongLVTSImpl instance) =>
       'nam': instance.nam,
     };
 
-_$KhoiKienThucImpl _$$KhoiKienThucImplFromJson(Map<String, dynamic> json) =>
-    _$KhoiKienThucImpl(
-      khoiKienThuc: json['khoiKienThuc'] as String,
-      tenKhoiKienThuc: json['tenKhoiKienThuc'] as String,
-    );
-
-Map<String, dynamic> _$$KhoiKienThucImplToJson(_$KhoiKienThucImpl instance) =>
-    <String, dynamic>{
-      'khoiKienThuc': instance.khoiKienThuc,
-      'tenKhoiKienThuc': instance.tenKhoiKienThuc,
-    };
-
 _$LopTinChiImpl _$$LopTinChiImplFromJson(Map<String, dynamic> json) =>
     _$LopTinChiImpl(
       id: (json['id'] as num).toInt(),
@@ -261,7 +277,9 @@ _$LopTinChiImpl _$$LopTinChiImplFromJson(Map<String, dynamic> json) =>
       ngayHoc: (json['ngayHoc'] as num?)?.toInt(),
       tietBatDau: (json['tietBatDau'] as num?)?.toInt(),
       tietKetThuc: (json['tietKetThuc'] as num?)?.toInt(),
-      trangThai: (json['trangThai'] as num?)?.toInt() ?? 0,
+      trangThai:
+          $enumDecodeNullable(_$TrangThaiLopTinChiEnumMap, json['trangThai']) ??
+              TrangThaiLopTinChi.binhThuong,
     );
 
 Map<String, dynamic> _$$LopTinChiImplToJson(_$LopTinChiImpl instance) =>
@@ -277,8 +295,13 @@ Map<String, dynamic> _$$LopTinChiImplToJson(_$LopTinChiImpl instance) =>
       'ngayHoc': instance.ngayHoc,
       'tietBatDau': instance.tietBatDau,
       'tietKetThuc': instance.tietKetThuc,
-      'trangThai': instance.trangThai,
+      'trangThai': _$TrangThaiLopTinChiEnumMap[instance.trangThai]!,
     };
+
+const _$TrangThaiLopTinChiEnumMap = {
+  TrangThaiLopTinChi.huy: 1,
+  TrangThaiLopTinChi.binhThuong: 0,
+};
 
 _$NamTaiChinhImpl _$$NamTaiChinhImplFromJson(Map<String, dynamic> json) =>
     _$NamTaiChinhImpl(
@@ -354,28 +377,18 @@ Map<String, dynamic> _$$TieuBanXetTuyenImplToJson(
       'idUyVien3': instance.idUyVien3,
     };
 
-_$TrangThaiHocVienImpl _$$TrangThaiHocVienImplFromJson(
-        Map<String, dynamic> json) =>
-    _$TrangThaiHocVienImpl(
-      maTrangThai: json['maTrangThai'] as String,
-      tenTrangThai: json['tenTrangThai'] as String,
+_$DeTaiThacSiImpl _$$DeTaiThacSiImplFromJson(Map<String, dynamic> json) =>
+    _$DeTaiThacSiImpl(
+      id: (json['id'] as num?)?.toInt(),
+      idGiangVien: (json['idGiangVien'] as num).toInt(),
+      tenTiengViet: json['tenTiengViet'] as String,
+      tenTiengAnh: json['tenTiengAnh'] as String,
     );
 
-Map<String, dynamic> _$$TrangThaiHocVienImplToJson(
-        _$TrangThaiHocVienImpl instance) =>
-    <String, dynamic>{
-      'maTrangThai': instance.maTrangThai,
-      'tenTrangThai': instance.tenTrangThai,
-    };
-
-_$DienTuyenSinhImpl _$$DienTuyenSinhImplFromJson(Map<String, dynamic> json) =>
-    _$DienTuyenSinhImpl(
-      id: json['id'] as String,
-      ten: json['ten'] as String,
-    );
-
-Map<String, dynamic> _$$DienTuyenSinhImplToJson(_$DienTuyenSinhImpl instance) =>
+Map<String, dynamic> _$$DeTaiThacSiImplToJson(_$DeTaiThacSiImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'ten': instance.ten,
+      'idGiangVien': instance.idGiangVien,
+      'tenTiengViet': instance.tenTiengViet,
+      'tenTiengAnh': instance.tenTiengAnh,
     };

@@ -5,10 +5,31 @@ import 'package:flutter/services.dart' show rootBundle;
 
 // Export so that other packages only need to use one namespace
 export 'package:pdf/widgets.dart';
+export 'package:pdf/pdf.dart' show PdfPageFormat;
+
+const double pt = PdfPageFormat.point;
+const double inch = PdfPageFormat.inch;
+const double mm = PdfPageFormat.mm;
 
 Future<pw.Font> loadFont(String assetPath) async {
   final fontData = await rootBundle.load(assetPath);
   return pw.Font.ttf(fontData);
+}
+
+PdfPageFormat a4Landscape({
+  double vMargin = 1 * PdfPageFormat.inch,
+  double hMargin = 1 * PdfPageFormat.inch,
+  double marginAll = 1 * PdfPageFormat.inch,
+}) {
+  return PdfPageFormat(
+    297 * PdfPageFormat.mm,
+    210 * PdfPageFormat.mm,
+    marginAll: marginAll,
+    marginTop: vMargin,
+    marginBottom: vMargin,
+    marginLeft: hMargin,
+    marginRight: hMargin,
+  );
 }
 
 final serifFonts = (
@@ -44,16 +65,30 @@ Future<pw.ThemeData> defaultTheme({double baseSize = 9.0}) async {
   return theme;
 }
 
+PdfPageFormat transpose(PdfPageFormat pageFormat) {
+  final height = pageFormat.height;
+  final width = pageFormat.width;
+  return PdfPageFormat(
+    height,
+    width,
+    marginTop: pageFormat.marginTop,
+    marginBottom: pageFormat.marginBottom,
+    marginLeft: pageFormat.marginLeft,
+    marginRight: pageFormat.marginRight,
+  );
+}
+
 pw.PageTheme defaultPageTheme({
   orientation = pw.PageOrientation.portrait,
+  pageFormat = PdfPageFormat.a4,
 }) {
   return pw.PageTheme(
-    pageFormat: PdfPageFormat.a4,
+    pageFormat: pageFormat,
     orientation: orientation,
     clip: true,
     margin: pw.EdgeInsets.symmetric(
-      vertical: 50,
-      horizontal: 50,
+      vertical: 1 * PdfPageFormat.inch,
+      horizontal: 1 * PdfPageFormat.inch,
     ),
   );
 }
@@ -124,6 +159,50 @@ pw.Text Heading5(String text) {
   return pw.Text(text, style: style);
 }
 
+class EzSkip extends pw.StatelessWidget {
+  late double height;
+
+  EzSkip({
+    required this.height,
+  });
+
+  factory EzSkip.smallskip() => EzSkip(height: 3 * pt);
+  factory EzSkip.medskip() => EzSkip(height: 6 * pt);
+  factory EzSkip.bigskip() => EzSkip(height: 14 * pt);
+
+  @override
+  pw.Widget build(context) {
+    return pw.Divider(
+      height: height,
+      borderStyle: pw.BorderStyle.none,
+    );
+  }
+}
+
+class EzTitle extends pw.StatelessWidget {
+  final String text;
+  final double fontSize;
+
+  EzTitle(
+    this.text, {
+    this.fontSize = 14,
+  });
+
+  @override
+  Widget build(context) {
+    final theme = pw.Theme.of(context);
+    return pw.Center(
+      child: pw.Text(
+        text,
+        style: theme.defaultTextStyle.copyWith(
+          fontSize: fontSize,
+          fontWeight: pw.FontWeight.bold,
+        ),
+      ),
+    );
+  }
+}
+
 class EzTopHeader extends StatelessWidget {
   final double? fontSize;
   final bool underline;
@@ -191,7 +270,6 @@ class EzTopHeader extends StatelessWidget {
 
 class EzTable<T> extends StatelessWidget {
   final List<Object?> headers;
-  final List<pw.TextAlign>? textAligns;
   final pw.TableBorder? border;
   final pw.EdgeInsetsGeometry padding;
   final bool dataWrap;
@@ -199,6 +277,9 @@ class EzTable<T> extends StatelessWidget {
   final List<T> data;
   final List<Object?> Function(int, T) rowBuilder;
   final PdfColor? headerForeground;
+  final Map<int, pw.TableColumnWidth>? columnWidths;
+  final Map<int, pw.Alignment>? alignments;
+  final Map<int, pw.TextAlign>? textAligns;
 
   EzTable({
     required this.data,
@@ -213,6 +294,8 @@ class EzTable<T> extends StatelessWidget {
     this.dataWrap = false,
     this.headerWrap = false,
     this.headerForeground,
+    this.columnWidths,
+    this.alignments,
   });
 
   List<Widget> _headers(Context context) {
@@ -242,6 +325,7 @@ class EzTable<T> extends StatelessWidget {
     final theme = pw.Theme.of(context);
 
     return pw.Table(
+      columnWidths: columnWidths,
       border: border ?? pw.TableBorder.all(),
       children: [
         // Headers
@@ -252,13 +336,14 @@ class EzTable<T> extends StatelessWidget {
         // Data rows
         for (final (rowCount, row) in data.indexed)
           pw.TableRow(
+            verticalAlignment: pw.TableCellVerticalAlignment.middle,
             children: [
               for (final (colCount, data) in rowBuilder(rowCount, row).indexed)
                 (data is Widget)
                     ? data
                     : pw.Container(
                         padding: padding,
-                        alignment: pw.Alignment.center,
+                        alignment: alignments?[colCount] ?? pw.Alignment.center,
                         child: pw.Text(
                           data?.toString() ?? "",
                           softWrap: dataWrap,

@@ -1,293 +1,321 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:provider/provider.dart';
+import 'package:path/path.dart' as path;
 
-import '../extensions.dart';
-import '../drawer.dart';
-import '../datamodels.dart';
 import '../custom_widgets.dart';
+import '../business/lop_tin_chi.dart' as domain;
+import '../business/lop_tin_chi.dart';
 
-typedef _LopHoc = ({
-  int id,
-  String hocKy,
-  String? maLop,
-  String hocPhan,
-  int? idGiangVien,
-  String? giangVien,
-  int ghiChu,
-});
+typedef _Esc<T> = EzSelectionController<T>;
+typedef _TT = TrangThaiLopTinChi;
+const List<int?> _listTietHoc = [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
-class _BangDanhSachLop extends StatefulWidget {
-  String? hocKy;
-  _BangDanhSachLop({this.hocKy});
-
-  @override
-  State<_BangDanhSachLop> createState() => _BangDanhSachLopState();
+List<T?> withNull<T>(List<T> items) {
+  return [null, for (final item in items) item];
 }
 
-class _BangDanhSachLopState extends State<_BangDanhSachLop> {
-  static const columns = [
-    "Học kỳ",
-    "Mã lớp",
-    "Học phần",
-    "Giảng viên",
-    "Ghi chú",
-  ];
+class _PageState extends ChangeNotifier {
+  // Các chỉ mục
+  List<LopTinChi> listLopTinChi = [];
+  Map<LopTinChi, GiangVien?> mapGiangVien = {};
+  Map<LopTinChi, HocPhan> mapHocPhan = {};
 
-  Future<void> updateGiangVien(int idLop, int idGiangVien) async {
-    var db = await openDatabase(databasePath);
-    await db.rawUpdate(
-      "UPDATE LopTinChi SET idGiangVien = ? WHERE id = ?",
-      [idGiangVien, idLop],
+  // Trạng thái tìm kiếm
+  _Esc<HocKy?> searchHocKy = _Esc();
+  _Esc<HocPhan?> searchHocPhan = _Esc();
+  _Esc<_TT?> searchTrangThai = _Esc(values: withNull(_TT.values));
+
+  // Trạng thái edit
+  LopTinChi? editLopTinChi;
+  TextEditingController editPhongHoc = TextEditingController();
+  _Esc<int?> editTietBatDau = _Esc(values: _listTietHoc);
+  _Esc<int?> editTietKetThuc = _Esc(values: _listTietHoc);
+  _Esc<HocKy?> editHocKy = _Esc();
+  _Esc<HocPhan?> editHocPhan = _Esc();
+  _Esc<_TT> editTrangThai = _Esc(
+    values: _TT.values,
+    initialSelection: _TT.binhThuong,
+  );
+  _Esc<GiangVien?> editGiangVien = _Esc(
+    labelFormatter: (GiangVien? gv) {
+      if (gv == null) return "";
+      return "${gv.hoTenChucDanh} (${gv.email})";
+    },
+  );
+
+  // Cập nhật lớp học
+  update() async {
+    // Cập nhật cho GUI
+    editLopTinChi = editLopTinChi?.copyWith(
+      idGiangVien: editGiangVien.value?.id,
+      trangThai: editTrangThai.value ?? _TT.binhThuong,
+      hocKy: editHocKy.value?.hocKy,
+      maHocPhan: editHocPhan.value?.maHocPhan,
     );
-    await db.close();
+
+    // Cập nhật trên DB
+    await editLopTinChi?.commitValue();
+
+    // Load lại dữ liệu
+    await refresh();
   }
 
-  Future<void> updateHuyLop(int idLop, bool huy) async {
-    var db = await openDatabase(databasePath);
-    await db.rawUpdate(
-      "UPDATE LopTinChi SET trangThai = ? where id = ?",
-      [huy ? 1 : 0, idLop],
-    );
-    await db.close();
-    setState(() {});
+  // Bỏ không chỉnh sửa lớp học nữa
+  unedit() {
+    editLopTinChi = null;
+    editHocKy.value = searchHocKy.value;
+    editGiangVien.value = null;
+    editPhongHoc.text = "";
+    editTietBatDau.value = null;
+    editTietKetThuc.value = null;
+    editHocKy.value = null;
+    editTrangThai.value = _TT.binhThuong;
+    notifyListeners();
   }
 
-  Widget buildFinished(List<_LopHoc> rows) {
-    return DataTable(
-      columns: [
-        for (final label in columns)
-          DataColumn(
-            headingRowAlignment: MainAxisAlignment.spaceBetween,
-            label: Text(
-              label,
-              style: TextStyle(
-                fontVariations: [FontVariation.weight(700)],
+  // Chỉ định form chỉnh sửa lớp học
+  edit(LopTinChi ltc) async {
+    editLopTinChi = ltc;
+    editHocKy.value = await ltc.hocKyObject;
+    editGiangVien.value = await ltc.giangVien;
+    editPhongHoc.text = ltc.phongHoc ?? "";
+    editTietBatDau.value = ltc.tietBatDau;
+    editTietKetThuc.value = ltc.tietKetThuc;
+    editTrangThai.value = ltc.trangThai;
+    notifyListeners();
+  }
+
+  // Lấy dữ liệu từ DB và load lên trang
+  refresh() async {
+    listLopTinChi = await getLopTinChi(
+      hocKy: searchHocKy.value,
+      hocPhan: searchHocPhan.value,
+      trangThai: searchTrangThai.value,
+    );
+    mapGiangVien = {};
+    mapHocPhan = {};
+    for (final lopTinChi in listLopTinChi) {
+      mapGiangVien[lopTinChi] = await lopTinChi.giangVien;
+      mapHocPhan[lopTinChi] = await lopTinChi.hocPhan;
+    }
+    notifyListeners();
+  }
+
+  // Khởi tạo các chỉ mục dùng trong trang
+  init() async {
+    // Danh mục học kỳ
+    List<HocKy?> listHocKy = (await domain.listHocKy()).reversed.toList();
+    editHocKy.values = [null, for (final hk in listHocKy) hk];
+    searchHocKy.values = [null, for (final hk in listHocKy) hk];
+    searchHocKy.value = listHocKy.first;
+
+    // Danh mục học phần
+    List<HocPhan?> listHocPhan = await domain.listHocPhan();
+    searchHocPhan.values = [null, for (final hk in listHocPhan) hk];
+    editHocPhan.values = [null, for (final hk in listHocPhan) hk];
+
+    // Danh mục giảng viên
+    editGiangVien.values = [
+      null,
+      for (final gv in await domain.listGiangVien()) gv
+    ];
+    await refresh();
+  }
+
+  // Constructor
+  _PageState() {
+    init();
+  }
+}
+
+class _EditPanel extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final model = Provider.of<_PageState>(context);
+    final edit = model.editLopTinChi;
+    return EzFixed(
+      margin: EdgeInsets.all(0),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      direction: Axis.vertical,
+      children: [
+        EzHeader(text: "Thao tác", level: 0),
+        if (edit != null)
+          EzFlex(
+            direction: Axis.horizontal,
+            margin: EdgeInsets.all(0),
+            flex: [1, 0],
+            children: [
+              EzTextInput(
+                label: "ID lớp đang sửa",
+                placeholder: "${edit.id}",
+                readOnly: true,
               ),
-            ),
-          ),
-      ],
-      rows: [
-        for (final _LopHoc row in rows)
-          DataRow(
-            selected: true,
-            cells: [
-              DataCell(Text(row.hocKy)),
-              DataCell(Text(row.maLop ?? "N/A")),
-              DataCell(Text(row.hocPhan)),
-              DataCell(DropdownGiangVien(
-                selectedId: row.idGiangVien,
-                onSelected: (int? idGiangVien) {
-                  switch (idGiangVien) {
-                    case int id:
-                      updateGiangVien(row.id, id).then((_) => {});
-                    case null:
-                  }
-                },
-              )),
-              DataCell(Checkbox(
-                value: row.ghiChu > 0,
-                onChanged: (bool? mchecked) {
-                  switch (mchecked) {
-                    case bool checked:
-                      updateHuyLop(row.id, checked);
-                    default:
-                  }
-                },
-              )),
+              ElevatedButton.icon(
+                label: Text("Hủy"),
+                onPressed: () => model.unedit(),
+                icon: Icon(Icons.delete),
+              )
             ],
           ),
+        EzDropdown.fullWidth(
+          label: "Học kỳ",
+          controller: model.editHocKy,
+        ),
+        EzDropdown.fullWidth(
+          label: "Học phần",
+          controller: model.editHocPhan,
+        ),
+        EzTextInput(
+          label: "Phòng học",
+          controller: model.editPhongHoc,
+        ),
+        EzDropdown.fullWidth(
+          label: "Tiết bắt đầu",
+          controller: model.editTietBatDau,
+        ),
+        EzDropdown.fullWidth(
+          label: "Tiết kết thúc",
+          controller: model.editTietKetThuc,
+        ),
+        EzDropdown.fullWidth<GiangVien?>(
+          label: "Giảng viên",
+          controller: model.editGiangVien,
+        ),
+        EzDropdown.fullWidth<TrangThaiLopTinChi>(
+          label: "Trạng thái",
+          controller: model.editTrangThai,
+        ),
+        if (edit == null)
+          ElevatedButton.icon(
+            onPressed: () {} /* TODO */,
+            label: Text("Thêm"),
+            icon: Icon(Icons.add),
+          )
+        else
+          ElevatedButton.icon(
+            onPressed: () => model.update(),
+            label: Text("Cập nhật"),
+            icon: Icon(Icons.edit),
+          ),
+        ElevatedButton.icon(
+          onPressed: () {} /* TODO */,
+          label: Text("Import file đăng ký"),
+          icon: Icon(Icons.upload),
+        ),
+        ElevatedButton.icon(
+          onPressed: () {} /* TODO */,
+          label: Text("Export file phân công"),
+          icon: Icon(Icons.download),
+        ),
       ],
     );
   }
+}
 
-  Future<List<_LopHoc>> fetch() async {
-    Database db = await openDatabase(databasePath);
-    List<Map> rows = await db.rawQuery(
-      """
-    SELECT
-        LOPTINCHI.ID AS id,
-        LOPTINCHI.HOCKY AS hocKy,
-        LOPTINCHI.MALOPHOC AS maLop,
-        LOPTINCHI.IDGIANGVIEN as idGiangVien,
-        CONCAT(HOCPHAN.TENTIENGVIET, ' (', HOCPHAN.MAHOCPHAN, ')') AS hocPhan,
-        CASE
-            WHEN IDGIANGVIEN IS NULL THEN NULL
-            ELSE CONCAT(CD.CHUCDANH, G.HOTEN, CHAR(10), G.SDT, ' - ', G.EMAIL)
-        END AS giangVien,
-        LOPTINCHI.TRANGTHAI AS thangThai
-    FROM LOPTINCHI
-    LEFT JOIN HOCPHAN ON LOPTINCHI.MAHOCPHAN = HOCPHAN.MAHOCPHAN
-    LEFT JOIN GIANGVIEN AS G ON LOPTINCHI.IDGIANGVIEN = G.ID
-    LEFT JOIN CHUCDANHGIANGVIEN AS CD ON G.ID = CD.ID
-    WHERE (HOCKY = ?) OR (? IS NULL)
-    """,
-      [widget.hocKy, widget.hocKy],
-    );
-    List<_LopHoc> results = [
-      for (final {
-            "id": id as int,
-            "maLop": maLop as String?,
-            "thangThai": trangThai as int,
-            "hocPhan": hocPhan as String,
-            "idGiangVien": idGiangVien as int?,
-            "giangVien": giangVien as String?,
-            "hocKy": hocKy as String,
-          } in rows)
-        (
-          id: id,
-          hocKy: hocKy,
-          maLop: maLop,
-          ghiChu: trangThai,
-          hocPhan: hocPhan,
-          idGiangVien: idGiangVien,
-          giangVien: giangVien,
-        )
-    ];
-    await db.close();
-    return results;
-  }
-
+class _SearchPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: fetch(),
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.done:
-            List<_LopHoc> data = snapshot.data ?? <_LopHoc>[];
-            return buildFinished(data);
-          default:
-            return CircularProgressIndicator.adaptive();
-        }
+    return Consumer<_PageState>(
+      builder: (context, model, child) {
+        return EzFixed(
+          margin: EdgeInsets.all(0),
+          direction: Axis.vertical,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            EzHeader(text: "Tìm kiếm", level: 0),
+            EzDropdown.fullWidth(
+              label: "Học kỳ",
+              controller: model.searchHocKy,
+              onSelected: (_) => model.refresh(),
+            ),
+            EzDropdown.fullWidth(
+              label: "Học phần",
+              controller: model.searchHocPhan,
+              onSelected: (_) => model.refresh(),
+            ),
+            EzDropdown.fullWidth(
+              label: "Trạng thái lớp",
+              controller: model.searchTrangThai,
+              onSelected: (_) => model.refresh(),
+            ),
+          ],
+        );
       },
     );
   }
 }
 
-class _DanhSachLopTinChiState extends State<DanhSachLopTinChi> {
-  Future<List<String>>? futureDanhSachHocKy;
-  Future<List<Map>>? futureDanhSachHocPhan;
-  Future<List<Map>>? futureDanhSachLopHoc;
-  String? selImportFile;
-  String? selHocKy;
-  String? selHocPhan;
-
-  Future<List<Map>> getDanhSachHocPhan() async {
-    Database db = await openDatabase(databasePath);
-    List<Map> rows = await db.rawQuery(
-      """
-        SELECT DISTINCT
-        HocPhan.maHocPhan as value,
-        CONCAT(HocPhan.maHocPhan, " ", tenTiengViet, " ", khoiLuong) as label
-        FROM
-        LOPTINCHI INNER JOIN HOCPHAN ON LOPTINCHI.MAHOCPHAN = HOCPHAN.MAHOCPHAN
-        WHERE (? IS NULL) OR (HOCKY = ?) """,
-      [selHocKy, selHocKy],
-    );
-
-    await db.close();
-    return rows;
-  }
-
-  Widget childSelectHocKy() {
-    return FutureBuilder(
-      future: futureDanhSachHocKy,
-      builder: (context, snapshot) {
-        // default value
-        List<DropdownMenuEntry<String?>> items = [
-          DropdownMenuEntry(value: null, label: "Tất cả")
-        ];
-
-        // load data if any
-        switch (snapshot.connectionState) {
-          case ConnectionState.done:
-            List<String> hocKyList = snapshot.data ?? <String>[];
-            items.addAll(
-                hocKyList.map((v) => DropdownMenuEntry(label: v, value: v)));
-          default:
-            return CircularProgressIndicator();
-        }
-
-        return DropdownMenu<String?>(
-          enableFilter: true,
-          label: Text("Học kỳ"),
-          dropdownMenuEntries: items,
-          onSelected: (String? value) {
-            setState(() {
-              selHocKy = value;
-              futureDanhSachHocPhan = getDanhSachHocPhan();
-            });
-          },
-          initialSelection: selHocKy,
-        );
-      },
-    );
-  }
-
-  Widget SelectHocPhan() {
-    return FutureBuilder(
-      future: futureDanhSachHocPhan,
-      builder: (context, snapshot) {
-        List<({String? value, String label})> entries = [
-          (value: null, label: "Tất cả")
-        ];
-
-        // add extra data if any
-        switch (snapshot.connectionState) {
-          case ConnectionState.done:
-            snapshot.data?.forEach((v) {
-              entries.add((
-                value: v["value"],
-                label: v["label"] ?? "??",
-              ));
-            });
-          default:
-            return CircularProgressIndicator();
-        }
-
-        // Build drop down entries
-        List<DropdownMenuEntry<String?>> items = [
-          for (final e in entries)
-            DropdownMenuEntry(
-              label: e.label,
-              value: e.value,
-            )
-        ];
-
-        // find initial selection
-        Set<String?> allValues = {for (final e in entries) e.value};
-        String? initialSelection =
-            allValues.contains(selHocPhan) ? selHocPhan : null;
-        return DropdownMenu<String?>(
-          label: Text("Học phần"),
-          enableFilter: true,
-          dropdownMenuEntries: items,
-          onSelected: (String? value) {
-            setState(() {
-              selHocPhan = value;
-            });
-          },
-          initialSelection: initialSelection,
-        );
-      },
-    );
-  }
-
-  Future<List> getLopHoc() async {
-    Database db = await openDatabase(databasePath);
-
-    var rows = await db.rawQuery("""
-        SELECT * FROM ViewLopTinChi
-    """);
-    await db.close();
-    return rows;
-  }
+class _ClassTable extends StatelessWidget {
+  static const columns = [
+    ("Học kỳ", IntrinsicColumnWidth()),
+    ("Mã lớp", IntrinsicColumnWidth()),
+    ("Số TC", IntrinsicColumnWidth()),
+    ("Mã học phần", IntrinsicColumnWidth()),
+    ("Tên học phần", FlexColumnWidth()),
+    ("Phòng học", IntrinsicColumnWidth()),
+    ("Ngày", IntrinsicColumnWidth()),
+    ("Tiết", IntrinsicColumnWidth()),
+    ("Giảng viên", FlexColumnWidth()),
+    ("Trạng thái", IntrinsicColumnWidth()),
+    ("", IntrinsicColumnWidth()),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    futureDanhSachHocKy ??= getHocKy();
-    futureDanhSachHocPhan ??= getDanhSachHocPhan();
+    final model = Provider.of<_PageState>(context);
+    return SingleChildScrollView(
+      child: DataTable(
+        columns: [
+          for (final (label, width) in columns)
+            DataColumn(
+              columnWidth: width,
+              headingRowAlignment: MainAxisAlignment.spaceBetween,
+              label: Text(
+                label,
+                style: TextStyle(
+                  fontVariations: [FontVariation.weight(700)],
+                ),
+              ),
+            ),
+        ],
+        rows: model.listLopTinChi.map((row) {
+          final hocPhan = model.mapHocPhan[row];
+          final giangVien = model.mapGiangVien[row];
+          return DataRow(
+            cells: [
+              DataCell(Text(row.hocKy ?? "-")),
+              DataCell(Text(row.maLopHoc ?? "-")),
+              DataCell(Text(hocPhan?.soTinChi.toString() ?? "-")),
+              DataCell(Text(hocPhan?.maHocPhan ?? "-")),
+              DataCell(Text(hocPhan?.tenTiengViet ?? "-")),
+              DataCell(Text(row.phongHoc ?? "")),
+              DataCell(Text(row.ngayHoc?.toString() ?? "")),
+              if (row.tietBatDau != null)
+                DataCell(Text("${row.tietBatDau}-${row.tietKetThuc}"))
+              else
+                DataCell(Text("")),
+              DataCell(Text(giangVien?.hoTenChucDanh ?? "-")),
+              DataCell(Text(row.trangThai.toString())),
+              DataCell(EzLink(
+                text: "Sửa",
+                onPressed: () => model.edit(row),
+              )),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+class PageLopTinChi extends StatelessWidget {
+  static const routeName = "/index/lop-tin-chi";
+  const PageLopTinChi({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -296,72 +324,35 @@ class _DanhSachLopTinChiState extends State<DanhSachLopTinChi> {
         ),
         title: Text("Lớp tín chỉ"),
       ),
-      drawer: MyDrawer(),
-      body: Form(
-        child: Padding(
-          padding: EdgeInsets.all(10),
-          child: Wrap(
-            runSpacing: 15,
-            spacing: 15,
-            children: [
-              childSelectHocKy(),
-              SelectHocPhan(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: _BangDanhSachLop(hocKy: selHocKy),
+      body: ChangeNotifierProvider(
+        create: (context) => _PageState(),
+        child: EzFlex(
+          flex: [2, 1],
+          direction: Axis.horizontal,
+          children: [
+            EzFixed(
+              margin: EdgeInsets.all(0),
+              direction: Axis.vertical,
+              spacing: 20,
+              children: [
+                _SearchPanel(),
+                Expanded(
+                  child: EzFixed(
+                    margin: EdgeInsets.all(0),
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    direction: Axis.vertical,
+                    children: [
+                      EzHeader(text: "Kết quả tìm kiếm", level: 0),
+                      Expanded(child: _ClassTable()),
+                    ],
                   ),
-                ],
-              ),
-              SizedBox(
-                width: 700,
-                child: FilePickerInput(
-                  label: "Nhập danh sách từ trang tác nghiệp",
-                  hintText: "File điểm cuối kỳ xls",
-                  allowedExtensions: ["xlsx", "xls", "ods", "csv"],
-                  selectedFile: switch (selImportFile) {
-                    null => null,
-                    String file => file.basename(),
-                  },
-                  onSelected: (String file) {
-                    setState(() {
-                      selImportFile = file;
-                    });
-                  },
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: () {},
-                label: Text("Import"),
-              ),
-              // end of import
-              ElevatedButton.icon(
-                icon: Icon(Icons.save),
-                onPressed: () async {
-                  String? mfile = await FilePicker.platform.saveFile();
-                  switch (mfile) {
-                    case null:
-                      return;
-                    case String file:
-                      ;
-                  }
-                },
-                label: Text("Lưu file TKB"),
-              ),
-              // End of wrap
-            ],
-          ),
+                )
+              ],
+            ),
+            _EditPanel(),
+          ],
         ),
       ),
     );
   }
-}
-
-class DanhSachLopTinChi extends StatefulWidget {
-  static const routeName = "/index/lop-tin-chi";
-  const DanhSachLopTinChi({super.key});
-
-  @override
-  State<DanhSachLopTinChi> createState() => _DanhSachLopTinChiState();
 }

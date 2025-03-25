@@ -4,13 +4,11 @@ import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'package:path/path.dart' as p;
-import 'sqlbuilder/sqlbuilder.dart';
+import 'services/sqlbuilder/sqlbuilder.dart';
 
-import 'dtypes.dart';
-export 'dtypes.dart';
-
+import 'business/domain_objects.dart';
+export 'business/domain_objects.dart';
 export 'package:sqflite/sqflite.dart' show openDatabase;
-export 'dtypes.dart' show LopTinChi, HocPhan, GiangVien, NhomChuyenMon;
 
 const tables = (
   dangKyHoc: "DangKyHoc",
@@ -29,6 +27,10 @@ const tables = (
   tieuBanXetTuyen: "TieuBanXetTuyen",
   trangThaiHocVien: "TrangThaiHocVien",
 );
+
+Future<Database> getDefaultDatabase() async {
+  return await openDatabase(databasePath);
+}
 
 class DbSession {
   final String dbPath;
@@ -58,6 +60,33 @@ Future<T> dbSession<T>(Future<T> Function(Database) callback,
   return ret;
 }
 
+Future<void> _runInsert(String sql) async {
+  return await dbSession((Database db) async {
+    await db.rawInsert(sql);
+  });
+}
+
+Future<List<T>> _rawQueryGet<T>({
+  required T Function(Map<String, Object?>) fromJson,
+  required String sql,
+}) async {
+  return await dbSession(
+    (Database db) async {
+      final rows = await db.rawQuery(sql);
+      return [for (final json in rows) fromJson(json)];
+    },
+    ro: true,
+  );
+}
+
+Future<void> _rawQuery(String sql) async {
+  return await dbSession(
+    (Database db) async {
+      await db.rawQuery(sql);
+    },
+  );
+}
+
 enum AssignedMode {
   all,
   notAssigned,
@@ -65,10 +94,57 @@ enum AssignedMode {
 }
 
 class Repository {
-  static Future<List<DienTuyenSinh>> allDienTuyenSinh() async {
-    return await dbSession(ro: true, (Database db) async {
-      final rows = await db.query(DienTuyenSinh.table);
-      return [for (final json in rows) DienTuyenSinh.fromJson(json)];
+  // Tìm danh sách đề tài mà thầy cô đăng ký
+  static Future<List<DeTaiThacSi>> searchDeTai({
+    int? idGiangVien,
+    String? name,
+    int limit = 10,
+    int offset = 0,
+  }) async {
+    final query = SelectQuery()
+      ..from(DeTaiThacSi.table)
+      ..limit(limit)
+      ..offset(offset)
+      ..selectAll();
+
+    // Conditional filter
+    if (idGiangVien != null) query.where("idGiangVien = ?", [idGiangVien]);
+
+    // Conditional filter
+    if (name != null && name != "") {
+      query.where(
+        "(tenTiengAnh) LIKE ? OR (tenTiengViet) LIKE ? COLLATE UNICODE",
+        ["%$name%", "%$name%"],
+      );
+    }
+
+    final sql = query.build();
+    print(sql);
+    return await _rawQueryGet(fromJson: DeTaiThacSi.fromJson, sql: sql);
+  }
+
+  static Future<int> countDeTai({
+    int? idGiangVien,
+    String? name,
+  }) async {
+    final query = SelectQuery()
+      ..from(DeTaiThacSi.table)
+      ..select(["count(id) as count"]);
+
+    // Conditional filter
+    if (idGiangVien != null) query.where("idGiangVien = ?", [idGiangVien]);
+
+    // Conditional filter
+    if (name != null && name != "") {
+      query.where(
+        "(tenTiengAnh) LIKE ? OR (tenTiengViet) LIKE ? COLLATE UNICODE",
+        ["%$name%", "%$name%"],
+      );
+    }
+    final sql = query.build();
+    return await dbSession((Database db) async {
+      final rows = await db.rawQuery(sql);
+      return rows[0]["count"] as int;
     });
   }
 
@@ -124,7 +200,6 @@ class Repository {
     }
 
     final sql = query.build();
-    print(sql);
     return await dbSession(
       ro: true,
       (Database db) async {
@@ -312,32 +387,6 @@ Future<List<LopTinChi>> fetchLopTinChi({
   return [for (final json in rows) LopTinChi.fromJson(json)];
 }
 
-/// Trả về danh sách lớp tín chỉ [List<LopTinChi>], lọc theo trạng thái [trangThai],
-/// kỳ học [hocKy] và học phần [idHocPhan].
-Future<List<HocPhan>> getLopTinChi({
-  String? hocKy,
-  int? idHocPhan,
-  int? trangThai,
-}) async {
-  var db = await openDatabase(databasePath);
-  var rows = await db.query(
-    "LopTinChi",
-  );
-  var ret = [
-    for (final row in rows)
-      (
-        id: row['id'] as int,
-        maHocPhan: row['maHocPhan'] as String,
-        tenHocPhan: row['tenHocPhan'],
-        khoiLuong: row['khoiLuong'],
-        soTinChi: row['soTinChi'],
-      ) as HocPhan
-  ];
-
-  await db.close();
-  return ret;
-}
-
 Future<List<NhomChuyenMon>> fetchNhomChuyenMon() async {
   var db = await openDatabase(databasePath);
   var rows = await db.query("NhomChuyenMon");
@@ -420,24 +469,6 @@ extension HocVienCrud on HocVien {
     });
   }
 
-  Future<DienTuyenSinh?> get dienTuyenSinh async {
-    if (idDienTuyenSinh == null) return null;
-    return await dbSession<DienTuyenSinh?>(
-      (Database db) async {
-        final rows = await db.query(
-          DienTuyenSinh.table,
-          where: "id = ?",
-          whereArgs: [idDienTuyenSinh],
-        );
-        if (rows.isEmpty) {
-          return null;
-        } else {
-          return DienTuyenSinh.fromJson(rows.first);
-        }
-      },
-    );
-  }
-
   Future<TieuBanXetTuyen?> get tieuBanXetTuyen async {
     if (idTieuBanXetTuyen == null) {
       return null;
@@ -482,5 +513,36 @@ extension TieuBanXetTuyenCrud on TieuBanXetTuyen {
 
   Future<GiangVien> get uyVien3 async {
     return await Repository.getGiangVien(id: idUyVien3);
+  }
+}
+
+extension DeTaiThacSiRepository on DeTaiThacSi {
+  Future<GiangVien> get giangVien async {
+    return await Repository.getGiangVien(id: idGiangVien);
+  }
+
+  Future<void> delete() async {
+    final query = DeleteQuery()
+      ..deleteFrom(DeTaiThacSi.table)
+      ..where("id = ?", [id]);
+    await _rawQuery(query.build());
+  }
+
+  Future<void> insert() async {
+    final data = toJson();
+    final query = InsertQuery()
+      ..into(DeTaiThacSi.table)
+      ..insert(data);
+    final sql = query.build();
+    return _runInsert(sql);
+  }
+
+  Future<void> update([Map<String, Object?>? data]) async {
+    data ??= toJson();
+    final query = UpdateQuery()
+      ..update(DeTaiThacSi.table)
+      ..set(data)
+      ..where('id = ?', [id]);
+    await _rawQuery(query.build());
   }
 }

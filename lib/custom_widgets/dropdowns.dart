@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:provider/provider.dart';
 import '../datamodels.dart' show databasePath, NienKhoa;
-import '../bedrock.dart' show DropdownData, DropdownRecord, AppState;
 
 typedef _Row<T> = ({T? value, String label});
 
@@ -127,93 +126,6 @@ class DropdownFromSql<T> extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => _State(query: sql),
       child: Consumer<_State>(builder: builder),
-    );
-  }
-}
-
-class DropdownFromEnums<T> extends StatelessWidget {
-  final Function(AppState) getter;
-  final T? selectedId;
-  final ValueChanged<T?> onSelected;
-
-  factory DropdownFromEnums.giangVien({required onSelected, selectedId}) {
-    return DropdownFromEnums(
-      getter: (model) => model.listGiangVien,
-      onSelected: onSelected,
-      selectedId: selectedId,
-    );
-  }
-
-  factory DropdownFromEnums.nienKhoa({required onSelected, selectedId}) {
-    return DropdownFromEnums(
-      getter: (model) => model.listNienKhoa,
-      onSelected: onSelected,
-      selectedId: selectedId,
-    );
-  }
-
-  const DropdownFromEnums({
-    super.key,
-    this.selectedId,
-    required this.getter,
-    required this.onSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final data = Provider.of<AppState>(context);
-    final records = getter(data);
-    return DropdownMenu<T?>(
-      enableFilter: true,
-      enableSearch: true,
-      onSelected: onSelected,
-      initialSelection: selectedId,
-      dropdownMenuEntries: [
-        for (final rec in records)
-          DropdownMenuEntry(
-            value: rec.value,
-            label: rec.label,
-          )
-      ],
-    );
-  }
-}
-
-class DropdownNienKhoa extends StatelessWidget {
-  final bool allowEmpty;
-  final String emptyLabel;
-  final String? initialSelection;
-  final ValueChanged<String?> onSelected;
-
-  const DropdownNienKhoa({
-    super.key,
-    this.initialSelection,
-    this.allowEmpty = true,
-    this.emptyLabel = "",
-    required this.onSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    // print(Provider.of<List<NienKhoa>>(context));
-    final data = Provider.of<List<NienKhoa>>(context);
-    return DropdownMenu<String?>(
-      enableSearch: true,
-      enableFilter: true,
-      onSelected: onSelected,
-      initialSelection: initialSelection,
-      dropdownMenuEntries: [
-        if (allowEmpty)
-          DropdownMenuEntry(
-            value: null,
-            label: emptyLabel,
-          ),
-        for (final NienKhoa rec in data)
-          DropdownMenuEntry(
-            value: rec.nienKhoa,
-            label: rec.nienKhoa,
-          )
-      ],
     );
   }
 }

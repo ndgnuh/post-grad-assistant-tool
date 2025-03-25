@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'dtypes.dart';
+part of 'domain_objects.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -25,14 +25,15 @@ mixin _$GiangVien {
   String? get maCanBo => throw _privateConstructorUsedError;
   String? get donVi => throw _privateConstructorUsedError;
   String? get chuyenNganh => throw _privateConstructorUsedError;
-  String? get gioiTinh => throw _privateConstructorUsedError;
+  GioiTinh? get gioiTinh => throw _privateConstructorUsedError;
   String? get hocHam => throw _privateConstructorUsedError;
   String? get hocVi => throw _privateConstructorUsedError;
   int? get namNhanTs => throw _privateConstructorUsedError;
   String? get sdt => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
   String? get cccd => throw _privateConstructorUsedError;
-  String? get ngaySinh => throw _privateConstructorUsedError;
+  @DateSerializer()
+  DateTime? get ngaySinh => throw _privateConstructorUsedError;
   String? get stk => throw _privateConstructorUsedError;
   String? get nganHang => throw _privateConstructorUsedError;
   String? get mst => throw _privateConstructorUsedError;
@@ -60,14 +61,14 @@ abstract class $GiangVienCopyWith<$Res> {
       String? maCanBo,
       String? donVi,
       String? chuyenNganh,
-      String? gioiTinh,
+      GioiTinh? gioiTinh,
       String? hocHam,
       String? hocVi,
       int? namNhanTs,
       String? sdt,
       String? email,
       String? cccd,
-      String? ngaySinh,
+      @DateSerializer() DateTime? ngaySinh,
       String? stk,
       String? nganHang,
       String? mst,
@@ -133,7 +134,7 @@ class _$GiangVienCopyWithImpl<$Res, $Val extends GiangVien>
       gioiTinh: freezed == gioiTinh
           ? _value.gioiTinh
           : gioiTinh // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as GioiTinh?,
       hocHam: freezed == hocHam
           ? _value.hocHam
           : hocHam // ignore: cast_nullable_to_non_nullable
@@ -161,7 +162,7 @@ class _$GiangVienCopyWithImpl<$Res, $Val extends GiangVien>
       ngaySinh: freezed == ngaySinh
           ? _value.ngaySinh
           : ngaySinh // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as DateTime?,
       stk: freezed == stk
           ? _value.stk
           : stk // ignore: cast_nullable_to_non_nullable
@@ -200,14 +201,14 @@ abstract class _$$GiangVienImplCopyWith<$Res>
       String? maCanBo,
       String? donVi,
       String? chuyenNganh,
-      String? gioiTinh,
+      GioiTinh? gioiTinh,
       String? hocHam,
       String? hocVi,
       int? namNhanTs,
       String? sdt,
       String? email,
       String? cccd,
-      String? ngaySinh,
+      @DateSerializer() DateTime? ngaySinh,
       String? stk,
       String? nganHang,
       String? mst,
@@ -271,7 +272,7 @@ class __$$GiangVienImplCopyWithImpl<$Res>
       gioiTinh: freezed == gioiTinh
           ? _value.gioiTinh
           : gioiTinh // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as GioiTinh?,
       hocHam: freezed == hocHam
           ? _value.hocHam
           : hocHam // ignore: cast_nullable_to_non_nullable
@@ -299,7 +300,7 @@ class __$$GiangVienImplCopyWithImpl<$Res>
       ngaySinh: freezed == ngaySinh
           ? _value.ngaySinh
           : ngaySinh // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as DateTime?,
       stk: freezed == stk
           ? _value.stk
           : stk // ignore: cast_nullable_to_non_nullable
@@ -340,7 +341,7 @@ class _$GiangVienImpl extends _GiangVien with DiagnosticableTreeMixin {
       this.sdt,
       this.email,
       this.cccd,
-      this.ngaySinh,
+      @DateSerializer() this.ngaySinh,
       this.stk,
       this.nganHang,
       this.mst,
@@ -362,7 +363,7 @@ class _$GiangVienImpl extends _GiangVien with DiagnosticableTreeMixin {
   @override
   final String? chuyenNganh;
   @override
-  final String? gioiTinh;
+  final GioiTinh? gioiTinh;
   @override
   final String? hocHam;
   @override
@@ -376,7 +377,8 @@ class _$GiangVienImpl extends _GiangVien with DiagnosticableTreeMixin {
   @override
   final String? cccd;
   @override
-  final String? ngaySinh;
+  @DateSerializer()
+  final DateTime? ngaySinh;
   @override
   final String? stk;
   @override
@@ -494,14 +496,14 @@ abstract class _GiangVien extends GiangVien {
       final String? maCanBo,
       final String? donVi,
       final String? chuyenNganh,
-      final String? gioiTinh,
+      final GioiTinh? gioiTinh,
       final String? hocHam,
       final String? hocVi,
       final int? namNhanTs,
       final String? sdt,
       final String? email,
       final String? cccd,
-      final String? ngaySinh,
+      @DateSerializer() final DateTime? ngaySinh,
       final String? stk,
       final String? nganHang,
       final String? mst,
@@ -523,7 +525,7 @@ abstract class _GiangVien extends GiangVien {
   @override
   String? get chuyenNganh;
   @override
-  String? get gioiTinh;
+  GioiTinh? get gioiTinh;
   @override
   String? get hocHam;
   @override
@@ -537,7 +539,8 @@ abstract class _GiangVien extends GiangVien {
   @override
   String? get cccd;
   @override
-  String? get ngaySinh;
+  @DateSerializer()
+  DateTime? get ngaySinh;
   @override
   String? get stk;
   @override
@@ -1106,14 +1109,15 @@ class __$$HocKyImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$HocKyImpl with DiagnosticableTreeMixin implements _HocKy {
+class _$HocKyImpl extends _HocKy {
   const _$HocKyImpl(
       {required this.hocKy,
       required this.moDangKy,
       required this.dongDangKy,
       required this.batDauHoc,
       required this.ketThucHoc,
-      required this.hanNhapDiem});
+      required this.hanNhapDiem})
+      : super._();
 
   factory _$HocKyImpl.fromJson(Map<String, dynamic> json) =>
       _$$HocKyImplFromJson(json);
@@ -1130,24 +1134,6 @@ class _$HocKyImpl with DiagnosticableTreeMixin implements _HocKy {
   final String ketThucHoc;
   @override
   final String hanNhapDiem;
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'HocKy(hocKy: $hocKy, moDangKy: $moDangKy, dongDangKy: $dongDangKy, batDauHoc: $batDauHoc, ketThucHoc: $ketThucHoc, hanNhapDiem: $hanNhapDiem)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'HocKy'))
-      ..add(DiagnosticsProperty('hocKy', hocKy))
-      ..add(DiagnosticsProperty('moDangKy', moDangKy))
-      ..add(DiagnosticsProperty('dongDangKy', dongDangKy))
-      ..add(DiagnosticsProperty('batDauHoc', batDauHoc))
-      ..add(DiagnosticsProperty('ketThucHoc', ketThucHoc))
-      ..add(DiagnosticsProperty('hanNhapDiem', hanNhapDiem));
-  }
 
   @override
   bool operator ==(Object other) {
@@ -1188,7 +1174,7 @@ class _$HocKyImpl with DiagnosticableTreeMixin implements _HocKy {
   }
 }
 
-abstract class _HocKy implements HocKy {
+abstract class _HocKy extends HocKy {
   const factory _HocKy(
       {required final String hocKy,
       required final String moDangKy,
@@ -1196,6 +1182,7 @@ abstract class _HocKy implements HocKy {
       required final String batDauHoc,
       required final String ketThucHoc,
       required final String hanNhapDiem}) = _$HocKyImpl;
+  const _HocKy._() : super._();
 
   factory _HocKy.fromJson(Map<String, dynamic> json) = _$HocKyImpl.fromJson;
 
@@ -1230,7 +1217,7 @@ mixin _$HocPhan {
   String get tenTiengViet => throw _privateConstructorUsedError;
   String get tenTiengAnh => throw _privateConstructorUsedError;
   int get soTinChi => throw _privateConstructorUsedError;
-  String get khoiKienThuc => throw _privateConstructorUsedError;
+  KhoiKienThuc get khoiKienThuc => throw _privateConstructorUsedError;
   String get khoiLuong => throw _privateConstructorUsedError;
 
   /// Serializes this HocPhan to a JSON map.
@@ -1252,7 +1239,7 @@ abstract class $HocPhanCopyWith<$Res> {
       String tenTiengViet,
       String tenTiengAnh,
       int soTinChi,
-      String khoiKienThuc,
+      KhoiKienThuc khoiKienThuc,
       String khoiLuong});
 }
 
@@ -1298,7 +1285,7 @@ class _$HocPhanCopyWithImpl<$Res, $Val extends HocPhan>
       khoiKienThuc: null == khoiKienThuc
           ? _value.khoiKienThuc
           : khoiKienThuc // ignore: cast_nullable_to_non_nullable
-              as String,
+              as KhoiKienThuc,
       khoiLuong: null == khoiLuong
           ? _value.khoiLuong
           : khoiLuong // ignore: cast_nullable_to_non_nullable
@@ -1319,7 +1306,7 @@ abstract class _$$HocPhanImplCopyWith<$Res> implements $HocPhanCopyWith<$Res> {
       String tenTiengViet,
       String tenTiengAnh,
       int soTinChi,
-      String khoiKienThuc,
+      KhoiKienThuc khoiKienThuc,
       String khoiLuong});
 }
 
@@ -1363,7 +1350,7 @@ class __$$HocPhanImplCopyWithImpl<$Res>
       khoiKienThuc: null == khoiKienThuc
           ? _value.khoiKienThuc
           : khoiKienThuc // ignore: cast_nullable_to_non_nullable
-              as String,
+              as KhoiKienThuc,
       khoiLuong: null == khoiLuong
           ? _value.khoiLuong
           : khoiLuong // ignore: cast_nullable_to_non_nullable
@@ -1374,14 +1361,15 @@ class __$$HocPhanImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$HocPhanImpl with DiagnosticableTreeMixin implements _HocPhan {
+class _$HocPhanImpl extends _HocPhan {
   const _$HocPhanImpl(
       {required this.maHocPhan,
       required this.tenTiengViet,
       required this.tenTiengAnh,
       required this.soTinChi,
       required this.khoiKienThuc,
-      required this.khoiLuong});
+      required this.khoiLuong})
+      : super._();
 
   factory _$HocPhanImpl.fromJson(Map<String, dynamic> json) =>
       _$$HocPhanImplFromJson(json);
@@ -1395,27 +1383,9 @@ class _$HocPhanImpl with DiagnosticableTreeMixin implements _HocPhan {
   @override
   final int soTinChi;
   @override
-  final String khoiKienThuc;
+  final KhoiKienThuc khoiKienThuc;
   @override
   final String khoiLuong;
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'HocPhan(maHocPhan: $maHocPhan, tenTiengViet: $tenTiengViet, tenTiengAnh: $tenTiengAnh, soTinChi: $soTinChi, khoiKienThuc: $khoiKienThuc, khoiLuong: $khoiLuong)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'HocPhan'))
-      ..add(DiagnosticsProperty('maHocPhan', maHocPhan))
-      ..add(DiagnosticsProperty('tenTiengViet', tenTiengViet))
-      ..add(DiagnosticsProperty('tenTiengAnh', tenTiengAnh))
-      ..add(DiagnosticsProperty('soTinChi', soTinChi))
-      ..add(DiagnosticsProperty('khoiKienThuc', khoiKienThuc))
-      ..add(DiagnosticsProperty('khoiLuong', khoiLuong));
-  }
 
   @override
   bool operator ==(Object other) {
@@ -1457,14 +1427,15 @@ class _$HocPhanImpl with DiagnosticableTreeMixin implements _HocPhan {
   }
 }
 
-abstract class _HocPhan implements HocPhan {
+abstract class _HocPhan extends HocPhan {
   const factory _HocPhan(
       {required final String maHocPhan,
       required final String tenTiengViet,
       required final String tenTiengAnh,
       required final int soTinChi,
-      required final String khoiKienThuc,
+      required final KhoiKienThuc khoiKienThuc,
       required final String khoiLuong}) = _$HocPhanImpl;
+  const _HocPhan._() : super._();
 
   factory _HocPhan.fromJson(Map<String, dynamic> json) = _$HocPhanImpl.fromJson;
 
@@ -1477,7 +1448,7 @@ abstract class _HocPhan implements HocPhan {
   @override
   int get soTinChi;
   @override
-  String get khoiKienThuc;
+  KhoiKienThuc get khoiKienThuc;
   @override
   String get khoiLuong;
 
@@ -1675,7 +1646,7 @@ mixin _$HocVien {
   String get hoTen => throw _privateConstructorUsedError;
   @DateSerializer()
   DateTime? get ngaySinh => throw _privateConstructorUsedError;
-  String? get gioiTinh => throw _privateConstructorUsedError;
+  GioiTinh? get gioiTinh => throw _privateConstructorUsedError;
   String? get noiSinh => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
   String? get truongTotNghiepDaiHoc => throw _privateConstructorUsedError;
@@ -1688,7 +1659,7 @@ mixin _$HocVien {
   String? get hocPhanDuocMien => throw _privateConstructorUsedError;
   String? get nganhDaoTaoThacSi => throw _privateConstructorUsedError;
   String? get dienThoai => throw _privateConstructorUsedError;
-  String get maTrangThai => throw _privateConstructorUsedError;
+  TrangThaiHocVien get maTrangThai => throw _privateConstructorUsedError;
   String? get deTaiLuanVanTiengViet => throw _privateConstructorUsedError;
   String? get deTaiLuanVanTiengAnh => throw _privateConstructorUsedError;
   @DateSerializer()
@@ -1704,7 +1675,7 @@ mixin _$HocVien {
   DateTime? get hanBaoVe => throw _privateConstructorUsedError;
   int get lanGiaHan => throw _privateConstructorUsedError;
   int? get idTieuBanXetTuyen => throw _privateConstructorUsedError;
-  String? get idDienTuyenSinh => throw _privateConstructorUsedError;
+  DienTuyenSinh? get idDienTuyenSinh => throw _privateConstructorUsedError;
   int get thanhToanXetTuyen => throw _privateConstructorUsedError;
 
   /// Serializes this HocVien to a JSON map.
@@ -1728,7 +1699,7 @@ abstract class $HocVienCopyWith<$Res> {
       String? maHocVien,
       String hoTen,
       @DateSerializer() DateTime? ngaySinh,
-      String? gioiTinh,
+      GioiTinh? gioiTinh,
       String? noiSinh,
       String? email,
       String? truongTotNghiepDaiHoc,
@@ -1740,7 +1711,7 @@ abstract class $HocVienCopyWith<$Res> {
       String? hocPhanDuocMien,
       String? nganhDaoTaoThacSi,
       String? dienThoai,
-      String maTrangThai,
+      TrangThaiHocVien maTrangThai,
       String? deTaiLuanVanTiengViet,
       String? deTaiLuanVanTiengAnh,
       @DateSerializer() DateTime? ngayGiaoDeTai,
@@ -1752,7 +1723,7 @@ abstract class $HocVienCopyWith<$Res> {
       @DateSerializer() DateTime? hanBaoVe,
       int lanGiaHan,
       int? idTieuBanXetTuyen,
-      String? idDienTuyenSinh,
+      DienTuyenSinh? idDienTuyenSinh,
       int thanhToanXetTuyen});
 }
 
@@ -1832,7 +1803,7 @@ class _$HocVienCopyWithImpl<$Res, $Val extends HocVien>
       gioiTinh: freezed == gioiTinh
           ? _value.gioiTinh
           : gioiTinh // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as GioiTinh?,
       noiSinh: freezed == noiSinh
           ? _value.noiSinh
           : noiSinh // ignore: cast_nullable_to_non_nullable
@@ -1880,7 +1851,7 @@ class _$HocVienCopyWithImpl<$Res, $Val extends HocVien>
       maTrangThai: null == maTrangThai
           ? _value.maTrangThai
           : maTrangThai // ignore: cast_nullable_to_non_nullable
-              as String,
+              as TrangThaiHocVien,
       deTaiLuanVanTiengViet: freezed == deTaiLuanVanTiengViet
           ? _value.deTaiLuanVanTiengViet
           : deTaiLuanVanTiengViet // ignore: cast_nullable_to_non_nullable
@@ -1928,7 +1899,7 @@ class _$HocVienCopyWithImpl<$Res, $Val extends HocVien>
       idDienTuyenSinh: freezed == idDienTuyenSinh
           ? _value.idDienTuyenSinh
           : idDienTuyenSinh // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as DienTuyenSinh?,
       thanhToanXetTuyen: null == thanhToanXetTuyen
           ? _value.thanhToanXetTuyen
           : thanhToanXetTuyen // ignore: cast_nullable_to_non_nullable
@@ -1951,7 +1922,7 @@ abstract class _$$HocVienImplCopyWith<$Res> implements $HocVienCopyWith<$Res> {
       String? maHocVien,
       String hoTen,
       @DateSerializer() DateTime? ngaySinh,
-      String? gioiTinh,
+      GioiTinh? gioiTinh,
       String? noiSinh,
       String? email,
       String? truongTotNghiepDaiHoc,
@@ -1963,7 +1934,7 @@ abstract class _$$HocVienImplCopyWith<$Res> implements $HocVienCopyWith<$Res> {
       String? hocPhanDuocMien,
       String? nganhDaoTaoThacSi,
       String? dienThoai,
-      String maTrangThai,
+      TrangThaiHocVien maTrangThai,
       String? deTaiLuanVanTiengViet,
       String? deTaiLuanVanTiengAnh,
       @DateSerializer() DateTime? ngayGiaoDeTai,
@@ -1975,7 +1946,7 @@ abstract class _$$HocVienImplCopyWith<$Res> implements $HocVienCopyWith<$Res> {
       @DateSerializer() DateTime? hanBaoVe,
       int lanGiaHan,
       int? idTieuBanXetTuyen,
-      String? idDienTuyenSinh,
+      DienTuyenSinh? idDienTuyenSinh,
       int thanhToanXetTuyen});
 }
 
@@ -2053,7 +2024,7 @@ class __$$HocVienImplCopyWithImpl<$Res>
       gioiTinh: freezed == gioiTinh
           ? _value.gioiTinh
           : gioiTinh // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as GioiTinh?,
       noiSinh: freezed == noiSinh
           ? _value.noiSinh
           : noiSinh // ignore: cast_nullable_to_non_nullable
@@ -2101,7 +2072,7 @@ class __$$HocVienImplCopyWithImpl<$Res>
       maTrangThai: null == maTrangThai
           ? _value.maTrangThai
           : maTrangThai // ignore: cast_nullable_to_non_nullable
-              as String,
+              as TrangThaiHocVien,
       deTaiLuanVanTiengViet: freezed == deTaiLuanVanTiengViet
           ? _value.deTaiLuanVanTiengViet
           : deTaiLuanVanTiengViet // ignore: cast_nullable_to_non_nullable
@@ -2149,7 +2120,7 @@ class __$$HocVienImplCopyWithImpl<$Res>
       idDienTuyenSinh: freezed == idDienTuyenSinh
           ? _value.idDienTuyenSinh
           : idDienTuyenSinh // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as DienTuyenSinh?,
       thanhToanXetTuyen: null == thanhToanXetTuyen
           ? _value.thanhToanXetTuyen
           : thanhToanXetTuyen // ignore: cast_nullable_to_non_nullable
@@ -2160,7 +2131,7 @@ class __$$HocVienImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$HocVienImpl with DiagnosticableTreeMixin implements _HocVien {
+class _$HocVienImpl extends _HocVien with DiagnosticableTreeMixin {
   const _$HocVienImpl(
       {required this.id,
       this.soHoSo,
@@ -2193,7 +2164,8 @@ class _$HocVienImpl with DiagnosticableTreeMixin implements _HocVien {
       this.lanGiaHan = 0,
       this.idTieuBanXetTuyen,
       this.idDienTuyenSinh,
-      this.thanhToanXetTuyen = 0});
+      this.thanhToanXetTuyen = 0})
+      : super._();
 
   factory _$HocVienImpl.fromJson(Map<String, dynamic> json) =>
       _$$HocVienImplFromJson(json);
@@ -2212,7 +2184,7 @@ class _$HocVienImpl with DiagnosticableTreeMixin implements _HocVien {
   @DateSerializer()
   final DateTime? ngaySinh;
   @override
-  final String? gioiTinh;
+  final GioiTinh? gioiTinh;
   @override
   final String? noiSinh;
   @override
@@ -2237,7 +2209,7 @@ class _$HocVienImpl with DiagnosticableTreeMixin implements _HocVien {
   @override
   final String? dienThoai;
   @override
-  final String maTrangThai;
+  final TrangThaiHocVien maTrangThai;
   @override
   final String? deTaiLuanVanTiengViet;
   @override
@@ -2266,7 +2238,7 @@ class _$HocVienImpl with DiagnosticableTreeMixin implements _HocVien {
   @override
   final int? idTieuBanXetTuyen;
   @override
-  final String? idDienTuyenSinh;
+  final DienTuyenSinh? idDienTuyenSinh;
   @override
   @JsonKey()
   final int thanhToanXetTuyen;
@@ -2436,7 +2408,7 @@ class _$HocVienImpl with DiagnosticableTreeMixin implements _HocVien {
   }
 }
 
-abstract class _HocVien implements HocVien {
+abstract class _HocVien extends HocVien {
   const factory _HocVien(
       {required final int id,
       final String? soHoSo,
@@ -2444,7 +2416,7 @@ abstract class _HocVien implements HocVien {
       final String? maHocVien,
       required final String hoTen,
       @DateSerializer() final DateTime? ngaySinh,
-      final String? gioiTinh,
+      final GioiTinh? gioiTinh,
       final String? noiSinh,
       final String? email,
       final String? truongTotNghiepDaiHoc,
@@ -2456,7 +2428,7 @@ abstract class _HocVien implements HocVien {
       final String? hocPhanDuocMien,
       final String? nganhDaoTaoThacSi,
       final String? dienThoai,
-      required final String maTrangThai,
+      required final TrangThaiHocVien maTrangThai,
       final String? deTaiLuanVanTiengViet,
       final String? deTaiLuanVanTiengAnh,
       @DateSerializer() final DateTime? ngayGiaoDeTai,
@@ -2468,8 +2440,9 @@ abstract class _HocVien implements HocVien {
       @DateSerializer() final DateTime? hanBaoVe,
       final int lanGiaHan,
       final int? idTieuBanXetTuyen,
-      final String? idDienTuyenSinh,
+      final DienTuyenSinh? idDienTuyenSinh,
       final int thanhToanXetTuyen}) = _$HocVienImpl;
+  const _HocVien._() : super._();
 
   factory _HocVien.fromJson(Map<String, dynamic> json) = _$HocVienImpl.fromJson;
 
@@ -2487,7 +2460,7 @@ abstract class _HocVien implements HocVien {
   @DateSerializer()
   DateTime? get ngaySinh;
   @override
-  String? get gioiTinh;
+  GioiTinh? get gioiTinh;
   @override
   String? get noiSinh;
   @override
@@ -2512,7 +2485,7 @@ abstract class _HocVien implements HocVien {
   @override
   String? get dienThoai;
   @override
-  String get maTrangThai;
+  TrangThaiHocVien get maTrangThai;
   @override
   String? get deTaiLuanVanTiengViet;
   @override
@@ -2540,7 +2513,7 @@ abstract class _HocVien implements HocVien {
   @override
   int? get idTieuBanXetTuyen;
   @override
-  String? get idDienTuyenSinh;
+  DienTuyenSinh? get idDienTuyenSinh;
   @override
   int get thanhToanXetTuyen;
 
@@ -2968,185 +2941,6 @@ abstract class _HoiDongLVTS implements HoiDongLVTS {
       throw _privateConstructorUsedError;
 }
 
-KhoiKienThuc _$KhoiKienThucFromJson(Map<String, dynamic> json) {
-  return _KhoiKienThuc.fromJson(json);
-}
-
-/// @nodoc
-mixin _$KhoiKienThuc {
-  String get khoiKienThuc => throw _privateConstructorUsedError;
-  String get tenKhoiKienThuc => throw _privateConstructorUsedError;
-
-  /// Serializes this KhoiKienThuc to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of KhoiKienThuc
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $KhoiKienThucCopyWith<KhoiKienThuc> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $KhoiKienThucCopyWith<$Res> {
-  factory $KhoiKienThucCopyWith(
-          KhoiKienThuc value, $Res Function(KhoiKienThuc) then) =
-      _$KhoiKienThucCopyWithImpl<$Res, KhoiKienThuc>;
-  @useResult
-  $Res call({String khoiKienThuc, String tenKhoiKienThuc});
-}
-
-/// @nodoc
-class _$KhoiKienThucCopyWithImpl<$Res, $Val extends KhoiKienThuc>
-    implements $KhoiKienThucCopyWith<$Res> {
-  _$KhoiKienThucCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of KhoiKienThuc
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? khoiKienThuc = null,
-    Object? tenKhoiKienThuc = null,
-  }) {
-    return _then(_value.copyWith(
-      khoiKienThuc: null == khoiKienThuc
-          ? _value.khoiKienThuc
-          : khoiKienThuc // ignore: cast_nullable_to_non_nullable
-              as String,
-      tenKhoiKienThuc: null == tenKhoiKienThuc
-          ? _value.tenKhoiKienThuc
-          : tenKhoiKienThuc // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$KhoiKienThucImplCopyWith<$Res>
-    implements $KhoiKienThucCopyWith<$Res> {
-  factory _$$KhoiKienThucImplCopyWith(
-          _$KhoiKienThucImpl value, $Res Function(_$KhoiKienThucImpl) then) =
-      __$$KhoiKienThucImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({String khoiKienThuc, String tenKhoiKienThuc});
-}
-
-/// @nodoc
-class __$$KhoiKienThucImplCopyWithImpl<$Res>
-    extends _$KhoiKienThucCopyWithImpl<$Res, _$KhoiKienThucImpl>
-    implements _$$KhoiKienThucImplCopyWith<$Res> {
-  __$$KhoiKienThucImplCopyWithImpl(
-      _$KhoiKienThucImpl _value, $Res Function(_$KhoiKienThucImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of KhoiKienThuc
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? khoiKienThuc = null,
-    Object? tenKhoiKienThuc = null,
-  }) {
-    return _then(_$KhoiKienThucImpl(
-      khoiKienThuc: null == khoiKienThuc
-          ? _value.khoiKienThuc
-          : khoiKienThuc // ignore: cast_nullable_to_non_nullable
-              as String,
-      tenKhoiKienThuc: null == tenKhoiKienThuc
-          ? _value.tenKhoiKienThuc
-          : tenKhoiKienThuc // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$KhoiKienThucImpl with DiagnosticableTreeMixin implements _KhoiKienThuc {
-  const _$KhoiKienThucImpl(
-      {required this.khoiKienThuc, required this.tenKhoiKienThuc});
-
-  factory _$KhoiKienThucImpl.fromJson(Map<String, dynamic> json) =>
-      _$$KhoiKienThucImplFromJson(json);
-
-  @override
-  final String khoiKienThuc;
-  @override
-  final String tenKhoiKienThuc;
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'KhoiKienThuc(khoiKienThuc: $khoiKienThuc, tenKhoiKienThuc: $tenKhoiKienThuc)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'KhoiKienThuc'))
-      ..add(DiagnosticsProperty('khoiKienThuc', khoiKienThuc))
-      ..add(DiagnosticsProperty('tenKhoiKienThuc', tenKhoiKienThuc));
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$KhoiKienThucImpl &&
-            (identical(other.khoiKienThuc, khoiKienThuc) ||
-                other.khoiKienThuc == khoiKienThuc) &&
-            (identical(other.tenKhoiKienThuc, tenKhoiKienThuc) ||
-                other.tenKhoiKienThuc == tenKhoiKienThuc));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, khoiKienThuc, tenKhoiKienThuc);
-
-  /// Create a copy of KhoiKienThuc
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$KhoiKienThucImplCopyWith<_$KhoiKienThucImpl> get copyWith =>
-      __$$KhoiKienThucImplCopyWithImpl<_$KhoiKienThucImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$KhoiKienThucImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _KhoiKienThuc implements KhoiKienThuc {
-  const factory _KhoiKienThuc(
-      {required final String khoiKienThuc,
-      required final String tenKhoiKienThuc}) = _$KhoiKienThucImpl;
-
-  factory _KhoiKienThuc.fromJson(Map<String, dynamic> json) =
-      _$KhoiKienThucImpl.fromJson;
-
-  @override
-  String get khoiKienThuc;
-  @override
-  String get tenKhoiKienThuc;
-
-  /// Create a copy of KhoiKienThuc
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$KhoiKienThucImplCopyWith<_$KhoiKienThucImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
 LopTinChi _$LopTinChiFromJson(Map<String, dynamic> json) {
   return _LopTinChi.fromJson(json);
 }
@@ -3164,7 +2958,7 @@ mixin _$LopTinChi {
   int? get ngayHoc => throw _privateConstructorUsedError;
   int? get tietBatDau => throw _privateConstructorUsedError;
   int? get tietKetThuc => throw _privateConstructorUsedError;
-  int get trangThai => throw _privateConstructorUsedError;
+  TrangThaiLopTinChi get trangThai => throw _privateConstructorUsedError;
 
   /// Serializes this LopTinChi to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -3193,7 +2987,7 @@ abstract class $LopTinChiCopyWith<$Res> {
       int? ngayHoc,
       int? tietBatDau,
       int? tietKetThuc,
-      int trangThai});
+      TrangThaiLopTinChi trangThai});
 }
 
 /// @nodoc
@@ -3272,7 +3066,7 @@ class _$LopTinChiCopyWithImpl<$Res, $Val extends LopTinChi>
       trangThai: null == trangThai
           ? _value.trangThai
           : trangThai // ignore: cast_nullable_to_non_nullable
-              as int,
+              as TrangThaiLopTinChi,
     ) as $Val);
   }
 }
@@ -3297,7 +3091,7 @@ abstract class _$$LopTinChiImplCopyWith<$Res>
       int? ngayHoc,
       int? tietBatDau,
       int? tietKetThuc,
-      int trangThai});
+      TrangThaiLopTinChi trangThai});
 }
 
 /// @nodoc
@@ -3374,14 +3168,14 @@ class __$$LopTinChiImplCopyWithImpl<$Res>
       trangThai: null == trangThai
           ? _value.trangThai
           : trangThai // ignore: cast_nullable_to_non_nullable
-              as int,
+              as TrangThaiLopTinChi,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$LopTinChiImpl with DiagnosticableTreeMixin implements _LopTinChi {
+class _$LopTinChiImpl extends _LopTinChi with DiagnosticableTreeMixin {
   const _$LopTinChiImpl(
       {required this.id,
       this.maLopHoc,
@@ -3394,7 +3188,8 @@ class _$LopTinChiImpl with DiagnosticableTreeMixin implements _LopTinChi {
       this.ngayHoc,
       this.tietBatDau,
       this.tietKetThuc,
-      this.trangThai = 0});
+      this.trangThai = TrangThaiLopTinChi.binhThuong})
+      : super._();
 
   factory _$LopTinChiImpl.fromJson(Map<String, dynamic> json) =>
       _$$LopTinChiImplFromJson(json);
@@ -3423,7 +3218,7 @@ class _$LopTinChiImpl with DiagnosticableTreeMixin implements _LopTinChi {
   final int? tietKetThuc;
   @override
   @JsonKey()
-  final int trangThai;
+  final TrangThaiLopTinChi trangThai;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -3510,7 +3305,7 @@ class _$LopTinChiImpl with DiagnosticableTreeMixin implements _LopTinChi {
   }
 }
 
-abstract class _LopTinChi implements LopTinChi {
+abstract class _LopTinChi extends LopTinChi {
   const factory _LopTinChi(
       {required final int id,
       final String? maLopHoc,
@@ -3523,7 +3318,8 @@ abstract class _LopTinChi implements LopTinChi {
       final int? ngayHoc,
       final int? tietBatDau,
       final int? tietKetThuc,
-      final int trangThai}) = _$LopTinChiImpl;
+      final TrangThaiLopTinChi trangThai}) = _$LopTinChiImpl;
+  const _LopTinChi._() : super._();
 
   factory _LopTinChi.fromJson(Map<String, dynamic> json) =
       _$LopTinChiImpl.fromJson;
@@ -3551,7 +3347,7 @@ abstract class _LopTinChi implements LopTinChi {
   @override
   int? get tietKetThuc;
   @override
-  int get trangThai;
+  TrangThaiLopTinChi get trangThai;
 
   /// Create a copy of LopTinChi
   /// with the given fields replaced by the non-null parameter values.
@@ -4436,9 +4232,8 @@ class __$$TieuBanXetTuyenImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$TieuBanXetTuyenImpl
-    with DiagnosticableTreeMixin
-    implements _TieuBanXetTuyen {
+class _$TieuBanXetTuyenImpl extends _TieuBanXetTuyen
+    with DiagnosticableTreeMixin {
   const _$TieuBanXetTuyenImpl(
       {required this.id,
       required this.nam,
@@ -4446,7 +4241,8 @@ class _$TieuBanXetTuyenImpl
       required this.idThuKy,
       required this.idUyVien1,
       required this.idUyVien2,
-      required this.idUyVien3});
+      required this.idUyVien3})
+      : super._();
 
   factory _$TieuBanXetTuyenImpl.fromJson(Map<String, dynamic> json) =>
       _$$TieuBanXetTuyenImplFromJson(json);
@@ -4525,7 +4321,7 @@ class _$TieuBanXetTuyenImpl
   }
 }
 
-abstract class _TieuBanXetTuyen implements TieuBanXetTuyen {
+abstract class _TieuBanXetTuyen extends TieuBanXetTuyen {
   const factory _TieuBanXetTuyen(
       {required final int id,
       required final String nam,
@@ -4534,6 +4330,7 @@ abstract class _TieuBanXetTuyen implements TieuBanXetTuyen {
       required final int idUyVien1,
       required final int idUyVien2,
       required final int idUyVien3}) = _$TieuBanXetTuyenImpl;
+  const _TieuBanXetTuyen._() : super._();
 
   factory _TieuBanXetTuyen.fromJson(Map<String, dynamic> json) =
       _$TieuBanXetTuyenImpl.fromJson;
@@ -4561,100 +4358,124 @@ abstract class _TieuBanXetTuyen implements TieuBanXetTuyen {
       throw _privateConstructorUsedError;
 }
 
-TrangThaiHocVien _$TrangThaiHocVienFromJson(Map<String, dynamic> json) {
-  return _TrangThaiHocVien.fromJson(json);
+DeTaiThacSi _$DeTaiThacSiFromJson(Map<String, dynamic> json) {
+  return _DeTaiThacSi.fromJson(json);
 }
 
 /// @nodoc
-mixin _$TrangThaiHocVien {
-  String get maTrangThai => throw _privateConstructorUsedError;
-  String get tenTrangThai => throw _privateConstructorUsedError;
+mixin _$DeTaiThacSi {
+  int? get id => throw _privateConstructorUsedError;
+  int get idGiangVien => throw _privateConstructorUsedError;
+  String get tenTiengViet => throw _privateConstructorUsedError;
+  String get tenTiengAnh => throw _privateConstructorUsedError;
 
-  /// Serializes this TrangThaiHocVien to a JSON map.
+  /// Serializes this DeTaiThacSi to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of TrangThaiHocVien
+  /// Create a copy of DeTaiThacSi
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $TrangThaiHocVienCopyWith<TrangThaiHocVien> get copyWith =>
+  $DeTaiThacSiCopyWith<DeTaiThacSi> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $TrangThaiHocVienCopyWith<$Res> {
-  factory $TrangThaiHocVienCopyWith(
-          TrangThaiHocVien value, $Res Function(TrangThaiHocVien) then) =
-      _$TrangThaiHocVienCopyWithImpl<$Res, TrangThaiHocVien>;
+abstract class $DeTaiThacSiCopyWith<$Res> {
+  factory $DeTaiThacSiCopyWith(
+          DeTaiThacSi value, $Res Function(DeTaiThacSi) then) =
+      _$DeTaiThacSiCopyWithImpl<$Res, DeTaiThacSi>;
   @useResult
-  $Res call({String maTrangThai, String tenTrangThai});
+  $Res call(
+      {int? id, int idGiangVien, String tenTiengViet, String tenTiengAnh});
 }
 
 /// @nodoc
-class _$TrangThaiHocVienCopyWithImpl<$Res, $Val extends TrangThaiHocVien>
-    implements $TrangThaiHocVienCopyWith<$Res> {
-  _$TrangThaiHocVienCopyWithImpl(this._value, this._then);
+class _$DeTaiThacSiCopyWithImpl<$Res, $Val extends DeTaiThacSi>
+    implements $DeTaiThacSiCopyWith<$Res> {
+  _$DeTaiThacSiCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of TrangThaiHocVien
+  /// Create a copy of DeTaiThacSi
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? maTrangThai = null,
-    Object? tenTrangThai = null,
+    Object? id = freezed,
+    Object? idGiangVien = null,
+    Object? tenTiengViet = null,
+    Object? tenTiengAnh = null,
   }) {
     return _then(_value.copyWith(
-      maTrangThai: null == maTrangThai
-          ? _value.maTrangThai
-          : maTrangThai // ignore: cast_nullable_to_non_nullable
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      idGiangVien: null == idGiangVien
+          ? _value.idGiangVien
+          : idGiangVien // ignore: cast_nullable_to_non_nullable
+              as int,
+      tenTiengViet: null == tenTiengViet
+          ? _value.tenTiengViet
+          : tenTiengViet // ignore: cast_nullable_to_non_nullable
               as String,
-      tenTrangThai: null == tenTrangThai
-          ? _value.tenTrangThai
-          : tenTrangThai // ignore: cast_nullable_to_non_nullable
+      tenTiengAnh: null == tenTiengAnh
+          ? _value.tenTiengAnh
+          : tenTiengAnh // ignore: cast_nullable_to_non_nullable
               as String,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$TrangThaiHocVienImplCopyWith<$Res>
-    implements $TrangThaiHocVienCopyWith<$Res> {
-  factory _$$TrangThaiHocVienImplCopyWith(_$TrangThaiHocVienImpl value,
-          $Res Function(_$TrangThaiHocVienImpl) then) =
-      __$$TrangThaiHocVienImplCopyWithImpl<$Res>;
+abstract class _$$DeTaiThacSiImplCopyWith<$Res>
+    implements $DeTaiThacSiCopyWith<$Res> {
+  factory _$$DeTaiThacSiImplCopyWith(
+          _$DeTaiThacSiImpl value, $Res Function(_$DeTaiThacSiImpl) then) =
+      __$$DeTaiThacSiImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String maTrangThai, String tenTrangThai});
+  $Res call(
+      {int? id, int idGiangVien, String tenTiengViet, String tenTiengAnh});
 }
 
 /// @nodoc
-class __$$TrangThaiHocVienImplCopyWithImpl<$Res>
-    extends _$TrangThaiHocVienCopyWithImpl<$Res, _$TrangThaiHocVienImpl>
-    implements _$$TrangThaiHocVienImplCopyWith<$Res> {
-  __$$TrangThaiHocVienImplCopyWithImpl(_$TrangThaiHocVienImpl _value,
-      $Res Function(_$TrangThaiHocVienImpl) _then)
+class __$$DeTaiThacSiImplCopyWithImpl<$Res>
+    extends _$DeTaiThacSiCopyWithImpl<$Res, _$DeTaiThacSiImpl>
+    implements _$$DeTaiThacSiImplCopyWith<$Res> {
+  __$$DeTaiThacSiImplCopyWithImpl(
+      _$DeTaiThacSiImpl _value, $Res Function(_$DeTaiThacSiImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of TrangThaiHocVien
+  /// Create a copy of DeTaiThacSi
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? maTrangThai = null,
-    Object? tenTrangThai = null,
+    Object? id = freezed,
+    Object? idGiangVien = null,
+    Object? tenTiengViet = null,
+    Object? tenTiengAnh = null,
   }) {
-    return _then(_$TrangThaiHocVienImpl(
-      maTrangThai: null == maTrangThai
-          ? _value.maTrangThai
-          : maTrangThai // ignore: cast_nullable_to_non_nullable
+    return _then(_$DeTaiThacSiImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      idGiangVien: null == idGiangVien
+          ? _value.idGiangVien
+          : idGiangVien // ignore: cast_nullable_to_non_nullable
+              as int,
+      tenTiengViet: null == tenTiengViet
+          ? _value.tenTiengViet
+          : tenTiengViet // ignore: cast_nullable_to_non_nullable
               as String,
-      tenTrangThai: null == tenTrangThai
-          ? _value.tenTrangThai
-          : tenTrangThai // ignore: cast_nullable_to_non_nullable
+      tenTiengAnh: null == tenTiengAnh
+          ? _value.tenTiengAnh
+          : tenTiengAnh // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -4662,246 +4483,101 @@ class __$$TrangThaiHocVienImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$TrangThaiHocVienImpl
-    with DiagnosticableTreeMixin
-    implements _TrangThaiHocVien {
-  const _$TrangThaiHocVienImpl(
-      {required this.maTrangThai, required this.tenTrangThai});
+class _$DeTaiThacSiImpl extends _DeTaiThacSi with DiagnosticableTreeMixin {
+  const _$DeTaiThacSiImpl(
+      {this.id,
+      required this.idGiangVien,
+      required this.tenTiengViet,
+      required this.tenTiengAnh})
+      : super._();
 
-  factory _$TrangThaiHocVienImpl.fromJson(Map<String, dynamic> json) =>
-      _$$TrangThaiHocVienImplFromJson(json);
+  factory _$DeTaiThacSiImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DeTaiThacSiImplFromJson(json);
 
   @override
-  final String maTrangThai;
+  final int? id;
   @override
-  final String tenTrangThai;
+  final int idGiangVien;
+  @override
+  final String tenTiengViet;
+  @override
+  final String tenTiengAnh;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'TrangThaiHocVien(maTrangThai: $maTrangThai, tenTrangThai: $tenTrangThai)';
+    return 'DeTaiThacSi(id: $id, idGiangVien: $idGiangVien, tenTiengViet: $tenTiengViet, tenTiengAnh: $tenTiengAnh)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'TrangThaiHocVien'))
-      ..add(DiagnosticsProperty('maTrangThai', maTrangThai))
-      ..add(DiagnosticsProperty('tenTrangThai', tenTrangThai));
+      ..add(DiagnosticsProperty('type', 'DeTaiThacSi'))
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('idGiangVien', idGiangVien))
+      ..add(DiagnosticsProperty('tenTiengViet', tenTiengViet))
+      ..add(DiagnosticsProperty('tenTiengAnh', tenTiengAnh));
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$TrangThaiHocVienImpl &&
-            (identical(other.maTrangThai, maTrangThai) ||
-                other.maTrangThai == maTrangThai) &&
-            (identical(other.tenTrangThai, tenTrangThai) ||
-                other.tenTrangThai == tenTrangThai));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, maTrangThai, tenTrangThai);
-
-  /// Create a copy of TrangThaiHocVien
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$TrangThaiHocVienImplCopyWith<_$TrangThaiHocVienImpl> get copyWith =>
-      __$$TrangThaiHocVienImplCopyWithImpl<_$TrangThaiHocVienImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$TrangThaiHocVienImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _TrangThaiHocVien implements TrangThaiHocVien {
-  const factory _TrangThaiHocVien(
-      {required final String maTrangThai,
-      required final String tenTrangThai}) = _$TrangThaiHocVienImpl;
-
-  factory _TrangThaiHocVien.fromJson(Map<String, dynamic> json) =
-      _$TrangThaiHocVienImpl.fromJson;
-
-  @override
-  String get maTrangThai;
-  @override
-  String get tenTrangThai;
-
-  /// Create a copy of TrangThaiHocVien
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$TrangThaiHocVienImplCopyWith<_$TrangThaiHocVienImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-DienTuyenSinh _$DienTuyenSinhFromJson(Map<String, dynamic> json) {
-  return _DienTuyenSinh.fromJson(json);
-}
-
-/// @nodoc
-mixin _$DienTuyenSinh {
-  String get id => throw _privateConstructorUsedError;
-  String get ten => throw _privateConstructorUsedError;
-
-  /// Serializes this DienTuyenSinh to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of DienTuyenSinh
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $DienTuyenSinhCopyWith<DienTuyenSinh> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $DienTuyenSinhCopyWith<$Res> {
-  factory $DienTuyenSinhCopyWith(
-          DienTuyenSinh value, $Res Function(DienTuyenSinh) then) =
-      _$DienTuyenSinhCopyWithImpl<$Res, DienTuyenSinh>;
-  @useResult
-  $Res call({String id, String ten});
-}
-
-/// @nodoc
-class _$DienTuyenSinhCopyWithImpl<$Res, $Val extends DienTuyenSinh>
-    implements $DienTuyenSinhCopyWith<$Res> {
-  _$DienTuyenSinhCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of DienTuyenSinh
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? ten = null,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      ten: null == ten
-          ? _value.ten
-          : ten // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$DienTuyenSinhImplCopyWith<$Res>
-    implements $DienTuyenSinhCopyWith<$Res> {
-  factory _$$DienTuyenSinhImplCopyWith(
-          _$DienTuyenSinhImpl value, $Res Function(_$DienTuyenSinhImpl) then) =
-      __$$DienTuyenSinhImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({String id, String ten});
-}
-
-/// @nodoc
-class __$$DienTuyenSinhImplCopyWithImpl<$Res>
-    extends _$DienTuyenSinhCopyWithImpl<$Res, _$DienTuyenSinhImpl>
-    implements _$$DienTuyenSinhImplCopyWith<$Res> {
-  __$$DienTuyenSinhImplCopyWithImpl(
-      _$DienTuyenSinhImpl _value, $Res Function(_$DienTuyenSinhImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of DienTuyenSinh
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? ten = null,
-  }) {
-    return _then(_$DienTuyenSinhImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      ten: null == ten
-          ? _value.ten
-          : ten // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$DienTuyenSinhImpl extends _DienTuyenSinh {
-  const _$DienTuyenSinhImpl({required this.id, required this.ten}) : super._();
-
-  factory _$DienTuyenSinhImpl.fromJson(Map<String, dynamic> json) =>
-      _$$DienTuyenSinhImplFromJson(json);
-
-  @override
-  final String id;
-  @override
-  final String ten;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$DienTuyenSinhImpl &&
+            other is _$DeTaiThacSiImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.ten, ten) || other.ten == ten));
+            (identical(other.idGiangVien, idGiangVien) ||
+                other.idGiangVien == idGiangVien) &&
+            (identical(other.tenTiengViet, tenTiengViet) ||
+                other.tenTiengViet == tenTiengViet) &&
+            (identical(other.tenTiengAnh, tenTiengAnh) ||
+                other.tenTiengAnh == tenTiengAnh));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, ten);
+  int get hashCode =>
+      Object.hash(runtimeType, id, idGiangVien, tenTiengViet, tenTiengAnh);
 
-  /// Create a copy of DienTuyenSinh
+  /// Create a copy of DeTaiThacSi
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$DienTuyenSinhImplCopyWith<_$DienTuyenSinhImpl> get copyWith =>
-      __$$DienTuyenSinhImplCopyWithImpl<_$DienTuyenSinhImpl>(this, _$identity);
+  _$$DeTaiThacSiImplCopyWith<_$DeTaiThacSiImpl> get copyWith =>
+      __$$DeTaiThacSiImplCopyWithImpl<_$DeTaiThacSiImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$DienTuyenSinhImplToJson(
+    return _$$DeTaiThacSiImplToJson(
       this,
     );
   }
 }
 
-abstract class _DienTuyenSinh extends DienTuyenSinh {
-  const factory _DienTuyenSinh(
-      {required final String id,
-      required final String ten}) = _$DienTuyenSinhImpl;
-  const _DienTuyenSinh._() : super._();
+abstract class _DeTaiThacSi extends DeTaiThacSi {
+  const factory _DeTaiThacSi(
+      {final int? id,
+      required final int idGiangVien,
+      required final String tenTiengViet,
+      required final String tenTiengAnh}) = _$DeTaiThacSiImpl;
+  const _DeTaiThacSi._() : super._();
 
-  factory _DienTuyenSinh.fromJson(Map<String, dynamic> json) =
-      _$DienTuyenSinhImpl.fromJson;
+  factory _DeTaiThacSi.fromJson(Map<String, dynamic> json) =
+      _$DeTaiThacSiImpl.fromJson;
 
   @override
-  String get id;
+  int? get id;
   @override
-  String get ten;
+  int get idGiangVien;
+  @override
+  String get tenTiengViet;
+  @override
+  String get tenTiengAnh;
 
-  /// Create a copy of DienTuyenSinh
+  /// Create a copy of DeTaiThacSi
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$DienTuyenSinhImplCopyWith<_$DienTuyenSinhImpl> get copyWith =>
+  _$$DeTaiThacSiImplCopyWith<_$DeTaiThacSiImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

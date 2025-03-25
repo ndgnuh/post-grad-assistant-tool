@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../datamodels.dart';
 import '../custom_widgets.dart';
-import '../bedrock.dart';
 import 'dart:core';
 
 const fields = (

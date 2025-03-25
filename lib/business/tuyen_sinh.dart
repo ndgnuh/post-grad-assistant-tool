@@ -5,12 +5,26 @@ import 'package:dio/dio.dart';
 import 'package:pdf/pdf.dart';
 import 'package:path/path.dart' as p;
 
-import '../dtypes.dart';
-import '../datamodels.dart' show DateTimeConvert;
-import '../pdfbuilder/heplers.dart' as pw;
+import '../business/domain_objects.dart';
+import '../datamodels.dart' show DateTimeConvert, dbSession;
+import '../services/pdf_widgets.dart' as pw;
+import '../services/sqlbuilder/sqlbuilder.dart';
 
 final dio = Dio();
 const baseTuyenSinhUrl = "https://sdh.hust.edu.vn/AnhTuyenSinh";
+
+Future<List<HocVien>> fetchCandidates() async {
+  final query = SelectQuery()
+    ..from(HocVien.table)
+    ..selectAll()
+    ..where("maTrangThai = ?", [TrangThaiHocVien.xetTuyen.value]);
+  final sql = query.build();
+  print(sql);
+  return dbSession((db) async {
+    final rows = await db.rawQuery(sql);
+    return [for (final json in rows) HocVien.fromJson(json)];
+  });
+}
 
 String englishCertUrl(id) {
   return "$baseTuyenSinhUrl/20174/$id.pdf";
@@ -85,7 +99,7 @@ Future<(bool, String?)> downloadAdmissionFiles({
   }
 }
 
-Future<pw.Document> buildBang2DanhSachThiSinh({
+Future<pw.Document> _buildBang2DanhSachThiSinh({
   required List<HocVien> candidates,
   required String saveDirectory,
   required year,
@@ -138,7 +152,7 @@ Future<pw.Document> buildBang2DanhSachThiSinh({
         "Chuyên ngành\nđào tạo ĐH",
         "Xếp loại\nTNĐH",
         "Ngày, tháng, năm\ntốt nghiệp ĐH",
-        "Chuyên ngành,\nchương trình\nđào tạo\nhệ Thạc sĩ",
+        "Chuyên ngành,\nchương trình\nđào tạo Thạc sĩ",
         "Định hướng\nchuyên sâu\n(nếu có)",
         "Mã các HP\nđược miễn học"
       ];
@@ -197,7 +211,7 @@ Future<pw.Document> buildBang2DanhSachThiSinh({
                 pw.Container(
                   padding: padding,
                   child: pw.Text(
-                    hv.gioiTinh ?? "",
+                    hv.gioiTinh.toString(),
                     textAlign: pw.TextAlign.center,
                     softWrap: false,
                   ),
@@ -301,7 +315,7 @@ Future<pw.Document> buildBang2DanhSachThiSinh({
   return doc;
 }
 
-Future<pw.Document> buildBang3NhanXet({
+Future<pw.Document> _buildBang3NhanXet({
   required List<HocVien> candidates,
   required String saveDirectory,
   required GiangVien gv,
@@ -425,12 +439,11 @@ Future<pw.Document> buildBang3NhanXet({
       "Bảng 3 ${gv.hoTen}.pdf",
     ),
   );
-  print(file);
   await file.writeAsBytes(await doc.save());
   return doc;
 }
 
-Future<pw.Document> buildBang4TongHopKq({
+Future<pw.Document> _buildBang4TongHopKq({
   required List<HocVien> candidates,
   required String saveDirectory,
   required String year,
@@ -560,4 +573,176 @@ Future<pw.Document> buildBang4TongHopKq({
   );
   await file.writeAsBytes(await doc.save());
   return doc;
+}
+
+Future<pw.Document> _buildBang4TongHopCnths({
+  required List<HocVien> candidates,
+  required String saveDirectory,
+  required String year,
+}) async {
+  final theme = await pw.defaultTheme(baseSize: 9.0);
+  final doc = pw.Document(
+    pageMode: PdfPageMode.fullscreen,
+    theme: theme,
+    title: "Bảng 4a: Tổng hợp danh sách xét tuyển theo diện Cử nhân - Thạc sĩ",
+    producer: "Nguyễn Đức Hùng",
+    author: "Nguyễn Đức Hùng",
+  );
+  final page = pw.Page(
+    theme: theme,
+    pageFormat: PdfPageFormat(
+      297 * PdfPageFormat.mm,
+      210 * PdfPageFormat.mm,
+      marginAll: 0.75 * PdfPageFormat.inch,
+    ),
+    build: (context) {
+      final header = pw.EzTopHeader.fami().flushLeft();
+
+      final title = pw.Center(
+        child: pw.BoldText(
+          "TỔNG HỢP DANH SÁCH XÉT TUYỂN CAO HỌC ĐỊNH HƯỚNG NGHIÊN CỨU THEO DIỆN CỬ NHÂN - THẠC SĨ NĂM $year",
+          fontSize: 11,
+        ),
+      );
+
+      final footer = pw.Row(
+        children: [
+          pw.Expanded(child: pw.SizedBox.shrink()),
+          pw.Column(
+            children: [
+              pw.ItalicText("Hà Nội, ngày ..... tháng ..... năm $year"),
+              pw.BoldText("TRƯỞNG TIỂU BAN"),
+              pw.Divider(
+                height: 1.5 * PdfPageFormat.cm,
+                borderStyle: pw.BorderStyle.none,
+              ),
+            ],
+          ),
+        ],
+      );
+
+      final tbl = pw.EzTable<HocVien>(
+        data: candidates,
+        rowBuilder: (i, HocVien hv) => [
+          (i + 1).toString(),
+          hv.soHoSo,
+          hv.hoTen,
+          hv.ngaySinh?.toDmy(),
+          hv.gioiTinh,
+          hv.nganhDaoTaoThacSi,
+          hv.dinhHuongChuyenSau,
+          hv.hocPhanDuocMien,
+        ],
+        headers: [
+          "TT",
+          "Số hồ sơ",
+          "Họ tên thí sinh",
+          "Ngày sinh",
+          "Giới tính",
+          "Chuyên ngành,\nchương trình đào tạo",
+          "Định hướng chuyên sâu\n(nếu có)",
+          "Danh sách học phần được miễn",
+        ],
+      );
+
+      final spacing = pw.Divider(
+        height: 5 * PdfPageFormat.mm,
+        borderStyle: pw.BorderStyle.none,
+      );
+      return pw.Column(
+        mainAxisAlignment: pw.MainAxisAlignment.start,
+        children: [
+          header,
+          spacing,
+          title,
+          spacing,
+          pw.Divider(
+            height: 2.5 * PdfPageFormat.mm,
+            borderStyle: pw.BorderStyle.none,
+          ),
+          tbl,
+          spacing,
+          footer,
+        ],
+      );
+    },
+  );
+
+  doc.addPage(page);
+
+  final file = File(
+    p.join(
+      saveDirectory,
+      "Bảng 4 tổng hợp cn-ths.pdf",
+    ),
+  );
+  await file.writeAsBytes(await doc.save());
+  return doc;
+}
+
+Future<void> saveBienBanTuyenSinh({
+  required String saveDirectory,
+  required List<HocVien> listCandidates,
+  required TieuBanXetTuyen tb,
+}) async {
+  List<HocVien> candidatesXt = [
+    for (final c in listCandidates)
+      if (c.idDienTuyenSinh == DienTuyenSinh.xetTuyen) c
+  ];
+
+  List<HocVien> candidatesCnThs = [
+    for (final c in listCandidates)
+      if (c.idDienTuyenSinh == DienTuyenSinh.tichHop) c
+  ];
+
+  await _buildBang2DanhSachThiSinh(
+    candidates: candidatesXt,
+    saveDirectory: saveDirectory,
+    year: tb.nam,
+  );
+  await _buildBang3NhanXet(
+    candidates: candidatesXt,
+    saveDirectory: saveDirectory,
+    gv: await tb.chuTich,
+    role: "Chủ tịch tiểu ban",
+    year: tb.nam,
+  );
+  await _buildBang3NhanXet(
+    candidates: candidatesXt,
+    saveDirectory: saveDirectory,
+    gv: await tb.thuKy,
+    role: "Thư ký tiểu ban",
+    year: tb.nam,
+  );
+  await _buildBang3NhanXet(
+    candidates: candidatesXt,
+    saveDirectory: saveDirectory,
+    gv: await tb.uyVien1,
+    role: "Ủy viên",
+    year: tb.nam,
+  );
+  await _buildBang3NhanXet(
+    candidates: candidatesXt,
+    saveDirectory: saveDirectory,
+    gv: await tb.uyVien2,
+    role: "Ủy viên",
+    year: tb.nam,
+  );
+  await _buildBang3NhanXet(
+    candidates: candidatesXt,
+    saveDirectory: saveDirectory,
+    gv: await tb.uyVien3,
+    role: "Ủy viên",
+    year: tb.nam,
+  );
+  await _buildBang4TongHopKq(
+    candidates: candidatesXt,
+    saveDirectory: saveDirectory,
+    year: tb.nam,
+  );
+  await _buildBang4TongHopCnths(
+    candidates: candidatesCnThs,
+    saveDirectory: saveDirectory,
+    year: tb.nam,
+  );
 }

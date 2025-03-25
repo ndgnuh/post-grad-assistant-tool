@@ -16,8 +16,8 @@ class _FormState extends ChangeNotifier {
   TextEditingController hoTen = TextEditingController();
   TextEditingController dienThoai = TextEditingController();
   TextEditingController email = TextEditingController();
-  EzSelectionController<String?> gioiTinh = EzSelectionController(
-    values: ["Nam", "Nữ"],
+  EzSelectionController<GioiTinh?> gioiTinh = EzSelectionController(
+    values: GioiTinh.values,
   );
   TextEditingController noiSinh = TextEditingController();
   TextEditingController truongTotNghiepDaiHoc = TextEditingController();
@@ -37,13 +37,7 @@ class _FormState extends ChangeNotifier {
   EzController<String> idTieuBanXetTuyen = EzController();
   _FormMode mode = _FormMode.create;
 
-  _FormState() {
-    Repository.allDienTuyenSinh().then((data) {
-      dienTuyenSinh.values = data;
-      dienTuyenSinh.value = data.isEmpty ? null : data.first;
-      notifyListeners();
-    });
-  }
+  _FormState() {}
 
   void toUpdateMode() {
     mode = _FormMode.create;
@@ -66,7 +60,7 @@ class _FormState extends ChangeNotifier {
     ngaySinh.value = hv.ngaySinh;
     dienThoai.text = hv.dienThoai ?? "";
     email.text = hv.email ?? "";
-    gioiTinh.value = hv.gioiTinh ?? "";
+    gioiTinh.value = hv.gioiTinh;
     noiSinh.text = hv.noiSinh ?? "";
     truongTotNghiepDaiHoc.text = hv.truongTotNghiepDaiHoc ?? "";
     nganhTotNghiepDaiHoc.text = hv.nganhTotNghiepDaiHoc ?? "";
@@ -88,7 +82,7 @@ class _FormState extends ChangeNotifier {
       "hoTen": hoTen.text,
       "dienThoai": dienThoai.text,
       "email": email.text,
-      "gioiTinh": gioiTinh.value,
+      "gioiTinh": gioiTinh.value?.value,
       "noiSinh": noiSinh.text,
       "truongTotNghiepDaiHoc": truongTotNghiepDaiHoc.text,
       "nganhTotNghiepDaiHoc": nganhTotNghiepDaiHoc.text,
@@ -98,7 +92,7 @@ class _FormState extends ChangeNotifier {
       "ngayTotNghiepDaiHoc": ngayTotNghiepDaiHoc.value?.toYmd(),
       "dinhHuongChuyenSau": dinhHuongChuyenSau.text,
       "hocPhanDuocMien": hocPhanDuocMien.text,
-      "idDienTuyenSinh": dienTuyenSinh.value?.id,
+      "idDienTuyenSinh": dienTuyenSinh.value?.value,
       "idTieuBanXetTuyen": tb.id,
     };
     for (final key in data.keys) {
@@ -108,7 +102,7 @@ class _FormState extends ChangeNotifier {
         _ => data[key],
       };
     }
-    await student?.update(data);
+    await student?.update();
   }
 
   void reset() {
@@ -162,7 +156,7 @@ class _FormState extends ChangeNotifier {
         "dinhHuongChuyenSau": dinhHuongChuyenSau.text,
         "hocPhanDuocMien": hocPhanDuocMien.text,
         "nganhDaoTaoThacSi": nganhDaoTaoThacSi.text,
-        "idDienTuyenSinh": dienTuyenSinh.value?.id,
+        "idDienTuyenSinh": dienTuyenSinh.value?.value,
         "maTrangThai": "xt",
       };
       for (final key in data.keys) {
@@ -216,31 +210,25 @@ class _State extends ChangeNotifier {
   );
 
   _State() {
-    futureListCandidate.then((data) {
-      listCandidate = data;
-      notifyListeners();
-    });
-    Repository.allTieuBanXetTuyen().then((data) {
-      tieuBanXetTuyen.values = data;
-      if (data.isNotEmpty) {
-        tieuBanXetTuyen.value = data.last;
-      } else {
-        tieuBanXetTuyen.value = null;
-      }
-      notifyListeners();
-    });
+    initState().then((_) => notifyListeners());
+  }
+
+  Future<void> initState() async {
+    final prefs = await SharedPreferences.getInstance();
+    saveDirectory.value = prefs.getString(xetTuyenStoragePath);
+    listCandidate = await futureListCandidate;
+    final tbxt = await Repository.allTieuBanXetTuyen();
+    tieuBanXetTuyen.values = tbxt;
+    if (tbxt.isNotEmpty) {
+      tieuBanXetTuyen.value = tbxt.last;
+    } else {
+      tieuBanXetTuyen.value = null;
+    }
   }
 
   setSaveDirectory(String dir) {
     saveDirectory.value = dir;
     notifyListeners();
-  }
-
-  List<HocVien> get candidatesXetTuyen {
-    return [
-      for (final c in listCandidate)
-        if (c.idDienTuyenSinh != "xt") c
-    ];
   }
 
   Future<void> refresh() async {

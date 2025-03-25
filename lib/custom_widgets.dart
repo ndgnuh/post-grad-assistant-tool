@@ -49,12 +49,12 @@ class EzController<T> extends ChangeNotifier {
 
   /// Create an [EzController] for [DateTime] class.
   /// This controller use [dateFormat] to format the date value to [String].
-  factory EzController.forDateTime({
+  static forDateTime({
     DateTime? date,
     DateFormat? dateFormat,
   }) {
     dateFormat ??= DateFormat("dd/MM/yyyy");
-    return EzController(
+    return EzController<DateTime>(
       value: date,
       labelFormatter: (DateTime? date) {
         return switch (date) {
@@ -145,6 +145,8 @@ class EzDatePicker extends StatelessWidget {
     final valueString = tryFormatHumanDate(value);
     return TextFormField(
       decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.transparent,
         floatingLabelBehavior: FloatingLabelBehavior.always,
         hintText: "Click để chọn",
         labelText: label,
@@ -217,9 +219,15 @@ class EzTextInput extends StatelessWidget {
   final TextInputType? keyboardType;
   final bool enabled;
   final bool readOnly;
+  final FocusNode? focusNode;
+  final List<TextInputFormatter>? inputFormatters;
+  final void Function()? onEditingComplete;
+  final void Function()? onFocus;
+  final void Function()? onUnfocus;
 
   const EzTextInput({
     super.key,
+    this.inputFormatters,
     this.label,
     this.controller,
     this.keyboardType,
@@ -228,34 +236,59 @@ class EzTextInput extends StatelessWidget {
     this.readOnly = false,
     this.placeholder,
     this.value,
+    this.onEditingComplete,
+    this.onUnfocus,
+    this.onFocus,
     this.onSubmitted,
     this.onChanged,
+    this.focusNode,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      onSubmitted: onSubmitted,
-      enabled: enabled,
-      readOnly: readOnly,
-      maxLines: multiline ? null : 1,
-      keyboardType: multiline ? TextInputType.multiline : keyboardType,
-      controller: controller,
-      onChanged: (String? text) {
-        Future.delayed(Duration.zero, () {
-          switch (onChanged) {
-            case ValueChanged<String?> callback:
-              callback(text);
-          }
-        });
+    return Focus(
+      focusNode: focusNode,
+      onFocusChange: (bool? focused) {
+        if (focused == false && focusNode != null) {
+          final ftg = FocusTraversalGroup.of(context);
+          ftg.next(focusNode as FocusNode);
+        }
+        switch ((focused, onFocus, onUnfocus)) {
+          case (true, Function() callback, _):
+            callback();
+          case (false, _, Function() callback):
+            callback();
+          default:
+        }
       },
-      decoration: InputDecoration(
-        hintText: placeholder,
-        labelText: label,
-        floatingLabelBehavior: switch (placeholder) {
-          null => FloatingLabelBehavior.auto,
-          _ => FloatingLabelBehavior.always
+      child: TextFormField(
+        inputFormatters: inputFormatters,
+        onEditingComplete: onEditingComplete,
+        enabled: enabled,
+        readOnly: readOnly,
+        maxLines: multiline ? null : 1,
+        keyboardType: multiline ? TextInputType.multiline : keyboardType,
+        controller: controller,
+        onChanged: (String? text) {
+          Future.delayed(Duration.zero, () {
+            switch (onChanged) {
+              case ValueChanged<String?> callback:
+                callback(text);
+            }
+          });
         },
+        decoration: InputDecoration(
+          // Transparent fill makes the widget
+          // align with everything else
+          filled: true,
+          fillColor: Colors.transparent,
+          hintText: placeholder,
+          labelText: label,
+          floatingLabelBehavior: switch (placeholder) {
+            null => FloatingLabelBehavior.auto,
+            _ => FloatingLabelBehavior.always
+          },
+        ),
       ),
     );
   }
@@ -305,6 +338,92 @@ Flex VBox({List<int>? flex, required List<Widget> children}) {
         )
     ],
   );
+}
+
+class EzFlex extends StatelessWidget {
+  final Axis direction;
+  final List<int>? flex;
+  final List<Widget> children;
+  final double spacing;
+  final EdgeInsetsGeometry? margin;
+  final MainAxisAlignment mainAxisAlignment;
+  final CrossAxisAlignment crossAxisAlignment;
+
+  const EzFlex({
+    super.key,
+    required this.direction,
+    required this.children,
+    this.flex,
+    this.spacing = 10.0,
+    this.margin,
+    this.mainAxisAlignment = MainAxisAlignment.start,
+    this.crossAxisAlignment = CrossAxisAlignment.center,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: margin ?? EdgeInsets.all(spacing),
+      child: Flex(
+        spacing: spacing,
+        mainAxisAlignment: mainAxisAlignment,
+        crossAxisAlignment: crossAxisAlignment,
+        direction: direction,
+        children: [
+          for (final (i, child) in children.indexed)
+            Flexible(
+              fit: FlexFit.tight,
+              flex: flex?[i] ?? 1,
+              child: Container(
+                child: child,
+              ),
+            )
+        ],
+      ),
+    );
+  }
+}
+
+class EzFixed extends StatelessWidget {
+  final Axis direction;
+  final List<Widget> children;
+  final double spacing;
+  final EdgeInsetsGeometry? margin;
+  final MainAxisAlignment mainAxisAlignment;
+  final CrossAxisAlignment crossAxisAlignment;
+
+  const EzFixed({
+    super.key,
+    required this.direction,
+    required this.children,
+    this.spacing = 10.0,
+    this.margin,
+    this.mainAxisAlignment = MainAxisAlignment.start,
+    this.crossAxisAlignment = CrossAxisAlignment.center,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final layout = switch (direction) {
+      Axis.horizontal => Row(
+          spacing: spacing,
+          mainAxisAlignment: mainAxisAlignment,
+          crossAxisAlignment: crossAxisAlignment,
+          children: children,
+        ),
+      Axis.vertical => Column(
+          spacing: spacing,
+          mainAxisAlignment: mainAxisAlignment,
+          crossAxisAlignment: crossAxisAlignment,
+          children: children,
+        ),
+    };
+
+    return Container(
+      padding: margin ?? EdgeInsets.all(spacing),
+      child: layout,
+    );
+  }
 }
 
 /// Quicky create a [Flex] with horizontal direction and wrap the [children] in [Flexible]
@@ -388,6 +507,7 @@ class EzDropdown<T> extends StatefulWidget {
   final T? initialSelection;
   final EzSelectionController<T> controller;
   final ValueChanged<T?>? onSelected;
+  final FocusNode? focusNode;
 
   const EzDropdown({
     super.key,
@@ -397,6 +517,7 @@ class EzDropdown<T> extends StatefulWidget {
     this.label,
     this.initialSelection,
     this.onSelected,
+    this.focusNode,
   });
 
   static Widget fullWidth<T>({
@@ -406,6 +527,7 @@ class EzDropdown<T> extends StatefulWidget {
     label,
     initialSelection,
     onSelected,
+    focusNode,
   }) {
     return LayoutBuilder(
       builder: (context, constraint) {
@@ -416,6 +538,7 @@ class EzDropdown<T> extends StatefulWidget {
           label: label,
           initialSelection: initialSelection,
           onSelected: onSelected,
+          focusNode: focusNode,
         );
       },
     );
@@ -450,20 +573,23 @@ class _EzDropdownState<T> extends State<EzDropdown<T>> {
       for (final (i, value) in values.indexed)
         DropdownMenuEntry(value: value, label: labels[i])
     ];
-    return DropdownMenu<T?>(
-      controller: widget.controller.labelController,
-      onSelected: (T? value) {
-        widget.controller.value = value;
-        switch (widget.onSelected) {
-          case ValueChanged<T?> callback:
-            callback(value);
-        }
-      },
-      initialSelection: widget.initialSelection,
-      width: widget.width,
-      label: widget.label == null ? null : Text(widget.label as String),
-      enableFilter: true,
-      dropdownMenuEntries: entries,
+    return Focus(
+      focusNode: widget.focusNode,
+      child: DropdownMenu<T?>(
+        controller: widget.controller.labelController,
+        onSelected: (T? value) {
+          widget.controller.value = value;
+          switch (widget.onSelected) {
+            case ValueChanged<T?> callback:
+              callback(value);
+          }
+        },
+        initialSelection: widget.initialSelection,
+        width: widget.width,
+        label: widget.label == null ? null : Text(widget.label as String),
+        enableFilter: true,
+        dropdownMenuEntries: entries,
+      ),
     );
   }
 }
@@ -685,12 +811,16 @@ class EzTable<T> extends StatelessWidget {
   final List<T> data;
   final List<Object?> Function(int, T) rowBuilder;
   final Color? headerForeground;
+  final Map<int, TableColumnWidth>? columnWidths;
+  final Map<int, Alignment>? alignments;
 
   const EzTable({
     super.key,
+    required this.headers,
     required this.data,
     required this.rowBuilder,
-    required this.headers,
+    this.columnWidths,
+    this.alignments,
     this.textAligns,
     this.border,
     this.padding = const EdgeInsetsDirectional.symmetric(
@@ -726,6 +856,7 @@ class EzTable<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Table(
+      columnWidths: columnWidths,
       border: border ?? TableBorder.all(),
       children: [
         // Headers
@@ -741,7 +872,7 @@ class EzTable<T> extends StatelessWidget {
                   Widget widget => widget,
                   _ => Container(
                       padding: padding,
-                      alignment: Alignment.center,
+                      alignment: alignments?[colCount] ?? Alignment.center,
                       child: Text(
                         data?.toString() ?? "",
                         softWrap: dataWrap,
@@ -753,5 +884,47 @@ class EzTable<T> extends StatelessWidget {
           ),
       ],
     );
+  }
+}
+
+abstract class EzPage<T extends ChangeNotifier> extends StatelessWidget {
+  const EzPage({super.key});
+
+  /// Returns the page's name, this will be displayed on the [AppBar]
+  String get pageName;
+
+  /// Build the body widget
+  Widget buildBody(BuildContext context);
+
+  /// Page state
+  T createState(BuildContext context);
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<T>(
+      create: createState,
+      child: Scaffold(
+        body: Builder(builder: buildBody),
+        appBar: AppBar(
+          leading: BackButton(),
+          title: Text(pageName),
+        ),
+      ),
+    );
+  }
+}
+
+/// Set controller value, supports
+/// [TextEditingController], [EzController], [EzSEzSelectionController],
+void setControllerValue(ChangeNotifier controller, Object? value) {
+  switch ((controller, value)) {
+    case (TextEditingController c, String? v):
+      c.text = v ?? "";
+    case (EzController c, Object? v):
+      c.value = v;
+    case (EzSelectionController c, Object? v):
+      c.value = v;
+    default:
+      throw "Unsupported controller";
   }
 }
