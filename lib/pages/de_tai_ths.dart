@@ -3,8 +3,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-import '../datamodels.dart';
+// import '../datamodels.dart';
 import '../custom_widgets.dart';
+import '../business/domain_objects.dart';
 import '../business/giao_de_tai.dart';
 
 const _defaultPadding = EdgeInsets.symmetric(vertical: 5, horizontal: 10);
@@ -16,14 +17,8 @@ String labelFormatter(GiangVien? gv) {
 class _State extends ChangeNotifier {
   List<DeTaiThacSi> listDeTai = [];
   final Set<DeTaiThacSi> selectedDeTai = {};
-  final Map<DeTaiThacSi, GiangVien> mapDeTaiGiangVien = {};
-
-  // Pagination state
-  int page = 0;
-  int total = 0;
-  final int perpage = 10;
-  int get offset => page * perpage;
-  int get totalPage => (total / perpage).round();
+  final Map<DeTaiThacSi, GiangVien> mapGiangVien = {};
+  final Map<DeTaiThacSi, HocVien?> mapHocVien = {};
 
   final TextEditingController searchDeTai = TextEditingController();
   final EzSelectionController<GiangVien> searchGiangVien =
@@ -52,26 +47,17 @@ class _State extends ChangeNotifier {
   Future<void> refresh({
     bool resetPage = false,
   }) async {
-    if (resetPage) {
-      total = await Repository.countDeTai(
-        name: searchDeTai.text,
-        idGiangVien: searchGiangVien.value?.id,
-      );
-      page = 0;
-    }
-
-    final listGv = await Repository.searchGiangVien();
+    final listGv = await GiangVien.all();
     searchGiangVien.values = listGv;
     giangVien.values = listGv;
-    listDeTai = await Repository.searchDeTai(
+    listDeTai = await DeTaiThacSi.search(
       name: searchDeTai.text,
       idGiangVien: searchGiangVien.value?.id,
-      limit: perpage,
-      offset: offset,
     );
 
     for (final deTai in listDeTai) {
-      mapDeTaiGiangVien[deTai] = await deTai.giangVien;
+      mapGiangVien[deTai] = await deTai.giangVien;
+      mapHocVien[deTai] = await deTai.hocVien;
     }
     notifyListeners();
   }
@@ -81,7 +67,7 @@ class _State extends ChangeNotifier {
       idGiangVien: giangVien.value!.id,
       tenTiengViet: tenTiengViet.text,
       tenTiengAnh: tenTiengAnh.text,
-    ).insert();
+    ).create();
     tenTiengViet.text = "";
     tenTiengAnh.text = "";
     await refresh();
@@ -91,7 +77,7 @@ class _State extends ChangeNotifier {
   void edit(DeTaiThacSi dt) {
     tenTiengViet.text = dt.tenTiengViet;
     tenTiengAnh.text = dt.tenTiengAnh;
-    giangVien.value = mapDeTaiGiangVien[dt];
+    giangVien.value = mapGiangVien[dt];
   }
 
   void select(DeTaiThacSi dt) {
@@ -104,35 +90,9 @@ class _State extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _delete() async {
-    final db = await getDefaultDatabase();
-    // TODO: add delete method
-    // dt.delete(db)
-    await Future.wait([
-      for (final dt in selectedDeTai) Future.delayed(Duration(microseconds: 1))
-    ]);
-    await db.close();
-    refresh();
-  }
+  Future<void> _delete() async {}
 
-  Function()? get fnDelete {
-    if (selectedDeTai.isEmpty) {
-      return null;
-    }
-    return _delete;
-  }
-
-  Future<void> _update() async {
-    final db = await getDefaultDatabase();
-    final deTaiNew = selectedDeTai.single.copyWith(
-      idGiangVien: giangVien.value!.id,
-      tenTiengViet: tenTiengViet.text,
-      tenTiengAnh: tenTiengAnh.text,
-    );
-    // TODO: update de tai
-    await db.close();
-    refresh();
-  }
+  Future<void> _update() async {}
 
   Function()? get fnUpdate {
     if (selectedDeTai.length != 1 || giangVien.value == null) {
@@ -151,28 +111,6 @@ class _State extends ChangeNotifier {
     return addDeTai;
   }
 
-  Function()? get fnPrevPage {
-    if (page == 0) {
-      return null;
-    }
-    return () async {
-      page = page - 1;
-      await refresh();
-      notifyListeners();
-    };
-  }
-
-  Function()? get fnNextPage {
-    if (page == totalPage) {
-      return null;
-    }
-    return () async {
-      page = page + 1;
-      await refresh();
-      notifyListeners();
-    };
-  }
-
   _exportDanhSachDeTai({
     required String extention,
     required exporter,
@@ -184,9 +122,7 @@ class _State extends ChangeNotifier {
 
     switch (outputFile) {
       case String outputFile:
-        final data = await Repository.searchDeTai(
-          limit: 9999999,
-        );
+        final data = listDeTai;
         await exporter(
           outputPath: outputFile,
           listDeTaiThacSi: data,
@@ -210,6 +146,63 @@ class _State extends ChangeNotifier {
 
   _State() {
     refresh(resetPage: true);
+  }
+}
+
+class _DeTaiSource extends DataTableSource {
+  final _State state;
+  _DeTaiSource(this.state);
+
+  @override
+  DataRow? getRow(int index) {
+    final deTai = state.listDeTai[index];
+    final giangVien = state.mapGiangVien[deTai] as GiangVien;
+    final hocVien = state.mapHocVien[deTai];
+    return DataRow(cells: [
+      DataCell(Text(giangVien.hoTenChucDanh)),
+      DataCell(Text(deTai.tenTiengViet)),
+      DataCell(Text(hocVien?.hoTen ?? "-")),
+      DataCell(Text(deTai.hanBaoVe?.toString() ?? "-")),
+      DataCell(TextButton(
+        onPressed: null,
+        child: Text("Sửa"),
+      )),
+    ]);
+  }
+
+  @override
+  int get rowCount => state.listDeTai.length;
+
+  @override
+  int get selectedRowCount => 0;
+  @override
+  bool get isRowCountApproximate => false;
+}
+
+class _TableDeTai extends StatelessWidget {
+  final _columns = [
+    ("Giảng viên", IntrinsicColumnWidth()),
+    ("Tên đề tài", FlexColumnWidth(1)),
+    ("Giao cho", IntrinsicColumnWidth()),
+    ("Hạn bảo vệ", IntrinsicColumnWidth()),
+    ("", IntrinsicColumnWidth()),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final state = Provider.of<_State>(context);
+    final columns = [
+      for (final (column, columnWidth) in _columns)
+        DataColumn(
+          label: Text(column),
+          columnWidth: columnWidth,
+        )
+    ];
+    return PaginatedDataTable(
+      rowsPerPage: 20,
+      columns: columns,
+      source: _DeTaiSource(state),
+    );
   }
 }
 
@@ -257,79 +250,13 @@ class PageQuanLyDeTai extends EzPage<_State> {
                 ),
               ],
             ),
-            Consumer<_State>(
-              builder: (context, state, child) {
-                return EzFlex(
-                  margin: EdgeInsets.all(0),
-                  direction: Axis.horizontal,
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: state.fnPrevPage,
-                      label: Text("Trang trước"),
-                      icon: Icon(Icons.arrow_left),
-                    ),
-                    ElevatedButton.icon(
-                      onPressed: state.fnNextPage,
-                      label: Text("Trang sau"),
-                      icon: Icon(Icons.arrow_right),
-                    ),
-                  ],
-                );
-              },
-            ),
             Expanded(
-              child: SingleChildScrollView(
-                child: Consumer<_State>(
-                  builder: (context, state, _) {
-                    return EzTable<DeTaiThacSi>(
-                      padding: EdgeInsetsDirectional.all(10),
-                      columnWidths: {
-                        0: IntrinsicColumnWidth(),
-                        1: IntrinsicColumnWidth(),
-                        4: IntrinsicColumnWidth(),
-                        5: IntrinsicColumnWidth(),
-                      },
-                      alignments: {
-                        1: Alignment.centerLeft,
-                        2: Alignment.centerLeft,
-                        3: Alignment.centerLeft,
-                      },
-                      headers: [
-                        "TT",
-                        "Giảng viên",
-                        "Tên tiếng Việt",
-                        "Tên tiếng Anh",
-                        Checkbox(value: false, onChanged: (_) {}),
-                        "",
-                      ],
-                      data: state.listDeTai,
-                      rowBuilder: (int i, DeTaiThacSi dt) {
-                        return [
-                          (state.offset + i + 1).toString(),
-                          state.mapDeTaiGiangVien[dt]?.hoTenChucDanh.toString(),
-                          dt.tenTiengViet,
-                          dt.tenTiengAnh,
-                          Checkbox(
-                            value: state.selectedDeTai.contains(dt),
-                            onChanged: (bool? sel) {
-                              if (sel == true) {
-                                state.select(dt);
-                              } else {
-                                state.deselect(dt);
-                              }
-                            },
-                          ),
-                          IconButton(
-                            onPressed: () => state.edit(dt),
-                            icon: Icon(
-                              Icons.edit_rounded,
-                            ),
-                          ),
-                        ];
-                      },
-                    );
-                  },
-                ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _TableDeTai(),
+                  ),
+                ],
               ),
             ),
           ],
@@ -371,7 +298,7 @@ class PageQuanLyDeTai extends EzPage<_State> {
               ),
               ElevatedButton(
                 focusNode: FocusNode(),
-                onPressed: state.fnDelete,
+                onPressed: null,
                 child: Text("Xóa"),
                 statesController: state.deleteButtonController,
               ),

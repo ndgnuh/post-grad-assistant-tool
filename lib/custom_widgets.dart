@@ -208,6 +208,13 @@ class _EzCheckBoxState extends State<EzCheckBox> {
   }
 }
 
+extension NonEmptyValue on TextEditingController {
+  String? get nonEmptyValue {
+    final txt = text.trim();
+    return txt.isEmpty ? null : txt;
+  }
+}
+
 class EzTextInput extends StatelessWidget {
   final String? label;
   final String? placeholder;
@@ -220,6 +227,7 @@ class EzTextInput extends StatelessWidget {
   final bool enabled;
   final bool readOnly;
   final FocusNode? focusNode;
+  final IconData? icon;
   final List<TextInputFormatter>? inputFormatters;
   final void Function()? onEditingComplete;
   final void Function()? onFocus;
@@ -242,6 +250,7 @@ class EzTextInput extends StatelessWidget {
     this.onSubmitted,
     this.onChanged,
     this.focusNode,
+    this.icon,
   });
 
   @override
@@ -267,6 +276,7 @@ class EzTextInput extends StatelessWidget {
         enabled: enabled,
         readOnly: readOnly,
         maxLines: multiline ? null : 1,
+        onFieldSubmitted: onSubmitted,
         keyboardType: multiline ? TextInputType.multiline : keyboardType,
         controller: controller,
         onChanged: (String? text) {
@@ -280,6 +290,7 @@ class EzTextInput extends StatelessWidget {
         decoration: InputDecoration(
           // Transparent fill makes the widget
           // align with everything else
+          prefixIcon: (icon != null) ? Icon(icon) : null,
           filled: true,
           fillColor: Colors.transparent,
           hintText: placeholder,
@@ -363,7 +374,7 @@ class EzFlex extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: margin ?? EdgeInsets.all(spacing),
+      padding: margin ?? EdgeInsets.all(0),
       child: Flex(
         spacing: spacing,
         mainAxisAlignment: mainAxisAlignment,
@@ -388,7 +399,7 @@ class EzFixed extends StatelessWidget {
   final Axis direction;
   final List<Widget> children;
   final double spacing;
-  final EdgeInsetsGeometry? margin;
+  final EdgeInsetsGeometry margin;
   final MainAxisAlignment mainAxisAlignment;
   final CrossAxisAlignment crossAxisAlignment;
 
@@ -397,7 +408,7 @@ class EzFixed extends StatelessWidget {
     required this.direction,
     required this.children,
     this.spacing = 10.0,
-    this.margin,
+    this.margin = const EdgeInsets.all(0),
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.center,
   });
@@ -420,7 +431,7 @@ class EzFixed extends StatelessWidget {
     };
 
     return Container(
-      padding: margin ?? EdgeInsets.all(spacing),
+      padding: margin,
       child: layout,
     );
   }
@@ -664,11 +675,12 @@ class EzLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = ColorScheme.of(context);
     return RichText(
       text: TextSpan(
         children: [
           TextSpan(
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: theme.primary),
             text: text,
             recognizer: TapGestureRecognizer()..onTap = onPressed,
           ),
@@ -691,7 +703,6 @@ class EzCopy extends StatelessWidget {
       text: TextSpan(
         children: [
           TextSpan(
-            style: TextStyle(color: Colors.black),
             text: text,
             recognizer: TapGestureRecognizer()
               ..onTap = () async {
@@ -767,6 +778,8 @@ class EzFilePicker extends StatelessWidget {
       },
       decoration: InputDecoration(
         labelText: label,
+        filled: true,
+        fillColor: Colors.transparent,
         hintText: hintText ?? "Tap to select a file",
         floatingLabelBehavior: FloatingLabelBehavior.always,
       ),
@@ -912,6 +925,31 @@ abstract class EzPage<T extends ChangeNotifier> extends StatelessWidget {
       ),
     );
   }
+}
+
+class FutureTextState extends State<FutureText> {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: widget.create(),
+      builder: (context, state) {
+        switch (state.connectionState) {
+          case ConnectionState.done:
+            return Text(state.data ?? "");
+          default:
+            return CircularProgressIndicator();
+        }
+      },
+    );
+  }
+}
+
+class FutureText extends StatefulWidget {
+  Future<String> Function() create;
+  FutureText({required this.create, super.key});
+
+  @override
+  State<FutureText> createState() => FutureTextState();
 }
 
 /// Set controller value, supports

@@ -145,14 +145,13 @@ class _EditPanel extends StatelessWidget {
           EzFlex(
             direction: Axis.horizontal,
             margin: EdgeInsets.all(0),
-            flex: [1, 0],
             children: [
               EzTextInput(
                 label: "ID lớp đang sửa",
                 placeholder: "${edit.id}",
                 readOnly: true,
               ),
-              ElevatedButton.icon(
+              OutlinedButton.icon(
                 label: Text("Hủy"),
                 onPressed: () => model.unedit(),
                 icon: Icon(Icons.delete),
@@ -188,23 +187,23 @@ class _EditPanel extends StatelessWidget {
           controller: model.editTrangThai,
         ),
         if (edit == null)
-          ElevatedButton.icon(
+          OutlinedButton.icon(
             onPressed: () {} /* TODO */,
             label: Text("Thêm"),
             icon: Icon(Icons.add),
           )
         else
-          ElevatedButton.icon(
+          OutlinedButton.icon(
             onPressed: () => model.update(),
             label: Text("Cập nhật"),
             icon: Icon(Icons.edit),
           ),
-        ElevatedButton.icon(
+        OutlinedButton.icon(
           onPressed: () {} /* TODO */,
           label: Text("Import file đăng ký"),
           icon: Icon(Icons.upload),
         ),
-        ElevatedButton.icon(
+        OutlinedButton.icon(
           onPressed: () {} /* TODO */,
           label: Text("Export file phân công"),
           icon: Icon(Icons.download),

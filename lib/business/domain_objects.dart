@@ -14,6 +14,10 @@ import '../services/sqlbuilder/sqlbuilder.dart';
 part 'domain_objects.freezed.dart';
 part 'domain_objects.g.dart';
 
+List<T?> prependNull<T>(List<T> values) {
+  return [null, for (final value in values) value];
+}
+
 @JsonEnum(valueField: "value")
 enum TrangThaiLopTinChi {
   huy(1),
@@ -39,6 +43,36 @@ enum TrangThaiHocVien {
   final String value;
   final String label;
   const TrangThaiHocVien(this.value, this.label);
+
+  @override
+  toString() => label;
+}
+
+@JsonEnum(valueField: "value")
+enum HocHam {
+  gs("GS", "GS.", "Giáo sư"),
+  pgs("PGS", "PGS.", "Phó giáo sư");
+
+  final String value;
+  final String short;
+  final String label;
+  const HocHam(this.value, this.short, this.label);
+
+  @override
+  toString() => label;
+}
+
+@JsonEnum(valueField: "value")
+enum HocVi {
+  kySu('KS', "KS.", 'Kỹ sư'),
+  thacSi('ThS', "ThS.", 'Thạc sĩ'),
+  tienSi('TS', "TS.", 'Tiến sĩ'),
+  tienSiKhoaHoc('TSKH', "TSKH.", 'Tiến sĩ khoa học');
+
+  final String value;
+  final String short;
+  final String label;
+  const HocVi(this.value, this.short, this.label);
 
   @override
   toString() => label;
@@ -94,6 +128,15 @@ enum DienTuyenSinh {
   toString() => label;
 }
 
+class BoolIntSerializer implements JsonConverter<bool, int?> {
+  const BoolIntSerializer();
+
+  @override
+  bool fromJson(int? i) => (i != 0);
+  @override
+  int? toJson(bool b) => (b == true) ? 1 : 0;
+}
+
 class DateSerializer implements JsonConverter<DateTime?, String?> {
   const DateSerializer();
 
@@ -122,6 +165,20 @@ class DateSerializer implements JsonConverter<DateTime?, String?> {
   }
 }
 
+Map<String, Object?> _sanitize(Map<String, Object?> data) {
+  Map<String, Object?> ret = {};
+  for (final key in data.keys) {
+    final value = data[key];
+    switch (value) {
+      case String svalue:
+        ret[key] = svalue.trim();
+      default:
+        ret[key] = value;
+    }
+  }
+  return ret;
+}
+
 Future<void> _commitValue<T>({
   required String table,
   required String idField,
@@ -133,10 +190,26 @@ Future<void> _commitValue<T>({
   return dbSession((db) async {
     db.update(
       table,
-      data,
+      _sanitize(data),
       where: "$idField = ?",
       whereArgs: [id],
     );
+  });
+}
+
+Future<T> _getById<T>({
+  required Object id,
+  required String table,
+  required String idField,
+  required T Function(Map<String, Object?>) fromJson,
+}) async {
+  return dbSession((db) async {
+    final rows = await db.query(
+      table,
+      where: "$idField = ?",
+      whereArgs: [id],
+    );
+    return fromJson(rows.single);
   });
 }
 
@@ -148,7 +221,7 @@ Future<void> _create<T>({
   final data = toJson();
   data.remove(idField);
   return dbSession((db) async {
-    db.insert(table, data);
+    db.insert(table, _sanitize(data));
   });
 }
 
@@ -166,7 +239,9 @@ Future<void> _delete<T>({
 @freezed
 class GiangVien with _$GiangVien {
   static const table = "GiangVien";
+  static const idField = "id";
   const GiangVien._();
+
   factory GiangVien({
     required int id,
     required String hoTen,
@@ -174,8 +249,8 @@ class GiangVien with _$GiangVien {
     String? donVi,
     String? chuyenNganh,
     GioiTinh? gioiTinh,
-    String? hocHam,
-    String? hocVi,
+    HocHam? hocHam,
+    HocVi? hocVi,
     int? namNhanTs,
     String? sdt,
     String? email,
@@ -191,29 +266,49 @@ class GiangVien with _$GiangVien {
   factory GiangVien.fromJson(Map<String, dynamic> json) =>
       _$GiangVienFromJson(json);
 
-  // Tìm giảng viên theo ID trong DB
-  static Future<GiangVien?> getById(id) async {
-    final query = SelectQuery()
-      ..from(GiangVien.table)
-      ..where("id = ?", [id])
-      ..selectAll();
-    final sql = query.build();
-    return dbSession((Database db) async {
-      final rows = await db.rawQuery(sql);
-      if (rows.isEmpty) {
-        return null;
-      } else {
-        return GiangVien.fromJson(rows.single);
-      }
+  // Tất cả giảng viên
+  static Future<List<GiangVien>> all() async {
+    return dbSession((db) async {
+      final rows = await db.query(table);
+      return [for (final json in rows) GiangVien.fromJson(json)];
     });
   }
+
+  // Tất cả giảng viên
+  static Future<List<GiangVien>> search(String? searchKeyword) async {
+    final query = SelectQuery()
+      ..from(table)
+      ..selectAll();
+
+    if (searchKeyword != null && searchKeyword != "") {
+      final like = "%$searchKeyword%";
+      query.where(
+        "hoTen like ? OR email like ? OR sdt like ? or stk like ? or MST like ?",
+        [like, like, like, like, like],
+      );
+    }
+
+    final sql = query.build();
+    return dbSession((db) async {
+      final rows = await db.rawQuery(sql);
+      return [for (final json in rows) GiangVien.fromJson(json)];
+    });
+  }
+
+  // CRUDs
+  static Future<GiangVien> getById(id) => _getById(
+      id: id, table: table, idField: idField, fromJson: GiangVien.fromJson);
+  Future<void> create() =>
+      _create(table: table, idField: idField, toJson: toJson);
+  Future<void> update() =>
+      _commitValue(table: table, idField: idField, toJson: toJson);
 
   // Họ tên, học hàm, học vị
   String get hoTenChucDanh {
     return switch ((hocHam, hocVi)) {
-      (String a, String b) => "$a. $b. $hoTen",
-      (String a, null) => "$a. $hoTen",
-      (null, String a) => "$a. $hoTen",
+      (HocHam a, HocVi b) => "${a.short} ${b.short} $hoTen",
+      (HocHam a, null) => "${a.short} $hoTen",
+      (null, HocVi a) => "${a.short} $hoTen",
       _ => hoTen,
     };
   }
@@ -231,17 +326,6 @@ class DangKyHoc with _$DangKyHoc {
 
   factory DangKyHoc.fromJson(Map<String, dynamic> json) =>
       _$DangKyHocFromJson(json);
-}
-
-@freezed
-class HocHam with _$HocHam {
-  static const table = "HocHam";
-  factory HocHam({
-    required String hocHam,
-    required String tenHocHam,
-  }) = _HocHam;
-
-  factory HocHam.fromJson(Map<String, dynamic> json) => _$HocHamFromJson(json);
 }
 
 @freezed
@@ -284,19 +368,10 @@ class HocPhan with _$HocPhan {
 }
 
 @freezed
-class HocVi with _$HocVi {
-  static const table = "HocVi";
-  const factory HocVi({
-    required String hocVi,
-    required String tenHocVi,
-  }) = _HocVi;
-
-  factory HocVi.fromJson(Map<String, dynamic> json) => _$HocViFromJson(json);
-}
-
-@freezed
 class HocVien with _$HocVien {
   static const table = "HocVien";
+  static const idField = "id";
+
   const HocVien._();
   const factory HocVien({
     required int id,
@@ -338,6 +413,8 @@ class HocVien with _$HocVien {
   DienTuyenSinh? get dienTuyenSinh => idDienTuyenSinh;
   TrangThaiHocVien? get trangThai => maTrangThai;
 
+  static Future<HocVien> getById(int id) => _getById(
+      id: id, table: table, idField: idField, fromJson: HocVien.fromJson);
   Future<void> create() =>
       _create(table: HocVien.table, idField: "id", toJson: toJson);
   Future<void> update() =>
@@ -544,13 +621,73 @@ class DeTaiThacSi with _$DeTaiThacSi {
   const DeTaiThacSi._();
 
   static const table = "DeTaiThacSi";
+  static const idField = "id";
+
   const factory DeTaiThacSi({
     int? id,
     required int idGiangVien,
     required String tenTiengViet,
     required String tenTiengAnh,
+    int? idHocVien,
+    int? idChuTich,
+    int? idPhanBien1,
+    int? idPhanBien2,
+    int? idUyVien,
+    int? idThuKy,
+    DateTime? ngayGiao,
+    DateTime? soQdGiao,
+    DateTime? hanBaoVe,
+    DateTime? soQdBaoVe,
+    DateTime? ngayBaoVe,
+    @Default(false) @BoolIntSerializer() bool thanhToan,
+    String? group,
+    int? nam,
   }) = _DeTaiThacSi;
 
   factory DeTaiThacSi.fromJson(Map<String, dynamic> json) =>
       _$DeTaiThacSiFromJson(json);
+
+  static Future<List<DeTaiThacSi>> search({
+    int? idGiangVien,
+    String? name,
+  }) async {
+    final query = SelectQuery()
+      ..from(DeTaiThacSi.table)
+      ..selectAll();
+
+    // Conditional filter
+    if (idGiangVien != null) query.where("idGiangVien = ?", [idGiangVien]);
+
+    // Conditional filter
+    if (name != null && name != "") {
+      query.where(
+        "(tenTiengAnh) LIKE ? OR (tenTiengViet) LIKE ? COLLATE UNICODE",
+        ["%$name%", "%$name%"],
+      );
+    }
+
+    // Actual query
+    final sql = query.build();
+    return dbSession((Database db) async {
+      final rows = await db.rawQuery(sql);
+      return [for (final json in rows) DeTaiThacSi.fromJson(json)];
+    });
+  }
+
+  /// CRUD create
+  Future<void> create() =>
+      _create(table: table, idField: idField, toJson: toJson);
+  Future<void> update() =>
+      _commitValue(table: table, idField: idField, toJson: toJson);
+  Future<void> delete() =>
+      _delete(table: table, idField: idField, toJson: toJson);
+
+  /// Giảng viên hướng dẫn đề tài
+  Future<GiangVien> get giangVien => GiangVien.getById(idGiangVien);
+  Future<HocVien?> get hocVien async {
+    return switch (idHocVien) {
+      null => null,
+      int id => HocVien.getById(id),
+    };
+  }
 }

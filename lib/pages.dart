@@ -1,32 +1,29 @@
 import 'package:flutter/material.dart';
 import 'datamodels.dart';
 
-export 'pages/lop_tin_chi.dart' show PageLopTinChi;
-export 'pages/danh_sach_giang_vien.dart' show DanhSachGiangVien;
-export 'pages/home.dart' show HomePage;
-export 'pages/chi_tiet_giang_vien.dart' show ChiTietGiangVien;
-export 'pages/draft.dart' show DraftPage;
-export 'pages/danh_sach_hoc_phan.dart' show DanhSachHocPhan;
-export 'pages/+phan_cong_do_an.dart' show PagePhanCongDoAn;
-export 'pages/xet_tuyen.dart' show PageXetTuyen;
-export 'pages/de_tai_ths.dart' show PageQuanLyDeTai;
-export 'pages/han_che_hoc_phan.dart' show PageHanCheHocPhan;
-
 import 'pages/lop_tin_chi.dart' show PageLopTinChi;
-import 'pages/danh_sach_giang_vien.dart' show DanhSachGiangVien;
 import 'pages/home.dart' show HomePage;
 import 'pages/chi_tiet_giang_vien.dart' show ChiTietGiangVien;
 import 'pages/draft.dart' show DraftPage;
 import 'pages/danh_sach_hoc_phan.dart' show DanhSachHocPhan;
 import 'pages/+phan_cong_do_an.dart' show PagePhanCongDoAn;
+import 'pages/phan_cong_hoi_dong_lvths.dart'
+    show PagePhanCongHoiDongLuanVanThacSi;
 import 'pages/xet_tuyen.dart' show PageXetTuyen;
+import 'pages/page_xet_tuyen_ncs.dart' show PageXetTuyenNcs;
 import 'pages/de_tai_ths.dart' show PageQuanLyDeTai;
 import 'pages/han_che_hoc_phan.dart' show PageHanCheHocPhan;
+import 'pages/danh_sach_giang_vien.dart' show PageQuanLyGiangVien;
+import 'pages/page_copy_pasta.dart' show PageCopyPasta;
 
-const initialRoute = PageXetTuyen.routeName;
-// const initialRoute = PageQuanLyDeTai.routeName;
+// const initialRoute = PagePhanCongHoiDongLuanVanThacSi.routeName;
+// const initialRoute = PageQuanLyGiangVien.routeName;
+//const initialRoute = PageCopyPasta.routeName;
+// const initialRoute = PageXetTuyen.routeName;
+const initialRoute = PageQuanLyDeTai.routeName;
 // const initialRoute = PageHanCheHocPhan.routeName;
 // const initialRoute = PageLopTinChi.routeName;
+// const initialRoute = "/";
 
 const routes = [
   (
@@ -35,7 +32,7 @@ const routes = [
     icon: Icons.home,
   ),
   (
-    route: DanhSachGiangVien.routeName,
+    route: PageQuanLyGiangVien.routeName,
     label: "Giảng viên",
     icon: Icons.person,
   ),
@@ -61,9 +58,29 @@ const routes = [
     icon: Icons.book,
   ),
   (
+    route: PageQuanLyDeTai.routeName,
+    label: "Quản lý đề tài",
+    icon: Icons.book,
+  ),
+  (
     route: PageXetTuyen.routeName,
     label: "Xét tuyển cao học",
     icon: Icons.person_add,
+  ),
+  (
+    route: PageXetTuyenNcs.routeName,
+    label: "Xét tuyển NCS",
+    icon: PageXetTuyenNcs.icon,
+  ),
+  (
+    route: PagePhanCongHoiDongLuanVanThacSi.routeName,
+    label: "Phân hội đồng bảo vệ",
+    icon: Icons.person_add,
+  ),
+  (
+    route: PageCopyPasta.routeName,
+    label: "Văn mẫu",
+    icon: Icons.book,
   ),
 ];
 
@@ -74,12 +91,12 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (name) {
       case PagePhanCongDoAn.routeName:
         return PagePhanCongDoAn();
-      case DanhSachGiangVien.routeName:
-        return DanhSachGiangVien();
+      case PageQuanLyGiangVien.routeName:
+        return PageQuanLyGiangVien();
       case "/edit/giang-vien":
         return switch (args) {
           (GiangVien gv) => ChiTietGiangVien(gv: gv),
-          _ => const DanhSachGiangVien(),
+          _ => const PageQuanLyGiangVien(),
         };
       case HomePage.routeName:
         return HomePage();
@@ -91,10 +108,16 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
         return DanhSachHocPhan();
       case PageXetTuyen.routeName:
         return PageXetTuyen();
+      case PageXetTuyenNcs.routeName:
+        return PageXetTuyenNcs();
       case PageQuanLyDeTai.routeName:
         return PageQuanLyDeTai();
       case PageHanCheHocPhan.routeName:
         return PageHanCheHocPhan();
+      case PagePhanCongHoiDongLuanVanThacSi.routeName:
+        return PagePhanCongHoiDongLuanVanThacSi();
+      case PageCopyPasta.routeName:
+        return PageCopyPasta();
       default:
         return HomePage();
     }

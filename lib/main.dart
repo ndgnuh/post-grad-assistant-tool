@@ -26,8 +26,50 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = ColorScheme.fromSeed(
+      brightness: Brightness.dark,
+      dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+      seedColor: Colors.black38,
+      primary: Colors.deepOrange,
+    );
+
+    final buttonShape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(5)),
+    );
+    final buttonMinimumSize = Size.fromHeight(50);
+
     return MaterialApp(
       initialRoute: initialRoute,
+      theme: ThemeData(
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            shape: buttonShape,
+            minimumSize: buttonMinimumSize,
+          ),
+        ),
+        searchBarTheme: SearchBarThemeData(
+          constraints: BoxConstraints.tightFor(height: 50),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            shape: buttonShape,
+            minimumSize: buttonMinimumSize,
+            side: BorderSide(color: colorScheme.primary),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            shape: buttonShape,
+            minimumSize: buttonMinimumSize,
+          ),
+        ),
+        colorScheme: colorScheme,
+      ),
       onGenerateRoute: onGenerateRoute,
     );
   }
