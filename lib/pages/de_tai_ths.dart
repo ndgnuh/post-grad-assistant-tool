@@ -51,7 +51,7 @@ class _State extends ChangeNotifier {
     searchGiangVien.values = listGv;
     giangVien.values = listGv;
     listDeTai = await DeTaiThacSi.search(
-      name: searchDeTai.text,
+      searchQuery: searchDeTai.text,
       idGiangVien: searchGiangVien.value?.id,
     );
 

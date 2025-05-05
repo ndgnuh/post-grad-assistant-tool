@@ -32,7 +32,7 @@ mixin _$GiangVien {
   String? get sdt => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
   String? get cccd => throw _privateConstructorUsedError;
-  @DateSerializer()
+  @MaybeDateSerializer()
   DateTime? get ngaySinh => throw _privateConstructorUsedError;
   String? get stk => throw _privateConstructorUsedError;
   String? get nganHang => throw _privateConstructorUsedError;
@@ -68,7 +68,7 @@ abstract class $GiangVienCopyWith<$Res> {
       String? sdt,
       String? email,
       String? cccd,
-      @DateSerializer() DateTime? ngaySinh,
+      @MaybeDateSerializer() DateTime? ngaySinh,
       String? stk,
       String? nganHang,
       String? mst,
@@ -208,7 +208,7 @@ abstract class _$$GiangVienImplCopyWith<$Res>
       String? sdt,
       String? email,
       String? cccd,
-      @DateSerializer() DateTime? ngaySinh,
+      @MaybeDateSerializer() DateTime? ngaySinh,
       String? stk,
       String? nganHang,
       String? mst,
@@ -327,7 +327,7 @@ class __$$GiangVienImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$GiangVienImpl extends _GiangVien with DiagnosticableTreeMixin {
+class _$GiangVienImpl extends _GiangVien {
   _$GiangVienImpl(
       {required this.id,
       required this.hoTen,
@@ -341,7 +341,7 @@ class _$GiangVienImpl extends _GiangVien with DiagnosticableTreeMixin {
       this.sdt,
       this.email,
       this.cccd,
-      @DateSerializer() this.ngaySinh,
+      @MaybeDateSerializer() this.ngaySinh,
       this.stk,
       this.nganHang,
       this.mst,
@@ -377,7 +377,7 @@ class _$GiangVienImpl extends _GiangVien with DiagnosticableTreeMixin {
   @override
   final String? cccd;
   @override
-  @DateSerializer()
+  @MaybeDateSerializer()
   final DateTime? ngaySinh;
   @override
   final String? stk;
@@ -391,33 +391,8 @@ class _$GiangVienImpl extends _GiangVien with DiagnosticableTreeMixin {
   final int? ncm;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'GiangVien(id: $id, hoTen: $hoTen, maCanBo: $maCanBo, donVi: $donVi, chuyenNganh: $chuyenNganh, gioiTinh: $gioiTinh, hocHam: $hocHam, hocVi: $hocVi, namNhanTs: $namNhanTs, sdt: $sdt, email: $email, cccd: $cccd, ngaySinh: $ngaySinh, stk: $stk, nganHang: $nganHang, mst: $mst, note: $note, ncm: $ncm)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'GiangVien'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('hoTen', hoTen))
-      ..add(DiagnosticsProperty('maCanBo', maCanBo))
-      ..add(DiagnosticsProperty('donVi', donVi))
-      ..add(DiagnosticsProperty('chuyenNganh', chuyenNganh))
-      ..add(DiagnosticsProperty('gioiTinh', gioiTinh))
-      ..add(DiagnosticsProperty('hocHam', hocHam))
-      ..add(DiagnosticsProperty('hocVi', hocVi))
-      ..add(DiagnosticsProperty('namNhanTs', namNhanTs))
-      ..add(DiagnosticsProperty('sdt', sdt))
-      ..add(DiagnosticsProperty('email', email))
-      ..add(DiagnosticsProperty('cccd', cccd))
-      ..add(DiagnosticsProperty('ngaySinh', ngaySinh))
-      ..add(DiagnosticsProperty('stk', stk))
-      ..add(DiagnosticsProperty('nganHang', nganHang))
-      ..add(DiagnosticsProperty('mst', mst))
-      ..add(DiagnosticsProperty('note', note))
-      ..add(DiagnosticsProperty('ncm', ncm));
   }
 
   @override
@@ -503,7 +478,7 @@ abstract class _GiangVien extends GiangVien {
       final String? sdt,
       final String? email,
       final String? cccd,
-      @DateSerializer() final DateTime? ngaySinh,
+      @MaybeDateSerializer() final DateTime? ngaySinh,
       final String? stk,
       final String? nganHang,
       final String? mst,
@@ -539,7 +514,7 @@ abstract class _GiangVien extends GiangVien {
   @override
   String? get cccd;
   @override
-  @DateSerializer()
+  @MaybeDateSerializer()
   DateTime? get ngaySinh;
   @override
   String? get stk;
@@ -566,8 +541,8 @@ DangKyHoc _$DangKyHocFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$DangKyHoc {
-  int get maLopHoc => throw _privateConstructorUsedError;
-  int get maHocVien => throw _privateConstructorUsedError;
+  int get idLopTinChi => throw _privateConstructorUsedError;
+  int get idHocVien => throw _privateConstructorUsedError;
   double? get diemQuaTrinh => throw _privateConstructorUsedError;
   double? get diemCuoiKy => throw _privateConstructorUsedError;
 
@@ -587,7 +562,10 @@ abstract class $DangKyHocCopyWith<$Res> {
       _$DangKyHocCopyWithImpl<$Res, DangKyHoc>;
   @useResult
   $Res call(
-      {int maLopHoc, int maHocVien, double? diemQuaTrinh, double? diemCuoiKy});
+      {int idLopTinChi,
+      int idHocVien,
+      double? diemQuaTrinh,
+      double? diemCuoiKy});
 }
 
 /// @nodoc
@@ -605,19 +583,19 @@ class _$DangKyHocCopyWithImpl<$Res, $Val extends DangKyHoc>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? maLopHoc = null,
-    Object? maHocVien = null,
+    Object? idLopTinChi = null,
+    Object? idHocVien = null,
     Object? diemQuaTrinh = freezed,
     Object? diemCuoiKy = freezed,
   }) {
     return _then(_value.copyWith(
-      maLopHoc: null == maLopHoc
-          ? _value.maLopHoc
-          : maLopHoc // ignore: cast_nullable_to_non_nullable
+      idLopTinChi: null == idLopTinChi
+          ? _value.idLopTinChi
+          : idLopTinChi // ignore: cast_nullable_to_non_nullable
               as int,
-      maHocVien: null == maHocVien
-          ? _value.maHocVien
-          : maHocVien // ignore: cast_nullable_to_non_nullable
+      idHocVien: null == idHocVien
+          ? _value.idHocVien
+          : idHocVien // ignore: cast_nullable_to_non_nullable
               as int,
       diemQuaTrinh: freezed == diemQuaTrinh
           ? _value.diemQuaTrinh
@@ -640,7 +618,10 @@ abstract class _$$DangKyHocImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int maLopHoc, int maHocVien, double? diemQuaTrinh, double? diemCuoiKy});
+      {int idLopTinChi,
+      int idHocVien,
+      double? diemQuaTrinh,
+      double? diemCuoiKy});
 }
 
 /// @nodoc
@@ -656,19 +637,19 @@ class __$$DangKyHocImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? maLopHoc = null,
-    Object? maHocVien = null,
+    Object? idLopTinChi = null,
+    Object? idHocVien = null,
     Object? diemQuaTrinh = freezed,
     Object? diemCuoiKy = freezed,
   }) {
     return _then(_$DangKyHocImpl(
-      maLopHoc: null == maLopHoc
-          ? _value.maLopHoc
-          : maLopHoc // ignore: cast_nullable_to_non_nullable
+      idLopTinChi: null == idLopTinChi
+          ? _value.idLopTinChi
+          : idLopTinChi // ignore: cast_nullable_to_non_nullable
               as int,
-      maHocVien: null == maHocVien
-          ? _value.maHocVien
-          : maHocVien // ignore: cast_nullable_to_non_nullable
+      idHocVien: null == idHocVien
+          ? _value.idHocVien
+          : idHocVien // ignore: cast_nullable_to_non_nullable
               as int,
       diemQuaTrinh: freezed == diemQuaTrinh
           ? _value.diemQuaTrinh
@@ -684,39 +665,29 @@ class __$$DangKyHocImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$DangKyHocImpl with DiagnosticableTreeMixin implements _DangKyHoc {
+class _$DangKyHocImpl extends _DangKyHoc {
   _$DangKyHocImpl(
-      {required this.maLopHoc,
-      required this.maHocVien,
+      {required this.idLopTinChi,
+      required this.idHocVien,
       this.diemQuaTrinh,
-      this.diemCuoiKy});
+      this.diemCuoiKy})
+      : super._();
 
   factory _$DangKyHocImpl.fromJson(Map<String, dynamic> json) =>
       _$$DangKyHocImplFromJson(json);
 
   @override
-  final int maLopHoc;
+  final int idLopTinChi;
   @override
-  final int maHocVien;
+  final int idHocVien;
   @override
   final double? diemQuaTrinh;
   @override
   final double? diemCuoiKy;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'DangKyHoc(maLopHoc: $maLopHoc, maHocVien: $maHocVien, diemQuaTrinh: $diemQuaTrinh, diemCuoiKy: $diemCuoiKy)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'DangKyHoc'))
-      ..add(DiagnosticsProperty('maLopHoc', maLopHoc))
-      ..add(DiagnosticsProperty('maHocVien', maHocVien))
-      ..add(DiagnosticsProperty('diemQuaTrinh', diemQuaTrinh))
-      ..add(DiagnosticsProperty('diemCuoiKy', diemCuoiKy));
+  String toString() {
+    return 'DangKyHoc(idLopTinChi: $idLopTinChi, idHocVien: $idHocVien, diemQuaTrinh: $diemQuaTrinh, diemCuoiKy: $diemCuoiKy)';
   }
 
   @override
@@ -724,10 +695,10 @@ class _$DangKyHocImpl with DiagnosticableTreeMixin implements _DangKyHoc {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$DangKyHocImpl &&
-            (identical(other.maLopHoc, maLopHoc) ||
-                other.maLopHoc == maLopHoc) &&
-            (identical(other.maHocVien, maHocVien) ||
-                other.maHocVien == maHocVien) &&
+            (identical(other.idLopTinChi, idLopTinChi) ||
+                other.idLopTinChi == idLopTinChi) &&
+            (identical(other.idHocVien, idHocVien) ||
+                other.idHocVien == idHocVien) &&
             (identical(other.diemQuaTrinh, diemQuaTrinh) ||
                 other.diemQuaTrinh == diemQuaTrinh) &&
             (identical(other.diemCuoiKy, diemCuoiKy) ||
@@ -736,8 +707,8 @@ class _$DangKyHocImpl with DiagnosticableTreeMixin implements _DangKyHoc {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, maLopHoc, maHocVien, diemQuaTrinh, diemCuoiKy);
+  int get hashCode => Object.hash(
+      runtimeType, idLopTinChi, idHocVien, diemQuaTrinh, diemCuoiKy);
 
   /// Create a copy of DangKyHoc
   /// with the given fields replaced by the non-null parameter values.
@@ -755,20 +726,21 @@ class _$DangKyHocImpl with DiagnosticableTreeMixin implements _DangKyHoc {
   }
 }
 
-abstract class _DangKyHoc implements DangKyHoc {
+abstract class _DangKyHoc extends DangKyHoc {
   factory _DangKyHoc(
-      {required final int maLopHoc,
-      required final int maHocVien,
+      {required final int idLopTinChi,
+      required final int idHocVien,
       final double? diemQuaTrinh,
       final double? diemCuoiKy}) = _$DangKyHocImpl;
+  _DangKyHoc._() : super._();
 
   factory _DangKyHoc.fromJson(Map<String, dynamic> json) =
       _$DangKyHocImpl.fromJson;
 
   @override
-  int get maLopHoc;
+  int get idLopTinChi;
   @override
-  int get maHocVien;
+  int get idHocVien;
   @override
   double? get diemQuaTrinh;
   @override
@@ -789,11 +761,16 @@ HocKy _$HocKyFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$HocKy {
   String get hocKy => throw _privateConstructorUsedError;
-  String get moDangKy => throw _privateConstructorUsedError;
-  String get dongDangKy => throw _privateConstructorUsedError;
-  String get batDauHoc => throw _privateConstructorUsedError;
-  String get ketThucHoc => throw _privateConstructorUsedError;
-  String get hanNhapDiem => throw _privateConstructorUsedError;
+  @DateSerializer()
+  DateTime get moDangKy => throw _privateConstructorUsedError;
+  @DateSerializer()
+  DateTime get dongDangKy => throw _privateConstructorUsedError;
+  @DateSerializer()
+  DateTime get batDauHoc => throw _privateConstructorUsedError;
+  @DateSerializer()
+  DateTime get ketThucHoc => throw _privateConstructorUsedError;
+  @DateSerializer()
+  DateTime get hanNhapDiem => throw _privateConstructorUsedError;
 
   /// Serializes this HocKy to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -811,11 +788,11 @@ abstract class $HocKyCopyWith<$Res> {
   @useResult
   $Res call(
       {String hocKy,
-      String moDangKy,
-      String dongDangKy,
-      String batDauHoc,
-      String ketThucHoc,
-      String hanNhapDiem});
+      @DateSerializer() DateTime moDangKy,
+      @DateSerializer() DateTime dongDangKy,
+      @DateSerializer() DateTime batDauHoc,
+      @DateSerializer() DateTime ketThucHoc,
+      @DateSerializer() DateTime hanNhapDiem});
 }
 
 /// @nodoc
@@ -848,23 +825,23 @@ class _$HocKyCopyWithImpl<$Res, $Val extends HocKy>
       moDangKy: null == moDangKy
           ? _value.moDangKy
           : moDangKy // ignore: cast_nullable_to_non_nullable
-              as String,
+              as DateTime,
       dongDangKy: null == dongDangKy
           ? _value.dongDangKy
           : dongDangKy // ignore: cast_nullable_to_non_nullable
-              as String,
+              as DateTime,
       batDauHoc: null == batDauHoc
           ? _value.batDauHoc
           : batDauHoc // ignore: cast_nullable_to_non_nullable
-              as String,
+              as DateTime,
       ketThucHoc: null == ketThucHoc
           ? _value.ketThucHoc
           : ketThucHoc // ignore: cast_nullable_to_non_nullable
-              as String,
+              as DateTime,
       hanNhapDiem: null == hanNhapDiem
           ? _value.hanNhapDiem
           : hanNhapDiem // ignore: cast_nullable_to_non_nullable
-              as String,
+              as DateTime,
     ) as $Val);
   }
 }
@@ -878,11 +855,11 @@ abstract class _$$HocKyImplCopyWith<$Res> implements $HocKyCopyWith<$Res> {
   @useResult
   $Res call(
       {String hocKy,
-      String moDangKy,
-      String dongDangKy,
-      String batDauHoc,
-      String ketThucHoc,
-      String hanNhapDiem});
+      @DateSerializer() DateTime moDangKy,
+      @DateSerializer() DateTime dongDangKy,
+      @DateSerializer() DateTime batDauHoc,
+      @DateSerializer() DateTime ketThucHoc,
+      @DateSerializer() DateTime hanNhapDiem});
 }
 
 /// @nodoc
@@ -913,23 +890,23 @@ class __$$HocKyImplCopyWithImpl<$Res>
       moDangKy: null == moDangKy
           ? _value.moDangKy
           : moDangKy // ignore: cast_nullable_to_non_nullable
-              as String,
+              as DateTime,
       dongDangKy: null == dongDangKy
           ? _value.dongDangKy
           : dongDangKy // ignore: cast_nullable_to_non_nullable
-              as String,
+              as DateTime,
       batDauHoc: null == batDauHoc
           ? _value.batDauHoc
           : batDauHoc // ignore: cast_nullable_to_non_nullable
-              as String,
+              as DateTime,
       ketThucHoc: null == ketThucHoc
           ? _value.ketThucHoc
           : ketThucHoc // ignore: cast_nullable_to_non_nullable
-              as String,
+              as DateTime,
       hanNhapDiem: null == hanNhapDiem
           ? _value.hanNhapDiem
           : hanNhapDiem // ignore: cast_nullable_to_non_nullable
-              as String,
+              as DateTime,
     ));
   }
 }
@@ -939,11 +916,11 @@ class __$$HocKyImplCopyWithImpl<$Res>
 class _$HocKyImpl extends _HocKy {
   const _$HocKyImpl(
       {required this.hocKy,
-      required this.moDangKy,
-      required this.dongDangKy,
-      required this.batDauHoc,
-      required this.ketThucHoc,
-      required this.hanNhapDiem})
+      @DateSerializer() required this.moDangKy,
+      @DateSerializer() required this.dongDangKy,
+      @DateSerializer() required this.batDauHoc,
+      @DateSerializer() required this.ketThucHoc,
+      @DateSerializer() required this.hanNhapDiem})
       : super._();
 
   factory _$HocKyImpl.fromJson(Map<String, dynamic> json) =>
@@ -952,15 +929,20 @@ class _$HocKyImpl extends _HocKy {
   @override
   final String hocKy;
   @override
-  final String moDangKy;
+  @DateSerializer()
+  final DateTime moDangKy;
   @override
-  final String dongDangKy;
+  @DateSerializer()
+  final DateTime dongDangKy;
   @override
-  final String batDauHoc;
+  @DateSerializer()
+  final DateTime batDauHoc;
   @override
-  final String ketThucHoc;
+  @DateSerializer()
+  final DateTime ketThucHoc;
   @override
-  final String hanNhapDiem;
+  @DateSerializer()
+  final DateTime hanNhapDiem;
 
   @override
   bool operator ==(Object other) {
@@ -1004,11 +986,11 @@ class _$HocKyImpl extends _HocKy {
 abstract class _HocKy extends HocKy {
   const factory _HocKy(
       {required final String hocKy,
-      required final String moDangKy,
-      required final String dongDangKy,
-      required final String batDauHoc,
-      required final String ketThucHoc,
-      required final String hanNhapDiem}) = _$HocKyImpl;
+      @DateSerializer() required final DateTime moDangKy,
+      @DateSerializer() required final DateTime dongDangKy,
+      @DateSerializer() required final DateTime batDauHoc,
+      @DateSerializer() required final DateTime ketThucHoc,
+      @DateSerializer() required final DateTime hanNhapDiem}) = _$HocKyImpl;
   const _HocKy._() : super._();
 
   factory _HocKy.fromJson(Map<String, dynamic> json) = _$HocKyImpl.fromJson;
@@ -1016,15 +998,20 @@ abstract class _HocKy extends HocKy {
   @override
   String get hocKy;
   @override
-  String get moDangKy;
+  @DateSerializer()
+  DateTime get moDangKy;
   @override
-  String get dongDangKy;
+  @DateSerializer()
+  DateTime get dongDangKy;
   @override
-  String get batDauHoc;
+  @DateSerializer()
+  DateTime get batDauHoc;
   @override
-  String get ketThucHoc;
+  @DateSerializer()
+  DateTime get ketThucHoc;
   @override
-  String get hanNhapDiem;
+  @DateSerializer()
+  DateTime get hanNhapDiem;
 
   /// Create a copy of HocKy
   /// with the given fields replaced by the non-null parameter values.
@@ -1298,7 +1285,7 @@ mixin _$HocVien {
   String? get nienKhoa => throw _privateConstructorUsedError;
   String? get maHocVien => throw _privateConstructorUsedError;
   String get hoTen => throw _privateConstructorUsedError;
-  @DateSerializer()
+  @MaybeDateSerializer()
   DateTime? get ngaySinh => throw _privateConstructorUsedError;
   GioiTinh? get gioiTinh => throw _privateConstructorUsedError;
   String? get noiSinh => throw _privateConstructorUsedError;
@@ -1307,7 +1294,7 @@ mixin _$HocVien {
   String? get nganhTotNghiepDaiHoc => throw _privateConstructorUsedError;
   String? get heTotNghiepDaiHoc => throw _privateConstructorUsedError;
   String? get xepLoaiTotNghiepDaiHoc => throw _privateConstructorUsedError;
-  @DateSerializer()
+  @MaybeDateSerializer()
   DateTime? get ngayTotNghiepDaiHoc => throw _privateConstructorUsedError;
   String? get dinhHuongChuyenSau => throw _privateConstructorUsedError;
   String? get hocPhanDuocMien => throw _privateConstructorUsedError;
@@ -1316,16 +1303,16 @@ mixin _$HocVien {
   TrangThaiHocVien get maTrangThai => throw _privateConstructorUsedError;
   String? get deTaiLuanVanTiengViet => throw _privateConstructorUsedError;
   String? get deTaiLuanVanTiengAnh => throw _privateConstructorUsedError;
-  @DateSerializer()
+  @MaybeDateSerializer()
   DateTime? get ngayGiaoDeTai => throw _privateConstructorUsedError;
   String? get soQuyetDinhGiao => throw _privateConstructorUsedError;
-  @DateSerializer()
+  @MaybeDateSerializer()
   DateTime? get ngayBaoVe => throw _privateConstructorUsedError;
   int? get soQuyetDinhBaoVe => throw _privateConstructorUsedError;
-  @DateSerializer()
+  @MaybeDateSerializer()
   DateTime? get ngayKyQuyetDinhBaoVe => throw _privateConstructorUsedError;
   int? get idGiangVienHuongDan => throw _privateConstructorUsedError;
-  @DateSerializer()
+  @MaybeDateSerializer()
   DateTime? get hanBaoVe => throw _privateConstructorUsedError;
   int get lanGiaHan => throw _privateConstructorUsedError;
   int? get idTieuBanXetTuyen => throw _privateConstructorUsedError;
@@ -1352,7 +1339,7 @@ abstract class $HocVienCopyWith<$Res> {
       String? nienKhoa,
       String? maHocVien,
       String hoTen,
-      @DateSerializer() DateTime? ngaySinh,
+      @MaybeDateSerializer() DateTime? ngaySinh,
       GioiTinh? gioiTinh,
       String? noiSinh,
       String? email,
@@ -1360,7 +1347,7 @@ abstract class $HocVienCopyWith<$Res> {
       String? nganhTotNghiepDaiHoc,
       String? heTotNghiepDaiHoc,
       String? xepLoaiTotNghiepDaiHoc,
-      @DateSerializer() DateTime? ngayTotNghiepDaiHoc,
+      @MaybeDateSerializer() DateTime? ngayTotNghiepDaiHoc,
       String? dinhHuongChuyenSau,
       String? hocPhanDuocMien,
       String? nganhDaoTaoThacSi,
@@ -1368,13 +1355,13 @@ abstract class $HocVienCopyWith<$Res> {
       TrangThaiHocVien maTrangThai,
       String? deTaiLuanVanTiengViet,
       String? deTaiLuanVanTiengAnh,
-      @DateSerializer() DateTime? ngayGiaoDeTai,
+      @MaybeDateSerializer() DateTime? ngayGiaoDeTai,
       String? soQuyetDinhGiao,
-      @DateSerializer() DateTime? ngayBaoVe,
+      @MaybeDateSerializer() DateTime? ngayBaoVe,
       int? soQuyetDinhBaoVe,
-      @DateSerializer() DateTime? ngayKyQuyetDinhBaoVe,
+      @MaybeDateSerializer() DateTime? ngayKyQuyetDinhBaoVe,
       int? idGiangVienHuongDan,
-      @DateSerializer() DateTime? hanBaoVe,
+      @MaybeDateSerializer() DateTime? hanBaoVe,
       int lanGiaHan,
       int? idTieuBanXetTuyen,
       DienTuyenSinh? idDienTuyenSinh,
@@ -1575,7 +1562,7 @@ abstract class _$$HocVienImplCopyWith<$Res> implements $HocVienCopyWith<$Res> {
       String? nienKhoa,
       String? maHocVien,
       String hoTen,
-      @DateSerializer() DateTime? ngaySinh,
+      @MaybeDateSerializer() DateTime? ngaySinh,
       GioiTinh? gioiTinh,
       String? noiSinh,
       String? email,
@@ -1583,7 +1570,7 @@ abstract class _$$HocVienImplCopyWith<$Res> implements $HocVienCopyWith<$Res> {
       String? nganhTotNghiepDaiHoc,
       String? heTotNghiepDaiHoc,
       String? xepLoaiTotNghiepDaiHoc,
-      @DateSerializer() DateTime? ngayTotNghiepDaiHoc,
+      @MaybeDateSerializer() DateTime? ngayTotNghiepDaiHoc,
       String? dinhHuongChuyenSau,
       String? hocPhanDuocMien,
       String? nganhDaoTaoThacSi,
@@ -1591,13 +1578,13 @@ abstract class _$$HocVienImplCopyWith<$Res> implements $HocVienCopyWith<$Res> {
       TrangThaiHocVien maTrangThai,
       String? deTaiLuanVanTiengViet,
       String? deTaiLuanVanTiengAnh,
-      @DateSerializer() DateTime? ngayGiaoDeTai,
+      @MaybeDateSerializer() DateTime? ngayGiaoDeTai,
       String? soQuyetDinhGiao,
-      @DateSerializer() DateTime? ngayBaoVe,
+      @MaybeDateSerializer() DateTime? ngayBaoVe,
       int? soQuyetDinhBaoVe,
-      @DateSerializer() DateTime? ngayKyQuyetDinhBaoVe,
+      @MaybeDateSerializer() DateTime? ngayKyQuyetDinhBaoVe,
       int? idGiangVienHuongDan,
-      @DateSerializer() DateTime? hanBaoVe,
+      @MaybeDateSerializer() DateTime? hanBaoVe,
       int lanGiaHan,
       int? idTieuBanXetTuyen,
       DienTuyenSinh? idDienTuyenSinh,
@@ -1785,14 +1772,14 @@ class __$$HocVienImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$HocVienImpl extends _HocVien with DiagnosticableTreeMixin {
+class _$HocVienImpl extends _HocVien {
   const _$HocVienImpl(
       {required this.id,
       this.soHoSo,
       this.nienKhoa,
       this.maHocVien,
       required this.hoTen,
-      @DateSerializer() this.ngaySinh,
+      @MaybeDateSerializer() this.ngaySinh,
       this.gioiTinh,
       this.noiSinh,
       this.email,
@@ -1800,7 +1787,7 @@ class _$HocVienImpl extends _HocVien with DiagnosticableTreeMixin {
       this.nganhTotNghiepDaiHoc,
       this.heTotNghiepDaiHoc,
       this.xepLoaiTotNghiepDaiHoc,
-      @DateSerializer() this.ngayTotNghiepDaiHoc,
+      @MaybeDateSerializer() this.ngayTotNghiepDaiHoc,
       this.dinhHuongChuyenSau,
       this.hocPhanDuocMien,
       this.nganhDaoTaoThacSi,
@@ -1808,13 +1795,13 @@ class _$HocVienImpl extends _HocVien with DiagnosticableTreeMixin {
       required this.maTrangThai,
       this.deTaiLuanVanTiengViet,
       this.deTaiLuanVanTiengAnh,
-      @DateSerializer() this.ngayGiaoDeTai,
+      @MaybeDateSerializer() this.ngayGiaoDeTai,
       this.soQuyetDinhGiao,
-      @DateSerializer() this.ngayBaoVe,
+      @MaybeDateSerializer() this.ngayBaoVe,
       this.soQuyetDinhBaoVe,
-      @DateSerializer() this.ngayKyQuyetDinhBaoVe,
+      @MaybeDateSerializer() this.ngayKyQuyetDinhBaoVe,
       this.idGiangVienHuongDan,
-      @DateSerializer() this.hanBaoVe,
+      @MaybeDateSerializer() this.hanBaoVe,
       this.lanGiaHan = 0,
       this.idTieuBanXetTuyen,
       this.idDienTuyenSinh,
@@ -1835,7 +1822,7 @@ class _$HocVienImpl extends _HocVien with DiagnosticableTreeMixin {
   @override
   final String hoTen;
   @override
-  @DateSerializer()
+  @MaybeDateSerializer()
   final DateTime? ngaySinh;
   @override
   final GioiTinh? gioiTinh;
@@ -1852,7 +1839,7 @@ class _$HocVienImpl extends _HocVien with DiagnosticableTreeMixin {
   @override
   final String? xepLoaiTotNghiepDaiHoc;
   @override
-  @DateSerializer()
+  @MaybeDateSerializer()
   final DateTime? ngayTotNghiepDaiHoc;
   @override
   final String? dinhHuongChuyenSau;
@@ -1869,22 +1856,22 @@ class _$HocVienImpl extends _HocVien with DiagnosticableTreeMixin {
   @override
   final String? deTaiLuanVanTiengAnh;
   @override
-  @DateSerializer()
+  @MaybeDateSerializer()
   final DateTime? ngayGiaoDeTai;
   @override
   final String? soQuyetDinhGiao;
   @override
-  @DateSerializer()
+  @MaybeDateSerializer()
   final DateTime? ngayBaoVe;
   @override
   final int? soQuyetDinhBaoVe;
   @override
-  @DateSerializer()
+  @MaybeDateSerializer()
   final DateTime? ngayKyQuyetDinhBaoVe;
   @override
   final int? idGiangVienHuongDan;
   @override
-  @DateSerializer()
+  @MaybeDateSerializer()
   final DateTime? hanBaoVe;
   @override
   @JsonKey()
@@ -1898,48 +1885,8 @@ class _$HocVienImpl extends _HocVien with DiagnosticableTreeMixin {
   final int thanhToanXetTuyen;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'HocVien(id: $id, soHoSo: $soHoSo, nienKhoa: $nienKhoa, maHocVien: $maHocVien, hoTen: $hoTen, ngaySinh: $ngaySinh, gioiTinh: $gioiTinh, noiSinh: $noiSinh, email: $email, truongTotNghiepDaiHoc: $truongTotNghiepDaiHoc, nganhTotNghiepDaiHoc: $nganhTotNghiepDaiHoc, heTotNghiepDaiHoc: $heTotNghiepDaiHoc, xepLoaiTotNghiepDaiHoc: $xepLoaiTotNghiepDaiHoc, ngayTotNghiepDaiHoc: $ngayTotNghiepDaiHoc, dinhHuongChuyenSau: $dinhHuongChuyenSau, hocPhanDuocMien: $hocPhanDuocMien, nganhDaoTaoThacSi: $nganhDaoTaoThacSi, dienThoai: $dienThoai, maTrangThai: $maTrangThai, deTaiLuanVanTiengViet: $deTaiLuanVanTiengViet, deTaiLuanVanTiengAnh: $deTaiLuanVanTiengAnh, ngayGiaoDeTai: $ngayGiaoDeTai, soQuyetDinhGiao: $soQuyetDinhGiao, ngayBaoVe: $ngayBaoVe, soQuyetDinhBaoVe: $soQuyetDinhBaoVe, ngayKyQuyetDinhBaoVe: $ngayKyQuyetDinhBaoVe, idGiangVienHuongDan: $idGiangVienHuongDan, hanBaoVe: $hanBaoVe, lanGiaHan: $lanGiaHan, idTieuBanXetTuyen: $idTieuBanXetTuyen, idDienTuyenSinh: $idDienTuyenSinh, thanhToanXetTuyen: $thanhToanXetTuyen)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'HocVien'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('soHoSo', soHoSo))
-      ..add(DiagnosticsProperty('nienKhoa', nienKhoa))
-      ..add(DiagnosticsProperty('maHocVien', maHocVien))
-      ..add(DiagnosticsProperty('hoTen', hoTen))
-      ..add(DiagnosticsProperty('ngaySinh', ngaySinh))
-      ..add(DiagnosticsProperty('gioiTinh', gioiTinh))
-      ..add(DiagnosticsProperty('noiSinh', noiSinh))
-      ..add(DiagnosticsProperty('email', email))
-      ..add(DiagnosticsProperty('truongTotNghiepDaiHoc', truongTotNghiepDaiHoc))
-      ..add(DiagnosticsProperty('nganhTotNghiepDaiHoc', nganhTotNghiepDaiHoc))
-      ..add(DiagnosticsProperty('heTotNghiepDaiHoc', heTotNghiepDaiHoc))
-      ..add(
-          DiagnosticsProperty('xepLoaiTotNghiepDaiHoc', xepLoaiTotNghiepDaiHoc))
-      ..add(DiagnosticsProperty('ngayTotNghiepDaiHoc', ngayTotNghiepDaiHoc))
-      ..add(DiagnosticsProperty('dinhHuongChuyenSau', dinhHuongChuyenSau))
-      ..add(DiagnosticsProperty('hocPhanDuocMien', hocPhanDuocMien))
-      ..add(DiagnosticsProperty('nganhDaoTaoThacSi', nganhDaoTaoThacSi))
-      ..add(DiagnosticsProperty('dienThoai', dienThoai))
-      ..add(DiagnosticsProperty('maTrangThai', maTrangThai))
-      ..add(DiagnosticsProperty('deTaiLuanVanTiengViet', deTaiLuanVanTiengViet))
-      ..add(DiagnosticsProperty('deTaiLuanVanTiengAnh', deTaiLuanVanTiengAnh))
-      ..add(DiagnosticsProperty('ngayGiaoDeTai', ngayGiaoDeTai))
-      ..add(DiagnosticsProperty('soQuyetDinhGiao', soQuyetDinhGiao))
-      ..add(DiagnosticsProperty('ngayBaoVe', ngayBaoVe))
-      ..add(DiagnosticsProperty('soQuyetDinhBaoVe', soQuyetDinhBaoVe))
-      ..add(DiagnosticsProperty('ngayKyQuyetDinhBaoVe', ngayKyQuyetDinhBaoVe))
-      ..add(DiagnosticsProperty('idGiangVienHuongDan', idGiangVienHuongDan))
-      ..add(DiagnosticsProperty('hanBaoVe', hanBaoVe))
-      ..add(DiagnosticsProperty('lanGiaHan', lanGiaHan))
-      ..add(DiagnosticsProperty('idTieuBanXetTuyen', idTieuBanXetTuyen))
-      ..add(DiagnosticsProperty('idDienTuyenSinh', idDienTuyenSinh))
-      ..add(DiagnosticsProperty('thanhToanXetTuyen', thanhToanXetTuyen));
   }
 
   @override
@@ -2069,7 +2016,7 @@ abstract class _HocVien extends HocVien {
       final String? nienKhoa,
       final String? maHocVien,
       required final String hoTen,
-      @DateSerializer() final DateTime? ngaySinh,
+      @MaybeDateSerializer() final DateTime? ngaySinh,
       final GioiTinh? gioiTinh,
       final String? noiSinh,
       final String? email,
@@ -2077,7 +2024,7 @@ abstract class _HocVien extends HocVien {
       final String? nganhTotNghiepDaiHoc,
       final String? heTotNghiepDaiHoc,
       final String? xepLoaiTotNghiepDaiHoc,
-      @DateSerializer() final DateTime? ngayTotNghiepDaiHoc,
+      @MaybeDateSerializer() final DateTime? ngayTotNghiepDaiHoc,
       final String? dinhHuongChuyenSau,
       final String? hocPhanDuocMien,
       final String? nganhDaoTaoThacSi,
@@ -2085,13 +2032,13 @@ abstract class _HocVien extends HocVien {
       required final TrangThaiHocVien maTrangThai,
       final String? deTaiLuanVanTiengViet,
       final String? deTaiLuanVanTiengAnh,
-      @DateSerializer() final DateTime? ngayGiaoDeTai,
+      @MaybeDateSerializer() final DateTime? ngayGiaoDeTai,
       final String? soQuyetDinhGiao,
-      @DateSerializer() final DateTime? ngayBaoVe,
+      @MaybeDateSerializer() final DateTime? ngayBaoVe,
       final int? soQuyetDinhBaoVe,
-      @DateSerializer() final DateTime? ngayKyQuyetDinhBaoVe,
+      @MaybeDateSerializer() final DateTime? ngayKyQuyetDinhBaoVe,
       final int? idGiangVienHuongDan,
-      @DateSerializer() final DateTime? hanBaoVe,
+      @MaybeDateSerializer() final DateTime? hanBaoVe,
       final int lanGiaHan,
       final int? idTieuBanXetTuyen,
       final DienTuyenSinh? idDienTuyenSinh,
@@ -2111,7 +2058,7 @@ abstract class _HocVien extends HocVien {
   @override
   String get hoTen;
   @override
-  @DateSerializer()
+  @MaybeDateSerializer()
   DateTime? get ngaySinh;
   @override
   GioiTinh? get gioiTinh;
@@ -2128,7 +2075,7 @@ abstract class _HocVien extends HocVien {
   @override
   String? get xepLoaiTotNghiepDaiHoc;
   @override
-  @DateSerializer()
+  @MaybeDateSerializer()
   DateTime? get ngayTotNghiepDaiHoc;
   @override
   String? get dinhHuongChuyenSau;
@@ -2145,22 +2092,22 @@ abstract class _HocVien extends HocVien {
   @override
   String? get deTaiLuanVanTiengAnh;
   @override
-  @DateSerializer()
+  @MaybeDateSerializer()
   DateTime? get ngayGiaoDeTai;
   @override
   String? get soQuyetDinhGiao;
   @override
-  @DateSerializer()
+  @MaybeDateSerializer()
   DateTime? get ngayBaoVe;
   @override
   int? get soQuyetDinhBaoVe;
   @override
-  @DateSerializer()
+  @MaybeDateSerializer()
   DateTime? get ngayKyQuyetDinhBaoVe;
   @override
   int? get idGiangVienHuongDan;
   @override
-  @DateSerializer()
+  @MaybeDateSerializer()
   DateTime? get hanBaoVe;
   @override
   int get lanGiaHan;
@@ -2414,7 +2361,7 @@ class __$$HoiDongLVTSImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$HoiDongLVTSImpl with DiagnosticableTreeMixin implements _HoiDongLVTS {
+class _$HoiDongLVTSImpl implements _HoiDongLVTS {
   const _$HoiDongLVTSImpl(
       {required this.id,
       this.idHocVien,
@@ -2460,27 +2407,8 @@ class _$HoiDongLVTSImpl with DiagnosticableTreeMixin implements _HoiDongLVTS {
   final String? nam;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'HoiDongLVTS(id: $id, idHocVien: $idHocVien, idChuTich: $idChuTich, idThuKy: $idThuKy, idPhanBien1: $idPhanBien1, idPhanBien2: $idPhanBien2, idUyVien: $idUyVien, ngayBaoVe: $ngayBaoVe, soQuyetDinh: $soQuyetDinh, lanBaoVe: $lanBaoVe, thanhToan: $thanhToan, nam: $nam)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'HoiDongLVTS'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('idHocVien', idHocVien))
-      ..add(DiagnosticsProperty('idChuTich', idChuTich))
-      ..add(DiagnosticsProperty('idThuKy', idThuKy))
-      ..add(DiagnosticsProperty('idPhanBien1', idPhanBien1))
-      ..add(DiagnosticsProperty('idPhanBien2', idPhanBien2))
-      ..add(DiagnosticsProperty('idUyVien', idUyVien))
-      ..add(DiagnosticsProperty('ngayBaoVe', ngayBaoVe))
-      ..add(DiagnosticsProperty('soQuyetDinh', soQuyetDinh))
-      ..add(DiagnosticsProperty('lanBaoVe', lanBaoVe))
-      ..add(DiagnosticsProperty('thanhToan', thanhToan))
-      ..add(DiagnosticsProperty('nam', nam));
   }
 
   @override
@@ -2609,7 +2537,7 @@ mixin _$LopTinChi {
   String? get urlTruyCap => throw _privateConstructorUsedError;
   String? get hocKy => throw _privateConstructorUsedError;
   String? get phongHoc => throw _privateConstructorUsedError;
-  int? get ngayHoc => throw _privateConstructorUsedError;
+  NgayTrongTuan? get ngayHoc => throw _privateConstructorUsedError;
   int? get tietBatDau => throw _privateConstructorUsedError;
   int? get tietKetThuc => throw _privateConstructorUsedError;
   TrangThaiLopTinChi get trangThai => throw _privateConstructorUsedError;
@@ -2638,7 +2566,7 @@ abstract class $LopTinChiCopyWith<$Res> {
       String? urlTruyCap,
       String? hocKy,
       String? phongHoc,
-      int? ngayHoc,
+      NgayTrongTuan? ngayHoc,
       int? tietBatDau,
       int? tietKetThuc,
       TrangThaiLopTinChi trangThai});
@@ -2708,7 +2636,7 @@ class _$LopTinChiCopyWithImpl<$Res, $Val extends LopTinChi>
       ngayHoc: freezed == ngayHoc
           ? _value.ngayHoc
           : ngayHoc // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as NgayTrongTuan?,
       tietBatDau: freezed == tietBatDau
           ? _value.tietBatDau
           : tietBatDau // ignore: cast_nullable_to_non_nullable
@@ -2742,7 +2670,7 @@ abstract class _$$LopTinChiImplCopyWith<$Res>
       String? urlTruyCap,
       String? hocKy,
       String? phongHoc,
-      int? ngayHoc,
+      NgayTrongTuan? ngayHoc,
       int? tietBatDau,
       int? tietKetThuc,
       TrangThaiLopTinChi trangThai});
@@ -2810,7 +2738,7 @@ class __$$LopTinChiImplCopyWithImpl<$Res>
       ngayHoc: freezed == ngayHoc
           ? _value.ngayHoc
           : ngayHoc // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as NgayTrongTuan?,
       tietBatDau: freezed == tietBatDau
           ? _value.tietBatDau
           : tietBatDau // ignore: cast_nullable_to_non_nullable
@@ -2829,7 +2757,7 @@ class __$$LopTinChiImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$LopTinChiImpl extends _LopTinChi with DiagnosticableTreeMixin {
+class _$LopTinChiImpl extends _LopTinChi {
   const _$LopTinChiImpl(
       {required this.id,
       this.maLopHoc,
@@ -2865,7 +2793,7 @@ class _$LopTinChiImpl extends _LopTinChi with DiagnosticableTreeMixin {
   @override
   final String? phongHoc;
   @override
-  final int? ngayHoc;
+  final NgayTrongTuan? ngayHoc;
   @override
   final int? tietBatDau;
   @override
@@ -2875,27 +2803,8 @@ class _$LopTinChiImpl extends _LopTinChi with DiagnosticableTreeMixin {
   final TrangThaiLopTinChi trangThai;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'LopTinChi(id: $id, maLopHoc: $maLopHoc, maHocPhan: $maHocPhan, idGiangVien: $idGiangVien, idLopTruong: $idLopTruong, urlTruyCap: $urlTruyCap, hocKy: $hocKy, phongHoc: $phongHoc, ngayHoc: $ngayHoc, tietBatDau: $tietBatDau, tietKetThuc: $tietKetThuc, trangThai: $trangThai)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'LopTinChi'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('maLopHoc', maLopHoc))
-      ..add(DiagnosticsProperty('maHocPhan', maHocPhan))
-      ..add(DiagnosticsProperty('idGiangVien', idGiangVien))
-      ..add(DiagnosticsProperty('idLopTruong', idLopTruong))
-      ..add(DiagnosticsProperty('urlTruyCap', urlTruyCap))
-      ..add(DiagnosticsProperty('hocKy', hocKy))
-      ..add(DiagnosticsProperty('phongHoc', phongHoc))
-      ..add(DiagnosticsProperty('ngayHoc', ngayHoc))
-      ..add(DiagnosticsProperty('tietBatDau', tietBatDau))
-      ..add(DiagnosticsProperty('tietKetThuc', tietKetThuc))
-      ..add(DiagnosticsProperty('trangThai', trangThai));
   }
 
   @override
@@ -2969,7 +2878,7 @@ abstract class _LopTinChi extends LopTinChi {
       final String? urlTruyCap,
       final String? hocKy,
       final String? phongHoc,
-      final int? ngayHoc,
+      final NgayTrongTuan? ngayHoc,
       final int? tietBatDau,
       final int? tietKetThuc,
       final TrangThaiLopTinChi trangThai}) = _$LopTinChiImpl;
@@ -2995,7 +2904,7 @@ abstract class _LopTinChi extends LopTinChi {
   @override
   String? get phongHoc;
   @override
-  int? get ngayHoc;
+  NgayTrongTuan? get ngayHoc;
   @override
   int? get tietBatDau;
   @override
@@ -3220,7 +3129,7 @@ class __$$NamTaiChinhImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$NamTaiChinhImpl with DiagnosticableTreeMixin implements _NamTaiChinh {
+class _$NamTaiChinhImpl implements _NamTaiChinh {
   const _$NamTaiChinhImpl(
       {required this.nam,
       required this.tienChuTichLVTS,
@@ -3258,25 +3167,8 @@ class _$NamTaiChinhImpl with DiagnosticableTreeMixin implements _NamTaiChinh {
   final int tienThuKyDCNCS;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'NamTaiChinh(nam: $nam, tienChuTichLVTS: $tienChuTichLVTS, tienThuKyLVTS: $tienThuKyLVTS, tienUyVienLVTS: $tienUyVienLVTS, tienPhanBienLVTS: $tienPhanBienLVTS, tienChuTichXT: $tienChuTichXT, tienThuKyXT: $tienThuKyXT, tienUyVienXT: $tienUyVienXT, tienChuTichDCNCS: $tienChuTichDCNCS, tienThuKyDCNCS: $tienThuKyDCNCS)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'NamTaiChinh'))
-      ..add(DiagnosticsProperty('nam', nam))
-      ..add(DiagnosticsProperty('tienChuTichLVTS', tienChuTichLVTS))
-      ..add(DiagnosticsProperty('tienThuKyLVTS', tienThuKyLVTS))
-      ..add(DiagnosticsProperty('tienUyVienLVTS', tienUyVienLVTS))
-      ..add(DiagnosticsProperty('tienPhanBienLVTS', tienPhanBienLVTS))
-      ..add(DiagnosticsProperty('tienChuTichXT', tienChuTichXT))
-      ..add(DiagnosticsProperty('tienThuKyXT', tienThuKyXT))
-      ..add(DiagnosticsProperty('tienUyVienXT', tienUyVienXT))
-      ..add(DiagnosticsProperty('tienChuTichDCNCS', tienChuTichDCNCS))
-      ..add(DiagnosticsProperty('tienThuKyDCNCS', tienThuKyDCNCS));
   }
 
   @override
@@ -3482,9 +3374,7 @@ class __$$NhomChuyenMonImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$NhomChuyenMonImpl
-    with DiagnosticableTreeMixin
-    implements _NhomChuyenMon {
+class _$NhomChuyenMonImpl implements _NhomChuyenMon {
   const _$NhomChuyenMonImpl({required this.id, required this.tenNhom});
 
   factory _$NhomChuyenMonImpl.fromJson(Map<String, dynamic> json) =>
@@ -3496,17 +3386,8 @@ class _$NhomChuyenMonImpl
   final String tenNhom;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'NhomChuyenMon(id: $id, tenNhom: $tenNhom)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'NhomChuyenMon'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('tenNhom', tenNhom));
   }
 
   @override
@@ -3648,7 +3529,7 @@ class __$$NienKhoaImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$NienKhoaImpl with DiagnosticableTreeMixin implements _NienKhoa {
+class _$NienKhoaImpl implements _NienKhoa {
   const _$NienKhoaImpl({required this.nienKhoa});
 
   factory _$NienKhoaImpl.fromJson(Map<String, dynamic> json) =>
@@ -3658,16 +3539,8 @@ class _$NienKhoaImpl with DiagnosticableTreeMixin implements _NienKhoa {
   final String nienKhoa;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'NienKhoa(nienKhoa: $nienKhoa)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'NienKhoa'))
-      ..add(DiagnosticsProperty('nienKhoa', nienKhoa));
   }
 
   @override
@@ -4008,10 +3881,13 @@ mixin _$DeTaiThacSi {
   int? get idPhanBien2 => throw _privateConstructorUsedError;
   int? get idUyVien => throw _privateConstructorUsedError;
   int? get idThuKy => throw _privateConstructorUsedError;
+  @MaybeDateSerializer()
   DateTime? get ngayGiao => throw _privateConstructorUsedError;
-  DateTime? get soQdGiao => throw _privateConstructorUsedError;
+  String? get soQdGiao => throw _privateConstructorUsedError;
+  @MaybeDateSerializer()
   DateTime? get hanBaoVe => throw _privateConstructorUsedError;
-  DateTime? get soQdBaoVe => throw _privateConstructorUsedError;
+  String? get soQdBaoVe => throw _privateConstructorUsedError;
+  @MaybeDateSerializer()
   DateTime? get ngayBaoVe => throw _privateConstructorUsedError;
   @BoolIntSerializer()
   bool get thanhToan => throw _privateConstructorUsedError;
@@ -4045,11 +3921,11 @@ abstract class $DeTaiThacSiCopyWith<$Res> {
       int? idPhanBien2,
       int? idUyVien,
       int? idThuKy,
-      DateTime? ngayGiao,
-      DateTime? soQdGiao,
-      DateTime? hanBaoVe,
-      DateTime? soQdBaoVe,
-      DateTime? ngayBaoVe,
+      @MaybeDateSerializer() DateTime? ngayGiao,
+      String? soQdGiao,
+      @MaybeDateSerializer() DateTime? hanBaoVe,
+      String? soQdBaoVe,
+      @MaybeDateSerializer() DateTime? ngayBaoVe,
       @BoolIntSerializer() bool thanhToan,
       String? group,
       int? nam});
@@ -4137,7 +4013,7 @@ class _$DeTaiThacSiCopyWithImpl<$Res, $Val extends DeTaiThacSi>
       soQdGiao: freezed == soQdGiao
           ? _value.soQdGiao
           : soQdGiao // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as String?,
       hanBaoVe: freezed == hanBaoVe
           ? _value.hanBaoVe
           : hanBaoVe // ignore: cast_nullable_to_non_nullable
@@ -4145,7 +4021,7 @@ class _$DeTaiThacSiCopyWithImpl<$Res, $Val extends DeTaiThacSi>
       soQdBaoVe: freezed == soQdBaoVe
           ? _value.soQdBaoVe
           : soQdBaoVe // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as String?,
       ngayBaoVe: freezed == ngayBaoVe
           ? _value.ngayBaoVe
           : ngayBaoVe // ignore: cast_nullable_to_non_nullable
@@ -4185,11 +4061,11 @@ abstract class _$$DeTaiThacSiImplCopyWith<$Res>
       int? idPhanBien2,
       int? idUyVien,
       int? idThuKy,
-      DateTime? ngayGiao,
-      DateTime? soQdGiao,
-      DateTime? hanBaoVe,
-      DateTime? soQdBaoVe,
-      DateTime? ngayBaoVe,
+      @MaybeDateSerializer() DateTime? ngayGiao,
+      String? soQdGiao,
+      @MaybeDateSerializer() DateTime? hanBaoVe,
+      String? soQdBaoVe,
+      @MaybeDateSerializer() DateTime? ngayBaoVe,
       @BoolIntSerializer() bool thanhToan,
       String? group,
       int? nam});
@@ -4275,7 +4151,7 @@ class __$$DeTaiThacSiImplCopyWithImpl<$Res>
       soQdGiao: freezed == soQdGiao
           ? _value.soQdGiao
           : soQdGiao // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as String?,
       hanBaoVe: freezed == hanBaoVe
           ? _value.hanBaoVe
           : hanBaoVe // ignore: cast_nullable_to_non_nullable
@@ -4283,7 +4159,7 @@ class __$$DeTaiThacSiImplCopyWithImpl<$Res>
       soQdBaoVe: freezed == soQdBaoVe
           ? _value.soQdBaoVe
           : soQdBaoVe // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as String?,
       ngayBaoVe: freezed == ngayBaoVe
           ? _value.ngayBaoVe
           : ngayBaoVe // ignore: cast_nullable_to_non_nullable
@@ -4306,7 +4182,7 @@ class __$$DeTaiThacSiImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$DeTaiThacSiImpl extends _DeTaiThacSi with DiagnosticableTreeMixin {
+class _$DeTaiThacSiImpl extends _DeTaiThacSi {
   const _$DeTaiThacSiImpl(
       {this.id,
       required this.idGiangVien,
@@ -4318,11 +4194,11 @@ class _$DeTaiThacSiImpl extends _DeTaiThacSi with DiagnosticableTreeMixin {
       this.idPhanBien2,
       this.idUyVien,
       this.idThuKy,
-      this.ngayGiao,
+      @MaybeDateSerializer() this.ngayGiao,
       this.soQdGiao,
-      this.hanBaoVe,
+      @MaybeDateSerializer() this.hanBaoVe,
       this.soQdBaoVe,
-      this.ngayBaoVe,
+      @MaybeDateSerializer() this.ngayBaoVe,
       @BoolIntSerializer() this.thanhToan = false,
       this.group,
       this.nam})
@@ -4352,14 +4228,17 @@ class _$DeTaiThacSiImpl extends _DeTaiThacSi with DiagnosticableTreeMixin {
   @override
   final int? idThuKy;
   @override
+  @MaybeDateSerializer()
   final DateTime? ngayGiao;
   @override
-  final DateTime? soQdGiao;
+  final String? soQdGiao;
   @override
+  @MaybeDateSerializer()
   final DateTime? hanBaoVe;
   @override
-  final DateTime? soQdBaoVe;
+  final String? soQdBaoVe;
   @override
+  @MaybeDateSerializer()
   final DateTime? ngayBaoVe;
   @override
   @JsonKey()
@@ -4371,33 +4250,8 @@ class _$DeTaiThacSiImpl extends _DeTaiThacSi with DiagnosticableTreeMixin {
   final int? nam;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'DeTaiThacSi(id: $id, idGiangVien: $idGiangVien, tenTiengViet: $tenTiengViet, tenTiengAnh: $tenTiengAnh, idHocVien: $idHocVien, idChuTich: $idChuTich, idPhanBien1: $idPhanBien1, idPhanBien2: $idPhanBien2, idUyVien: $idUyVien, idThuKy: $idThuKy, ngayGiao: $ngayGiao, soQdGiao: $soQdGiao, hanBaoVe: $hanBaoVe, soQdBaoVe: $soQdBaoVe, ngayBaoVe: $ngayBaoVe, thanhToan: $thanhToan, group: $group, nam: $nam)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'DeTaiThacSi'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('idGiangVien', idGiangVien))
-      ..add(DiagnosticsProperty('tenTiengViet', tenTiengViet))
-      ..add(DiagnosticsProperty('tenTiengAnh', tenTiengAnh))
-      ..add(DiagnosticsProperty('idHocVien', idHocVien))
-      ..add(DiagnosticsProperty('idChuTich', idChuTich))
-      ..add(DiagnosticsProperty('idPhanBien1', idPhanBien1))
-      ..add(DiagnosticsProperty('idPhanBien2', idPhanBien2))
-      ..add(DiagnosticsProperty('idUyVien', idUyVien))
-      ..add(DiagnosticsProperty('idThuKy', idThuKy))
-      ..add(DiagnosticsProperty('ngayGiao', ngayGiao))
-      ..add(DiagnosticsProperty('soQdGiao', soQdGiao))
-      ..add(DiagnosticsProperty('hanBaoVe', hanBaoVe))
-      ..add(DiagnosticsProperty('soQdBaoVe', soQdBaoVe))
-      ..add(DiagnosticsProperty('ngayBaoVe', ngayBaoVe))
-      ..add(DiagnosticsProperty('thanhToan', thanhToan))
-      ..add(DiagnosticsProperty('group', group))
-      ..add(DiagnosticsProperty('nam', nam));
   }
 
   @override
@@ -4490,11 +4344,11 @@ abstract class _DeTaiThacSi extends DeTaiThacSi {
       final int? idPhanBien2,
       final int? idUyVien,
       final int? idThuKy,
-      final DateTime? ngayGiao,
-      final DateTime? soQdGiao,
-      final DateTime? hanBaoVe,
-      final DateTime? soQdBaoVe,
-      final DateTime? ngayBaoVe,
+      @MaybeDateSerializer() final DateTime? ngayGiao,
+      final String? soQdGiao,
+      @MaybeDateSerializer() final DateTime? hanBaoVe,
+      final String? soQdBaoVe,
+      @MaybeDateSerializer() final DateTime? ngayBaoVe,
       @BoolIntSerializer() final bool thanhToan,
       final String? group,
       final int? nam}) = _$DeTaiThacSiImpl;
@@ -4524,14 +4378,17 @@ abstract class _DeTaiThacSi extends DeTaiThacSi {
   @override
   int? get idThuKy;
   @override
+  @MaybeDateSerializer()
   DateTime? get ngayGiao;
   @override
-  DateTime? get soQdGiao;
+  String? get soQdGiao;
   @override
+  @MaybeDateSerializer()
   DateTime? get hanBaoVe;
   @override
-  DateTime? get soQdBaoVe;
+  String? get soQdBaoVe;
   @override
+  @MaybeDateSerializer()
   DateTime? get ngayBaoVe;
   @override
   @BoolIntSerializer()

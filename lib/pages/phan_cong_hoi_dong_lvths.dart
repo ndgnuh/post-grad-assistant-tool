@@ -27,6 +27,11 @@ class _State extends ChangeNotifier {
   Set<HocVien> selectedHocVien = {};
   List<GiangVien> listGiangVien = [];
 
+  /// Chỉ mục (DB mới)
+  List<DeTaiThacSi> listDeTai = [];
+  Map<DeTaiThacSi, HocVien?> mapHocVien = {};
+  Map<DeTaiThacSi, GiangVien> mapGiangVien = {};
+
   /// Trạng thái search
   TextEditingController searchText = TextEditingController();
 
@@ -40,6 +45,10 @@ class _State extends ChangeNotifier {
   /// Re-fetch all data
   Future<void> refresh() async {
     print(searchText.text);
+    listDeTai = await DeTaiThacSi.search(
+      searchQuery: searchText.text,
+    );
+
     searchedHocVien = await domain.listHocVien(
       searchQuery: searchText.text,
     );

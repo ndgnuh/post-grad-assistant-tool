@@ -20,7 +20,8 @@ _$GiangVienImpl _$$GiangVienImplFromJson(Map<String, dynamic> json) =>
       sdt: json['sdt'] as String?,
       email: json['email'] as String?,
       cccd: json['cccd'] as String?,
-      ngaySinh: const DateSerializer().fromJson(json['ngaySinh'] as String?),
+      ngaySinh:
+          const MaybeDateSerializer().fromJson(json['ngaySinh'] as String?),
       stk: json['stk'] as String?,
       nganHang: json['nganHang'] as String?,
       mst: json['mst'] as String?,
@@ -42,7 +43,7 @@ Map<String, dynamic> _$$GiangVienImplToJson(_$GiangVienImpl instance) =>
       'sdt': instance.sdt,
       'email': instance.email,
       'cccd': instance.cccd,
-      'ngaySinh': const DateSerializer().toJson(instance.ngaySinh),
+      'ngaySinh': const MaybeDateSerializer().toJson(instance.ngaySinh),
       'stk': instance.stk,
       'nganHang': instance.nganHang,
       'mst': instance.mst,
@@ -69,37 +70,38 @@ const _$HocViEnumMap = {
 
 _$DangKyHocImpl _$$DangKyHocImplFromJson(Map<String, dynamic> json) =>
     _$DangKyHocImpl(
-      maLopHoc: (json['maLopHoc'] as num).toInt(),
-      maHocVien: (json['maHocVien'] as num).toInt(),
+      idLopTinChi: (json['idLopTinChi'] as num).toInt(),
+      idHocVien: (json['idHocVien'] as num).toInt(),
       diemQuaTrinh: (json['diemQuaTrinh'] as num?)?.toDouble(),
       diemCuoiKy: (json['diemCuoiKy'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$$DangKyHocImplToJson(_$DangKyHocImpl instance) =>
     <String, dynamic>{
-      'maLopHoc': instance.maLopHoc,
-      'maHocVien': instance.maHocVien,
+      'idLopTinChi': instance.idLopTinChi,
+      'idHocVien': instance.idHocVien,
       'diemQuaTrinh': instance.diemQuaTrinh,
       'diemCuoiKy': instance.diemCuoiKy,
     };
 
 _$HocKyImpl _$$HocKyImplFromJson(Map<String, dynamic> json) => _$HocKyImpl(
       hocKy: json['hocKy'] as String,
-      moDangKy: json['moDangKy'] as String,
-      dongDangKy: json['dongDangKy'] as String,
-      batDauHoc: json['batDauHoc'] as String,
-      ketThucHoc: json['ketThucHoc'] as String,
-      hanNhapDiem: json['hanNhapDiem'] as String,
+      moDangKy: const DateSerializer().fromJson(json['moDangKy'] as String),
+      dongDangKy: const DateSerializer().fromJson(json['dongDangKy'] as String),
+      batDauHoc: const DateSerializer().fromJson(json['batDauHoc'] as String),
+      ketThucHoc: const DateSerializer().fromJson(json['ketThucHoc'] as String),
+      hanNhapDiem:
+          const DateSerializer().fromJson(json['hanNhapDiem'] as String),
     );
 
 Map<String, dynamic> _$$HocKyImplToJson(_$HocKyImpl instance) =>
     <String, dynamic>{
       'hocKy': instance.hocKy,
-      'moDangKy': instance.moDangKy,
-      'dongDangKy': instance.dongDangKy,
-      'batDauHoc': instance.batDauHoc,
-      'ketThucHoc': instance.ketThucHoc,
-      'hanNhapDiem': instance.hanNhapDiem,
+      'moDangKy': const DateSerializer().toJson(instance.moDangKy),
+      'dongDangKy': const DateSerializer().toJson(instance.dongDangKy),
+      'batDauHoc': const DateSerializer().toJson(instance.batDauHoc),
+      'ketThucHoc': const DateSerializer().toJson(instance.ketThucHoc),
+      'hanNhapDiem': const DateSerializer().toJson(instance.hanNhapDiem),
     };
 
 _$HocPhanImpl _$$HocPhanImplFromJson(Map<String, dynamic> json) =>
@@ -139,7 +141,8 @@ _$HocVienImpl _$$HocVienImplFromJson(Map<String, dynamic> json) =>
       nienKhoa: json['nienKhoa'] as String?,
       maHocVien: json['maHocVien'] as String?,
       hoTen: json['hoTen'] as String,
-      ngaySinh: const DateSerializer().fromJson(json['ngaySinh'] as String?),
+      ngaySinh:
+          const MaybeDateSerializer().fromJson(json['ngaySinh'] as String?),
       gioiTinh: $enumDecodeNullable(_$GioiTinhEnumMap, json['gioiTinh']),
       noiSinh: json['noiSinh'] as String?,
       email: json['email'] as String?,
@@ -147,7 +150,7 @@ _$HocVienImpl _$$HocVienImplFromJson(Map<String, dynamic> json) =>
       nganhTotNghiepDaiHoc: json['nganhTotNghiepDaiHoc'] as String?,
       heTotNghiepDaiHoc: json['heTotNghiepDaiHoc'] as String?,
       xepLoaiTotNghiepDaiHoc: json['xepLoaiTotNghiepDaiHoc'] as String?,
-      ngayTotNghiepDaiHoc: const DateSerializer()
+      ngayTotNghiepDaiHoc: const MaybeDateSerializer()
           .fromJson(json['ngayTotNghiepDaiHoc'] as String?),
       dinhHuongChuyenSau: json['dinhHuongChuyenSau'] as String?,
       hocPhanDuocMien: json['hocPhanDuocMien'] as String?,
@@ -156,15 +159,17 @@ _$HocVienImpl _$$HocVienImplFromJson(Map<String, dynamic> json) =>
       maTrangThai: $enumDecode(_$TrangThaiHocVienEnumMap, json['maTrangThai']),
       deTaiLuanVanTiengViet: json['deTaiLuanVanTiengViet'] as String?,
       deTaiLuanVanTiengAnh: json['deTaiLuanVanTiengAnh'] as String?,
-      ngayGiaoDeTai:
-          const DateSerializer().fromJson(json['ngayGiaoDeTai'] as String?),
+      ngayGiaoDeTai: const MaybeDateSerializer()
+          .fromJson(json['ngayGiaoDeTai'] as String?),
       soQuyetDinhGiao: json['soQuyetDinhGiao'] as String?,
-      ngayBaoVe: const DateSerializer().fromJson(json['ngayBaoVe'] as String?),
+      ngayBaoVe:
+          const MaybeDateSerializer().fromJson(json['ngayBaoVe'] as String?),
       soQuyetDinhBaoVe: (json['soQuyetDinhBaoVe'] as num?)?.toInt(),
-      ngayKyQuyetDinhBaoVe: const DateSerializer()
+      ngayKyQuyetDinhBaoVe: const MaybeDateSerializer()
           .fromJson(json['ngayKyQuyetDinhBaoVe'] as String?),
       idGiangVienHuongDan: (json['idGiangVienHuongDan'] as num?)?.toInt(),
-      hanBaoVe: const DateSerializer().fromJson(json['hanBaoVe'] as String?),
+      hanBaoVe:
+          const MaybeDateSerializer().fromJson(json['hanBaoVe'] as String?),
       lanGiaHan: (json['lanGiaHan'] as num?)?.toInt() ?? 0,
       idTieuBanXetTuyen: (json['idTieuBanXetTuyen'] as num?)?.toInt(),
       idDienTuyenSinh:
@@ -179,7 +184,7 @@ Map<String, dynamic> _$$HocVienImplToJson(_$HocVienImpl instance) =>
       'nienKhoa': instance.nienKhoa,
       'maHocVien': instance.maHocVien,
       'hoTen': instance.hoTen,
-      'ngaySinh': const DateSerializer().toJson(instance.ngaySinh),
+      'ngaySinh': const MaybeDateSerializer().toJson(instance.ngaySinh),
       'gioiTinh': _$GioiTinhEnumMap[instance.gioiTinh],
       'noiSinh': instance.noiSinh,
       'email': instance.email,
@@ -188,7 +193,7 @@ Map<String, dynamic> _$$HocVienImplToJson(_$HocVienImpl instance) =>
       'heTotNghiepDaiHoc': instance.heTotNghiepDaiHoc,
       'xepLoaiTotNghiepDaiHoc': instance.xepLoaiTotNghiepDaiHoc,
       'ngayTotNghiepDaiHoc':
-          const DateSerializer().toJson(instance.ngayTotNghiepDaiHoc),
+          const MaybeDateSerializer().toJson(instance.ngayTotNghiepDaiHoc),
       'dinhHuongChuyenSau': instance.dinhHuongChuyenSau,
       'hocPhanDuocMien': instance.hocPhanDuocMien,
       'nganhDaoTaoThacSi': instance.nganhDaoTaoThacSi,
@@ -196,14 +201,15 @@ Map<String, dynamic> _$$HocVienImplToJson(_$HocVienImpl instance) =>
       'maTrangThai': _$TrangThaiHocVienEnumMap[instance.maTrangThai]!,
       'deTaiLuanVanTiengViet': instance.deTaiLuanVanTiengViet,
       'deTaiLuanVanTiengAnh': instance.deTaiLuanVanTiengAnh,
-      'ngayGiaoDeTai': const DateSerializer().toJson(instance.ngayGiaoDeTai),
+      'ngayGiaoDeTai':
+          const MaybeDateSerializer().toJson(instance.ngayGiaoDeTai),
       'soQuyetDinhGiao': instance.soQuyetDinhGiao,
-      'ngayBaoVe': const DateSerializer().toJson(instance.ngayBaoVe),
+      'ngayBaoVe': const MaybeDateSerializer().toJson(instance.ngayBaoVe),
       'soQuyetDinhBaoVe': instance.soQuyetDinhBaoVe,
       'ngayKyQuyetDinhBaoVe':
-          const DateSerializer().toJson(instance.ngayKyQuyetDinhBaoVe),
+          const MaybeDateSerializer().toJson(instance.ngayKyQuyetDinhBaoVe),
       'idGiangVienHuongDan': instance.idGiangVienHuongDan,
-      'hanBaoVe': const DateSerializer().toJson(instance.hanBaoVe),
+      'hanBaoVe': const MaybeDateSerializer().toJson(instance.hanBaoVe),
       'lanGiaHan': instance.lanGiaHan,
       'idTieuBanXetTuyen': instance.idTieuBanXetTuyen,
       'idDienTuyenSinh': _$DienTuyenSinhEnumMap[instance.idDienTuyenSinh],
@@ -264,7 +270,7 @@ _$LopTinChiImpl _$$LopTinChiImplFromJson(Map<String, dynamic> json) =>
       urlTruyCap: json['urlTruyCap'] as String?,
       hocKy: json['hocKy'] as String?,
       phongHoc: json['phongHoc'] as String?,
-      ngayHoc: (json['ngayHoc'] as num?)?.toInt(),
+      ngayHoc: $enumDecodeNullable(_$NgayTrongTuanEnumMap, json['ngayHoc']),
       tietBatDau: (json['tietBatDau'] as num?)?.toInt(),
       tietKetThuc: (json['tietKetThuc'] as num?)?.toInt(),
       trangThai:
@@ -282,11 +288,20 @@ Map<String, dynamic> _$$LopTinChiImplToJson(_$LopTinChiImpl instance) =>
       'urlTruyCap': instance.urlTruyCap,
       'hocKy': instance.hocKy,
       'phongHoc': instance.phongHoc,
-      'ngayHoc': instance.ngayHoc,
+      'ngayHoc': _$NgayTrongTuanEnumMap[instance.ngayHoc],
       'tietBatDau': instance.tietBatDau,
       'tietKetThuc': instance.tietKetThuc,
       'trangThai': _$TrangThaiLopTinChiEnumMap[instance.trangThai]!,
     };
+
+const _$NgayTrongTuanEnumMap = {
+  NgayTrongTuan.t2: 2,
+  NgayTrongTuan.t3: 3,
+  NgayTrongTuan.t4: 4,
+  NgayTrongTuan.t5: 5,
+  NgayTrongTuan.t6: 6,
+  NgayTrongTuan.t7: 7,
+};
 
 const _$TrangThaiLopTinChiEnumMap = {
   TrangThaiLopTinChi.huy: 1,
@@ -379,21 +394,14 @@ _$DeTaiThacSiImpl _$$DeTaiThacSiImplFromJson(Map<String, dynamic> json) =>
       idPhanBien2: (json['idPhanBien2'] as num?)?.toInt(),
       idUyVien: (json['idUyVien'] as num?)?.toInt(),
       idThuKy: (json['idThuKy'] as num?)?.toInt(),
-      ngayGiao: json['ngayGiao'] == null
-          ? null
-          : DateTime.parse(json['ngayGiao'] as String),
-      soQdGiao: json['soQdGiao'] == null
-          ? null
-          : DateTime.parse(json['soQdGiao'] as String),
-      hanBaoVe: json['hanBaoVe'] == null
-          ? null
-          : DateTime.parse(json['hanBaoVe'] as String),
-      soQdBaoVe: json['soQdBaoVe'] == null
-          ? null
-          : DateTime.parse(json['soQdBaoVe'] as String),
-      ngayBaoVe: json['ngayBaoVe'] == null
-          ? null
-          : DateTime.parse(json['ngayBaoVe'] as String),
+      ngayGiao:
+          const MaybeDateSerializer().fromJson(json['ngayGiao'] as String?),
+      soQdGiao: json['soQdGiao'] as String?,
+      hanBaoVe:
+          const MaybeDateSerializer().fromJson(json['hanBaoVe'] as String?),
+      soQdBaoVe: json['soQdBaoVe'] as String?,
+      ngayBaoVe:
+          const MaybeDateSerializer().fromJson(json['ngayBaoVe'] as String?),
       thanhToan: json['thanhToan'] == null
           ? false
           : const BoolIntSerializer()
@@ -414,11 +422,11 @@ Map<String, dynamic> _$$DeTaiThacSiImplToJson(_$DeTaiThacSiImpl instance) =>
       'idPhanBien2': instance.idPhanBien2,
       'idUyVien': instance.idUyVien,
       'idThuKy': instance.idThuKy,
-      'ngayGiao': instance.ngayGiao?.toIso8601String(),
-      'soQdGiao': instance.soQdGiao?.toIso8601String(),
-      'hanBaoVe': instance.hanBaoVe?.toIso8601String(),
-      'soQdBaoVe': instance.soQdBaoVe?.toIso8601String(),
-      'ngayBaoVe': instance.ngayBaoVe?.toIso8601String(),
+      'ngayGiao': const MaybeDateSerializer().toJson(instance.ngayGiao),
+      'soQdGiao': instance.soQdGiao,
+      'hanBaoVe': const MaybeDateSerializer().toJson(instance.hanBaoVe),
+      'soQdBaoVe': instance.soQdBaoVe,
+      'ngayBaoVe': const MaybeDateSerializer().toJson(instance.ngayBaoVe),
       'thanhToan': const BoolIntSerializer().toJson(instance.thanhToan),
       'group': instance.group,
       'nam': instance.nam,

@@ -18,11 +18,11 @@ import 'pages/page_copy_pasta.dart' show PageCopyPasta;
 
 // const initialRoute = PagePhanCongHoiDongLuanVanThacSi.routeName;
 // const initialRoute = PageQuanLyGiangVien.routeName;
-//const initialRoute = PageCopyPasta.routeName;
+// const initialRoute = PageCopyPasta.routeName;
 // const initialRoute = PageXetTuyen.routeName;
-const initialRoute = PageQuanLyDeTai.routeName;
+// const initialRoute = PageQuanLyDeTai.routeName;
 // const initialRoute = PageHanCheHocPhan.routeName;
-// const initialRoute = PageLopTinChi.routeName;
+const initialRoute = PageLopTinChi.routeName;
 // const initialRoute = "/";
 
 const routes = [

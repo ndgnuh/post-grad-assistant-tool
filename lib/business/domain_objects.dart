@@ -1,15 +1,13 @@
 // Run
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as p;
-import '../datamodels.dart' show dbSession;
 
 import '../services/sqlbuilder/sqlbuilder.dart';
+import '../services/database.dart';
 
 part 'domain_objects.freezed.dart';
 part 'domain_objects.g.dart';
@@ -49,6 +47,34 @@ enum TrangThaiHocVien {
 }
 
 @JsonEnum(valueField: "value")
+enum NgayTrongTuan {
+  t2(2, 'Thứ 2'),
+  t3(3, 'Thứ 3'),
+  t4(4, 'Thứ 4'),
+  t5(5, 'Thứ 5'),
+  t6(6, 'Thứ 6'),
+  t7(7, 'Thứ 7');
+
+  final int value;
+  final String label;
+  const NgayTrongTuan(this.value, this.label);
+  static NgayTrongTuan? fromInt(int? i) {
+    return switch (i) {
+      2 => t2,
+      3 => t3,
+      4 => t4,
+      5 => t5,
+      6 => t6,
+      7 => t7,
+      _ => null,
+    };
+  }
+
+  @override
+  toString() => label;
+}
+
+@JsonEnum(valueField: "value")
 enum HocHam {
   gs("GS", "GS.", "Giáo sư"),
   pgs("PGS", "PGS.", "Phó giáo sư");
@@ -78,15 +104,8 @@ enum HocVi {
   toString() => label;
 }
 
-mixin EnumWithLabel {
-  String get label;
-
-  @override
-  toString() => label;
-}
-
 @JsonEnum(valueField: "value")
-enum KhoiKienThuc with EnumWithLabel {
+enum KhoiKienThuc {
   khac('khac', 'Khác'),
   cn('cn', 'Cử nhân'),
   daiCuongThs('dc-ths', 'Đại cương'),
@@ -99,6 +118,9 @@ enum KhoiKienThuc with EnumWithLabel {
   final String value;
   final String label;
   const KhoiKienThuc(this.value, this.label);
+
+  @override
+  toString() => label;
 }
 
 @JsonEnum(valueField: "value")
@@ -137,8 +159,28 @@ class BoolIntSerializer implements JsonConverter<bool, int?> {
   int? toJson(bool b) => (b == true) ? 1 : 0;
 }
 
-class DateSerializer implements JsonConverter<DateTime?, String?> {
+DateTime datetimeFromYyyymmdd(String dString) {
+  return DateFormat('yyyy/MM/dd').parse(dString);
+}
+
+String datetimeToYyyymmdd(DateTime d) {
+  return DateFormat('yyyy/MM/dd').format(d);
+}
+
+String datetimeToDdmmyyyy(DateTime d) {
+  return DateFormat('dd/MM/yyyy').format(d);
+}
+
+class DateSerializer implements JsonConverter<DateTime, String> {
   const DateSerializer();
+  @override
+  DateTime fromJson(String s) => datetimeFromYyyymmdd(s);
+  @override
+  String toJson(DateTime d) => datetimeToYyyymmdd(d);
+}
+
+class MaybeDateSerializer implements JsonConverter<DateTime?, String?> {
+  const MaybeDateSerializer();
 
   @override
   DateTime? fromJson(String? inputString) {
@@ -255,7 +297,7 @@ class GiangVien with _$GiangVien {
     String? sdt,
     String? email,
     String? cccd,
-    @DateSerializer() DateTime? ngaySinh,
+    @MaybeDateSerializer() DateTime? ngaySinh,
     String? stk,
     String? nganHang,
     String? mst,
@@ -317,12 +359,34 @@ class GiangVien with _$GiangVien {
 @freezed
 class DangKyHoc with _$DangKyHoc {
   static const table = "DangKyHoc";
+  const DangKyHoc._();
   factory DangKyHoc({
-    required int maLopHoc,
-    required int maHocVien,
+    required int idLopTinChi,
+    required int idHocVien,
     double? diemQuaTrinh,
     double? diemCuoiKy,
   }) = _DangKyHoc;
+
+  static Future<void> create({
+    required LopTinChi lopTinChi,
+    required List<HocVien> listHocVien,
+  }) async {
+    await transaction((Transaction txn) async {
+      final idLopTinChi = lopTinChi.id;
+      for (final hocVien in listHocVien) {
+        final idHocVien = hocVien.id;
+        final query = InsertQuery()
+          ..into(table)
+          ..insert({
+            "idLopTinChi": idLopTinChi,
+            "idHocVien": idHocVien,
+          });
+
+        final sql = query.build();
+        await txn.rawInsert(sql);
+      }
+    });
+  }
 
   factory DangKyHoc.fromJson(Map<String, dynamic> json) =>
       _$DangKyHocFromJson(json);
@@ -334,22 +398,40 @@ class HocKy with _$HocKy {
   const HocKy._();
   const factory HocKy({
     required String hocKy,
-    required String moDangKy,
-    required String dongDangKy,
-    required String batDauHoc,
-    required String ketThucHoc,
-    required String hanNhapDiem,
+    @DateSerializer() required DateTime moDangKy,
+    @DateSerializer() required DateTime dongDangKy,
+    @DateSerializer() required DateTime batDauHoc,
+    @DateSerializer() required DateTime ketThucHoc,
+    @DateSerializer() required DateTime hanNhapDiem,
   }) = _HocKy;
 
   factory HocKy.fromJson(Map<String, dynamic> json) => _$HocKyFromJson(json);
 
   @override
   String toString() => hocKy;
+
+  (int, int) get yearStartEnd {
+    final yearStart = int.parse(hocKy.substring(0, 4));
+    final yearEnd = yearStart + 1;
+    return (yearStart, yearEnd);
+  }
+
+  String get thoiGianHoc {
+    final a = datetimeToDdmmyyyy(batDauHoc);
+    final b = datetimeToDdmmyyyy(ketThucHoc);
+    return "$a - $b";
+  }
+
+  String get namHoc {
+    final (yearStart, yearEnd) = yearStartEnd;
+    return "$yearStart-$yearEnd";
+  }
 }
 
 @freezed
 class HocPhan with _$HocPhan {
   static const table = "HocPhan";
+  static const idField = "maHocPhan";
   const HocPhan._();
   const factory HocPhan({
     required String maHocPhan,
@@ -363,8 +445,15 @@ class HocPhan with _$HocPhan {
   factory HocPhan.fromJson(Map<String, dynamic> json) =>
       _$HocPhanFromJson(json);
 
+  static Future<HocPhan> getById(String id) => _getById(
+        id: id,
+        table: table,
+        idField: idField,
+        fromJson: HocPhan.fromJson,
+      );
+
   @override
-  toString() => "$maHocPhan $tenTiengViet ($soTinChi TC)";
+  toString() => "$maHocPhan $tenTiengViet $khoiLuong";
 }
 
 @freezed
@@ -379,7 +468,7 @@ class HocVien with _$HocVien {
     String? nienKhoa,
     String? maHocVien,
     required String hoTen,
-    @DateSerializer() DateTime? ngaySinh,
+    @MaybeDateSerializer() DateTime? ngaySinh,
     GioiTinh? gioiTinh,
     String? noiSinh,
     String? email,
@@ -387,7 +476,7 @@ class HocVien with _$HocVien {
     String? nganhTotNghiepDaiHoc,
     String? heTotNghiepDaiHoc,
     String? xepLoaiTotNghiepDaiHoc,
-    @DateSerializer() DateTime? ngayTotNghiepDaiHoc,
+    @MaybeDateSerializer() DateTime? ngayTotNghiepDaiHoc,
     String? dinhHuongChuyenSau,
     String? hocPhanDuocMien,
     String? nganhDaoTaoThacSi,
@@ -395,13 +484,13 @@ class HocVien with _$HocVien {
     required TrangThaiHocVien maTrangThai,
     String? deTaiLuanVanTiengViet,
     String? deTaiLuanVanTiengAnh,
-    @DateSerializer() DateTime? ngayGiaoDeTai,
+    @MaybeDateSerializer() DateTime? ngayGiaoDeTai,
     String? soQuyetDinhGiao,
-    @DateSerializer() DateTime? ngayBaoVe,
+    @MaybeDateSerializer() DateTime? ngayBaoVe,
     int? soQuyetDinhBaoVe,
-    @DateSerializer() DateTime? ngayKyQuyetDinhBaoVe,
+    @MaybeDateSerializer() DateTime? ngayKyQuyetDinhBaoVe,
     int? idGiangVienHuongDan,
-    @DateSerializer() DateTime? hanBaoVe,
+    @MaybeDateSerializer() DateTime? hanBaoVe,
     @Default(0) int lanGiaHan,
     int? idTieuBanXetTuyen,
     DienTuyenSinh? idDienTuyenSinh,
@@ -412,6 +501,15 @@ class HocVien with _$HocVien {
   // so that it maps nicely to the database.
   DienTuyenSinh? get dienTuyenSinh => idDienTuyenSinh;
   TrangThaiHocVien? get trangThai => maTrangThai;
+
+  static Future<HocVien> getByMaHocVien(String maHocVien) {
+    return _getById(
+      id: maHocVien,
+      table: table,
+      idField: "maHocVien",
+      fromJson: HocVien.fromJson,
+    );
+  }
 
   static Future<HocVien> getById(int id) => _getById(
       id: id, table: table, idField: idField, fromJson: HocVien.fromJson);
@@ -461,7 +559,7 @@ class LopTinChi with _$LopTinChi {
     String? urlTruyCap,
     String? hocKy,
     String? phongHoc,
-    int? ngayHoc,
+    NgayTrongTuan? ngayHoc,
     int? tietBatDau,
     int? tietKetThuc,
     @Default(TrangThaiLopTinChi.binhThuong) TrangThaiLopTinChi trangThai,
@@ -470,7 +568,20 @@ class LopTinChi with _$LopTinChi {
   factory LopTinChi.fromJson(Map<String, dynamic> json) =>
       _$LopTinChiFromJson(json);
 
-  Future<void> commitValue() => _commitValue(
+  static Future<LopTinChi?> getByMaLop(String maLopHoc) => _getById(
+        id: maLopHoc,
+        table: table,
+        idField: "maLopHoc",
+        fromJson: LopTinChi.fromJson,
+      );
+
+  Future<void> create() => _create(
+        table: LopTinChi.table,
+        idField: "id",
+        toJson: toJson,
+      );
+
+  Future<void> update() => _commitValue(
         table: LopTinChi.table,
         idField: "id",
         toJson: toJson,
@@ -509,6 +620,18 @@ class LopTinChi with _$LopTinChi {
         whereArgs: [idGiangVien],
       );
       return GiangVien.fromJson(rows[0]);
+    });
+  }
+
+  Future<int> get soLuongHocVien async {
+    return await dbSession((db) async {
+      final query = SelectQuery()
+        ..select(["COUNT(idHocVien) as count"])
+        ..from(DangKyHoc.table)
+        ..where("idLopTinChi = ?", [id]);
+      final sql = query.build();
+      final rows = await db.rawQuery(sql);
+      return rows.first["count"] as int;
     });
   }
 }
@@ -596,19 +719,19 @@ class TieuBanXetTuyen with _$TieuBanXetTuyen {
   String toString() => "Tiểu ban xét tuyển năm $nam";
 
   Future<GiangVien> get chuTich async {
-    return await GiangVien.getById(idChuTich) as GiangVien;
+    return await GiangVien.getById(idChuTich);
   }
 
   Future<GiangVien> get thuKy async {
-    return await GiangVien.getById(idThuKy) as GiangVien;
+    return await GiangVien.getById(idThuKy);
   }
 
   Future<GiangVien> get uyVien1 async {
-    return await GiangVien.getById(idUyVien1) as GiangVien;
+    return await GiangVien.getById(idUyVien1);
   }
 
   Future<GiangVien> get uyVien2 async {
-    return await GiangVien.getById(idUyVien2) as GiangVien;
+    return await GiangVien.getById(idUyVien2);
   }
 
   Future<GiangVien> get uyVien3 async {
@@ -634,11 +757,11 @@ class DeTaiThacSi with _$DeTaiThacSi {
     int? idPhanBien2,
     int? idUyVien,
     int? idThuKy,
-    DateTime? ngayGiao,
-    DateTime? soQdGiao,
-    DateTime? hanBaoVe,
-    DateTime? soQdBaoVe,
-    DateTime? ngayBaoVe,
+    @MaybeDateSerializer() DateTime? ngayGiao,
+    String? soQdGiao,
+    @MaybeDateSerializer() DateTime? hanBaoVe,
+    String? soQdBaoVe,
+    @MaybeDateSerializer() DateTime? ngayBaoVe,
     @Default(false) @BoolIntSerializer() bool thanhToan,
     String? group,
     int? nam,
@@ -649,20 +772,35 @@ class DeTaiThacSi with _$DeTaiThacSi {
 
   static Future<List<DeTaiThacSi>> search({
     int? idGiangVien,
-    String? name,
+    String? searchQuery,
   }) async {
     final query = SelectQuery()
       ..from(DeTaiThacSi.table)
-      ..selectAll();
+      ..selectAll()
+      ..join(
+          HocVien.table, "${HocVien.table}.id = ${DeTaiThacSi.table}.idHocVien")
+      ..join(GiangVien.table,
+          "${GiangVien.table}.id = ${DeTaiThacSi.table}.idGiangVien");
 
     // Conditional filter
     if (idGiangVien != null) query.where("idGiangVien = ?", [idGiangVien]);
 
     // Conditional filter
-    if (name != null && name != "") {
+    if (searchQuery != null && searchQuery != "") {
+      final like = "%$searchQuery%";
       query.where(
-        "(tenTiengAnh) LIKE ? OR (tenTiengViet) LIKE ? COLLATE UNICODE",
-        ["%$name%", "%$name%"],
+        """
+        DetaiThacSi.tenTiengAnh LIKE ?
+        OR DetaiThacSi.tenTiengViet LIKE ?
+        OR HocVien.hoTen LIKE ?
+        OR HocVien.email LIKE ?
+        OR HocVien.dienThoai LIKE ?
+        OR HocVien.maHocVien LIKE ?
+        OR GiangVien.hoTen LIKE ?
+        OR GiangVien.email LIKE ?
+        OR GiangVien.sdt LIKE ?
+        """,
+        [like, like, like, like, like, like, like, like, like],
       );
     }
 

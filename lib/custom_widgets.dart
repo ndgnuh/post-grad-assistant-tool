@@ -806,6 +806,7 @@ class EzFilePicker extends StatelessWidget {
 
 extension ScaffoldMessengerEzMesage on ScaffoldMessengerState {
   void showMessage(String text) {
+    hideCurrentSnackBar();
     showSnackBar(
       SnackBar(
         content: Text(text),
@@ -964,5 +965,39 @@ void setControllerValue(ChangeNotifier controller, Object? value) {
       c.value = v;
     default:
       throw "Unsupported controller";
+  }
+}
+
+/// Common interface for widget controllers?
+T? ezGetValue<T>(ChangeNotifier controller, {bool textNullable = true}) {
+  switch (controller) {
+    case EzSelectionController<T> ctl:
+      return ctl.value;
+    case TextEditingController tec:
+      if (textNullable) {
+        return tec.nonEmptyValue as T?;
+      } else {
+        return tec.text as T;
+      }
+    default:
+      throw "Invalid controller $controller";
+  }
+}
+
+/// Common interface to set value for widget controllers?
+/// We pass value as Object? here so that if null is passed,
+/// the parameter T is inferred from the controller, not the value.
+/// Therefore, there is no need to call this function with type
+/// parameters
+void ezSetValue<T>(ChangeNotifier controller, Object? value) {
+  switch (controller) {
+    case EzSelectionController<T> ctl:
+      ctl.value = value as T;
+    case EzSelectionController<T?> ctl:
+      ctl.value = value as T?;
+    case TextEditingController tec:
+      tec.text = value?.toString() ?? "";
+    default:
+      throw "Invalid controller $controller";
   }
 }

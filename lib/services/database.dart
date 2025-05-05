@@ -4,6 +4,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'package:sqflite/sqflite.dart';
 
+export 'package:sqflite/sqflite.dart' show Database, Transaction;
 export 'sqlbuilder/sqlbuilder.dart'
     show Query, SelectQuery, UpdateQuery, InsertQuery, DeleteQuery;
 
@@ -15,6 +16,13 @@ Future initSqlite() async {
   } else {
     databaseFactory = databaseFactoryFfi;
   }
+}
+
+Future<T> transaction<T>(Future<T> Function(Transaction) callback) async {
+  final db = await openDatabase(databasePath, singleInstance: false);
+  final ret = await db.transaction(callback);
+  await db.close();
+  return ret;
 }
 
 Future<T> dbSession<T>(Future<T> Function(Database) callback) async {

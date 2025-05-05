@@ -136,6 +136,7 @@ class _GiangVienDataSource extends DataTableSource {
   DataRow getRow(int i) {
     final gv = state.listGiangVien[i];
     return DataRow(cells: [
+      DataCell(EzCopy(gv.id.toString())),
       DataCell(EzCopy(gv.hoTenChucDanh)),
       DataCell(EzCopy(gv.email ?? "-")),
       DataCell(EzCopy(gv.sdt ?? "-")),
@@ -163,6 +164,7 @@ class _GiangVienDataSource extends DataTableSource {
 
 class _TableGiangVien extends StatelessWidget {
   static const columns = [
+    ("ID", IntrinsicColumnWidth()),
     ("Họ và tên", FlexColumnWidth()),
     ("Email", IntrinsicColumnWidth()),
     ("SĐT", IntrinsicColumnWidth()),
