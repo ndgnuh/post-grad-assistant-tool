@@ -2531,7 +2531,7 @@ LopTinChi _$LopTinChiFromJson(Map<String, dynamic> json) {
 mixin _$LopTinChi {
   int get id => throw _privateConstructorUsedError;
   String? get maLopHoc => throw _privateConstructorUsedError;
-  String? get maHocPhan => throw _privateConstructorUsedError;
+  String get maHocPhan => throw _privateConstructorUsedError;
   int? get idGiangVien => throw _privateConstructorUsedError;
   int? get idLopTruong => throw _privateConstructorUsedError;
   String? get urlTruyCap => throw _privateConstructorUsedError;
@@ -2560,7 +2560,7 @@ abstract class $LopTinChiCopyWith<$Res> {
   $Res call(
       {int id,
       String? maLopHoc,
-      String? maHocPhan,
+      String maHocPhan,
       int? idGiangVien,
       int? idLopTruong,
       String? urlTruyCap,
@@ -2589,7 +2589,7 @@ class _$LopTinChiCopyWithImpl<$Res, $Val extends LopTinChi>
   $Res call({
     Object? id = null,
     Object? maLopHoc = freezed,
-    Object? maHocPhan = freezed,
+    Object? maHocPhan = null,
     Object? idGiangVien = freezed,
     Object? idLopTruong = freezed,
     Object? urlTruyCap = freezed,
@@ -2609,10 +2609,10 @@ class _$LopTinChiCopyWithImpl<$Res, $Val extends LopTinChi>
           ? _value.maLopHoc
           : maLopHoc // ignore: cast_nullable_to_non_nullable
               as String?,
-      maHocPhan: freezed == maHocPhan
+      maHocPhan: null == maHocPhan
           ? _value.maHocPhan
           : maHocPhan // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       idGiangVien: freezed == idGiangVien
           ? _value.idGiangVien
           : idGiangVien // ignore: cast_nullable_to_non_nullable
@@ -2664,7 +2664,7 @@ abstract class _$$LopTinChiImplCopyWith<$Res>
   $Res call(
       {int id,
       String? maLopHoc,
-      String? maHocPhan,
+      String maHocPhan,
       int? idGiangVien,
       int? idLopTruong,
       String? urlTruyCap,
@@ -2691,7 +2691,7 @@ class __$$LopTinChiImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? maLopHoc = freezed,
-    Object? maHocPhan = freezed,
+    Object? maHocPhan = null,
     Object? idGiangVien = freezed,
     Object? idLopTruong = freezed,
     Object? urlTruyCap = freezed,
@@ -2711,10 +2711,10 @@ class __$$LopTinChiImplCopyWithImpl<$Res>
           ? _value.maLopHoc
           : maLopHoc // ignore: cast_nullable_to_non_nullable
               as String?,
-      maHocPhan: freezed == maHocPhan
+      maHocPhan: null == maHocPhan
           ? _value.maHocPhan
           : maHocPhan // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       idGiangVien: freezed == idGiangVien
           ? _value.idGiangVien
           : idGiangVien // ignore: cast_nullable_to_non_nullable
@@ -2761,7 +2761,7 @@ class _$LopTinChiImpl extends _LopTinChi {
   const _$LopTinChiImpl(
       {required this.id,
       this.maLopHoc,
-      this.maHocPhan,
+      required this.maHocPhan,
       this.idGiangVien,
       this.idLopTruong,
       this.urlTruyCap,
@@ -2781,7 +2781,7 @@ class _$LopTinChiImpl extends _LopTinChi {
   @override
   final String? maLopHoc;
   @override
-  final String? maHocPhan;
+  final String maHocPhan;
   @override
   final int? idGiangVien;
   @override
@@ -2872,7 +2872,7 @@ abstract class _LopTinChi extends LopTinChi {
   const factory _LopTinChi(
       {required final int id,
       final String? maLopHoc,
-      final String? maHocPhan,
+      required final String maHocPhan,
       final int? idGiangVien,
       final int? idLopTruong,
       final String? urlTruyCap,
@@ -2892,7 +2892,7 @@ abstract class _LopTinChi extends LopTinChi {
   @override
   String? get maLopHoc;
   @override
-  String? get maHocPhan;
+  String get maHocPhan;
   @override
   int? get idGiangVien;
   @override

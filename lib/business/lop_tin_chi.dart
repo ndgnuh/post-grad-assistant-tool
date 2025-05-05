@@ -111,6 +111,25 @@ Future<List<GiangVien>> listGiangVien() async {
   });
 }
 
+/// Tạo thông báo lớp học + url
+/// để gửi cho học viên.
+Future<String> makeNotificationText({
+  required List<LopTinChi> listLopTinChi,
+}) async {
+  final rows = <String>[];
+  int count = 1;
+  for (final (idx, lop) in listLopTinChi.indexed) {
+    final stt = count.toString();
+    final tenLop = await lop.tenLopHoc;
+    final url = lop.urlTruyCap;
+    if (url != null) {
+      count = count + 1;
+      rows.add("$stt. $tenLop: $url");
+    }
+  }
+  return rows.join("\n");
+}
+
 /// Copy thông tin lớp tín chỉ để có thể paste vào các
 /// chương trình bảng tính, nội dung copy giống trong
 /// biểu mẫu đăng ký phân công giảng dạy

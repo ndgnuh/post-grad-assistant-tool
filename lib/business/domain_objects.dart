@@ -553,7 +553,7 @@ class LopTinChi with _$LopTinChi {
   const factory LopTinChi({
     required int id,
     String? maLopHoc,
-    String? maHocPhan,
+    required String maHocPhan,
     int? idGiangVien,
     int? idLopTruong,
     String? urlTruyCap,
@@ -587,6 +587,14 @@ class LopTinChi with _$LopTinChi {
         toJson: toJson,
       );
 
+  // Lấy mã học phần
+  Future<HocPhan> get hocPhan async => HocPhan.getById(maHocPhan);
+
+  Future<String> get tenLopHoc async {
+    final hp = await hocPhan;
+    return maLopHoc?.replaceFirst(hp.maHocPhan, hp.tenTiengViet) ?? "";
+  }
+
   Future<HocKy> get hocKyObject async {
     return dbSession((db) async {
       final rows = await db.query(
@@ -595,17 +603,6 @@ class LopTinChi with _$LopTinChi {
         whereArgs: [hocKy],
       );
       return HocKy.fromJson(rows[0]);
-    });
-  }
-
-  Future<HocPhan> get hocPhan async {
-    return dbSession((db) async {
-      final rows = await db.query(
-        "HocPhan",
-        where: "maHocPhan = ?",
-        whereArgs: [maHocPhan],
-      );
-      return HocPhan.fromJson(rows[0]);
     });
   }
 

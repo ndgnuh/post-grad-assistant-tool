@@ -88,6 +88,16 @@ class _PageState extends ChangeNotifier {
     }
   }
 
+  /// Copy nội dung phân công
+  copyUrlNotificationText() async {
+    String content = await makeNotificationText(
+      listLopTinChi: listLopTinChi,
+    );
+    final clipboardData = ClipboardData(text: content);
+    await Clipboard.setData(clipboardData);
+    return true;
+  }
+
   /// Copy tiêu đề phân công
   copyBm09Title() async {
     switch (searchHocKy.value) {
@@ -156,7 +166,7 @@ class _PageState extends ChangeNotifier {
       id: editLopTinChi?.id ?? -1,
       hocKy: ezGetValue<HocKy?>(editHocKy)?.hocKy,
       maLopHoc: ezGetValue(editMaLop),
-      maHocPhan: ezGetValue<HocPhan?>(editHocPhan)?.maHocPhan,
+      maHocPhan: (ezGetValue<HocPhan?>(editHocPhan) as HocPhan).maHocPhan,
       idGiangVien: ezGetValue<GiangVien?>(editGiangVien)?.id,
       phongHoc: ezGetValue(editPhongHoc),
       ngayHoc: ezGetValue<NgayTrongTuan?>(editNgayHoc),
@@ -339,17 +349,6 @@ class _EditPanel extends StatelessWidget {
         ),
         OutlinedButton.icon(
           onPressed: () async {
-            if (await model.copyBm09Text()) {
-              sm.showMessage(strings.msgCopySuccess);
-            } else {
-              sm.showMessage(strings.msgSelectTerm);
-            }
-          },
-          label: Text("Copy nội dung phân công"),
-          icon: Icon(Icons.content_copy),
-        ),
-        OutlinedButton.icon(
-          onPressed: () async {
             if (await model.copyBm09Title()) {
               sm.showMessage(strings.msgCopySuccess);
             } else {
@@ -368,6 +367,28 @@ class _EditPanel extends StatelessWidget {
             }
           },
           label: Text("Copy thời gian học"),
+          icon: Icon(Icons.content_copy),
+        ),
+        OutlinedButton.icon(
+          onPressed: () async {
+            if (await model.copyBm09Text()) {
+              sm.showMessage(strings.msgCopySuccess);
+            } else {
+              sm.showMessage(strings.msgSelectTerm);
+            }
+          },
+          label: Text("Copy nội dung phân công"),
+          icon: Icon(Icons.content_copy),
+        ),
+        OutlinedButton.icon(
+          onPressed: () async {
+            if (await model.copyUrlNotificationText()) {
+              sm.showMessage(strings.msgCopySuccess);
+            } else {
+              sm.showMessage(strings.msgSelectTerm);
+            }
+          },
+          label: Text("Copy thông báo cho học viên"),
           icon: Icon(Icons.content_copy),
         ),
       ],

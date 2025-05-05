@@ -264,7 +264,7 @@ _$LopTinChiImpl _$$LopTinChiImplFromJson(Map<String, dynamic> json) =>
     _$LopTinChiImpl(
       id: (json['id'] as num).toInt(),
       maLopHoc: json['maLopHoc'] as String?,
-      maHocPhan: json['maHocPhan'] as String?,
+      maHocPhan: json['maHocPhan'] as String,
       idGiangVien: (json['idGiangVien'] as num?)?.toInt(),
       idLopTruong: (json['idLopTruong'] as num?)?.toInt(),
       urlTruyCap: json['urlTruyCap'] as String?,
