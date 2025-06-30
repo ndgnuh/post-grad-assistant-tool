@@ -1,10 +1,7 @@
 // Run
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart' as p;
+import 'package:diacritic/diacritic.dart';
 
 import '../services/sqlbuilder/sqlbuilder.dart';
 import '../services/database.dart';
@@ -29,6 +26,18 @@ enum TrangThaiLopTinChi {
         TrangThaiLopTinChi.huy => "Hủy",
         TrangThaiLopTinChi.binhThuong => "Bình thường",
       };
+}
+
+enum VaiTroHoiDong {
+  chuTich('chu-tich', 'Chủ tịch'),
+  phanBien('phan-bien', 'Phản biện'),
+  thuKy('thu-ky', 'Thư ký'),
+  uyVien('uy-vien', 'Ủy viên'),
+  phucVu('phuc-vu', 'Người phục vụ');
+
+  final String value;
+  final String label;
+  const VaiTroHoiDong(this.value, this.label);
 }
 
 @JsonEnum(valueField: "value")
@@ -255,6 +264,16 @@ Future<T> _getById<T>({
   });
 }
 
+Future<List<T>> _all<T>({
+  required String table,
+  required T Function(Map<String, Object?>) fromJson,
+}) {
+  return dbSession((db) async {
+    final rows = await db.query(table);
+    return [for (final json in rows) fromJson(json)];
+  });
+}
+
 Future<void> _create<T>({
   required String table,
   required String idField,
@@ -322,16 +341,19 @@ class GiangVien with _$GiangVien {
       ..from(table)
       ..selectAll();
 
+    if (searchKeyword == "") return [];
+
     if (searchKeyword != null && searchKeyword != "") {
-      final like = "%$searchKeyword%";
-      query.where(
-        "hoTen like ? OR email like ? OR sdt like ? or stk like ? or MST like ?",
-        [like, like, like, like, like],
-      );
+      final rowid = SelectQuery()
+        ..select(['rowid'])
+        ..from("fts_GiangVien")
+        ..where("fts_GiangVien MATCH ?", [searchKeyword]);
+      query.where("id in ?", [rowid]);
     }
 
     final sql = query.build();
-    return dbSession((db) async {
+    print(sql);
+    return dbSessionReadOnly((db) async {
       final rows = await db.rawQuery(sql);
       return [for (final json in rows) GiangVien.fromJson(json)];
     });
@@ -445,6 +467,28 @@ class HocPhan with _$HocPhan {
   factory HocPhan.fromJson(Map<String, dynamic> json) =>
       _$HocPhanFromJson(json);
 
+  static Future<List<HocPhan>> search(String query) async {
+    if (query.trim().isEmpty) {
+      return [];
+    }
+
+    return await dbSessionReadOnly((Database db) async {
+      final ftsQuery = SelectQuery()
+        ..from("fts_HocPhan")
+        ..select(["maHocPhan"])
+        ..where("fts_HocPhan MATCH ?", [query]);
+
+      final hpQuery = SelectQuery()
+        ..selectAll()
+        ..from("HocPhan")
+        ..where("maHocPhan in ?", [ftsQuery]);
+
+      final sql = hpQuery.build();
+      final rows = await db.rawQuery(sql);
+      return <HocPhan>[for (final json in rows) HocPhan.fromJson(json)];
+    });
+  }
+
   static Future<HocPhan> getById(String id) => _getById(
         id: id,
         table: table,
@@ -502,6 +546,33 @@ class HocVien with _$HocVien {
   DienTuyenSinh? get dienTuyenSinh => idDienTuyenSinh;
   TrangThaiHocVien? get trangThai => maTrangThai;
 
+  String get emailHust {
+    final nameParts = removeDiacritics(hoTen).split(" ");
+    final firstName = nameParts.removeLast();
+    final lastInitials = [for (String part in nameParts) part[0]].join();
+    final lastMaHv = maHocVien?.substring(2);
+    return "$firstName.$lastInitials$lastMaHv@sis.hust.edu.vn";
+  }
+
+  static Future<List<HocVien>> search(String query) {
+    return dbSessionReadOnly((Database db) async {
+      final query1 = SelectQuery()
+        ..from("fts_HocVien")
+        ..select(["maHocVien"])
+        ..where("fts_HocVien MATCH ?", [query]);
+
+      final query2 = SelectQuery()
+        ..from(table)
+        ..selectAll()
+        ..where("maHocVien in ?", [query1]);
+
+      final sql = query2.build();
+      final rows = await db.rawQuery(sql);
+
+      return [for (final json in rows) HocVien.fromJson(json)];
+    });
+  }
+
   static Future<HocVien> getByMaHocVien(String maHocVien) {
     return _getById(
       id: maHocVien,
@@ -511,6 +582,8 @@ class HocVien with _$HocVien {
     );
   }
 
+  static Future<List<HocVien>> all() =>
+      _all(table: table, fromJson: HocVien.fromJson);
   static Future<HocVien> getById(int id) => _getById(
       id: id, table: table, idField: idField, fromJson: HocVien.fromJson);
   Future<void> create() =>
@@ -732,7 +805,7 @@ class TieuBanXetTuyen with _$TieuBanXetTuyen {
   }
 
   Future<GiangVien> get uyVien3 async {
-    return await GiangVien.getById(idUyVien3) as GiangVien;
+    return await GiangVien.getById(idUyVien3);
   }
 }
 
@@ -760,6 +833,7 @@ class DeTaiThacSi with _$DeTaiThacSi {
     String? soQdBaoVe,
     @MaybeDateSerializer() DateTime? ngayBaoVe,
     @Default(false) @BoolIntSerializer() bool thanhToan,
+    String? ghiChu,
     String? group,
     int? nam,
   }) = _DeTaiThacSi;
@@ -767,17 +841,33 @@ class DeTaiThacSi with _$DeTaiThacSi {
   factory DeTaiThacSi.fromJson(Map<String, dynamic> json) =>
       _$DeTaiThacSiFromJson(json);
 
+  static Future<DeTaiThacSi> getById(int id) => _getById(
+      id: id, table: table, idField: idField, fromJson: DeTaiThacSi.fromJson);
+
   static Future<List<DeTaiThacSi>> search({
     int? idGiangVien,
     String? searchQuery,
+    bool assigned = false,
   }) async {
+    final studentJoinMode = switch (assigned) {
+      false => JoinType.left,
+      true => JoinType.inner,
+    };
+
     final query = SelectQuery()
       ..from(DeTaiThacSi.table)
-      ..selectAll()
+      ..select(["$table.*"])
       ..join(
-          HocVien.table, "${HocVien.table}.id = ${DeTaiThacSi.table}.idHocVien")
+        HocVien.table,
+        "${HocVien.table}.id = ${DeTaiThacSi.table}.idHocVien",
+        studentJoinMode,
+      )
       ..join(GiangVien.table,
           "${GiangVien.table}.id = ${DeTaiThacSi.table}.idGiangVien");
+
+    if (assigned) {
+      query.where("idHocVien is not NULL");
+    }
 
     // Conditional filter
     if (idGiangVien != null) query.where("idGiangVien = ?", [idGiangVien]);
@@ -819,6 +909,26 @@ class DeTaiThacSi with _$DeTaiThacSi {
 
   /// Giảng viên hướng dẫn đề tài
   Future<GiangVien> get giangVien => GiangVien.getById(idGiangVien);
+  Future<GiangVien?> get chuTich async => switch (idChuTich) {
+        null => null,
+        Object id => GiangVien.getById(id),
+      };
+  Future<GiangVien?> get thuKy async => switch (idThuKy) {
+        null => null,
+        Object id => GiangVien.getById(id),
+      };
+  Future<GiangVien?> get uyVien async => switch (idUyVien) {
+        null => null,
+        Object id => GiangVien.getById(id),
+      };
+  Future<GiangVien?> get phanBien1 async => switch (idPhanBien1) {
+        null => null,
+        Object id => GiangVien.getById(id),
+      };
+  Future<GiangVien?> get phanBien2 async => switch (idPhanBien2) {
+        null => null,
+        Object id => GiangVien.getById(id),
+      };
   Future<HocVien?> get hocVien async {
     return switch (idHocVien) {
       null => null,

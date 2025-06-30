@@ -1,5 +1,5 @@
 import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
+import 'package:pdf/widgets.dart';
 import 'package:pdf/widgets.dart' show Widget, Context, StatelessWidget;
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -11,9 +11,9 @@ const double pt = PdfPageFormat.point;
 const double inch = PdfPageFormat.inch;
 const double mm = PdfPageFormat.mm;
 
-Future<pw.Font> loadFont(String assetPath) async {
+Future<Font> loadFont(String assetPath) async {
   final fontData = await rootBundle.load(assetPath);
-  return pw.Font.ttf(fontData);
+  return Font.ttf(fontData);
 }
 
 PdfPageFormat a4Landscape({
@@ -39,8 +39,8 @@ final serifFonts = (
   boldItalic: loadFont("assets/fonts/Times_New_Roman_Bold_Italic.ttf"),
 );
 
-Future<pw.ThemeData> defaultTheme({double baseSize = 9.0}) async {
-  final defaultTextStyle = pw.TextStyle(
+Future<ThemeData> defaultTheme({double baseSize = 9.0}) async {
+  final defaultTextStyle = TextStyle(
     font: await serifFonts.base,
     fontItalic: await serifFonts.italic,
     fontBoldItalic: await serifFonts.boldItalic,
@@ -48,10 +48,10 @@ Future<pw.ThemeData> defaultTheme({double baseSize = 9.0}) async {
     fontSize: baseSize,
   );
   final boldTextStyle = defaultTextStyle.copyWith(
-    fontWeight: pw.FontWeight.bold,
+    fontWeight: FontWeight.bold,
   );
 
-  final theme = pw.ThemeData(
+  final theme = ThemeData(
     defaultTextStyle: defaultTextStyle,
     header0: boldTextStyle.copyWith(fontSize: baseSize + 10),
     header1: boldTextStyle.copyWith(fontSize: baseSize + 8),
@@ -78,15 +78,15 @@ PdfPageFormat transpose(PdfPageFormat pageFormat) {
   );
 }
 
-pw.PageTheme defaultPageTheme({
-  orientation = pw.PageOrientation.portrait,
+PageTheme defaultPageTheme({
+  orientation = PageOrientation.portrait,
   pageFormat = PdfPageFormat.a4,
 }) {
-  return pw.PageTheme(
+  return PageTheme(
     pageFormat: pageFormat,
     orientation: orientation,
     clip: true,
-    margin: pw.EdgeInsets.symmetric(
+    margin: EdgeInsets.symmetric(
       vertical: 1 * PdfPageFormat.inch,
       horizontal: 1 * PdfPageFormat.inch,
     ),
@@ -94,14 +94,14 @@ pw.PageTheme defaultPageTheme({
 }
 
 Widget BoldText(String text, {dynamic? theme, double? fontSize}) {
-  return pw.Builder(
+  return Builder(
     builder: (context) {
-      final theme = pw.Theme.of(context);
+      final theme = Theme.of(context);
       final style = theme.defaultTextStyle.copyWith(
-        fontWeight: pw.FontWeight.bold,
+        fontWeight: FontWeight.bold,
         fontSize: fontSize,
       );
-      return pw.Text(text, style: style);
+      return Text(text, style: style);
     },
   );
 }
@@ -112,54 +112,54 @@ class ItalicText extends StatelessWidget {
   ItalicText(this.text, {this.fontSize});
   @override
   Widget build(context) {
-    final theme = pw.Theme.of(context);
+    final theme = Theme.of(context);
     final style = theme.defaultTextStyle.copyWith(
-      fontStyle: pw.FontStyle.italic,
+      fontStyle: FontStyle.italic,
       fontSize: fontSize,
     );
-    return pw.Text(text, style: style);
+    return Text(text, style: style);
   }
 }
 
-pw.Text BoldItalicText(String text) {
-  final style = pw.TextStyle.defaultStyle().copyWith(
-    fontWeight: pw.FontWeight.bold,
-    fontStyle: pw.FontStyle.italic,
+Text BoldItalicText(String text) {
+  final style = TextStyle.defaultStyle().copyWith(
+    fontWeight: FontWeight.bold,
+    fontStyle: FontStyle.italic,
   );
-  return pw.Text(text, style: style);
+  return Text(text, style: style);
 }
 
-pw.Text Heading0(String text) {
-  final style = pw.ThemeData.base().header0;
-  return pw.Text(text, style: style);
+Text Heading0(String text) {
+  final style = ThemeData.base().header0;
+  return Text(text, style: style);
 }
 
-pw.Text Heading1(String text) {
-  final style = pw.ThemeData.base().header1;
-  return pw.Text(text, style: style);
+Text Heading1(String text) {
+  final style = ThemeData.base().header1;
+  return Text(text, style: style);
 }
 
-pw.Text Heading2(String text) {
-  final style = pw.ThemeData.base().header2;
-  return pw.Text(text, style: style);
+Text Heading2(String text) {
+  final style = ThemeData.base().header2;
+  return Text(text, style: style);
 }
 
-pw.Text Heading3(String text) {
-  final style = pw.ThemeData.base().header3;
-  return pw.Text(text, style: style);
+Text Heading3(String text) {
+  final style = ThemeData.base().header3;
+  return Text(text, style: style);
 }
 
-pw.Text Heading4(String text) {
-  final style = pw.ThemeData.base().header4;
-  return pw.Text(text, style: style);
+Text Heading4(String text) {
+  final style = ThemeData.base().header4;
+  return Text(text, style: style);
 }
 
-pw.Text Heading5(String text) {
-  final style = pw.ThemeData.base().header5;
-  return pw.Text(text, style: style);
+Text Heading5(String text) {
+  final style = ThemeData.base().header5;
+  return Text(text, style: style);
 }
 
-class EzSkip extends pw.StatelessWidget {
+class EzSkip extends StatelessWidget {
   late double height;
 
   EzSkip({
@@ -171,15 +171,15 @@ class EzSkip extends pw.StatelessWidget {
   factory EzSkip.bigskip() => EzSkip(height: 14 * pt);
 
   @override
-  pw.Widget build(context) {
-    return pw.Divider(
+  Widget build(context) {
+    return Divider(
       height: height,
-      borderStyle: pw.BorderStyle.none,
+      borderStyle: BorderStyle.none,
     );
   }
 }
 
-class EzTitle extends pw.StatelessWidget {
+class EzTitle extends StatelessWidget {
   final String text;
   final double fontSize;
 
@@ -190,13 +190,13 @@ class EzTitle extends pw.StatelessWidget {
 
   @override
   Widget build(context) {
-    final theme = pw.Theme.of(context);
-    return pw.Center(
-      child: pw.Text(
+    final theme = Theme.of(context);
+    return Center(
+      child: Text(
         text,
         style: theme.defaultTextStyle.copyWith(
           fontSize: fontSize,
-          fontWeight: pw.FontWeight.bold,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -236,33 +236,33 @@ class EzTopHeader extends StatelessWidget {
   }
 
   Widget flushLeft() {
-    return pw.Row(children: [
+    return Row(children: [
       this,
-      pw.Expanded(child: pw.SizedBox.shrink()),
+      Expanded(child: SizedBox.shrink()),
     ]);
   }
 
   Widget flushRight() {
-    return pw.Row(children: [
-      pw.Expanded(child: pw.SizedBox.shrink()),
+    return Row(children: [
+      Expanded(child: SizedBox.shrink()),
       this,
     ]);
   }
 
   @override
   Widget build(Context context) {
-    final theme = pw.Theme.of(context);
+    final theme = Theme.of(context);
     final firstStyle = theme.defaultTextStyle.copyWith(
       fontSize: 12.5,
-      fontWeight: pw.FontWeight.bold,
+      fontWeight: FontWeight.bold,
     );
     final secondStyle = theme.defaultTextStyle.copyWith(
       fontSize: 13.5,
     );
-    return pw.Column(
+    return Column(
       children: [
-        pw.Text(firstLine, style: firstStyle),
-        pw.Text(secondLine, style: secondStyle),
+        Text(firstLine, style: firstStyle),
+        Text(secondLine, style: secondStyle),
       ],
     );
   }
@@ -270,16 +270,16 @@ class EzTopHeader extends StatelessWidget {
 
 class EzTable<T> extends StatelessWidget {
   final List<Object?> headers;
-  final pw.TableBorder? border;
-  final pw.EdgeInsetsGeometry padding;
+  final TableBorder? border;
+  final EdgeInsetsGeometry padding;
   final bool dataWrap;
   final bool headerWrap;
   final List<T> data;
   final List<Object?> Function(int, T) rowBuilder;
   final PdfColor? headerForeground;
-  final Map<int, pw.TableColumnWidth>? columnWidths;
-  final Map<int, pw.Alignment>? alignments;
-  final Map<int, pw.TextAlign>? textAligns;
+  final Map<int, TableColumnWidth>? columnWidths;
+  final Map<int, Alignment>? alignments;
+  final Map<int, TextAlign>? textAligns;
 
   EzTable({
     required this.data,
@@ -287,7 +287,7 @@ class EzTable<T> extends StatelessWidget {
     required this.headers,
     this.textAligns,
     this.border,
-    this.padding = const pw.EdgeInsetsDirectional.symmetric(
+    this.padding = const EdgeInsetsDirectional.symmetric(
       vertical: 5,
       horizontal: 3,
     ),
@@ -299,21 +299,21 @@ class EzTable<T> extends StatelessWidget {
   });
 
   List<Widget> _headers(Context context) {
-    final theme = pw.Theme.of(context);
+    final theme = Theme.of(context);
     return [
       for (final (i, header) in headers.indexed)
         (header is Widget)
             ? header
-            : pw.Container(
+            : Container(
                 padding: padding,
-                alignment: pw.Alignment.center,
-                child: pw.Text(
+                alignment: Alignment.center,
+                child: Text(
                   header?.toString() ?? "",
-                  textAlign: textAligns?[i] ?? pw.TextAlign.center,
+                  textAlign: textAligns?[i] ?? TextAlign.center,
                   softWrap: headerWrap,
                   style: theme.defaultTextStyle.copyWith(
                     color: headerForeground,
-                    fontWeight: pw.FontWeight.bold,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               )
@@ -322,33 +322,32 @@ class EzTable<T> extends StatelessWidget {
 
   @override
   Widget build(Context context) {
-    final theme = pw.Theme.of(context);
+    final theme = Theme.of(context);
 
-    return pw.Table(
+    return Table(
       columnWidths: columnWidths,
-      border: border ?? pw.TableBorder.all(),
+      border: border ?? TableBorder.all(),
       children: [
         // Headers
-        pw.TableRow(
-          verticalAlignment: pw.TableCellVerticalAlignment.middle,
+        TableRow(
+          verticalAlignment: TableCellVerticalAlignment.middle,
           children: _headers(context),
         ),
         // Data rows
         for (final (rowCount, row) in data.indexed)
-          pw.TableRow(
-            verticalAlignment: pw.TableCellVerticalAlignment.middle,
+          TableRow(
+            verticalAlignment: TableCellVerticalAlignment.middle,
             children: [
               for (final (colCount, data) in rowBuilder(rowCount, row).indexed)
                 (data is Widget)
                     ? data
-                    : pw.Container(
+                    : Container(
                         padding: padding,
-                        alignment: alignments?[colCount] ?? pw.Alignment.center,
-                        child: pw.Text(
+                        alignment: alignments?[colCount] ?? Alignment.center,
+                        child: Text(
                           data?.toString() ?? "",
                           softWrap: dataWrap,
-                          textAlign:
-                              textAligns?[colCount] ?? pw.TextAlign.center,
+                          textAlign: textAligns?[colCount] ?? TextAlign.center,
                           style: theme.defaultTextStyle.copyWith(),
                         ),
                       )

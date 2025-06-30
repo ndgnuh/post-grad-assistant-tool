@@ -2,7 +2,6 @@ import '../datamodels.dart' show dbSession;
 import '../services/sqlbuilder/sqlbuilder.dart';
 import '../services/pdf_widgets.dart' as pw;
 import 'dart:typed_data';
-import 'dart:io';
 
 import 'domain_objects.dart';
 export 'domain_objects.dart' show HocPhan, KhoiKienThuc;
@@ -61,7 +60,7 @@ Future<Uint8List> createPdf({
   final month = today.month;
   final year = today.year;
   final greetLine =
-      "Thực hiện kế hoạch giảng dạy cao học học kỳ $hocKy, Khoa Toán - Tin đề xuấn danh mục các học phần trong chương trình đào tạo Thạc sĩ các ngành như sau:";
+      "Thực hiện kế hoạch giảng dạy cao học học kỳ $hocKy, Khoa Toán - Tin đề xuất danh mục các học phần trong chương trình đào tạo Thạc sĩ các ngành như sau:";
 
   // Resolve khoi Kien Thuc
   // TODO: implement proper access function elsewhere
@@ -131,7 +130,7 @@ Future<Uint8List> createPdf({
               children: [
                 pw.ItalicText("Hà Nội, ngày $day tháng $month năm $year"),
                 pw.EzSkip.smallskip(),
-                pw.Text("TRƯỞNG KHOA KHOA TOÁN - TIN"),
+                pw.Text("KHOA TOÁN - TIN"),
                 pw.EzSkip(height: 15 * pw.mm),
               ],
             ),

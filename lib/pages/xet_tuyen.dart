@@ -29,9 +29,8 @@ class _PageState extends ChangeNotifier {
   final editNganhTotNghiepDaiHoc = TextEditingController();
   final editHeTotNghiepDaiHoc = TextEditingController();
   final editXepLoaiTotNghiepDaiHoc = EzSelectionController(values: listXepLoai);
-  final editNgaySinh = EzController.forDateTime(dateFormat: dateFormat);
-  final editNgayTotNghiepDaiHoc =
-      EzController.forDateTime(dateFormat: dateFormat);
+  final editNgaySinh = EzDateInputController();
+  final editNgayTotNghiepDaiHoc = EzDateInputController();
   final editDinhHuongChuyenSau = TextEditingController();
   final editHocPhanDuocMien = TextEditingController();
   final editNganhDaoTaoThacSi = TextEditingController();
@@ -132,6 +131,53 @@ class _PageState extends ChangeNotifier {
     return hocVien;
   }
 
+  /// Export hồ sơ tuyển sinh
+  exportFiles({
+    required ScaffoldMessengerState scaffoldMessenger,
+  }) async {
+    switch ((exportSaveDirectory.value, editTieuBanXetTuyen.value)) {
+      case (String saveDir, TieuBanXetTuyen tb):
+        saveBienBanTuyenSinh(
+          saveDirectory: saveDir,
+          listCandidates: listCandidate,
+          tb: tb,
+        );
+        scaffoldMessenger.showMessage("Đã lưu");
+      case (_, TieuBanXetTuyen _):
+        scaffoldMessenger.showMessage("Chọn thư mục lưu trước!");
+      case (String _, _):
+        scaffoldMessenger.showMessage("Chọn tiểu ban xét tuyển trước!");
+    }
+  }
+
+  /// Tải hồ sơ học viên
+  downloadStudentFiles({
+    required ScaffoldMessengerState scaffoldMessenger,
+  }) async {
+    final listCandidateXetTuyen = [
+      for (HocVien student in listCandidate)
+        if (student.dienTuyenSinh == DienTuyenSinh.xetTuyen) student
+    ];
+    switch (exportSaveDirectory.value) {
+      case String saveDir:
+        for (final student in listCandidateXetTuyen) {
+          final (success, error) = await downloadAdmissionFiles(
+            student: student,
+            outputDirectory: saveDir,
+          );
+          if (success) {
+            scaffoldMessenger
+                .showMessage("Đã tải hồ sơ ứng viên ${student.hoTen}!");
+          } else {
+            scaffoldMessenger.showMessage(
+                "Xảy ra lỗi khi tải hồ sơ ứng viên ${student.hoTen}! ($error)");
+          }
+        }
+      default:
+        scaffoldMessenger.showMessage("Chọn thư mục lưu trước!");
+    }
+  }
+
   /// Khởi tạo, constructor không được async, nên...
   _initAsync() async {
     listCandidate = await domain.fetchCandidates();
@@ -147,11 +193,11 @@ class _PageState extends ChangeNotifier {
 class _PanelListCandidateState extends State<_PanelListCandidate> {
   static const columns = [
     ("MHS", "Mã hồ sơ", IntrinsicColumnWidth()),
-    ("Họ và tên", null, FractionColumnWidth(0.2)),
-    ("Email", null, FractionColumnWidth(0.2)),
-    ("SĐT", "Số điện thoại", FlexColumnWidth()),
-    ("Nơi sinh", null, FlexColumnWidth()),
-    ("Ngày sinh", null, FlexColumnWidth()),
+    ("Họ và tên", null, IntrinsicColumnWidth()),
+    ("Email", null, IntrinsicColumnWidth()),
+    ("SĐT", "Số điện thoại", IntrinsicColumnWidth()),
+    ("Nơi sinh", null, IntrinsicColumnWidth()),
+    ("Ngày sinh", null, IntrinsicColumnWidth()),
     (
       "Tích hợp",
       "Hồ sơ Tích hợp Cử nhân - Thạc sĩ",
@@ -195,12 +241,12 @@ class _PanelListCandidateState extends State<_PanelListCandidate> {
 
     return DataRow(
       cells: [
-        DataCell(Text(hv.soHoSo ?? "")),
-        DataCell(Text(hv.hoTen)),
-        DataCell(Text(hv.email ?? "")),
-        DataCell(Text(hv.dienThoai ?? "")),
-        DataCell(Text(hv.noiSinh ?? "")),
-        DataCell(Text(hv.ngaySinh?.toString() ?? "")),
+        DataCell(EzCopy(hv.soHoSo ?? "")),
+        DataCell(EzCopy(hv.hoTen)),
+        DataCell(EzCopy(hv.email ?? "")),
+        DataCell(EzCopy(hv.dienThoai ?? "")),
+        DataCell(EzCopy(hv.noiSinh ?? "")),
+        DataCell(EzDmyText(hv.ngaySinh)),
         DataCell(
           Checkbox(
             value: (hv.dienTuyenSinh == DienTuyenSinh.tichHop),
@@ -305,7 +351,6 @@ class _EditPanel extends StatelessWidget {
         else
           EzFlex(
             margin: EdgeInsets.all(0),
-            flex: [1, 0],
             direction: Axis.horizontal,
             children: [
               EzTextInput(
@@ -329,7 +374,7 @@ class _EditPanel extends StatelessWidget {
           label: "Giới tính",
           controller: model.editGioiTinh,
         ),
-        EzDatePicker(
+        EzDateInput(
           label: "Ngày sinh",
           controller: model.editNgaySinh,
         ),
@@ -357,7 +402,7 @@ class _EditPanel extends StatelessWidget {
           label: "Hệ tốt nghiệp đại học",
           controller: model.editHeTotNghiepDaiHoc,
         ),
-        EzDatePicker(
+        EzDateInput(
           label: "Ngày tốt nghiệp đại học",
           controller: model.editNgayTotNghiepDaiHoc,
         ),
@@ -394,6 +439,7 @@ class _ActionPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pageState = Provider.of<_PageState>(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     return EzFixed(
       direction: Axis.vertical,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -409,12 +455,20 @@ class _ActionPanel extends StatelessWidget {
           },
         ),
         FilledButton.icon(
-          onPressed: null, // TODO
+          onPressed: () async {
+            await pageState.exportFiles(
+              scaffoldMessenger: scaffoldMessenger,
+            );
+          },
           icon: Icon(Icons.download),
           label: Text("Export biểu mẫu tuyển sinh"),
         ),
         FilledButton.icon(
-          onPressed: null, // TODO
+          onPressed: () async {
+            await pageState.downloadStudentFiles(
+              scaffoldMessenger: scaffoldMessenger,
+            );
+          },
           icon: Icon(Icons.download),
           label: Text("Download hồ sơ xét tuyển"),
         ),
@@ -451,7 +505,12 @@ class PageXetTuyen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   EzHeader(text: "Danh sách xét tuyển", level: 0),
-                  Expanded(child: _PanelListCandidate()),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: _PanelListCandidate(),
+                    ),
+                  ),
                 ],
               ),
               EzFlex(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
+import 'dart:async';
 
 export 'custom_widgets/dropdown_giangvien.dart' show DropdownGiangVien;
 export 'custom_widgets/dropdowns.dart' show DropdownFromEnums;
@@ -166,7 +167,7 @@ class EzDatePicker extends StatelessWidget {
 class EzCheckBox extends StatefulWidget {
   final String label;
   final bool triState;
-  final EzController<bool>? controller;
+  final EzController<bool?>? controller;
   final ValueChanged<bool?>? onChanged;
 
   const EzCheckBox({
@@ -215,6 +216,14 @@ extension NonEmptyValue on TextEditingController {
   }
 }
 
+/// A text input widget that supports
+/// - [label] for the input field
+/// - [placeholder] for the input field
+/// - [value] for the initial value of the input field
+/// - [onSubmitted] callback when the input is submitted
+/// - [onChanged] callback when the input is changed
+/// - [multiline] for multiline input, default to false
+/// - [controller] for the input field controller
 class EzTextInput extends StatelessWidget {
   final String? label;
   final String? placeholder;
@@ -519,6 +528,7 @@ class EzDropdown<T> extends StatefulWidget {
   final EzSelectionController<T> controller;
   final ValueChanged<T?>? onSelected;
   final FocusNode? focusNode;
+  final FutureOr<List<T>> Function(String query)? searchFunction;
 
   const EzDropdown({
     super.key,
@@ -529,6 +539,7 @@ class EzDropdown<T> extends StatefulWidget {
     this.initialSelection,
     this.onSelected,
     this.focusNode,
+    this.searchFunction,
   });
 
   static Widget fullWidth<T>({
@@ -539,6 +550,7 @@ class EzDropdown<T> extends StatefulWidget {
     initialSelection,
     onSelected,
     focusNode,
+    searchFunction,
   }) {
     return LayoutBuilder(
       builder: (context, constraint) {
@@ -550,6 +562,7 @@ class EzDropdown<T> extends StatefulWidget {
           initialSelection: initialSelection,
           onSelected: onSelected,
           focusNode: focusNode,
+          searchFunction: searchFunction,
         );
       },
     );
@@ -560,6 +573,8 @@ class EzDropdown<T> extends StatefulWidget {
 }
 
 class _EzDropdownState<T> extends State<EzDropdown<T>> {
+  String searchQuery = "";
+
   @override
   void initState() {
     widget.controller.addListener(
@@ -574,6 +589,15 @@ class _EzDropdownState<T> extends State<EzDropdown<T>> {
   void dispose() {
     widget.controller.dispose();
     super.dispose();
+  }
+
+  searchAndUpdate(String query) async {
+    if (query == searchQuery) return;
+    if (widget.searchFunction == null) return;
+
+    searchQuery = query;
+    final results = await widget.searchFunction!(query);
+    widget.controller.values = results;
   }
 
   @override
@@ -599,6 +623,10 @@ class _EzDropdownState<T> extends State<EzDropdown<T>> {
         width: widget.width,
         label: widget.label == null ? null : Text(widget.label as String),
         enableFilter: true,
+        filterCallback: (entries, query) {
+          searchAndUpdate(query);
+          return entries;
+        },
         dropdownMenuEntries: entries,
       ),
     );
@@ -999,5 +1027,159 @@ void ezSetValue<T>(ChangeNotifier controller, Object? value) {
       tec.text = value?.toString() ?? "";
     default:
       throw "Invalid controller $controller";
+  }
+}
+
+class EzDateInputController extends ChangeNotifier {
+  final TextEditingController formatController = TextEditingController();
+  late DateFormat dateFormat;
+
+  EzDateInputController({DateTime? value, DateFormat? dateFormat}) {
+    this.dateFormat = dateFormat ?? DateFormat("dd/MM/yyyy");
+    formatController.text = switch (value) {
+      DateTime date => toSqliteDate(date) ?? "",
+      _ => "",
+    };
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    formatController.dispose();
+  }
+
+  set value(DateTime? newValue) {
+    // Set the text in the format controller
+    formatController.text = switch (newValue) {
+      DateTime date => dateFormat.format(date),
+      _ => "",
+    };
+    notifyListeners();
+  }
+
+  DateTime? get value {
+    final text = formatController.text.trim();
+    if (text.isEmpty) return null;
+
+    // Try to parse the date from the text
+    final parsedDate = tryParseDMY(text);
+    if (parsedDate != null) {
+      return parsedDate;
+    }
+
+    // If parsing fails, return null
+    return null;
+  }
+}
+
+class EzDateInput extends StatelessWidget {
+  final EzDateInputController controller;
+  final String? label;
+  final bool enabled;
+  final bool readOnly;
+
+  const EzDateInput({
+    super.key,
+    required this.controller,
+    this.label,
+    this.enabled = true,
+    this.readOnly = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final formattedDateInputFormatter = TextInputFormatter.withFunction(
+      // this function is AI generated slop
+      // A function that auto format text as dd/MM/yyyy
+      // This function does not use date library
+      (oldValue, newValue) {
+        final newLength = newValue.text.length;
+        final oldLength = oldValue.text.length;
+        if (newLength < oldLength) {
+          return newValue;
+        }
+
+        int consectuiveInt = 0;
+        int numberOfSeparator = 0;
+        for (int i = 0; i < newValue.text.length; i++) {
+          final c = newValue.text[i];
+          final isNumeric = c.codeUnitAt(0) >= 48 && c.codeUnitAt(0) <= 57;
+          final isSeparator = c == '/' || c == '-';
+          if (isNumeric) {
+            consectuiveInt = consectuiveInt + 1;
+            // is day or month
+            if (consectuiveInt > 2 && numberOfSeparator < 2) {
+              return oldValue;
+            } else if (consectuiveInt > 4) {
+              return oldValue;
+            }
+          } else if (i > 0 && isSeparator && numberOfSeparator < 2) {
+            consectuiveInt = 0;
+            numberOfSeparator = numberOfSeparator + 1;
+          } else {
+            return oldValue;
+          }
+        }
+
+        // Validate date values
+        if (numberOfSeparator < 2) {
+          return newValue;
+        }
+        final newText = newValue.text;
+        final parts = newText.split(RegExp(r'[/\-]'));
+        final day = int.tryParse(parts[0]) as int;
+        final month = int.tryParse(parts[1]) as int;
+        final year = int.tryParse(parts[2]) as int;
+        final correctedMonth = (month > 12) ? 12 : month;
+        final correctedDate = switch (correctedMonth) {
+          2 => switch (year % 4) {
+              0 => day > 29 ? 29 : day, // Leap year
+              _ => day > 28 ? 28 : day, // Non-leap year
+            },
+          4 || 6 || 9 || 11 => day > 30 ? 30 : day, // Months with 30 days
+          _ => day > 31 ? 31 : day,
+        };
+
+        // Reconstruct the date string
+        final newDateString = "$correctedDate/$correctedMonth/$year";
+        return TextEditingValue(
+          text: newDateString,
+          selection: newValue.selection,
+        );
+      },
+    );
+
+    return TextFormField(
+      inputFormatters: [formattedDateInputFormatter],
+      controller: controller.formatController,
+      decoration: InputDecoration(
+        labelText: label ?? "Chọn ngày",
+        hintText: "dd/mm/yyyy",
+        filled: true,
+        fillColor: Colors.transparent,
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+      ),
+      readOnly: readOnly,
+      enabled: enabled,
+    );
+  }
+}
+
+/// A wrapper for [Text] widget that display
+/// [DateTime] as dd/mm/yyyy
+class EzDmyText extends StatelessWidget {
+  final DateTime? date;
+  final String? placeholder;
+
+  const EzDmyText(
+    this.date, {
+    super.key,
+    this.placeholder = "N/A",
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final formattedDate = tryFormatHumanDate(date);
+    return Text(formattedDate ?? placeholder!);
   }
 }

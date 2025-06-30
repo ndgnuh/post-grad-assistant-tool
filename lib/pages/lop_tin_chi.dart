@@ -442,6 +442,7 @@ class _ClassTable extends StatelessWidget {
     ("Tiết", IntrinsicColumnWidth()),
     ("URL", IntrinsicColumnWidth()),
     ("Giảng viên", IntrinsicColumnWidth()),
+    ("Email", IntrinsicColumnWidth()),
     ("Trạng thái", IntrinsicColumnWidth()),
     ("", IntrinsicColumnWidth()),
   ];
@@ -470,6 +471,8 @@ class _ClassTable extends StatelessWidget {
           final giangVien = model.mapGiangVien[row];
           final soHocVien = model.mapCount[row];
           return DataRow(
+            selected: model.editLopTinChi == row,
+            onSelectChanged: (_) => model.edit(row),
             cells: [
               DataCell(EzCopy(row.hocKy ?? "-")),
               DataCell(EzCopy(row.maLopHoc ?? "-")),
@@ -485,6 +488,7 @@ class _ClassTable extends StatelessWidget {
                 DataCell(EzCopy("")),
               DataCell(EzCopy(row.urlTruyCap ?? "")),
               DataCell(EzCopy(giangVien?.hoTenChucDanh ?? "-")),
+              DataCell(EzCopy(giangVien?.email ?? "-")),
               DataCell(EzCopy(row.trangThai.toString())),
               DataCell(EzLink(
                 text: "Sửa",

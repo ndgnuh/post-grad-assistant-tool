@@ -1,11 +1,7 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:provider/provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
-import 'package:path/path.dart' as p;
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'pages.dart';
 
@@ -21,11 +17,15 @@ Future main() async {
   runApp(const MyApp());
 }
 
+// Login button
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Function to get lighter color from a color
+
     final colorScheme = ColorScheme.fromSeed(
       brightness: Brightness.dark,
       dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
         ),
         searchBarTheme: SearchBarThemeData(
           constraints: BoxConstraints.tightFor(height: 50),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),

@@ -406,6 +406,7 @@ _$DeTaiThacSiImpl _$$DeTaiThacSiImplFromJson(Map<String, dynamic> json) =>
           ? false
           : const BoolIntSerializer()
               .fromJson((json['thanhToan'] as num?)?.toInt()),
+      ghiChu: json['ghiChu'] as String?,
       group: json['group'] as String?,
       nam: (json['nam'] as num?)?.toInt(),
     );
@@ -428,6 +429,7 @@ Map<String, dynamic> _$$DeTaiThacSiImplToJson(_$DeTaiThacSiImpl instance) =>
       'soQdBaoVe': instance.soQdBaoVe,
       'ngayBaoVe': const MaybeDateSerializer().toJson(instance.ngayBaoVe),
       'thanhToan': const BoolIntSerializer().toJson(instance.thanhToan),
+      'ghiChu': instance.ghiChu,
       'group': instance.group,
       'nam': instance.nam,
     };

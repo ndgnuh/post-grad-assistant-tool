@@ -26,7 +26,18 @@ Future<T> transaction<T>(Future<T> Function(Transaction) callback) async {
 }
 
 Future<T> dbSession<T>(Future<T> Function(Database) callback) async {
-  final db = await openDatabase(databasePath, singleInstance: false);
+  final db = await openDatabase(databasePath);
+  final ret = await callback(db);
+  await db.close();
+  return ret;
+}
+
+Future<T> dbSessionReadOnly<T>(Future<T> Function(Database) callback) async {
+  final db = await openDatabase(
+    databasePath,
+    readOnly: true,
+    singleInstance: false,
+  );
   final ret = await callback(db);
   await db.close();
   return ret;

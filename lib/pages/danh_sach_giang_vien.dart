@@ -16,6 +16,7 @@ class _PageState extends ChangeNotifier {
   final editHoTen = TextEditingController();
   final editEmail = TextEditingController();
   final editSdt = TextEditingController();
+  final editChuyenNganh = TextEditingController();
   final editGioiTinh = EzSelectionController(
     values: prependNull(GioiTinh.values),
   );
@@ -37,6 +38,7 @@ class _PageState extends ChangeNotifier {
       email: editEmail.nonEmptyValue,
       sdt: editSdt.nonEmptyValue,
       gioiTinh: editGioiTinh.value,
+      chuyenNganh: editChuyenNganh.nonEmptyValue,
       donVi: editDonVi.nonEmptyValue,
       hocHam: editHocHam.value,
       hocVi: editHocVi.value,
@@ -50,6 +52,7 @@ class _PageState extends ChangeNotifier {
     editGiangVien = gv;
     editHoTen.text = gv.hoTen;
     editEmail.text = gv.email ?? "";
+    editChuyenNganh.text = gv.chuyenNganh ?? "";
     editSdt.text = gv.sdt ?? "";
     editGioiTinh.value = gv.gioiTinh;
     editHocHam.value = gv.hocHam;
@@ -69,6 +72,7 @@ class _PageState extends ChangeNotifier {
     editGioiTinh.value = GioiTinh.nam;
     editHocHam.value = null;
     editHocVi.value = null;
+    editChuyenNganh.text = "";
     editDonVi.text = "";
     editStk.text = "";
     editNganHang.text = "";
@@ -97,7 +101,11 @@ class _PageState extends ChangeNotifier {
 
   refresh() async {
     final keyword = searchKeywordController.text;
-    listGiangVien = await GiangVien.search(keyword);
+    if (keyword.isEmpty) {
+      listGiangVien = await GiangVien.all();
+    } else {
+      listGiangVien = await GiangVien.search(keyword);
+    }
     notifyListeners();
   }
 
@@ -165,12 +173,12 @@ class _GiangVienDataSource extends DataTableSource {
 class _TableGiangVien extends StatelessWidget {
   static const columns = [
     ("ID", IntrinsicColumnWidth()),
-    ("Họ và tên", FlexColumnWidth()),
+    ("Họ và tên", IntrinsicColumnWidth()),
     ("Email", IntrinsicColumnWidth()),
     ("SĐT", IntrinsicColumnWidth()),
-    ("Cơ quan", FlexColumnWidth()),
+    ("Cơ quan", IntrinsicColumnWidth()),
     ("STK", IntrinsicColumnWidth()),
-    ("Bank", FlexColumnWidth()),
+    ("Bank", IntrinsicColumnWidth()),
     ("MST", IntrinsicColumnWidth()),
     ("", IntrinsicColumnWidth())
   ];
@@ -180,6 +188,7 @@ class _TableGiangVien extends StatelessWidget {
     final state = Provider.of<_PageState>(context);
     final source = _GiangVienDataSource(state);
     return PaginatedDataTable(
+      columnSpacing: 0,
       columns: [
         for (final (column, columnWidth) in columns)
           DataColumn(
@@ -239,6 +248,11 @@ class _EditPanel extends StatelessWidget {
           icon: Icons.work,
           label: "Đơn vị công tác",
           controller: state.editDonVi,
+        ),
+        EzTextInput(
+          icon: Icons.work,
+          label: "Chuyên môn",
+          controller: state.editChuyenNganh,
         ),
         EzFlex(
           direction: Axis.horizontal,

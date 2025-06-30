@@ -25,6 +25,10 @@ String _sanitize(dynamic value) {
     return "'${_escapeString(value)}'"; // Escape string input
   }
 
+  if (value is Query) {
+    return "(${value.build()})";
+  }
+
   throw ArgumentError("Unsupported SQL data type: ${value.runtimeType}");
 }
 

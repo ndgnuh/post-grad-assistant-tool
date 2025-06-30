@@ -1,13 +1,37 @@
 import 'dart:io';
 import 'package:excel/excel.dart';
-import '../datamodels.dart';
 import 'package:pdf/pdf.dart';
 import '../services/pdf_widgets.dart' as pw;
+import '../services/sqlbuilder/sqlbuilder.dart';
+import '../services/database.dart';
+import './domain_objects.dart';
 
 final _defaultCellStyle = CellStyle(
   fontFamily: "Times New Roman",
   fontSize: 10,
 );
+
+void exportXlsxAllTopic({
+  required String outputFile,
+}) async {
+  final query = SelectQuery()
+    ..from("DeTaiThacSi as A")
+    ..join("ChucDanhGiangVien as B", "A.idGiangVien = B.id")
+    ..select([
+      "CONCAT(B.chucDanh, B.hoTen) as namegv",
+      "A.tenTiengViet as namevi",
+      "A.tenTiengAnh as nameen",
+      "A.ghiChu as note"
+    ])
+    ..where("A.idHocVien is NULL");
+
+  final rows = await dbSession((Database db) async {
+    final sql = query.build();
+    return await db.rawQuery(sql);
+  });
+
+  print(rows);
+}
 
 extension _CellIndex on Sheet {
   Data operator [](dynamic index) {

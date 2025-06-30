@@ -3891,6 +3891,7 @@ mixin _$DeTaiThacSi {
   DateTime? get ngayBaoVe => throw _privateConstructorUsedError;
   @BoolIntSerializer()
   bool get thanhToan => throw _privateConstructorUsedError;
+  String? get ghiChu => throw _privateConstructorUsedError;
   String? get group => throw _privateConstructorUsedError;
   int? get nam => throw _privateConstructorUsedError;
 
@@ -3927,6 +3928,7 @@ abstract class $DeTaiThacSiCopyWith<$Res> {
       String? soQdBaoVe,
       @MaybeDateSerializer() DateTime? ngayBaoVe,
       @BoolIntSerializer() bool thanhToan,
+      String? ghiChu,
       String? group,
       int? nam});
 }
@@ -3962,6 +3964,7 @@ class _$DeTaiThacSiCopyWithImpl<$Res, $Val extends DeTaiThacSi>
     Object? soQdBaoVe = freezed,
     Object? ngayBaoVe = freezed,
     Object? thanhToan = null,
+    Object? ghiChu = freezed,
     Object? group = freezed,
     Object? nam = freezed,
   }) {
@@ -4030,6 +4033,10 @@ class _$DeTaiThacSiCopyWithImpl<$Res, $Val extends DeTaiThacSi>
           ? _value.thanhToan
           : thanhToan // ignore: cast_nullable_to_non_nullable
               as bool,
+      ghiChu: freezed == ghiChu
+          ? _value.ghiChu
+          : ghiChu // ignore: cast_nullable_to_non_nullable
+              as String?,
       group: freezed == group
           ? _value.group
           : group // ignore: cast_nullable_to_non_nullable
@@ -4067,6 +4074,7 @@ abstract class _$$DeTaiThacSiImplCopyWith<$Res>
       String? soQdBaoVe,
       @MaybeDateSerializer() DateTime? ngayBaoVe,
       @BoolIntSerializer() bool thanhToan,
+      String? ghiChu,
       String? group,
       int? nam});
 }
@@ -4100,6 +4108,7 @@ class __$$DeTaiThacSiImplCopyWithImpl<$Res>
     Object? soQdBaoVe = freezed,
     Object? ngayBaoVe = freezed,
     Object? thanhToan = null,
+    Object? ghiChu = freezed,
     Object? group = freezed,
     Object? nam = freezed,
   }) {
@@ -4168,6 +4177,10 @@ class __$$DeTaiThacSiImplCopyWithImpl<$Res>
           ? _value.thanhToan
           : thanhToan // ignore: cast_nullable_to_non_nullable
               as bool,
+      ghiChu: freezed == ghiChu
+          ? _value.ghiChu
+          : ghiChu // ignore: cast_nullable_to_non_nullable
+              as String?,
       group: freezed == group
           ? _value.group
           : group // ignore: cast_nullable_to_non_nullable
@@ -4200,6 +4213,7 @@ class _$DeTaiThacSiImpl extends _DeTaiThacSi {
       this.soQdBaoVe,
       @MaybeDateSerializer() this.ngayBaoVe,
       @BoolIntSerializer() this.thanhToan = false,
+      this.ghiChu,
       this.group,
       this.nam})
       : super._();
@@ -4245,13 +4259,15 @@ class _$DeTaiThacSiImpl extends _DeTaiThacSi {
   @BoolIntSerializer()
   final bool thanhToan;
   @override
+  final String? ghiChu;
+  @override
   final String? group;
   @override
   final int? nam;
 
   @override
   String toString() {
-    return 'DeTaiThacSi(id: $id, idGiangVien: $idGiangVien, tenTiengViet: $tenTiengViet, tenTiengAnh: $tenTiengAnh, idHocVien: $idHocVien, idChuTich: $idChuTich, idPhanBien1: $idPhanBien1, idPhanBien2: $idPhanBien2, idUyVien: $idUyVien, idThuKy: $idThuKy, ngayGiao: $ngayGiao, soQdGiao: $soQdGiao, hanBaoVe: $hanBaoVe, soQdBaoVe: $soQdBaoVe, ngayBaoVe: $ngayBaoVe, thanhToan: $thanhToan, group: $group, nam: $nam)';
+    return 'DeTaiThacSi(id: $id, idGiangVien: $idGiangVien, tenTiengViet: $tenTiengViet, tenTiengAnh: $tenTiengAnh, idHocVien: $idHocVien, idChuTich: $idChuTich, idPhanBien1: $idPhanBien1, idPhanBien2: $idPhanBien2, idUyVien: $idUyVien, idThuKy: $idThuKy, ngayGiao: $ngayGiao, soQdGiao: $soQdGiao, hanBaoVe: $hanBaoVe, soQdBaoVe: $soQdBaoVe, ngayBaoVe: $ngayBaoVe, thanhToan: $thanhToan, ghiChu: $ghiChu, group: $group, nam: $nam)';
   }
 
   @override
@@ -4289,32 +4305,35 @@ class _$DeTaiThacSiImpl extends _DeTaiThacSi {
                 other.ngayBaoVe == ngayBaoVe) &&
             (identical(other.thanhToan, thanhToan) ||
                 other.thanhToan == thanhToan) &&
+            (identical(other.ghiChu, ghiChu) || other.ghiChu == ghiChu) &&
             (identical(other.group, group) || other.group == group) &&
             (identical(other.nam, nam) || other.nam == nam));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      idGiangVien,
-      tenTiengViet,
-      tenTiengAnh,
-      idHocVien,
-      idChuTich,
-      idPhanBien1,
-      idPhanBien2,
-      idUyVien,
-      idThuKy,
-      ngayGiao,
-      soQdGiao,
-      hanBaoVe,
-      soQdBaoVe,
-      ngayBaoVe,
-      thanhToan,
-      group,
-      nam);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        idGiangVien,
+        tenTiengViet,
+        tenTiengAnh,
+        idHocVien,
+        idChuTich,
+        idPhanBien1,
+        idPhanBien2,
+        idUyVien,
+        idThuKy,
+        ngayGiao,
+        soQdGiao,
+        hanBaoVe,
+        soQdBaoVe,
+        ngayBaoVe,
+        thanhToan,
+        ghiChu,
+        group,
+        nam
+      ]);
 
   /// Create a copy of DeTaiThacSi
   /// with the given fields replaced by the non-null parameter values.
@@ -4350,6 +4369,7 @@ abstract class _DeTaiThacSi extends DeTaiThacSi {
       final String? soQdBaoVe,
       @MaybeDateSerializer() final DateTime? ngayBaoVe,
       @BoolIntSerializer() final bool thanhToan,
+      final String? ghiChu,
       final String? group,
       final int? nam}) = _$DeTaiThacSiImpl;
   const _DeTaiThacSi._() : super._();
@@ -4393,6 +4413,8 @@ abstract class _DeTaiThacSi extends DeTaiThacSi {
   @override
   @BoolIntSerializer()
   bool get thanhToan;
+  @override
+  String? get ghiChu;
   @override
   String? get group;
   @override
