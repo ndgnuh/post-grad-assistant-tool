@@ -17,10 +17,12 @@ import 'pages/han_che_hoc_phan.dart' show PageHanCheHocPhan;
 import 'pages/danh_sach_giang_vien.dart' show PageQuanLyGiangVien;
 import 'pages/page_copy_pasta.dart' show PageCopyPasta;
 import 'pages/ql_hoc_vien.dart' show QlHocVien;
+import 'pages/ql_bieu_mau.dart' show QlBieuMau, DienPhieuDiemThs;
 import 'pages/dang_ky_bao_ve.dart' show DangKyBaoVePage, DangKyBaoVePage2;
 
 // const initialRoute = PagePhanCongHoiDongLuanVanThacSi.routeName;
-const initialRoute = PageQuanLyDeTai.routeName;
+// const initialRoute = PageQuanLyDeTai.routeName;
+const initialRoute = QlBieuMau.routeName;
 
 //const initialRoute = QlHocVien.routeName;
 
@@ -138,6 +140,12 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
         return PageCopyPasta();
       case QlHocVien.routeName:
         return QlHocVien();
+
+      /// Biểu mẫu
+      case QlBieuMau.routeName:
+        return QlBieuMau();
+      case DienPhieuDiemThs.routeName:
+        return DienPhieuDiemThs();
       case DangKyBaoVePage.routeName:
         return DangKyBaoVePage();
       case DangKyBaoVePage2.routeName:
