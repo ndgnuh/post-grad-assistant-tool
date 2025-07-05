@@ -2,6 +2,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:intl/intl.dart';
 import 'package:diacritic/diacritic.dart';
+import 'dart:async';
 
 import '../services/sqlbuilder/sqlbuilder.dart';
 import '../services/database.dart';
@@ -230,14 +231,18 @@ Map<String, Object?> _sanitize(Map<String, Object?> data) {
   return ret;
 }
 
-Future<void> _commitValue<T>({
+Future<void> _update<T>({
   required String table,
   required String idField,
   required Map<String, Object?> Function() toJson,
+  List<String> ignoreFields = const [],
 }) async {
   final data = toJson();
   final id = data[idField];
   data.remove(idField);
+  for (final field in ignoreFields) {
+    data.remove(field);
+  }
   return dbSession((db) async {
     db.update(
       table,
@@ -278,9 +283,13 @@ Future<void> _create<T>({
   required String table,
   required String idField,
   required Map<String, Object?> Function() toJson,
+  List<String> ignoreFields = const [],
 }) async {
   final data = toJson();
   data.remove(idField);
+  for (final field in ignoreFields) {
+    data.remove(field);
+  }
   return dbSession((db) async {
     db.insert(table, _sanitize(data));
   });
@@ -365,7 +374,7 @@ class GiangVien with _$GiangVien {
   Future<void> create() =>
       _create(table: table, idField: idField, toJson: toJson);
   Future<void> update() =>
-      _commitValue(table: table, idField: idField, toJson: toJson);
+      _update(table: table, idField: idField, toJson: toJson);
 
   // Họ tên, học hàm, học vị
   String get hoTenChucDanh {
@@ -589,7 +598,7 @@ class HocVien with _$HocVien {
   Future<void> create() =>
       _create(table: HocVien.table, idField: "id", toJson: toJson);
   Future<void> update() =>
-      _commitValue(table: HocVien.table, idField: "id", toJson: toJson);
+      _update(table: HocVien.table, idField: "id", toJson: toJson);
   Future<void> delete() =>
       _delete(table: HocVien.table, idField: "id", toJson: toJson);
 
@@ -654,7 +663,7 @@ class LopTinChi with _$LopTinChi {
         toJson: toJson,
       );
 
-  Future<void> update() => _commitValue(
+  Future<void> update() => _update(
         table: LopTinChi.table,
         idField: "id",
         toJson: toJson,
@@ -821,7 +830,9 @@ class DeTaiThacSi with _$DeTaiThacSi {
     required int idGiangVien,
     required String tenTiengViet,
     required String tenTiengAnh,
+    required GiangVien giangVien,
     int? idHocVien,
+    HocVien? hocVien,
     int? idChuTich,
     int? idPhanBien1,
     int? idPhanBien2,
@@ -841,10 +852,86 @@ class DeTaiThacSi with _$DeTaiThacSi {
   factory DeTaiThacSi.fromJson(Map<String, dynamic> json) =>
       _$DeTaiThacSiFromJson(json);
 
-  static Future<DeTaiThacSi> getById(int id) => _getById(
-      id: id, table: table, idField: idField, fromJson: DeTaiThacSi.fromJson);
+  static Future<DeTaiThacSi> getById(int id) async {
+    return await dbSession((Database db) async {
+      final rows = await db.query(
+        table,
+        where: "$idField = ?",
+        whereArgs: [id],
+      );
+      if (rows.isEmpty) {
+        throw Exception("DeTaiThacSi with id $id not found");
+      }
 
-  static Future<List<DeTaiThacSi>> search({
+      final deTaiJson = rows.first;
+      deTaiJson["giangVien"] = await GiangVien.getById(
+        deTaiJson["idGiangVien"],
+      );
+      print(deTaiJson);
+      return DeTaiThacSi.fromJson(deTaiJson);
+    });
+  }
+
+  static FutureOr<List<DeTaiThacSi>> search({
+    required String searchQuery,
+    bool? assigned,
+    Object? idGiangVien, // deprecated
+  }) async {
+    return dbSession((Database db) async {
+      final queryBuilder = SelectQuery()
+        ..from("DeTaiThacSi")
+        ..selectAll();
+
+      // Additional filter if query is not empty
+      if (searchQuery.trim().isNotEmpty) {
+        final topicIdQuery = SelectQuery()
+          ..from("fts_DeTaiThacSi")
+          ..select(["id"])
+          ..where("fts_DeTaiThacSi match ?", [searchQuery]);
+
+        queryBuilder.where("id in ?", [topicIdQuery]);
+      }
+
+      switch (assigned) {
+        case true:
+          queryBuilder.where("idHocVien is not NULL");
+          break;
+        case false:
+          queryBuilder.where("idHocVien is NULL");
+          break;
+        default:
+          // No additional filter
+          break;
+      }
+
+      final sql = queryBuilder.build();
+      final rows = await db.rawQuery(sql);
+
+      // query to get GiangVien details
+      resolveRows(Map<String, Object?> rowOrig) async {
+        final row = Map<String, Object?>.from(rowOrig);
+        var query = SelectQuery()
+          ..from(GiangVien.table)
+          ..selectAll()
+          ..where("id = ?", [row["idGiangVien"]]);
+        row["giangVien"] = (await db.rawQuery(query.build())).firstOrNull;
+
+        query = SelectQuery()
+          ..from(HocVien.table)
+          ..selectAll()
+          ..where("id = ?", [row["idHocVien"]]);
+        row["hocVien"] = (await db.rawQuery(query.build())).firstOrNull;
+
+        return row;
+      }
+
+      final resolvedRows = [for (final row in rows) (await resolveRows(row))];
+
+      return [for (final json in resolvedRows) DeTaiThacSi.fromJson(json)];
+    });
+  }
+
+  static Future<List<DeTaiThacSi>> search2({
     int? idGiangVien,
     String? searchQuery,
     bool assigned = false,
@@ -900,15 +987,47 @@ class DeTaiThacSi with _$DeTaiThacSi {
   }
 
   /// CRUD create
-  Future<void> create() =>
-      _create(table: table, idField: idField, toJson: toJson);
-  Future<void> update() =>
-      _commitValue(table: table, idField: idField, toJson: toJson);
+  Future<void> create() async {
+    dbSession((Database db) async {
+      final data = toJson();
+      data.remove("id"); // Remove id to let the database generate it
+      data.remove("giangVien"); // Resolved field
+      data.remove("hocVien"); // Resolved field
+      await db.insert(table, _sanitize(data));
+    });
+  }
+
+  Future<void> assignStudent(HocVien? student) async {
+    final query = UpdateQuery()
+      ..update(table)
+      ..set({"idHocVien": student?.id})
+      ..where("id = ?", [id]);
+    final sql = query.build();
+    print(sql);
+    dbSession((Database db) async {
+      await db.rawUpdate(sql);
+    });
+  }
+
+  Future<void> update() async {
+    dbSession((Database db) async {
+      final data = toJson();
+      final id = data[idField];
+      data.remove(idField); // Remove id to let the database update it
+      data.remove("giangVien"); // Resolved field
+      data.remove("hocVien"); // Resolved field
+      await db.update(
+        table,
+        _sanitize(data),
+        where: "$idField = ?",
+        whereArgs: [id],
+      );
+    });
+  }
+
   Future<void> delete() =>
       _delete(table: table, idField: idField, toJson: toJson);
 
-  /// Giảng viên hướng dẫn đề tài
-  Future<GiangVien> get giangVien => GiangVien.getById(idGiangVien);
   Future<GiangVien?> get chuTich async => switch (idChuTich) {
         null => null,
         Object id => GiangVien.getById(id),
@@ -929,10 +1048,4 @@ class DeTaiThacSi with _$DeTaiThacSi {
         null => null,
         Object id => GiangVien.getById(id),
       };
-  Future<HocVien?> get hocVien async {
-    return switch (idHocVien) {
-      null => null,
-      int id => HocVien.getById(id),
-    };
-  }
 }

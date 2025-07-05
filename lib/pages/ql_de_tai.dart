@@ -7,6 +7,8 @@ import '../custom_widgets.dart';
 import '../business/domain_objects.dart';
 import '../business/domain_editors.dart';
 import '../business/ql_de_tai.dart';
+import '../features/manage_thesis_topic/page_export_thesis.dart'
+    show PageExportThesis;
 
 const _defaultPadding = EdgeInsets.symmetric(vertical: 5, horizontal: 10);
 
@@ -21,8 +23,6 @@ class _State extends ChangeNotifier {
   final editController = DeTaiThsEditingController();
 
   final Set<DeTaiThacSi> selectedDeTai = {};
-  final Map<DeTaiThacSi, GiangVien> mapGiangVien = {};
-  final Map<DeTaiThacSi, HocVien?> mapHocVien = {};
 
   final TextEditingController searchDeTai = TextEditingController();
   final searchGiangVien = SearchChoiceController<GiangVien>(
@@ -31,24 +31,24 @@ class _State extends ChangeNotifier {
     nullable: true,
   );
 
+  Future<void> assignStudent(HocVien student) async {
+    final deTai = editController.value;
+    if (deTai.id == null) return;
+    await deTai.assignStudent(student);
+    refresh(resetPage: false);
+  }
+
+  final paginationKey = GlobalKey<PaginatedDataTableState>();
   Future<void> refresh({
     bool resetPage = false,
   }) async {
-    final listGiangVien = await GiangVien.all();
-    final listHocVien = await HocVien.all();
-
     listDeTai = await DeTaiThacSi.search(
       searchQuery: searchDeTai.text,
-      idGiangVien: searchGiangVien.valueOrNull?.id,
     );
 
-    for (final deTai in listDeTai) {
-      mapGiangVien[deTai] = await deTai.giangVien;
-      mapHocVien[deTai] = await deTai.hocVien;
+    if (resetPage) {
+      paginationKey.currentState?.pageTo(0);
     }
-
-    editController.listGiangVien = listGiangVien;
-    editController.listHocVien = listHocVien;
 
     notifyListeners();
   }
@@ -88,6 +88,7 @@ class _State extends ChangeNotifier {
   Future<void> _create() async {
     final deTai = editController.value;
     await deTai.create();
+    await Future.delayed(Duration(milliseconds: 100));
     unedit();
     refresh();
   }
@@ -137,11 +138,11 @@ class _DeTaiSource extends DataTableSource {
   @override
   DataRow? getRow(int index) {
     final deTai = state.listDeTai[index];
-    final giangVien = state.mapGiangVien[deTai];
-    final hocVien = state.mapHocVien[deTai];
+    final giangVien = deTai.giangVien;
+    final hocVien = deTai.hocVien;
     return DataRow(cells: [
       DataCell(EzCopy(deTai.id.toString())),
-      DataCell(EzCopy(giangVien?.hoTenChucDanh ?? "")),
+      DataCell(EzCopy(giangVien.hoTenChucDanh)),
       DataCell(EzCopy(deTai.tenTiengViet)),
       DataCell(EzCopy(hocVien?.hoTen ?? "-")),
       DataCell(EzDmyText(deTai.hanBaoVe, placeholder: "-")),
@@ -182,6 +183,7 @@ class _TableDeTai extends StatelessWidget {
         )
     ];
     return PaginatedDataTable(
+      key: state.paginationKey,
       rowsPerPage: 20,
       columns: columns,
       source: _DeTaiSource(state),
@@ -229,9 +231,10 @@ class _EditForm extends StatelessWidget {
         ),
         Divider(height: 10, color: Colors.transparent),
         Text("Giao đề tài", style: textTheme.titleMedium),
-        SearchChoice(
+        SearchChoice<HocVien>(
           label: "Học viên",
           controller: state.editController.hocVien,
+          onSelected: (HocVien? student) => state.assignStudent(student),
         ),
         EzTextInput(
           label: "Số quyết định",
@@ -269,15 +272,25 @@ class _EditForm extends StatelessWidget {
             statesController: state.editController.canUpdate,
             child: Text("Hủy"),
           ),
-        ElevatedButton(
+        ElevatedButton.icon(
           focusNode: FocusNode(),
           onPressed: state.fnExportDanhSachDeTaiExcel,
-          child: Text("Lưu excel"),
+          icon: Icon(Icons.download),
+          label: Text("Xuất file excel"),
         ),
-        ElevatedButton(
+        ElevatedButton.icon(
           focusNode: FocusNode(),
           onPressed: state.fnExportDanhSachDeTaiPdf,
-          child: Text("Lưu Pdf"),
+          icon: Icon(Icons.download),
+          label: Text("Xuất file PDF"),
+        ),
+        ElevatedButton.icon(
+          focusNode: FocusNode(),
+          onPressed: () {
+            Navigator.pushNamed(context, PageExportThesis.routeName);
+          },
+          icon: Icon(Icons.download),
+          label: Text("Xuất file Đăng ký đề tài"),
         ),
       ],
     );

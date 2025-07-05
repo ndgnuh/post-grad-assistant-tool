@@ -3875,7 +3875,9 @@ mixin _$DeTaiThacSi {
   int get idGiangVien => throw _privateConstructorUsedError;
   String get tenTiengViet => throw _privateConstructorUsedError;
   String get tenTiengAnh => throw _privateConstructorUsedError;
+  GiangVien get giangVien => throw _privateConstructorUsedError;
   int? get idHocVien => throw _privateConstructorUsedError;
+  HocVien? get hocVien => throw _privateConstructorUsedError;
   int? get idChuTich => throw _privateConstructorUsedError;
   int? get idPhanBien1 => throw _privateConstructorUsedError;
   int? get idPhanBien2 => throw _privateConstructorUsedError;
@@ -3916,7 +3918,9 @@ abstract class $DeTaiThacSiCopyWith<$Res> {
       int idGiangVien,
       String tenTiengViet,
       String tenTiengAnh,
+      GiangVien giangVien,
       int? idHocVien,
+      HocVien? hocVien,
       int? idChuTich,
       int? idPhanBien1,
       int? idPhanBien2,
@@ -3931,6 +3935,9 @@ abstract class $DeTaiThacSiCopyWith<$Res> {
       String? ghiChu,
       String? group,
       int? nam});
+
+  $GiangVienCopyWith<$Res> get giangVien;
+  $HocVienCopyWith<$Res>? get hocVien;
 }
 
 /// @nodoc
@@ -3952,7 +3959,9 @@ class _$DeTaiThacSiCopyWithImpl<$Res, $Val extends DeTaiThacSi>
     Object? idGiangVien = null,
     Object? tenTiengViet = null,
     Object? tenTiengAnh = null,
+    Object? giangVien = null,
     Object? idHocVien = freezed,
+    Object? hocVien = freezed,
     Object? idChuTich = freezed,
     Object? idPhanBien1 = freezed,
     Object? idPhanBien2 = freezed,
@@ -3985,10 +3994,18 @@ class _$DeTaiThacSiCopyWithImpl<$Res, $Val extends DeTaiThacSi>
           ? _value.tenTiengAnh
           : tenTiengAnh // ignore: cast_nullable_to_non_nullable
               as String,
+      giangVien: null == giangVien
+          ? _value.giangVien
+          : giangVien // ignore: cast_nullable_to_non_nullable
+              as GiangVien,
       idHocVien: freezed == idHocVien
           ? _value.idHocVien
           : idHocVien // ignore: cast_nullable_to_non_nullable
               as int?,
+      hocVien: freezed == hocVien
+          ? _value.hocVien
+          : hocVien // ignore: cast_nullable_to_non_nullable
+              as HocVien?,
       idChuTich: freezed == idChuTich
           ? _value.idChuTich
           : idChuTich // ignore: cast_nullable_to_non_nullable
@@ -4047,6 +4064,30 @@ class _$DeTaiThacSiCopyWithImpl<$Res, $Val extends DeTaiThacSi>
               as int?,
     ) as $Val);
   }
+
+  /// Create a copy of DeTaiThacSi
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $GiangVienCopyWith<$Res> get giangVien {
+    return $GiangVienCopyWith<$Res>(_value.giangVien, (value) {
+      return _then(_value.copyWith(giangVien: value) as $Val);
+    });
+  }
+
+  /// Create a copy of DeTaiThacSi
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $HocVienCopyWith<$Res>? get hocVien {
+    if (_value.hocVien == null) {
+      return null;
+    }
+
+    return $HocVienCopyWith<$Res>(_value.hocVien!, (value) {
+      return _then(_value.copyWith(hocVien: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -4062,7 +4103,9 @@ abstract class _$$DeTaiThacSiImplCopyWith<$Res>
       int idGiangVien,
       String tenTiengViet,
       String tenTiengAnh,
+      GiangVien giangVien,
       int? idHocVien,
+      HocVien? hocVien,
       int? idChuTich,
       int? idPhanBien1,
       int? idPhanBien2,
@@ -4077,6 +4120,11 @@ abstract class _$$DeTaiThacSiImplCopyWith<$Res>
       String? ghiChu,
       String? group,
       int? nam});
+
+  @override
+  $GiangVienCopyWith<$Res> get giangVien;
+  @override
+  $HocVienCopyWith<$Res>? get hocVien;
 }
 
 /// @nodoc
@@ -4096,7 +4144,9 @@ class __$$DeTaiThacSiImplCopyWithImpl<$Res>
     Object? idGiangVien = null,
     Object? tenTiengViet = null,
     Object? tenTiengAnh = null,
+    Object? giangVien = null,
     Object? idHocVien = freezed,
+    Object? hocVien = freezed,
     Object? idChuTich = freezed,
     Object? idPhanBien1 = freezed,
     Object? idPhanBien2 = freezed,
@@ -4129,10 +4179,18 @@ class __$$DeTaiThacSiImplCopyWithImpl<$Res>
           ? _value.tenTiengAnh
           : tenTiengAnh // ignore: cast_nullable_to_non_nullable
               as String,
+      giangVien: null == giangVien
+          ? _value.giangVien
+          : giangVien // ignore: cast_nullable_to_non_nullable
+              as GiangVien,
       idHocVien: freezed == idHocVien
           ? _value.idHocVien
           : idHocVien // ignore: cast_nullable_to_non_nullable
               as int?,
+      hocVien: freezed == hocVien
+          ? _value.hocVien
+          : hocVien // ignore: cast_nullable_to_non_nullable
+              as HocVien?,
       idChuTich: freezed == idChuTich
           ? _value.idChuTich
           : idChuTich // ignore: cast_nullable_to_non_nullable
@@ -4201,7 +4259,9 @@ class _$DeTaiThacSiImpl extends _DeTaiThacSi {
       required this.idGiangVien,
       required this.tenTiengViet,
       required this.tenTiengAnh,
+      required this.giangVien,
       this.idHocVien,
+      this.hocVien,
       this.idChuTich,
       this.idPhanBien1,
       this.idPhanBien2,
@@ -4230,7 +4290,11 @@ class _$DeTaiThacSiImpl extends _DeTaiThacSi {
   @override
   final String tenTiengAnh;
   @override
+  final GiangVien giangVien;
+  @override
   final int? idHocVien;
+  @override
+  final HocVien? hocVien;
   @override
   final int? idChuTich;
   @override
@@ -4267,7 +4331,7 @@ class _$DeTaiThacSiImpl extends _DeTaiThacSi {
 
   @override
   String toString() {
-    return 'DeTaiThacSi(id: $id, idGiangVien: $idGiangVien, tenTiengViet: $tenTiengViet, tenTiengAnh: $tenTiengAnh, idHocVien: $idHocVien, idChuTich: $idChuTich, idPhanBien1: $idPhanBien1, idPhanBien2: $idPhanBien2, idUyVien: $idUyVien, idThuKy: $idThuKy, ngayGiao: $ngayGiao, soQdGiao: $soQdGiao, hanBaoVe: $hanBaoVe, soQdBaoVe: $soQdBaoVe, ngayBaoVe: $ngayBaoVe, thanhToan: $thanhToan, ghiChu: $ghiChu, group: $group, nam: $nam)';
+    return 'DeTaiThacSi(id: $id, idGiangVien: $idGiangVien, tenTiengViet: $tenTiengViet, tenTiengAnh: $tenTiengAnh, giangVien: $giangVien, idHocVien: $idHocVien, hocVien: $hocVien, idChuTich: $idChuTich, idPhanBien1: $idPhanBien1, idPhanBien2: $idPhanBien2, idUyVien: $idUyVien, idThuKy: $idThuKy, ngayGiao: $ngayGiao, soQdGiao: $soQdGiao, hanBaoVe: $hanBaoVe, soQdBaoVe: $soQdBaoVe, ngayBaoVe: $ngayBaoVe, thanhToan: $thanhToan, ghiChu: $ghiChu, group: $group, nam: $nam)';
   }
 
   @override
@@ -4282,8 +4346,11 @@ class _$DeTaiThacSiImpl extends _DeTaiThacSi {
                 other.tenTiengViet == tenTiengViet) &&
             (identical(other.tenTiengAnh, tenTiengAnh) ||
                 other.tenTiengAnh == tenTiengAnh) &&
+            (identical(other.giangVien, giangVien) ||
+                other.giangVien == giangVien) &&
             (identical(other.idHocVien, idHocVien) ||
                 other.idHocVien == idHocVien) &&
+            (identical(other.hocVien, hocVien) || other.hocVien == hocVien) &&
             (identical(other.idChuTich, idChuTich) ||
                 other.idChuTich == idChuTich) &&
             (identical(other.idPhanBien1, idPhanBien1) ||
@@ -4318,7 +4385,9 @@ class _$DeTaiThacSiImpl extends _DeTaiThacSi {
         idGiangVien,
         tenTiengViet,
         tenTiengAnh,
+        giangVien,
         idHocVien,
+        hocVien,
         idChuTich,
         idPhanBien1,
         idPhanBien2,
@@ -4357,7 +4426,9 @@ abstract class _DeTaiThacSi extends DeTaiThacSi {
       required final int idGiangVien,
       required final String tenTiengViet,
       required final String tenTiengAnh,
+      required final GiangVien giangVien,
       final int? idHocVien,
+      final HocVien? hocVien,
       final int? idChuTich,
       final int? idPhanBien1,
       final int? idPhanBien2,
@@ -4386,7 +4457,11 @@ abstract class _DeTaiThacSi extends DeTaiThacSi {
   @override
   String get tenTiengAnh;
   @override
+  GiangVien get giangVien;
+  @override
   int? get idHocVien;
+  @override
+  HocVien? get hocVien;
   @override
   int? get idChuTich;
   @override

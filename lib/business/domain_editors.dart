@@ -41,8 +41,6 @@ class GiangVienEditingController extends ChangeNotifier {
 }
 
 class DeTaiThsEditingController extends ChangeNotifier {
-  List<GiangVien> _listGiangVien = [];
-  List<HocVien> _listHocVien = [];
   int? id;
   final tenTiengViet = TextEditingController();
   final tenTiengAnh = TextEditingController();
@@ -99,28 +97,10 @@ class DeTaiThsEditingController extends ChangeNotifier {
     };
   }
 
-  List<GiangVien> get listGiangVien => _listGiangVien;
-  set listGiangVien(List<GiangVien> list) {
-    _listGiangVien = list;
-    final nullableList = [...list, null];
-  }
-
-  List<HocVien> get listHocVien => _listHocVien;
-  set listHocVien(List<HocVien> list) {
-    _listHocVien = list;
-  }
-
-  HocVien? _getHv(int? id) {
-    return listHocVien.where((hv) => hv.id == id).firstOrNull;
-  }
-
-  GiangVien? _getGv(int? id) {
-    return listGiangVien.where((gv) => gv.id == id).firstOrNull;
-  }
-
   DeTaiThacSi get value {
     return DeTaiThacSi(
       id: id,
+      giangVien: giangVien.value,
       idGiangVien: giangVien.value?.id ?? -1,
       tenTiengViet: tenTiengViet.text,
       tenTiengAnh: tenTiengAnh.text,

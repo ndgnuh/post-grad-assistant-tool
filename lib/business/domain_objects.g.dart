@@ -388,7 +388,11 @@ _$DeTaiThacSiImpl _$$DeTaiThacSiImplFromJson(Map<String, dynamic> json) =>
       idGiangVien: (json['idGiangVien'] as num).toInt(),
       tenTiengViet: json['tenTiengViet'] as String,
       tenTiengAnh: json['tenTiengAnh'] as String,
+      giangVien: GiangVien.fromJson(json['giangVien'] as Map<String, dynamic>),
       idHocVien: (json['idHocVien'] as num?)?.toInt(),
+      hocVien: json['hocVien'] == null
+          ? null
+          : HocVien.fromJson(json['hocVien'] as Map<String, dynamic>),
       idChuTich: (json['idChuTich'] as num?)?.toInt(),
       idPhanBien1: (json['idPhanBien1'] as num?)?.toInt(),
       idPhanBien2: (json['idPhanBien2'] as num?)?.toInt(),
@@ -417,7 +421,9 @@ Map<String, dynamic> _$$DeTaiThacSiImplToJson(_$DeTaiThacSiImpl instance) =>
       'idGiangVien': instance.idGiangVien,
       'tenTiengViet': instance.tenTiengViet,
       'tenTiengAnh': instance.tenTiengAnh,
+      'giangVien': instance.giangVien,
       'idHocVien': instance.idHocVien,
+      'hocVien': instance.hocVien,
       'idChuTich': instance.idChuTich,
       'idPhanBien1': instance.idPhanBien1,
       'idPhanBien2': instance.idPhanBien2,

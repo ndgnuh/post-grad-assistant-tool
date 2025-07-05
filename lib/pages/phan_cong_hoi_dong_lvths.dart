@@ -483,9 +483,6 @@ class _State extends ChangeNotifier {
       searchQuery: searchText.text,
     );
 
-    List<GiangVien> listGiangVien = await GiangVien.all();
-    editController.listGiangVien = listGiangVien;
-    editController.listHocVien = await HocVien.all();
     notifyListeners();
   }
 

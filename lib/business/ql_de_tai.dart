@@ -1,10 +1,89 @@
 import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:pdf/pdf.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'dart:async';
+
 import '../services/pdf_widgets.dart' as pw;
 import '../services/sqlbuilder/sqlbuilder.dart';
 import '../services/database.dart';
 import './domain_objects.dart';
+
+part 'ql_de_tai.freezed.dart';
+part 'ql_de_tai.g.dart';
+
+@freezed
+abstract class MasterThesisTopic with _$MasterThesisTopic {
+  const MasterThesisTopic._();
+  const factory MasterThesisTopic({
+    required String advisor,
+    required String nameVi,
+    required String nameEn,
+    required String note,
+    String? studentName,
+    String? studentCode,
+  }) = _MasterThesisTopic;
+
+  factory MasterThesisTopic.fromJson(Map<String, dynamic> json) =>
+      _$MasterThesisTopicFromJson(json);
+}
+
+/// Search for master thesis topics based on a query string.
+/// Returns a list of topic IDs that match the query.
+FutureOr<List<int>> searchDeTai({
+  required String query,
+  bool? assigned,
+}) async {
+  if (query.isEmpty) {
+    return [];
+  }
+
+  return dbSession((Database db) async {
+    final topicIdQuery = SelectQuery()
+      ..from("fts_DeTaiThacSi")
+      ..select(["id"])
+      ..where("fts_DeTaiThacSi match ?", [query]);
+
+    final queryBuilder = SelectQuery()
+      ..from("DeTaiThacSi")
+      ..select(["id"])
+      ..where("id in ?", [topicIdQuery]);
+
+    switch (assigned) {
+      case true:
+        queryBuilder.where("idHocVien is not NULL");
+        break;
+      case false:
+        queryBuilder.where("idHocVien is NULL");
+        break;
+      default:
+        // No additional filter
+        break;
+    }
+
+    final rows = await db.rawQuery(queryBuilder.build());
+    return [for (final row in rows) row["id"] as int];
+  });
+}
+
+Future<List<MasterThesisTopic>> getAllMasterTopics() async {
+  return dbSession((Database db) async {
+    final query = SelectQuery()
+      ..from("DeTaiThacSi as A")
+      ..join("ChucDanhGiangVien as B", "A.idGiangVien = B.id")
+      ..select([
+        "CONCAT(B.chucDanh, B.hoTen) as advisor",
+        "A.tenTiengViet as nameVi",
+        "A.tenTiengAnh as nameEn",
+        "A.ghiChu as note"
+      ])
+      ..where("A.idHocVien is NULL");
+
+    final sql = query.build();
+    final rows = await db.rawQuery(sql);
+    return [for (final row in rows) MasterThesisTopic.fromJson(row)];
+  });
+}
 
 final _defaultCellStyle = CellStyle(
   fontFamily: "Times New Roman",

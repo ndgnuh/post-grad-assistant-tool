@@ -19,10 +19,12 @@ import 'pages/page_copy_pasta.dart' show PageCopyPasta;
 import 'pages/ql_hoc_vien.dart' show QlHocVien;
 import 'pages/ql_bieu_mau.dart' show QlBieuMau, DienPhieuDiemThs;
 import 'pages/dang_ky_bao_ve.dart' show DangKyBaoVePage, DangKyBaoVePage2;
+import 'features/manage_thesis_topic/page_export_thesis.dart'
+    show PageExportThesis;
 
 // const initialRoute = PagePhanCongHoiDongLuanVanThacSi.routeName;
-// const initialRoute = PageQuanLyDeTai.routeName;
-const initialRoute = QlBieuMau.routeName;
+const initialRoute = PageQuanLyDeTai.routeName;
+// const initialRoute = QlBieuMau.routeName;
 
 //const initialRoute = QlHocVien.routeName;
 
@@ -148,6 +150,8 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
         return DienPhieuDiemThs();
       case DangKyBaoVePage.routeName:
         return DangKyBaoVePage();
+      case PageExportThesis.routeName:
+        return const PageExportThesis();
       case DangKyBaoVePage2.routeName:
         switch (args) {
           case (
