@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../custom_widgets.dart';
@@ -265,8 +266,8 @@ class _PanelListCandidateState extends State<_PanelListCandidate> {
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<_PageState>(context);
-    return Expanded(
-      child: SingleChildScrollView(
+    return SingleChildScrollView(
+      child: Expanded(
         child: DataTable(
           sortColumnIndex: 0,
           columnSpacing: 20,
@@ -484,117 +485,105 @@ class PageXetTuyen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final page = Scaffold(
       appBar: AppBar(
         title: Text("Xét tuyển cao học"),
+        actions: [
+          ActionMenu(),
+        ],
         leading: BackButton(),
       ),
-      body: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-            create: (_) => _PageState(),
-          ),
-        ],
-        builder: (context, _) {
-          return EzFlex(
-            direction: Axis.horizontal,
-            flex: [2, 1],
+      body: EzFlex(
+        direction: Axis.horizontal,
+        flex: [2, 1],
+        children: [
+          EzFixed(
+            direction: Axis.vertical,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              EzFixed(
-                direction: Axis.vertical,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  EzHeader(text: "Danh sách xét tuyển", level: 0),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: _PanelListCandidate(),
-                    ),
-                  ),
-                ],
-              ),
-              EzFlex(
-                flex: [0, 1, 0, 0, 0],
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.start,
-                direction: Axis.vertical,
-                children: [
-                  EzHeader(text: "Thông tin học viên", level: 0),
-                  SingleChildScrollView(
-                    child: _EditPanel(),
-                  ),
-                  _EditPanelAction(),
-                  EzHeader(text: "Hành động", level: 0),
-                  _ActionPanel(),
-                ],
+              EzHeader(text: "Danh sách xét tuyển", level: 0),
+              Expanded(
+                child: _PanelListCandidate(),
               ),
             ],
-          );
-        },
+          ),
+          EzFlex(
+            flex: [0, 1, 0, 0, 0],
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.start,
+            direction: Axis.vertical,
+            children: [
+              EzHeader(text: "Thông tin học viên", level: 0),
+              SingleChildScrollView(
+                child: _EditPanel(),
+              ),
+              _EditPanelAction(),
+              EzHeader(text: "Hành động", level: 0),
+              _ActionPanel(),
+            ],
+          ),
+        ],
       ),
+    );
+    return ChangeNotifierProvider<_PageState>(
+      create: (_) => _PageState(),
+      child: page,
     );
   }
 }
 
-/* TODO: code cũ */
-//         ListTile(
-//           title: _PageWidget<(List<HocVien>?, String?)>(
-//             selector: (_, model) {
-//               return (model.listCandidate, model.saveDirectory.value);
-//             },
-//             builder: (_, data, __) {
-//               var onPressed = switch (data) {
-//                 (List<HocVien> listStudents, String saveDirectory) => () async {
-//                     scaffoldMessenger.showSnackBar(SnackBar(
-//                       content:
-//                           Text("File tuyển sinh sẽ được tải về $saveDirectory"),
-//                     ));
-//                     for (final student in listStudents) {
-//                       final (success, error) = await downloadAdmissionFiles(
-//                         student: student,
-//                         outputDirectory: saveDirectory,
-//                       );
-//                       if (success) {
-//                         scaffoldMessenger.showSnackBar(SnackBar(
-//                           content: Text(
-//                               "Đã tải hồ sơ của học viên ${student.hoTen}"),
-//                         ));
-//                       } else {
-//                         scaffoldMessenger.showSnackBar(SnackBar(
-//                           content: Text(
-//                               "Có lỗi khi tải hồ sơ của học viên ${student.hoTen}: $error"),
-//                         ));
-//                       }
-//                     }
-//                   },
-//                 _ => null,
-//               };
-//               return ElevatedButton(
-//                 onPressed: onPressed,
-//                 child: Text("Tải hồ sơ học viên"),
-//               );
-//             },
-//           ),
-//         ),
-//         ListTile(
-//           title: _PageWidget<(List<HocVien>, String?)>(
-//             selector: (_, model) {
-//               return (model.listCandidate, model.saveDirectory.value);
-//             },
-//             builder: (_, data, __) => ElevatedButton(
-//               onPressed: switch (data) {
-//                 (List<HocVien> candidates, String saveDirectory) => () async {
-//                     final tb = pageState.tieuBanXetTuyen.value;
-//                     if (tb == null) return;
-//                     saveBienBanTuyenSinh(
-//                       saveDirectory: saveDirectory,
-//                       listCandidates: candidates,
-//                       tb: tb,
-//                     );
-//                   },
-//                 _ => null,
-//               },
-//               child: Text("Lưu giấy tờ xét tuyển"),
-//             ),
-//           ),
-//         ),
+enum MenuAction {
+  copyEmailXetTuyen,
+  copyEmailTichHop,
+  copyEmailAll,
+}
+
+class ActionMenu extends StatelessWidget {
+  const ActionMenu({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    return PopupMenuButton<MenuAction>(
+      icon: Icon(Icons.more_vert),
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: MenuAction.copyEmailXetTuyen,
+          child: Text("Copy email (Xét tuyển)"),
+        ),
+        PopupMenuItem(
+          value: MenuAction.copyEmailTichHop,
+          child: Text("Copy email (Tích hợp)"),
+        ),
+        PopupMenuItem(
+          value: MenuAction.copyEmailAll,
+          child: Text("Copy email (Tất cả)"),
+        ),
+      ],
+      onSelected: (value) async {
+        final pageState = Provider.of<_PageState>(context, listen: false);
+
+        // Filter candidates based on the selected action
+        final listCandidate = switch (value) {
+          MenuAction.copyEmailXetTuyen => pageState.listCandidate
+              .where((hv) => hv.dienTuyenSinh == DienTuyenSinh.xetTuyen),
+          MenuAction.copyEmailTichHop => pageState.listCandidate
+              .where((hv) => hv.dienTuyenSinh == DienTuyenSinh.tichHop),
+          MenuAction.copyEmailAll => pageState.listCandidate,
+        };
+
+        // Merge emails into a single string
+        final emails =
+            listCandidate.map((hv) => hv.email).whereType<String>().join("\n ");
+
+        // Copy emails to clipboard
+        final clipboardData = ClipboardData(text: emails);
+        await Clipboard.setData(clipboardData);
+
+        // Notification
+        final msg = "Đã copy ${listCandidate.length} email";
+        scaffoldMessenger.showMessage(msg);
+      },
+    );
+  }
+}
