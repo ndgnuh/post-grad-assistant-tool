@@ -259,7 +259,7 @@ Future<T> _getById<T>({
   required String idField,
   required T Function(Map<String, Object?>) fromJson,
 }) async {
-  return dbSession((db) async {
+  return dbSessionReadOnly((db) async {
     final rows = await db.query(
       table,
       where: "$idField = ?",
@@ -335,6 +335,34 @@ class GiangVien with _$GiangVien {
 
   factory GiangVien.fromJson(Map<String, dynamic> json) =>
       _$GiangVienFromJson(json);
+
+  Future<GiangVien> setSdt(String? sdt) async {
+    var query = UpdateQuery()
+      ..update(table)
+      ..setSingle("sdt", sdt)
+      ..where("id = ?", [id]);
+
+    final sql = query.build();
+    await dbSession((db) async {
+      await db.rawUpdate(sql);
+    });
+
+    return copyWith(sdt: sdt);
+  }
+
+  Future<GiangVien> setGioiTinh(GioiTinh? gioiTinh) async {
+    var query = UpdateQuery()
+      ..update(table)
+      ..setSingle("gioiTinh", gioiTinh?.value)
+      ..where("id = ?", [id]);
+
+    final sql = query.build();
+    await dbSession((db) async {
+      await db.rawUpdate(sql);
+    });
+
+    return copyWith(gioiTinh: gioiTinh);
+  }
 
   // Tất cả giảng viên
   static Future<List<GiangVien>> all() async {
@@ -563,6 +591,19 @@ class HocVien with _$HocVien {
     return "$firstName.$lastInitials$lastMaHv@sis.hust.edu.vn";
   }
 
+  static Future<List<HocVien>> getByClassOfYear(NienKhoa? nienKhoa) {
+    return dbSession((Database db) async {
+      final query = SelectQuery()
+        ..from(table)
+        ..where("nienKhoa = ?", [nienKhoa?.nienKhoa])
+        ..selectAll();
+
+      final sql = query.build();
+      final rows = await db.rawQuery(sql);
+      return [for (final json in rows) HocVien.fromJson(json)];
+    });
+  }
+
   static Future<List<HocVien>> search(String query) {
     return dbSessionReadOnly((Database db) async {
       final query1 = SelectQuery()
@@ -754,6 +795,27 @@ class NienKhoa with _$NienKhoa {
     required String nienKhoa,
   }) = _NienKhoa;
 
+  static Future<List<NienKhoa>> all() async {
+    return dbSession((db) async {
+      final rows = await db.query(table, orderBy: "nienKhoa DESC");
+      return [for (final json in rows) NienKhoa.fromJson(json)];
+    });
+  }
+
+  static Future<List<NienKhoa>> search(String? nienKhoa) async {
+    if (nienKhoa == null || nienKhoa.isEmpty) {
+      return [];
+    }
+    return dbSession((db) async {
+      final rows = await db.query(
+        table,
+        where: "nienKhoa like ?",
+        whereArgs: ["%$nienKhoa%"],
+      );
+      return [for (final json in rows) NienKhoa.fromJson(json)];
+    });
+  }
+
   factory NienKhoa.fromJson(Map<String, dynamic> json) =>
       _$NienKhoaFromJson(json);
 }
@@ -852,6 +914,26 @@ class DeTaiThacSi with _$DeTaiThacSi {
   factory DeTaiThacSi.fromJson(Map<String, dynamic> json) =>
       _$DeTaiThacSiFromJson(json);
 
+  static Future<DeTaiThacSi?> getByStudentId(int idHocVien) async {
+    return dbSession((Database db) async {
+      final rows = await db.query(
+        table,
+        where: "idHocVien = ?",
+        whereArgs: [idHocVien],
+      );
+
+      if (rows.isEmpty) {
+        return null;
+      }
+
+      final thesisJson = Map<String, Object?>.from(rows.first);
+      thesisJson["giangVien"] =
+          await GiangVien.getById(thesisJson["idGiangVien"]);
+      final thesis = DeTaiThacSi.fromJson(thesisJson);
+      return thesis;
+    });
+  }
+
   static Future<DeTaiThacSi> getById(int id) async {
     return await dbSession((Database db) async {
       final rows = await db.query(
@@ -867,7 +949,6 @@ class DeTaiThacSi with _$DeTaiThacSi {
       deTaiJson["giangVien"] = await GiangVien.getById(
         deTaiJson["idGiangVien"],
       );
-      print(deTaiJson);
       return DeTaiThacSi.fromJson(deTaiJson);
     });
   }
@@ -876,6 +957,7 @@ class DeTaiThacSi with _$DeTaiThacSi {
     required String searchQuery,
     bool? assigned,
     Object? idGiangVien, // deprecated
+    NienKhoa? nienKhoa,
   }) async {
     return dbSession((Database db) async {
       final queryBuilder = SelectQuery()
@@ -890,6 +972,16 @@ class DeTaiThacSi with _$DeTaiThacSi {
           ..where("fts_DeTaiThacSi match ?", [searchQuery]);
 
         queryBuilder.where("id in ?", [topicIdQuery]);
+      }
+
+      // Additional filter if class of-year is not empty
+      if (nienKhoa != null) {
+        final studentIdQuery = SelectQuery()
+          ..from(HocVien.table)
+          ..select(["id"])
+          ..where("nienKhoa = ?", [nienKhoa.nienKhoa]);
+
+        queryBuilder.where("idHocVien in ?", [studentIdQuery]);
       }
 
       switch (assigned) {

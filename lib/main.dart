@@ -1,7 +1,11 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+
+import 'package:provider/provider.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+import 'business/drift_orm.dart';
 
 import 'pages.dart';
 
@@ -13,8 +17,30 @@ Future main() async {
     databaseFactory = databaseFactoryFfi;
   }
 
-  sqfliteFfiInit();
-  runApp(const MyApp());
+  final database = AppDatabase();
+  // final students = await database.select(database.hocVien).get();
+  //
+  // final ncms = [
+  //   'Khoa học dữ liệu và ứng dụng',
+  //   'Cơ sở toán học cho tin học và hệ thống thông tin',
+  //   'Tối ưu và tính toán khoa học',
+  //   'Xác suất thống kê và ứng dụng',
+  //   'Giải tích',
+  //   'Đại số'
+  // ];
+  // for (final ncm in ncms) {
+  //   final ncmcomp = NhomChuyenMonCompanion.insert(tenNhom: ncm);
+  //   await database.into(database.nhomChuyenMon).insert(ncmcomp);
+  // }
+  // print(await database.select(database.nhomChuyenMon).get());
+
+  // sqfliteFfiInit();
+  final app = Provider<AppDatabase>(
+    create: (_) => database,
+    child: const MyApp(),
+    dispose: (context, db) => db.close(),
+  );
+  runApp(app);
 }
 
 // Login button

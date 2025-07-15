@@ -1,16 +1,16 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:shared_preferences/shared_preferences.dart';
 
 export 'package:sqflite/sqflite.dart' show Database, Transaction;
 export 'sqlbuilder/sqlbuilder.dart'
     show Query, SelectQuery, UpdateQuery, InsertQuery, DeleteQuery;
-
-final databasePath = path.join(path.current, "fami.sqlite3");
 
 Future initSqlite() async {
   if (kIsWeb) {
@@ -20,7 +20,17 @@ Future initSqlite() async {
   }
 }
 
+final defaultDatabasePath = path.join(path.current, "fami.sqlite3");
+
+Future<String> getDatabasePath() async {
+  final prefs = await SharedPreferences.getInstance();
+  print(await sqflite.getDatabasesPath());
+  final databasePath = prefs.getString('database_path') ?? defaultDatabasePath;
+  return databasePath;
+}
+
 Future<T> transaction<T>(Future<T> Function(Transaction) callback) async {
+  final databasePath = await getDatabasePath();
   final db = await openDatabase(databasePath, singleInstance: false);
   final ret = await db.transaction(callback);
   await db.close();
@@ -28,8 +38,7 @@ Future<T> transaction<T>(Future<T> Function(Transaction) callback) async {
 }
 
 Future<T> dbSession<T>(Future<T> Function(Database) callback) async {
-  final dbDirectory = await sqflite.getDatabasesPath();
-  print(dbDirectory);
+  final databasePath = await getDatabasePath();
   final db = await openDatabase(databasePath);
   final ret = await callback(db);
   await db.close();
@@ -37,6 +46,7 @@ Future<T> dbSession<T>(Future<T> Function(Database) callback) async {
 }
 
 Future<T> dbSessionReadOnly<T>(Future<T> Function(Database) callback) async {
+  final databasePath = await getDatabasePath();
   final db = await openDatabase(
     databasePath,
     readOnly: true,

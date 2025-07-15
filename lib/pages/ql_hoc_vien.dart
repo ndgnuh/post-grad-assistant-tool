@@ -71,7 +71,7 @@ class _TableHocVien extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = _State.of(context);
     return PaginatedDataTable(
-      rowsPerPage: 20,
+      rowsPerPage: 5,
       columns: _TableHocVienDataSource.columns,
       source: _TableHocVienDataSource(state: state),
     );

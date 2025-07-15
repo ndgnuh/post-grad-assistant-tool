@@ -7,7 +7,6 @@ import 'pages/home.dart' show HomePage;
 import 'pages/chi_tiet_giang_vien.dart' show ChiTietGiangVien;
 import 'pages/draft.dart' show DraftPage;
 import 'pages/danh_sach_hoc_phan.dart' show DanhSachHocPhan;
-import 'pages/+phan_cong_do_an.dart' show PagePhanCongDoAn;
 import 'pages/phan_cong_hoi_dong_lvths.dart'
     show PagePhanCongHoiDongLuanVanThacSi;
 import 'pages/xet_tuyen.dart' show PageXetTuyen;
@@ -22,11 +21,30 @@ import 'pages/dang_ky_bao_ve.dart' show DangKyBaoVePage, DangKyBaoVePage2;
 import 'features/manage_thesis_topic/page_export_thesis.dart'
     show PageExportThesis;
 
+import 'pages/settings.dart' show SettingsPage;
+
+import 'pages/drift_import.dart' show PageImportHocPhan;
+
+import 'pages/mobile/teacher_list.dart' show MobilePageTeacherList;
+import 'pages/mobile/teacher_detail.dart' show MobilePageTeacherDetail;
+import 'pages/mobile/thesis_assign_list.dart' show MobilePageThesisAssignList;
+
+import 'pages/mobile/select_class_of.dart'
+    show PageSelectClassOf, PageSelectClassOfArgs;
+
+// const initialRoute = SettingsPage.routeName;
+const initialRoute = MobilePageThesisAssignList.routeName;
+// const initialRoute = MobilePageTeacherList.routeName;
+
+// const initialRoute = PageImportHocPhan.routeName;
+
 // const initialRoute = PagePhanCongHoiDongLuanVanThacSi.routeName;
-const initialRoute = PageQuanLyDeTai.routeName;
+// const initialRoute = PageQuanLyDeTai.routeName;
 // const initialRoute = QlBieuMau.routeName;
 
 //const initialRoute = QlHocVien.routeName;
+
+// const initialRoute = PageXetTuyen.routeName;
 
 // const initialRoute = DraftPage.routeName;
 
@@ -35,6 +53,7 @@ const initialRoute = PageQuanLyDeTai.routeName;
 // const initialRoute = DangKyBaoVePage.routeName;
 // const initialRoute = PageHanCheHocPhan.routeName;
 // const initialRoute = PageLopTinChi.routeName;
+
 // const initialRoute = "/";
 
 const routes = [
@@ -42,6 +61,11 @@ const routes = [
     route: HomePage.routeName,
     label: "Trang chính",
     icon: Icons.home,
+  ),
+  (
+    route: MobilePageTeacherList.routeName,
+    label: "Giảng viên (M)",
+    icon: Icons.person,
   ),
   (
     route: PageQuanLyGiangVien.routeName,
@@ -67,11 +91,6 @@ const routes = [
   (
     route: DanhSachHocPhan.routeName,
     label: "Học phần",
-    icon: Icons.book,
-  ),
-  (
-    route: PagePhanCongDoAn.routeName,
-    label: "Phân công đồ án",
     icon: Icons.book,
   ),
   (
@@ -104,6 +123,11 @@ const routes = [
     label: "Văn mẫu",
     icon: Icons.book,
   ),
+  (
+    route: SettingsPage.routeName,
+    label: "Cài đặt",
+    icon: Icons.settings,
+  ),
 ];
 
 MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -111,8 +135,6 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
   Object? args = settings.arguments;
   return MaterialPageRoute(builder: (BuildContext context) {
     switch (name) {
-      case PagePhanCongDoAn.routeName:
-        return PagePhanCongDoAn();
       case PageQuanLyGiangVien.routeName:
         return PageQuanLyGiangVien();
       case "/edit/giang-vien":
@@ -143,6 +165,31 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
       case QlHocVien.routeName:
         return QlHocVien();
 
+      /// Mobiles
+      case MobilePageTeacherList.routeName:
+        return MobilePageTeacherList.initialize();
+      case MobilePageTeacherDetail.routeName:
+        return switch (args) {
+          (GiangVien teacher) => MobilePageTeacherDetail(teacher: teacher),
+          _ => const MobilePageTeacherList(),
+        };
+
+      case MobilePageThesisAssignList.routeName:
+        return const MobilePageThesisAssignList();
+
+      /// Selection pages
+      case PageSelectClassOf.routeName:
+        final args = settings.arguments;
+        switch (args) {
+          case PageSelectClassOfArgs args:
+            return PageSelectClassOf.fromArgs(args);
+        }
+        return HomePage();
+
+      /// Drift
+      case PageImportHocPhan.routeName:
+        return const PageImportHocPhan();
+
       /// Biểu mẫu
       case QlBieuMau.routeName:
         return QlBieuMau();
@@ -152,6 +199,8 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
         return DangKyBaoVePage();
       case PageExportThesis.routeName:
         return const PageExportThesis();
+      case SettingsPage.routeName:
+        return const SettingsPage();
       case DangKyBaoVePage2.routeName:
         switch (args) {
           case (
