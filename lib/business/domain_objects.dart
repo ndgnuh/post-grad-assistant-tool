@@ -466,8 +466,137 @@ class HocKy with _$HocKy {
 
   factory HocKy.fromJson(Map<String, dynamic> json) => _$HocKyFromJson(json);
 
+  get hanNopDiem => hanNhapDiem.add(Duration(days: -7));
+
+  get batDauHocDmy => datetimeToDdmmyyyy(batDauHoc);
+  get ketThucHocDmy => datetimeToDdmmyyyy(ketThucHoc);
+  get hanNhapDiemDmy => datetimeToDdmmyyyy(hanNhapDiem);
+  get moDangKyDmy => datetimeToDdmmyyyy(moDangKy);
+  get dongDangKyDmy => datetimeToDdmmyyyy(dongDangKy);
+  get hanNopDiemDmy => datetimeToDdmmyyyy(hanNopDiem);
+
   @override
   String toString() => hocKy;
+
+  static Future<HocKy> getClosest() async {
+    final listAcademicYears = await HocKy.all();
+    final now = DateTime.now();
+    var dayDiff = Duration(days: 99999999999);
+    var closest = listAcademicYears.first;
+
+    for (final year in listAcademicYears) {
+      final diff = year.batDauHoc.difference(now).abs();
+      if (diff < dayDiff) {
+        dayDiff = diff;
+        closest = year;
+      }
+    }
+
+    return closest;
+  }
+
+  static FutureOr<List<HocKy>> search({
+    required String searchQuery,
+  }) async {
+    if (searchQuery.trim().isEmpty) {
+      return [];
+    }
+
+    final query = SelectQuery()
+      ..from(table)
+      ..selectAll();
+
+    query.where("hocKy LIKE ?", ["%$searchQuery%"]);
+
+    final sql = query.build();
+    print(sql);
+    return dbSessionReadOnly((Database db) async {
+      final rows = await db.rawQuery(sql);
+      return [for (final json in rows) HocKy.fromJson(json)];
+    });
+  }
+
+  Future<HocKy> update({
+    DateTime? moDangKy,
+    DateTime? dongDangKy,
+    DateTime? batDauHoc,
+    DateTime? ketThucHoc,
+    DateTime? hanNhapDiem,
+  }) async {
+    final format = DateFormat('yyyy/MM/dd');
+    final data = {
+      "moDangKy": format.format(moDangKy ?? this.moDangKy),
+      "dongDangKy": format.format(dongDangKy ?? this.dongDangKy),
+      "batDauHoc": format.format(batDauHoc ?? this.batDauHoc),
+      "ketThucHoc": format.format(ketThucHoc ?? this.ketThucHoc),
+      "hanNhapDiem": format.format(hanNhapDiem ?? this.hanNhapDiem),
+    };
+
+    final query = UpdateQuery()
+      ..update(table)
+      ..set(data)
+      ..where("hocKy = ?", [hocKy]);
+
+    final sql = query.build();
+
+    await dbSession((Database db) async {
+      await db.rawUpdate(sql);
+    });
+
+    return copyWith(
+      moDangKy: moDangKy ?? this.moDangKy,
+      dongDangKy: dongDangKy ?? this.dongDangKy,
+      batDauHoc: batDauHoc ?? this.batDauHoc,
+      ketThucHoc: ketThucHoc ?? this.ketThucHoc,
+      hanNhapDiem: hanNhapDiem ?? this.hanNhapDiem,
+    );
+  }
+
+  static Future<HocKy> create({
+    required String hocKy,
+    required DateTime moDangKy,
+    required DateTime dongDangKy,
+    required DateTime batDauHoc,
+    required DateTime ketThucHoc,
+    required DateTime hanNhapDiem,
+  }) async {
+    final data = {
+      "hocKy": hocKy,
+      "moDangKy": datetimeToYyyymmdd(moDangKy),
+      "dongDangKy": datetimeToYyyymmdd(dongDangKy),
+      "batDauHoc": datetimeToYyyymmdd(batDauHoc),
+      "ketThucHoc": datetimeToYyyymmdd(ketThucHoc),
+      "hanNhapDiem": datetimeToYyyymmdd(hanNhapDiem),
+    };
+    final query = InsertQuery()
+      ..into(table)
+      ..insert(data);
+
+    final sql = query.build();
+
+    await dbSession((Database db) async {
+      await db.rawInsert(sql);
+    });
+    return HocKy.fromJson(data);
+  }
+
+  Future<void> delete() async {
+    final query = DeleteQuery()
+      ..deleteFrom(table)
+      ..where("hocKy = ?", [hocKy]);
+
+    final sql = query.build();
+    await dbSession((Database db) async {
+      await db.rawDelete(sql);
+    });
+  }
+
+  static Future<List<HocKy>> all() async {
+    return dbSession((Database db) async {
+      final rows = await db.query(table, orderBy: "hocKy DESC");
+      return [for (final json in rows) HocKy.fromJson(json)];
+    });
+  }
 
   (int, int) get yearStartEnd {
     final yearStart = int.parse(hocKy.substring(0, 4));
@@ -697,6 +826,19 @@ class LopTinChi with _$LopTinChi {
         idField: "maLopHoc",
         fromJson: LopTinChi.fromJson,
       );
+
+  static Future<List<LopTinChi>> getBySemester(HocKy semester) async {
+    final query = SelectQuery()
+      ..from(table)
+      ..selectAll()
+      ..where("hocKy = ?", [semester.hocKy]);
+
+    final sql = query.build();
+    return dbSessionReadOnly((db) async {
+      final rows = await db.rawQuery(sql);
+      return [for (final json in rows) LopTinChi.fromJson(json)];
+    });
+  }
 
   Future<void> create() => _create(
         table: LopTinChi.table,

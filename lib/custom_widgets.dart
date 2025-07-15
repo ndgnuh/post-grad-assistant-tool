@@ -1183,3 +1183,142 @@ class EzDmyText extends StatelessWidget {
     return Text(formattedDate ?? placeholder!);
   }
 }
+
+class DateEditingDialog extends StatelessWidget {
+  final DateTime? initialDate;
+  final String title;
+  final void Function(DateTime) onSubmit;
+
+  static void show({
+    required BuildContext context,
+    DateTime? initialDate,
+    String title = "Chỉnh sửa ngày",
+    required void Function(DateTime) onSubmit,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => DateEditingDialog(
+        title: title,
+        initialDate: initialDate,
+        onSubmit: onSubmit,
+      ),
+    );
+  }
+
+  const DateEditingDialog({
+    super.key,
+    this.title = "Chỉnh sửa ngày",
+    this.initialDate,
+    required this.onSubmit,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = EzDateInputController(
+      value: initialDate,
+      dateFormat: DateFormat("dd/MM/yyyy"),
+    );
+    return AlertDialog(
+      title: Text(title),
+      content: EzDateInput(
+        controller: controller,
+        label: "Ngày",
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text("Hủy"),
+        ),
+        TextButton(
+          onPressed: () {
+            onSubmit(controller.value!);
+            Navigator.of(context).pop();
+          },
+          child: const Text("Lưu"),
+        ),
+      ],
+    );
+  }
+}
+
+class PageSelectThings<T> extends StatefulWidget {
+  final String title;
+  final T? initialSelection;
+  final bool allowNull;
+  final String hintText;
+  final FutureOr<List<T>> Function(String query) searchFunction;
+  final Widget Function(BuildContext context, T? item) itemBuilder;
+  final bool searchWhenTyping;
+
+  const PageSelectThings({
+    super.key,
+    required this.allowNull,
+    required this.title,
+    required this.searchFunction,
+    required this.itemBuilder,
+    this.initialSelection,
+    this.hintText = "Tìm kiếm...",
+    this.searchWhenTyping = false,
+  });
+
+  @override
+  State<PageSelectThings<T>> createState() => _PageSelectThingsState<T>();
+}
+
+class _PageSelectThingsState<T> extends State<PageSelectThings<T>> {
+  List<T> _searchResults = [];
+
+  List<T?> get allResults => [
+        widget.initialSelection,
+        if (widget.allowNull) null,
+        ..._searchResults.where((item) => item != widget.initialSelection),
+      ];
+
+  @override
+  Widget build(BuildContext context) {
+    void callback(String? query) async {
+      if (query == null || query.isEmpty) {
+        setState(() {
+          _searchResults = [];
+        });
+        return;
+      }
+
+      final results = await widget.searchFunction(query);
+      setState(() {
+        _searchResults = results;
+      });
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Column(
+        children: [
+          ListTile(
+            title: SearchBar(
+              hintText: widget.hintText,
+              autoFocus: true,
+              onChanged: (query) {
+                if (widget.searchWhenTyping) {
+                  callback(query);
+                }
+              },
+              onSubmitted: callback,
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: allResults.length,
+              itemBuilder: (context, index) {
+                final item = allResults[index];
+                return widget.itemBuilder(context, item);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

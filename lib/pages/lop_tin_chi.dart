@@ -256,142 +256,144 @@ class _EditPanel extends StatelessWidget {
     final sm = ScaffoldMessenger.of(context);
     final model = Provider.of<_PageState>(context);
     final edit = model.editLopTinChi;
-    return EzFixed(
-      margin: EdgeInsets.all(0),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      direction: Axis.vertical,
-      children: [
-        EzHeader(text: "Thao tác", level: 0),
-        if (edit != null)
-          EzFlex(
-            direction: Axis.horizontal,
-            margin: EdgeInsets.all(0),
-            children: [
-              EzTextInput(
-                label: "ID lớp đang sửa",
-                placeholder: "${edit.id}",
-                readOnly: true,
-              ),
-              OutlinedButton.icon(
-                label: Text("Hủy"),
-                onPressed: () => model.unedit(),
-                icon: Icon(Icons.delete),
-              )
-            ],
+    return SingleChildScrollView(
+      child: EzFixed(
+        margin: EdgeInsets.all(0),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        direction: Axis.vertical,
+        children: [
+          EzHeader(text: "Thao tác", level: 0),
+          if (edit != null)
+            EzFlex(
+              direction: Axis.horizontal,
+              margin: EdgeInsets.all(0),
+              children: [
+                EzTextInput(
+                  label: "ID lớp đang sửa",
+                  placeholder: "${edit.id}",
+                  readOnly: true,
+                ),
+                OutlinedButton.icon(
+                  label: Text("Hủy"),
+                  onPressed: () => model.unedit(),
+                  icon: Icon(Icons.delete),
+                )
+              ],
+            ),
+          EzDropdown.fullWidth(
+            label: "Học kỳ",
+            controller: model.editHocKy,
+            onSelected: (hocKy) => model.notify(),
           ),
-        EzDropdown.fullWidth(
-          label: "Học kỳ",
-          controller: model.editHocKy,
-          onSelected: (hocKy) => model.notify(),
-        ),
-        EzDropdown.fullWidth(
-          label: "Học phần",
-          controller: model.editHocPhan,
-        ),
-        EzTextInput(
-          label: "Mã lớp học",
-          controller: model.editMaLop,
-        ),
-        EzTextInput(
-          label: "Phòng học",
-          controller: model.editPhongHoc,
-        ),
-        EzDropdown.fullWidth(
-          label: "Ngày học",
-          controller: model.editNgayHoc,
-        ),
-        EzDropdown.fullWidth(
-          label: "Tiết bắt đầu",
-          controller: model.editTietBatDau,
-        ),
-        EzDropdown.fullWidth(
-          label: "Tiết kết thúc",
-          controller: model.editTietKetThuc,
-        ),
-        EzDropdown.fullWidth<GiangVien?>(
-          label: "Giảng viên",
-          controller: model.editGiangVien,
-        ),
-        EzDropdown.fullWidth<TrangThaiLopTinChi>(
-          label: "Trạng thái",
-          controller: model.editTrangThai,
-        ),
-        EzTextInput(
-          label: "URL truy cập",
-          controller: model.editUrlTruyCap,
-        ),
-        if (edit == null)
-          OutlinedButton.icon(
-            onPressed: () => model.themLop(),
-            label: Text("Thêm"),
-            icon: Icon(Icons.add),
-          )
-        else
-          OutlinedButton.icon(
-            onPressed: () => model.update(),
-            label: Text("Cập nhật"),
-            icon: Icon(Icons.edit),
+          EzDropdown.fullWidth(
+            label: "Học phần",
+            controller: model.editHocPhan,
           ),
-        OutlinedButton.icon(
-          onPressed: switch (model.editHocKy.value) {
-            null => null,
-            _ => () => model.importLop(),
-          },
-          label: Text("Import file đăng ký"),
-          icon: Icon(Icons.upload),
-        ),
-        OutlinedButton.icon(
-          onPressed: () {
-            sm.showMessage(strings.msgNotImplemented);
-          } /* TODO */,
-          label: Text("Export file phân công"),
-          icon: Icon(Icons.download),
-        ),
-        OutlinedButton.icon(
-          onPressed: () async {
-            if (await model.copyBm09Title()) {
-              sm.showMessage(strings.msgCopySuccess);
-            } else {
-              sm.showMessage(strings.msgSelectTerm);
-            }
-          },
-          label: Text("Copy tiêu đề bảng"),
-          icon: Icon(Icons.content_copy),
-        ),
-        OutlinedButton.icon(
-          onPressed: () async {
-            if (await model.copyBm09DatePreriod()) {
-              sm.showMessage(strings.msgCopySuccess);
-            } else {
-              sm.showMessage(strings.msgSelectTerm);
-            }
-          },
-          label: Text("Copy thời gian học"),
-          icon: Icon(Icons.content_copy),
-        ),
-        OutlinedButton.icon(
-          onPressed: () async {
-            if (await model.copyBm09Text()) {
-              sm.showMessage(strings.msgCopySuccess);
-            } else {
-              sm.showMessage(strings.msgSelectTerm);
-            }
-          },
-          label: Text("Copy nội dung phân công"),
-          icon: Icon(Icons.content_copy),
-        ),
-        OutlinedButton.icon(
-          onPressed: () async {
-            if (await model.copyUrlNotificationText()) {
-              sm.showMessage(strings.msgCopySuccess);
-            } else {
-              sm.showMessage(strings.msgSelectTerm);
-            }
-          },
-          label: Text("Copy thông báo cho học viên"),
-          icon: Icon(Icons.content_copy),
-        ),
-      ],
+          EzTextInput(
+            label: "Mã lớp học",
+            controller: model.editMaLop,
+          ),
+          EzTextInput(
+            label: "Phòng học",
+            controller: model.editPhongHoc,
+          ),
+          EzDropdown.fullWidth(
+            label: "Ngày học",
+            controller: model.editNgayHoc,
+          ),
+          EzDropdown.fullWidth(
+            label: "Tiết bắt đầu",
+            controller: model.editTietBatDau,
+          ),
+          EzDropdown.fullWidth(
+            label: "Tiết kết thúc",
+            controller: model.editTietKetThuc,
+          ),
+          EzDropdown.fullWidth<GiangVien?>(
+            label: "Giảng viên",
+            controller: model.editGiangVien,
+          ),
+          EzDropdown.fullWidth<TrangThaiLopTinChi>(
+            label: "Trạng thái",
+            controller: model.editTrangThai,
+          ),
+          EzTextInput(
+            label: "URL truy cập",
+            controller: model.editUrlTruyCap,
+          ),
+          if (edit == null)
+            OutlinedButton.icon(
+              onPressed: () => model.themLop(),
+              label: Text("Thêm"),
+              icon: Icon(Icons.add),
+            )
+          else
+            OutlinedButton.icon(
+              onPressed: () => model.update(),
+              label: Text("Cập nhật"),
+              icon: Icon(Icons.edit),
+            ),
+          OutlinedButton.icon(
+            onPressed: switch (model.editHocKy.value) {
+              null => null,
+              _ => () => model.importLop(),
+            },
+            label: Text("Import file đăng ký"),
+            icon: Icon(Icons.upload),
+          ),
+          OutlinedButton.icon(
+            onPressed: () {
+              sm.showMessage(strings.msgNotImplemented);
+            } /* TODO */,
+            label: Text("Export file phân công"),
+            icon: Icon(Icons.download),
+          ),
+          OutlinedButton.icon(
+            onPressed: () async {
+              if (await model.copyBm09Title()) {
+                sm.showMessage(strings.msgCopySuccess);
+              } else {
+                sm.showMessage(strings.msgSelectTerm);
+              }
+            },
+            label: Text("Copy tiêu đề bảng"),
+            icon: Icon(Icons.content_copy),
+          ),
+          OutlinedButton.icon(
+            onPressed: () async {
+              if (await model.copyBm09DatePreriod()) {
+                sm.showMessage(strings.msgCopySuccess);
+              } else {
+                sm.showMessage(strings.msgSelectTerm);
+              }
+            },
+            label: Text("Copy thời gian học"),
+            icon: Icon(Icons.content_copy),
+          ),
+          OutlinedButton.icon(
+            onPressed: () async {
+              if (await model.copyBm09Text()) {
+                sm.showMessage(strings.msgCopySuccess);
+              } else {
+                sm.showMessage(strings.msgSelectTerm);
+              }
+            },
+            label: Text("Copy nội dung phân công"),
+            icon: Icon(Icons.content_copy),
+          ),
+          OutlinedButton.icon(
+            onPressed: () async {
+              if (await model.copyUrlNotificationText()) {
+                sm.showMessage(strings.msgCopySuccess);
+              } else {
+                sm.showMessage(strings.msgSelectTerm);
+              }
+            },
+            label: Text("Copy thông báo cho học viên"),
+            icon: Icon(Icons.content_copy),
+          ),
+        ],
+      ),
     );
   }
 }

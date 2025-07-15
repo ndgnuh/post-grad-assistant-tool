@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'datamodels.dart';
 import '../business/domain_objects.dart';
 
@@ -21,7 +22,17 @@ import 'pages/dang_ky_bao_ve.dart' show DangKyBaoVePage, DangKyBaoVePage2;
 import 'features/manage_thesis_topic/page_export_thesis.dart'
     show PageExportThesis;
 
+import 'pages/academic_year_list.dart'
+    show
+        PageAcademicYearList,
+        PageAcademicYearEdit,
+        PageAcademicYearCreate,
+        PageAcademicYearArgument;
+
 import 'pages/settings.dart' show SettingsPage;
+
+import 'pages/mobile/study_class_list.dart'
+    show PageCourseClassList, PageStudyClassListArgs, PageSelectSemester;
 
 import 'pages/drift_import.dart' show PageImportHocPhan;
 
@@ -32,8 +43,14 @@ import 'pages/mobile/thesis_assign_list.dart' show MobilePageThesisAssignList;
 import 'pages/mobile/select_class_of.dart'
     show PageSelectClassOf, PageSelectClassOfArgs;
 
+final initialRoute = switch (kReleaseMode) {
+  true => HomePage.routeName,
+  false => PageCourseClassList.routeName,
+};
+
 // const initialRoute = SettingsPage.routeName;
-const initialRoute = MobilePageThesisAssignList.routeName;
+// const initialRoute = MobilePageThesisAssignList.routeName;
+// const initialRoute = PageAcademicYearList.routeName;
 // const initialRoute = MobilePageTeacherList.routeName;
 
 // const initialRoute = PageImportHocPhan.routeName;
@@ -77,7 +94,26 @@ const routes = [
     label: "Học viên",
     icon: Icons.person,
   ),
-  (route: PageLopTinChi.routeName, label: "Lớp học", icon: Icons.class_rounded),
+  (
+    route: MobilePageThesisAssignList.routeName,
+    label: "Giao đề tài (2)",
+    icon: Icons.assignment_turned_in,
+  ),
+  (
+    route: PageAcademicYearList.routeName,
+    label: "Quản lý đợt học",
+    icon: Icons.lock_clock,
+  ),
+  (
+    route: PageLopTinChi.routeName,
+    label: "Lớp tín chỉ (v1)",
+    icon: Icons.class_rounded,
+  ),
+  (
+    route: PageCourseClassList.routeName,
+    label: "Lớp tín chỉ (v2)",
+    icon: Icons.class_,
+  ),
   (
     route: PageHanCheHocPhan.routeName,
     label: "Hạn chế học phần",
@@ -177,6 +213,29 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
       case MobilePageThesisAssignList.routeName:
         return const MobilePageThesisAssignList();
 
+      /// Academic year pages
+      case PageAcademicYearList.routeName:
+        return const PageAcademicYearList();
+      case PageAcademicYearEdit.routeName:
+        switch (args) {
+          case PageAcademicYearArgument args:
+            return PageAcademicYearEdit.fromArguments(args);
+          default:
+            return const PageAcademicYearList();
+        }
+      case PageAcademicYearCreate.routeName:
+        return const PageAcademicYearCreate();
+
+      /// Course class list
+      case PageCourseClassList.routeName:
+        print("Args: $args");
+        switch (args) {
+          case HocKy initialSemester:
+            return PageCourseClassList(initialSemester: initialSemester);
+          default:
+            return const PageCourseClassList();
+        }
+
       /// Selection pages
       case PageSelectClassOf.routeName:
         final args = settings.arguments;
@@ -185,6 +244,13 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
             return PageSelectClassOf.fromArgs(args);
         }
         return HomePage();
+      case PageSelectSemester.routeName:
+        switch (args) {
+          case HocKy initialSemester:
+            return PageSelectSemester(initialSemester: initialSemester);
+          default:
+            return PageSelectSemester(initialSemester: null);
+        }
 
       /// Drift
       case PageImportHocPhan.routeName:

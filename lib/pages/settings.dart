@@ -5,7 +5,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as p;
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_onedrive/flutter_onedrive.dart';
 
 import 'dart:io';
 
@@ -64,18 +63,7 @@ class SettingsPage extends StatelessWidget {
           ListTile(
             title: const Text("Import database"),
             subtitle: const Text("Import from onedrive"),
-            onTap: () async {
-              final redirectUrl =
-                  "https://login.microsoftonline.com/common/oauth2/nativeclient";
-              final clientId = "2b077247-3e09-40e5-a8f7-3229379fb34d";
-              final onedrive = OneDrive(
-                redirectURL: redirectUrl,
-                clientID: clientId,
-              );
-
-              final connected = await onedrive.isConnected();
-              print(connected);
-            },
+            onTap: () async {},
           ),
         ],
       ),

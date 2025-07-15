@@ -8,6 +8,24 @@ class TextEditDialog extends StatelessWidget {
   final IconData? icon;
   final void Function(String) onSubmit;
 
+  static void show(
+    BuildContext context, {
+    required String title,
+    String? initialText,
+    IconData? icon,
+    required void Function(String) onSubmit,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => TextEditDialog(
+        title: title,
+        initialText: initialText,
+        icon: icon,
+        onSubmit: onSubmit,
+      ),
+    );
+  }
+
   const TextEditDialog({
     super.key,
     required this.title,

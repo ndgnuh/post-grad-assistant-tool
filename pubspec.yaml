@@ -62,16 +62,20 @@ dependencies:
   spreadsheet_decoder: ^2.3.0
   csv: ^6.0.0
   diacritic: ^0.1.6
+  drift: ^2.26.1
+  drift_flutter: ^0.2.4
+  permission_handler: ^12.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
-  build_runner: ^2.4.13
+  build_runner: ^2.5.4
   freezed: ^2.5.7
   json_serializable: ^6.9.0
   functional_data_generator:
   source_gen: ^1.5.0
+  drift_dev: ^2.26.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -103,6 +107,7 @@ flutter:
   - assets/fonts/Times_New_Roman_Bold_Italic.ttf
   - assets/fonts/Times_New_Roman_Italic.ttf
   - assets/copy-pasta.yaml
+  - fami.sqlite3 # For debugging, remove this in production
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
