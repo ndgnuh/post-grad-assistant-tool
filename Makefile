@@ -1,4 +1,7 @@
 dev:
+	flutter run
+
+dev-linux:
 	flutter run -d linux
 
 build_runner:
