@@ -8,7 +8,9 @@ import '../../business/domain_objects.dart';
 
 import 'package:fami_tools/services/database.dart';
 import 'package:fami_tools/services/sqlbuilder/sqlbuilder.dart';
-import 'package:fami_tools/business/domain_editors.dart';
+
+import '../ql_de_tai.dart' show PageQuanLyDeTai;
+import 'thesis_list.dart' show ThesisTopicListPage;
 
 part 'thesis_assign_list.freezed.dart';
 part 'thesis_assign_list.g.dart';
@@ -107,11 +109,34 @@ class MobilePageThesisAssignList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final navigator = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+
     return ChangeNotifierProvider(
       create: (context) => _State(),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Giao đề tài'),
+          actions: [
+            MenuAnchor(
+              builder: (context, controller, child) => IconButton(
+                icon: const Icon(Icons.more_vert),
+                onPressed: controller.open,
+              ),
+              menuChildren: [
+                MenuItemButton(
+                  onPressed: null,
+                  child: Text("Thêm đề tài"),
+                ),
+                MenuItemButton(
+                  onPressed: () => navigator.pushNamed(
+                    ThesisTopicListPage.routeName,
+                  ),
+                  child: Text("Tới trang danh sách đề tài"),
+                ),
+              ],
+            )
+          ],
         ),
         body: Center(
           child: Column(
@@ -135,6 +160,7 @@ class _ListOfThesis extends StatelessWidget {
       itemCount: data.length,
       itemBuilder: (context, idx) {
         final thesis = data[idx];
+        final studentId = thesis.studentId;
 
         final title = "${thesis.studentName} (${thesis.studentCode})";
 
@@ -142,17 +168,39 @@ class _ListOfThesis extends StatelessWidget {
           null => "Chưa giao đề tài",
           int _ => "${thesis.thesisVietnameseName}\n${thesis.teacherName}",
         };
-        print(thesis);
 
         final icon = switch (thesis.assigned) {
           true => Icons.check_box,
           false => Icons.check_box_outline_blank,
         };
 
-        return ListTile(
-          leading: Icon(icon),
-          title: Text(title),
-          subtitle: Text(subtitle),
+        return SearchAnchor(
+          suggestionsBuilder: (context, searchController) async {
+            final query = searchController.text;
+            final theses = await DeTaiThacSi.search(
+              searchQuery: query,
+              assigned: false,
+            );
+
+            return [
+              for (final thesis in theses)
+                ListTile(
+                  title: Text(thesis.tenTiengViet),
+                  subtitle: Text(thesis.giangVien.hoTen),
+                  onTap: () async {
+                    final student = await HocVien.getById(studentId);
+                    await thesis.assignStudent(student);
+                    searchController.closeView("");
+                  },
+                )
+            ];
+          },
+          builder: (context, searchController) => ListTile(
+            leading: Icon(icon),
+            title: Text(title),
+            subtitle: Text(subtitle),
+            onTap: () => searchController.openView(),
+          ),
         );
       },
     );
@@ -163,30 +211,36 @@ class _SelectClassOfYearButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<_State>(context);
-    final navigator = Navigator.of(context);
 
-    // final searchChoice = SearchChoice<NienKhoa?>(
-    //   controller: SearchChoiceController<NienKhoa?>(
-    //     nullable: false,
-    //     searchFunction: NienKhoa.search,
-    //     labelFormatter: (NienKhoa? nienKhoa) => switch (nienKhoa) {
-    //       null => "Chọn khóa học viên",
-    //       NienKhoa nienKhoa => nienKhoa.nienKhoa,
-    //     },
-    //   ),
-    //   onSelected: (NienKhoa? nienKhoa) {
-    //     state.setSelectedClassOfYear(nienKhoa);
-    //   },
-    // );
+    return SearchAnchor(
+      suggestionsBuilder: (context, searchController) async {
+        final query = searchController.text;
+        final classOfYears = await NienKhoa.search(query);
 
-    return ListTile(
-      leading: Icon(Icons.search),
-      title: const Text('Khóa học viên'),
-      subtitle: switch (state.selectedClassOfYear) {
-        null => const Text("Click để chọn"),
-        NienKhoa nienKhoa => Text(nienKhoa.nienKhoa),
+        final suggestions = <Widget>[];
+        for (final classOfYear in classOfYears) {
+          final widget = ListTile(
+            title: Text(classOfYear.nienKhoa),
+            onTap: () {
+              state.setSelectedClassOfYear(classOfYear);
+              searchController.closeView("");
+            },
+          );
+
+          suggestions.add(widget);
+        }
+
+        return suggestions;
       },
-      onTap: () => state.selectClassOfYear(navigator),
+      builder: (context, searchController) => ListTile(
+        leading: Icon(Icons.search),
+        title: const Text('Khóa học viên'),
+        subtitle: switch (state.selectedClassOfYear) {
+          null => const Text("Click để chọn"),
+          NienKhoa nienKhoa => Text(nienKhoa.nienKhoa),
+        },
+        onTap: () => searchController.openView(),
+      ),
     );
   }
 }

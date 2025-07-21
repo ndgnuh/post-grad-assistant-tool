@@ -12,6 +12,8 @@ export 'package:sqflite/sqflite.dart' show Database, Transaction;
 export 'sqlbuilder/sqlbuilder.dart'
     show Query, SelectQuery, UpdateQuery, InsertQuery, DeleteQuery;
 
+import '../preferences.dart' as preferences;
+
 Future initSqlite() async {
   if (kIsWeb) {
     databaseFactory = databaseFactoryFfiWeb;
@@ -22,33 +24,26 @@ Future initSqlite() async {
 
 final defaultDatabasePath = path.join(path.current, "fami.sqlite3");
 
-Future<String> getDatabasePath() async {
-  final prefs = await SharedPreferences.getInstance();
-  print(await sqflite.getDatabasesPath());
-  final databasePath = prefs.getString('database_path') ?? defaultDatabasePath;
-  return databasePath;
-}
-
 Future<T> transaction<T>(Future<T> Function(Transaction) callback) async {
-  final databasePath = await getDatabasePath();
-  final db = await openDatabase(databasePath, singleInstance: false);
+  final databasePath = await preferences.getDatabasePath();
+  final db = await openDatabase(databasePath!, singleInstance: false);
   final ret = await db.transaction(callback);
   await db.close();
   return ret;
 }
 
 Future<T> dbSession<T>(Future<T> Function(Database) callback) async {
-  final databasePath = await getDatabasePath();
-  final db = await openDatabase(databasePath);
+  final databasePath = await preferences.getDatabasePath();
+  final db = await openDatabase(databasePath!);
   final ret = await callback(db);
   await db.close();
   return ret;
 }
 
 Future<T> dbSessionReadOnly<T>(Future<T> Function(Database) callback) async {
-  final databasePath = await getDatabasePath();
+  final databasePath = await preferences.getDatabasePath();
   final db = await openDatabase(
-    databasePath,
+    databasePath!,
     readOnly: true,
     singleInstance: false,
   );

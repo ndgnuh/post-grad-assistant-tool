@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import '../../business/domain_objects.dart';
 import '../../business_widgets.dart';
+import '../../custom_widgets.dart';
 
 const notAvailableText = "N/A";
 
@@ -150,20 +151,21 @@ class TeacherDetail extends StatelessWidget {
           title: Text("Số điện thoại"),
           leading: const Icon(Icons.phone),
           onLongPress: () => copyToClipboardAndNotify(teacher.sdt),
-          onTap: () {
+          onTap: () async {
             // Show dialog to edit phone number
-            showDialog(
+            final newPhone = await showDialog(
               context: context,
-              builder: (context) => TextEditDialog(
+              builder: (context) => TextEditingDialog(
                 title: "Sửa số điện thoại",
                 initialText: teacher.sdt,
-                icon: Icons.phone,
-                onSubmit: (newPhone) async {
-                  final teacherUpdated = await teacher.setSdt(newPhone);
-                  state.setTeacher(teacherUpdated);
-                },
               ),
             );
+
+            switch (newPhone) {
+              case String newPhone:
+                final teacherUpdated = await teacher.setSdt(newPhone);
+                state.setTeacher(teacherUpdated);
+            }
           },
           subtitle: Text(teacher.sdt ?? notAvailableText),
         ),

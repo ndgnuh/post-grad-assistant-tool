@@ -655,6 +655,11 @@ class HocPhan with _$HocPhan {
     });
   }
 
+  static Future<List<HocPhan>> all() => _all(
+        table: table,
+        fromJson: HocPhan.fromJson,
+      );
+
   static Future<HocPhan> getById(String id) => _getById(
         id: id,
         table: table,
@@ -682,6 +687,7 @@ class HocVien with _$HocVien {
     GioiTinh? gioiTinh,
     String? noiSinh,
     String? email,
+    String? emailHust,
     String? truongTotNghiepDaiHoc,
     String? nganhTotNghiepDaiHoc,
     String? heTotNghiepDaiHoc,
@@ -712,12 +718,27 @@ class HocVien with _$HocVien {
   DienTuyenSinh? get dienTuyenSinh => idDienTuyenSinh;
   TrangThaiHocVien? get trangThai => maTrangThai;
 
-  String get emailHust {
-    final nameParts = removeDiacritics(hoTen).split(" ");
-    final firstName = nameParts.removeLast();
-    final lastInitials = [for (String part in nameParts) part[0]].join();
-    final lastMaHv = maHocVien?.substring(2);
-    return "$firstName.$lastInitials$lastMaHv@sis.hust.edu.vn";
+  // String get emailHust {
+  //   final nameParts = removeDiacritics(hoTen).split(" ");
+  //   final firstName = nameParts.removeLast();
+  //   final lastInitials = [for (String part in nameParts) part[0]].join();
+  //   final lastMaHv = maHocVien?.substring(2);
+  //   return "$firstName.$lastInitials$lastMaHv@sis.hust.edu.vn";
+  // }
+
+  static Future<List<HocVien>> getAdmissionList() async {
+    final query = SelectQuery()
+      ..from(table)
+      ..selectAll()
+      ..where("maTrangThai = ?", [TrangThaiHocVien.xetTuyen.value])
+      ..orderBy(["soHoSo"]);
+
+    final sql = query.build();
+
+    return dbSessionReadOnly((Database db) async {
+      final rows = await db.rawQuery(sql);
+      return [for (final json in rows) HocVien.fromJson(json)];
+    });
   }
 
   static Future<List<HocVien>> getByClassOfYear(NienKhoa? nienKhoa) {

@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'datamodels.dart';
+
 import '../business/domain_objects.dart';
 
 import 'pages/lop_tin_chi.dart' show PageLopTinChi;
 import 'pages/home.dart' show HomePage;
 import 'pages/chi_tiet_giang_vien.dart' show ChiTietGiangVien;
 import 'pages/draft.dart' show DraftPage;
-import 'pages/danh_sach_hoc_phan.dart' show DanhSachHocPhan;
 import 'pages/phan_cong_hoi_dong_lvths.dart'
     show PagePhanCongHoiDongLuanVanThacSi;
-import 'pages/xet_tuyen.dart' show PageXetTuyen;
 import 'pages/page_xet_tuyen_ncs.dart' show PageXetTuyenNcs;
 import 'pages/ql_de_tai.dart' show PageQuanLyDeTai;
 import 'pages/han_che_hoc_phan.dart' show PageHanCheHocPhan;
@@ -22,6 +21,9 @@ import 'pages/dang_ky_bao_ve.dart' show DangKyBaoVePage, DangKyBaoVePage2;
 import 'features/manage_thesis_topic/page_export_thesis.dart'
     show PageExportThesis;
 
+import 'pages/course_management.dart'
+    show PageCourseList, PageCourseDetailArgs, PageCourseDetail;
+
 import 'pages/academic_year_list.dart'
     show
         PageAcademicYearList,
@@ -29,10 +31,25 @@ import 'pages/academic_year_list.dart'
         PageAcademicYearCreate,
         PageAcademicYearArgument;
 
+import 'pages/xet_tuyen.dart' show PageXetTuyen;
+import 'pages/mobile/admission.dart'
+    show
+        PageAdmissionList,
+        PageAdmissionDetail,
+        PageAdmissionCreate,
+        PageAdmissionDetailArgs;
+
 import 'pages/settings.dart' show SettingsPage;
 
 import 'pages/mobile/study_class_list.dart'
     show PageCourseClassList, PageStudyClassListArgs, PageSelectSemester;
+
+import 'pages/mobile/thesis_list.dart'
+    show
+        ThesisTopicListPage,
+        ThesisTopicDetailPageArguments,
+        ThesisTopicDetailPage,
+        ThesisTopicAddPage;
 
 import 'pages/drift_import.dart' show PageImportHocPhan;
 
@@ -43,9 +60,11 @@ import 'pages/mobile/thesis_assign_list.dart' show MobilePageThesisAssignList;
 import 'pages/mobile/select_class_of.dart'
     show PageSelectClassOf, PageSelectClassOfArgs;
 
+import '../preferences.dart' as preferences;
+
 final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
-  false => PageCourseClassList.routeName,
+  false => ThesisTopicListPage.routeName,
 };
 
 // const initialRoute = SettingsPage.routeName;
@@ -96,7 +115,12 @@ const routes = [
   ),
   (
     route: MobilePageThesisAssignList.routeName,
-    label: "Giao đề tài (2)",
+    label: "Giao đề tài (v2)",
+    icon: Icons.assignment_turned_in,
+  ),
+  (
+    route: ThesisTopicListPage.routeName,
+    label: "Quản lý đề tài (v2)",
     icon: Icons.assignment_turned_in,
   ),
   (
@@ -115,17 +139,17 @@ const routes = [
     icon: Icons.class_,
   ),
   (
+    route: PageAdmissionList.routeName,
+    label: "Xét tuyển (v2)",
+    icon: Icons.person_add
+  ),
+  (
     route: PageHanCheHocPhan.routeName,
     label: "Hạn chế học phần",
     icon: Icons.class_rounded
   ),
   (
-    route: DraftPage.routeName,
-    label: "Draft",
-    icon: Icons.drafts,
-  ),
-  (
-    route: DanhSachHocPhan.routeName,
+    route: PageCourseList.routeName,
     label: "Học phần",
     icon: Icons.book,
   ),
@@ -170,6 +194,8 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
   String? name = settings.name;
   Object? args = settings.arguments;
   return MaterialPageRoute(builder: (BuildContext context) {
+    // Initial setup
+
     switch (name) {
       case PageQuanLyGiangVien.routeName:
         return PageQuanLyGiangVien();
@@ -184,8 +210,6 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
         return PageLopTinChi();
       case DraftPage.routeName:
         return DraftPage();
-      case DanhSachHocPhan.routeName:
-        return DanhSachHocPhan();
       case PageXetTuyen.routeName:
         return PageXetTuyen();
       case PageXetTuyenNcs.routeName:
@@ -200,6 +224,17 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
         return PageCopyPasta();
       case QlHocVien.routeName:
         return QlHocVien();
+
+      // Manage courses
+      case PageCourseList.routeName:
+        return PageCourseList();
+      case PageCourseDetail.routeName:
+        switch (args) {
+          case PageCourseDetailArgs args:
+            return PageCourseDetail.fromArguments(args);
+          default:
+            return PageCourseList();
+        }
 
       /// Mobiles
       case MobilePageTeacherList.routeName:
@@ -236,6 +271,19 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
             return const PageCourseClassList();
         }
 
+      /// Admission pages
+      case PageAdmissionList.routeName:
+        return const PageAdmissionList();
+      case PageAdmissionCreate.routeName:
+        return const PageAdmissionCreate();
+      case PageAdmissionDetail.routeName:
+        switch (args) {
+          case PageAdmissionDetailArgs args:
+            return PageAdmissionDetail.fromArgs(args);
+          default:
+            return const PageAdmissionList();
+        }
+
       /// Selection pages
       case PageSelectClassOf.routeName:
         final args = settings.arguments;
@@ -250,6 +298,19 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
             return PageSelectSemester(initialSemester: initialSemester);
           default:
             return PageSelectSemester(initialSemester: null);
+        }
+
+      /// Thesis topic management pages
+      case ThesisTopicListPage.routeName:
+        return const ThesisTopicListPage();
+      case ThesisTopicAddPage.routeName:
+        return const ThesisTopicAddPage();
+      case ThesisTopicDetailPage.routeName:
+        switch (args) {
+          case ThesisTopicDetailPageArguments args:
+            return ThesisTopicDetailPage.fromArguments(args);
+          default:
+            return ThesisTopicListPage();
         }
 
       /// Drift

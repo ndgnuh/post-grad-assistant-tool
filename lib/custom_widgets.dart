@@ -1184,6 +1184,78 @@ class EzDmyText extends StatelessWidget {
   }
 }
 
+class TextEditingDialog extends StatelessWidget {
+  final String? initialText;
+  final String title;
+  final bool highlightOnFocus;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+
+  static FutureOr<String?> show({
+    required BuildContext context,
+    required String title,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+    bool highlightOnFocus = true,
+    String? initialValue,
+  }) async {
+    return await showDialog(
+      context: context,
+      builder: (context) => TextEditingDialog(
+        highlightOnFocus: highlightOnFocus,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
+        title: title,
+        initialText: initialValue,
+      ),
+    );
+  }
+
+  const TextEditingDialog({
+    super.key,
+    this.initialText,
+    this.highlightOnFocus = true,
+    this.keyboardType,
+    this.inputFormatters,
+    required this.title,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = TextEditingController(text: initialText);
+    if (highlightOnFocus) {
+      controller.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: controller.text.length,
+      );
+    }
+
+    final nav = Navigator.of(context);
+
+    return AlertDialog(
+      title: Text(title),
+      content: TextFormField(
+        controller: controller,
+        autofocus: true,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
+        onSaved: (String? value) => nav.pop(value),
+        onFieldSubmitted: (String? value) => nav.pop(value),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => nav.pop(initialText),
+          child: const Text("Hủy"),
+        ),
+        TextButton(
+          onPressed: () => nav.pop(controller.text),
+          child: const Text("Lưu"),
+        ),
+      ],
+    );
+  }
+}
+
 class DateEditingDialog extends StatelessWidget {
   final DateTime? initialDate;
   final String title;
@@ -1242,6 +1314,8 @@ class DateEditingDialog extends StatelessWidget {
 }
 
 class PageSelectThings<T> extends StatefulWidget {
+  static const String routeName = "/etc/select-things";
+
   final String title;
   final T? initialSelection;
   final bool allowNull;
@@ -1319,6 +1393,63 @@ class _PageSelectThingsState<T> extends State<PageSelectThings<T>> {
           ),
         ],
       ),
+    );
+  }
+}
+
+// Listtile that have onTap update behavior
+abstract class InfoTile<T> extends StatefulWidget {
+  final String title;
+  final T? initialValue;
+  final Widget? icon;
+  final ValueChanged<T?> onSubmit;
+  final String Function(T?) format;
+
+  const InfoTile({
+    super.key,
+    required this.title,
+    required this.onSubmit,
+    this.icon,
+    this.initialValue,
+    this.format = defaultFormatter,
+  });
+
+  // abstract method to tap function
+  Future<T?> onTap({
+    required BuildContext context,
+    required T? currentValue,
+  });
+
+  @override
+  State<InfoTile<T>> createState() => _InfoTileState<T>();
+}
+
+class _InfoTileState<T> extends State<InfoTile<T>> {
+  late T? value;
+
+  @override
+  initState() {
+    super.initState();
+    value = widget.initialValue;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(widget.title),
+      subtitle: Text(widget.format(value)),
+      leading: widget.icon,
+      onTap: () async {
+        final newValue = await widget.onTap(
+          context: context,
+          currentValue: value,
+        );
+        print(newValue);
+        widget.onSubmit(newValue);
+        setState(() {
+          value = newValue;
+        });
+      },
     );
   }
 }

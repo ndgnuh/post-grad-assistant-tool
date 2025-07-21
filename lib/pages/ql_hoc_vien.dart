@@ -57,7 +57,7 @@ class _TableHocVienDataSource extends DataTableSource {
       DataCell(EzCopy(hocVien.maHocVien ?? "-")),
       DataCell(EzCopy(hocVien.hoTen)),
       DataCell(EzCopy(hocVien.email ?? "")),
-      DataCell(EzCopy(hocVien.emailHust)),
+      DataCell(EzCopy(hocVien.emailHust ?? "")),
       DataCell(EzCopy(hocVien.dienThoai ?? "")),
       DataCell(EzCopy(hocVien.trangThai.toString())),
     ]);

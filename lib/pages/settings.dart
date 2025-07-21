@@ -1,5 +1,6 @@
-/// Setting pages
+// Setting pages
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' as foundation;
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,6 +8,24 @@ import 'package:path/path.dart' as p;
 import 'package:permission_handler/permission_handler.dart';
 
 import 'dart:io';
+
+class PageInitialSetup extends StatelessWidget {
+  const PageInitialSetup({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pushNamed(context, SettingsPage.routeName);
+          },
+          child: const Text("Go to Settings"),
+        ),
+      ),
+    );
+  }
+}
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -26,7 +45,11 @@ class SettingsPage extends StatelessWidget {
                   await SharedPreferences.getInstance();
               final filePicker = FilePicker.platform;
 
-              await Permission.camera.request();
+              if (Platform.isAndroid || Platform.isIOS) {
+                await Permission.camera.request();
+                return;
+              }
+
               final directory = await filePicker.getDirectoryPath(
                 dialogTitle: "Database directory",
               );

@@ -1290,6 +1290,7 @@ mixin _$HocVien {
   GioiTinh? get gioiTinh => throw _privateConstructorUsedError;
   String? get noiSinh => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
+  String? get emailHust => throw _privateConstructorUsedError;
   String? get truongTotNghiepDaiHoc => throw _privateConstructorUsedError;
   String? get nganhTotNghiepDaiHoc => throw _privateConstructorUsedError;
   String? get heTotNghiepDaiHoc => throw _privateConstructorUsedError;
@@ -1343,6 +1344,7 @@ abstract class $HocVienCopyWith<$Res> {
       GioiTinh? gioiTinh,
       String? noiSinh,
       String? email,
+      String? emailHust,
       String? truongTotNghiepDaiHoc,
       String? nganhTotNghiepDaiHoc,
       String? heTotNghiepDaiHoc,
@@ -1392,6 +1394,7 @@ class _$HocVienCopyWithImpl<$Res, $Val extends HocVien>
     Object? gioiTinh = freezed,
     Object? noiSinh = freezed,
     Object? email = freezed,
+    Object? emailHust = freezed,
     Object? truongTotNghiepDaiHoc = freezed,
     Object? nganhTotNghiepDaiHoc = freezed,
     Object? heTotNghiepDaiHoc = freezed,
@@ -1452,6 +1455,10 @@ class _$HocVienCopyWithImpl<$Res, $Val extends HocVien>
       email: freezed == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      emailHust: freezed == emailHust
+          ? _value.emailHust
+          : emailHust // ignore: cast_nullable_to_non_nullable
               as String?,
       truongTotNghiepDaiHoc: freezed == truongTotNghiepDaiHoc
           ? _value.truongTotNghiepDaiHoc
@@ -1566,6 +1573,7 @@ abstract class _$$HocVienImplCopyWith<$Res> implements $HocVienCopyWith<$Res> {
       GioiTinh? gioiTinh,
       String? noiSinh,
       String? email,
+      String? emailHust,
       String? truongTotNghiepDaiHoc,
       String? nganhTotNghiepDaiHoc,
       String? heTotNghiepDaiHoc,
@@ -1613,6 +1621,7 @@ class __$$HocVienImplCopyWithImpl<$Res>
     Object? gioiTinh = freezed,
     Object? noiSinh = freezed,
     Object? email = freezed,
+    Object? emailHust = freezed,
     Object? truongTotNghiepDaiHoc = freezed,
     Object? nganhTotNghiepDaiHoc = freezed,
     Object? heTotNghiepDaiHoc = freezed,
@@ -1673,6 +1682,10 @@ class __$$HocVienImplCopyWithImpl<$Res>
       email: freezed == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      emailHust: freezed == emailHust
+          ? _value.emailHust
+          : emailHust // ignore: cast_nullable_to_non_nullable
               as String?,
       truongTotNghiepDaiHoc: freezed == truongTotNghiepDaiHoc
           ? _value.truongTotNghiepDaiHoc
@@ -1783,6 +1796,7 @@ class _$HocVienImpl extends _HocVien {
       this.gioiTinh,
       this.noiSinh,
       this.email,
+      this.emailHust,
       this.truongTotNghiepDaiHoc,
       this.nganhTotNghiepDaiHoc,
       this.heTotNghiepDaiHoc,
@@ -1830,6 +1844,8 @@ class _$HocVienImpl extends _HocVien {
   final String? noiSinh;
   @override
   final String? email;
+  @override
+  final String? emailHust;
   @override
   final String? truongTotNghiepDaiHoc;
   @override
@@ -1886,7 +1902,7 @@ class _$HocVienImpl extends _HocVien {
 
   @override
   String toString() {
-    return 'HocVien(id: $id, soHoSo: $soHoSo, nienKhoa: $nienKhoa, maHocVien: $maHocVien, hoTen: $hoTen, ngaySinh: $ngaySinh, gioiTinh: $gioiTinh, noiSinh: $noiSinh, email: $email, truongTotNghiepDaiHoc: $truongTotNghiepDaiHoc, nganhTotNghiepDaiHoc: $nganhTotNghiepDaiHoc, heTotNghiepDaiHoc: $heTotNghiepDaiHoc, xepLoaiTotNghiepDaiHoc: $xepLoaiTotNghiepDaiHoc, ngayTotNghiepDaiHoc: $ngayTotNghiepDaiHoc, dinhHuongChuyenSau: $dinhHuongChuyenSau, hocPhanDuocMien: $hocPhanDuocMien, nganhDaoTaoThacSi: $nganhDaoTaoThacSi, dienThoai: $dienThoai, maTrangThai: $maTrangThai, deTaiLuanVanTiengViet: $deTaiLuanVanTiengViet, deTaiLuanVanTiengAnh: $deTaiLuanVanTiengAnh, ngayGiaoDeTai: $ngayGiaoDeTai, soQuyetDinhGiao: $soQuyetDinhGiao, ngayBaoVe: $ngayBaoVe, soQuyetDinhBaoVe: $soQuyetDinhBaoVe, ngayKyQuyetDinhBaoVe: $ngayKyQuyetDinhBaoVe, idGiangVienHuongDan: $idGiangVienHuongDan, hanBaoVe: $hanBaoVe, lanGiaHan: $lanGiaHan, idTieuBanXetTuyen: $idTieuBanXetTuyen, idDienTuyenSinh: $idDienTuyenSinh, thanhToanXetTuyen: $thanhToanXetTuyen)';
+    return 'HocVien(id: $id, soHoSo: $soHoSo, nienKhoa: $nienKhoa, maHocVien: $maHocVien, hoTen: $hoTen, ngaySinh: $ngaySinh, gioiTinh: $gioiTinh, noiSinh: $noiSinh, email: $email, emailHust: $emailHust, truongTotNghiepDaiHoc: $truongTotNghiepDaiHoc, nganhTotNghiepDaiHoc: $nganhTotNghiepDaiHoc, heTotNghiepDaiHoc: $heTotNghiepDaiHoc, xepLoaiTotNghiepDaiHoc: $xepLoaiTotNghiepDaiHoc, ngayTotNghiepDaiHoc: $ngayTotNghiepDaiHoc, dinhHuongChuyenSau: $dinhHuongChuyenSau, hocPhanDuocMien: $hocPhanDuocMien, nganhDaoTaoThacSi: $nganhDaoTaoThacSi, dienThoai: $dienThoai, maTrangThai: $maTrangThai, deTaiLuanVanTiengViet: $deTaiLuanVanTiengViet, deTaiLuanVanTiengAnh: $deTaiLuanVanTiengAnh, ngayGiaoDeTai: $ngayGiaoDeTai, soQuyetDinhGiao: $soQuyetDinhGiao, ngayBaoVe: $ngayBaoVe, soQuyetDinhBaoVe: $soQuyetDinhBaoVe, ngayKyQuyetDinhBaoVe: $ngayKyQuyetDinhBaoVe, idGiangVienHuongDan: $idGiangVienHuongDan, hanBaoVe: $hanBaoVe, lanGiaHan: $lanGiaHan, idTieuBanXetTuyen: $idTieuBanXetTuyen, idDienTuyenSinh: $idDienTuyenSinh, thanhToanXetTuyen: $thanhToanXetTuyen)';
   }
 
   @override
@@ -1907,6 +1923,8 @@ class _$HocVienImpl extends _HocVien {
                 other.gioiTinh == gioiTinh) &&
             (identical(other.noiSinh, noiSinh) || other.noiSinh == noiSinh) &&
             (identical(other.email, email) || other.email == email) &&
+            (identical(other.emailHust, emailHust) ||
+                other.emailHust == emailHust) &&
             (identical(other.truongTotNghiepDaiHoc, truongTotNghiepDaiHoc) ||
                 other.truongTotNghiepDaiHoc == truongTotNghiepDaiHoc) &&
             (identical(other.nganhTotNghiepDaiHoc, nganhTotNghiepDaiHoc) ||
@@ -1968,6 +1986,7 @@ class _$HocVienImpl extends _HocVien {
         gioiTinh,
         noiSinh,
         email,
+        emailHust,
         truongTotNghiepDaiHoc,
         nganhTotNghiepDaiHoc,
         heTotNghiepDaiHoc,
@@ -2020,6 +2039,7 @@ abstract class _HocVien extends HocVien {
       final GioiTinh? gioiTinh,
       final String? noiSinh,
       final String? email,
+      final String? emailHust,
       final String? truongTotNghiepDaiHoc,
       final String? nganhTotNghiepDaiHoc,
       final String? heTotNghiepDaiHoc,
@@ -2066,6 +2086,8 @@ abstract class _HocVien extends HocVien {
   String? get noiSinh;
   @override
   String? get email;
+  @override
+  String? get emailHust;
   @override
   String? get truongTotNghiepDaiHoc;
   @override

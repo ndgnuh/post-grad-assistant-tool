@@ -8,6 +8,7 @@ import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'business/drift_orm.dart';
 
 import 'pages.dart';
+import 'preferences.dart' as preferences;
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +41,7 @@ Future main() async {
     child: const MyApp(),
     dispose: (context, db) => db.close(),
   );
+
   runApp(app);
 }
 
