@@ -50,15 +50,21 @@ class _StringTileState extends State<StringTile> {
     final titleText = widget.titleText;
     final messenger = ScaffoldMessenger.of(context);
 
+    void copyCurrentValue() {
+      final data = ClipboardData(text: value);
+      Clipboard.setData(data);
+      messenger.showMessage("Copied $value");
+    }
+
     return ListTile(
       title: Text(titleText),
       subtitle: Text(valueNotifier.value),
       leading: widget.leading,
-      onLongPress: () {
-        final data = ClipboardData(text: value);
-        Clipboard.setData(data);
-        messenger.showMessage("Copied $value");
-      },
+      trailing: IconButton(
+        icon: Icon(Icons.copy),
+        onPressed: copyCurrentValue,
+      ),
+      onLongPress: copyCurrentValue,
       onTap: () async {
         String? newValue = await TextEditingDialog.show(
           title: titleText,
