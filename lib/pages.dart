@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'datamodels.dart';
 
 import '../business/domain_objects.dart';
+import '../shortcuts.dart';
 
 import 'pages/lop_tin_chi.dart' show PageLopTinChi;
 import 'pages/home.dart' show HomePage;
@@ -52,6 +54,7 @@ import 'pages/mobile/thesis_list.dart'
         ThesisTopicAddPage;
 
 import 'pages/drift_import.dart' show PageImportHocPhan;
+import 'pages/mobile/students.dart' show StudentListPage, StudentDetailPage;
 
 import 'pages/mobile/teacher_list.dart' show MobilePageTeacherList;
 import 'pages/mobile/teacher_detail.dart' show MobilePageTeacherDetail;
@@ -64,7 +67,8 @@ import '../preferences.dart' as preferences;
 
 final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
-  false => ThesisTopicListPage.routeName,
+  false => StudentListPage.routeName,
+  // false => MobilePageTeacherList.routeName,
 };
 
 // const initialRoute = SettingsPage.routeName;
@@ -109,8 +113,8 @@ const routes = [
     icon: Icons.person,
   ),
   (
-    route: QlHocVien.routeName,
-    label: "Học viên",
+    route: StudentListPage.routeName,
+    label: "Học viên (v2)",
     icon: Icons.person,
   ),
   (
@@ -129,11 +133,6 @@ const routes = [
     icon: Icons.lock_clock,
   ),
   (
-    route: PageLopTinChi.routeName,
-    label: "Lớp tín chỉ (v1)",
-    icon: Icons.class_rounded,
-  ),
-  (
     route: PageCourseClassList.routeName,
     label: "Lớp tín chỉ (v2)",
     icon: Icons.class_,
@@ -142,6 +141,16 @@ const routes = [
     route: PageAdmissionList.routeName,
     label: "Xét tuyển (v2)",
     icon: Icons.person_add
+  ),
+  (
+    route: PageLopTinChi.routeName,
+    label: "Lớp tín chỉ (v1)",
+    icon: Icons.class_rounded,
+  ),
+  (
+    route: QlHocVien.routeName,
+    label: "Học viên",
+    icon: Icons.person,
   ),
   (
     route: PageHanCheHocPhan.routeName,
@@ -190,161 +199,178 @@ const routes = [
   ),
 ];
 
-MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
+Widget buildRoute(BuildContext context, RouteSettings settings) {
   String? name = settings.name;
   Object? args = settings.arguments;
-  return MaterialPageRoute(builder: (BuildContext context) {
-    // Initial setup
 
-    switch (name) {
-      case PageQuanLyGiangVien.routeName:
-        return PageQuanLyGiangVien();
-      case "/edit/giang-vien":
-        return switch (args) {
-          (GiangVien gv) => ChiTietGiangVien(gv: gv),
-          _ => const PageQuanLyGiangVien(),
-        };
-      case HomePage.routeName:
-        return HomePage();
-      case PageLopTinChi.routeName:
-        return PageLopTinChi();
-      case DraftPage.routeName:
-        return DraftPage();
-      case PageXetTuyen.routeName:
-        return PageXetTuyen();
-      case PageXetTuyenNcs.routeName:
-        return PageXetTuyenNcs();
-      case PageQuanLyDeTai.routeName:
-        return PageQuanLyDeTai();
-      case PageHanCheHocPhan.routeName:
-        return PageHanCheHocPhan();
-      case PagePhanCongHoiDongLuanVanThacSi.routeName:
-        return PagePhanCongHoiDongLuanVanThacSi();
-      case PageCopyPasta.routeName:
-        return PageCopyPasta();
-      case QlHocVien.routeName:
-        return QlHocVien();
+  switch (name) {
+    case PageQuanLyGiangVien.routeName:
+      return PageQuanLyGiangVien();
+    case "/edit/giang-vien":
+      return switch (args) {
+        (GiangVien gv) => ChiTietGiangVien(gv: gv),
+        _ => const PageQuanLyGiangVien(),
+      };
+    case HomePage.routeName:
+      return HomePage();
+    case PageLopTinChi.routeName:
+      return PageLopTinChi();
+    case DraftPage.routeName:
+      return DraftPage();
+    case PageXetTuyen.routeName:
+      return PageXetTuyen();
+    case PageXetTuyenNcs.routeName:
+      return PageXetTuyenNcs();
+    case PageQuanLyDeTai.routeName:
+      return PageQuanLyDeTai();
+    case PageHanCheHocPhan.routeName:
+      return PageHanCheHocPhan();
+    case PagePhanCongHoiDongLuanVanThacSi.routeName:
+      return PagePhanCongHoiDongLuanVanThacSi();
+    case PageCopyPasta.routeName:
+      return PageCopyPasta();
+    case QlHocVien.routeName:
+      return QlHocVien();
 
-      // Manage courses
-      case PageCourseList.routeName:
-        return PageCourseList();
-      case PageCourseDetail.routeName:
-        switch (args) {
-          case PageCourseDetailArgs args:
-            return PageCourseDetail.fromArguments(args);
-          default:
-            return PageCourseList();
-        }
+    // Manage courses
+    case PageCourseList.routeName:
+      return PageCourseList();
+    case PageCourseDetail.routeName:
+      switch (args) {
+        case PageCourseDetailArgs args:
+          return PageCourseDetail.fromArguments(args);
+        default:
+          return PageCourseList();
+      }
 
-      /// Mobiles
-      case MobilePageTeacherList.routeName:
-        return MobilePageTeacherList.initialize();
-      case MobilePageTeacherDetail.routeName:
-        return switch (args) {
-          (GiangVien teacher) => MobilePageTeacherDetail(teacher: teacher),
-          _ => const MobilePageTeacherList(),
-        };
+    /// Mobiles
+    case MobilePageTeacherList.routeName:
+      return MobilePageTeacherList.initialize();
+    case MobilePageTeacherDetail.routeName:
+      return switch (args) {
+        (GiangVien teacher) => MobilePageTeacherDetail(teacher: teacher),
+        _ => const MobilePageTeacherList(),
+      };
 
-      case MobilePageThesisAssignList.routeName:
-        return const MobilePageThesisAssignList();
+    case MobilePageThesisAssignList.routeName:
+      return const MobilePageThesisAssignList();
 
-      /// Academic year pages
-      case PageAcademicYearList.routeName:
-        return const PageAcademicYearList();
-      case PageAcademicYearEdit.routeName:
-        switch (args) {
-          case PageAcademicYearArgument args:
-            return PageAcademicYearEdit.fromArguments(args);
-          default:
-            return const PageAcademicYearList();
-        }
-      case PageAcademicYearCreate.routeName:
-        return const PageAcademicYearCreate();
+    /// Academic year pages
+    case PageAcademicYearList.routeName:
+      return const PageAcademicYearList();
+    case PageAcademicYearEdit.routeName:
+      switch (args) {
+        case PageAcademicYearArgument args:
+          return PageAcademicYearEdit.fromArguments(args);
+        default:
+          return const PageAcademicYearList();
+      }
+    case PageAcademicYearCreate.routeName:
+      return const PageAcademicYearCreate();
 
-      /// Course class list
-      case PageCourseClassList.routeName:
-        print("Args: $args");
-        switch (args) {
-          case HocKy initialSemester:
-            return PageCourseClassList(initialSemester: initialSemester);
-          default:
-            return const PageCourseClassList();
-        }
+    /// Course class list
+    case PageCourseClassList.routeName:
+      print("Args: $args");
+      switch (args) {
+        case HocKy initialSemester:
+          return PageCourseClassList(initialSemester: initialSemester);
+        default:
+          return const PageCourseClassList();
+      }
 
-      /// Admission pages
-      case PageAdmissionList.routeName:
-        return const PageAdmissionList();
-      case PageAdmissionCreate.routeName:
-        return const PageAdmissionCreate();
-      case PageAdmissionDetail.routeName:
-        switch (args) {
-          case PageAdmissionDetailArgs args:
-            return PageAdmissionDetail.fromArgs(args);
-          default:
-            return const PageAdmissionList();
-        }
+    /// Admission pages
+    case PageAdmissionList.routeName:
+      return const PageAdmissionList();
+    case PageAdmissionCreate.routeName:
+      return const PageAdmissionCreate();
+    case PageAdmissionDetail.routeName:
+      switch (args) {
+        case PageAdmissionDetailArgs args:
+          return PageAdmissionDetail.fromArgs(args);
+        default:
+          return const PageAdmissionList();
+      }
 
-      /// Selection pages
-      case PageSelectClassOf.routeName:
-        final args = settings.arguments;
-        switch (args) {
-          case PageSelectClassOfArgs args:
-            return PageSelectClassOf.fromArgs(args);
-        }
-        return HomePage();
-      case PageSelectSemester.routeName:
-        switch (args) {
-          case HocKy initialSemester:
-            return PageSelectSemester(initialSemester: initialSemester);
-          default:
-            return PageSelectSemester(initialSemester: null);
-        }
+    /// Selection pages
+    case PageSelectClassOf.routeName:
+      final args = settings.arguments;
+      switch (args) {
+        case PageSelectClassOfArgs args:
+          return PageSelectClassOf.fromArgs(args);
+      }
+      return HomePage();
+    case PageSelectSemester.routeName:
+      switch (args) {
+        case HocKy initialSemester:
+          return PageSelectSemester(initialSemester: initialSemester);
+        default:
+          return PageSelectSemester(initialSemester: null);
+      }
 
-      /// Thesis topic management pages
-      case ThesisTopicListPage.routeName:
-        return const ThesisTopicListPage();
-      case ThesisTopicAddPage.routeName:
-        return const ThesisTopicAddPage();
-      case ThesisTopicDetailPage.routeName:
-        switch (args) {
-          case ThesisTopicDetailPageArguments args:
-            return ThesisTopicDetailPage.fromArguments(args);
-          default:
-            return ThesisTopicListPage();
-        }
+    /// Thesis topic management pages
+    case ThesisTopicListPage.routeName:
+      return const ThesisTopicListPage();
+    case ThesisTopicAddPage.routeName:
+      return const ThesisTopicAddPage();
+    case ThesisTopicDetailPage.routeName:
+      switch (args) {
+        case ThesisTopicDetailPageArguments args:
+          return ThesisTopicDetailPage.fromArguments(args);
+        default:
+          return ThesisTopicListPage();
+      }
 
-      /// Drift
-      case PageImportHocPhan.routeName:
-        return const PageImportHocPhan();
+    /// Student management pages
+    case StudentListPage.routeName:
+      return const StudentListPage();
+    case StudentDetailPage.routeName:
+      switch (args) {
+        case HocVien student:
+          return StudentDetailPage(student: student);
+        default:
+          return const StudentListPage();
+      }
 
-      /// Biểu mẫu
-      case QlBieuMau.routeName:
-        return QlBieuMau();
-      case DienPhieuDiemThs.routeName:
-        return DienPhieuDiemThs();
-      case DangKyBaoVePage.routeName:
-        return DangKyBaoVePage();
-      case PageExportThesis.routeName:
-        return const PageExportThesis();
-      case SettingsPage.routeName:
-        return const SettingsPage();
-      case DangKyBaoVePage2.routeName:
-        switch (args) {
-          case (
-              :final DeTaiThacSi deTai,
-              :final GiangVien giangVien,
-              :final HocVien hocVien,
-            ):
-            return DangKyBaoVePage2(
-              deTai: deTai,
-              giangVien: giangVien,
-              hocVien: hocVien,
-            );
-          default:
-            return HomePage();
-        }
-      default:
-        return HomePage();
-    }
-  });
+    /// Drift
+    case PageImportHocPhan.routeName:
+      return const PageImportHocPhan();
+
+    /// Biểu mẫu
+    case QlBieuMau.routeName:
+      return QlBieuMau();
+    case DienPhieuDiemThs.routeName:
+      return DienPhieuDiemThs();
+    case DangKyBaoVePage.routeName:
+      return DangKyBaoVePage();
+    case PageExportThesis.routeName:
+      return const PageExportThesis();
+    case SettingsPage.routeName:
+      return const SettingsPage();
+    case DangKyBaoVePage2.routeName:
+      switch (args) {
+        case (
+            :final DeTaiThacSi deTai,
+            :final GiangVien giangVien,
+            :final HocVien hocVien,
+          ):
+          return DangKyBaoVePage2(
+            deTai: deTai,
+            giangVien: giangVien,
+            hocVien: hocVien,
+          );
+        default:
+          return HomePage();
+      }
+    default:
+      return HomePage();
+  }
+}
+
+MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
+  return MaterialPageRoute(
+    builder: (BuildContext context) {
+      final page = buildRoute(context, settings);
+      return page;
+    },
+  );
 }

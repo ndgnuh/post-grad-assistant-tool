@@ -1,44 +1,77 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../business/domain_objects.dart';
+import '../../shortcuts.dart';
+import 'dart:async';
 
 class TeacherInfoPageState with ChangeNotifier {
   final FocusNode searchFocusNode = FocusNode();
-  final searchEditingController = TextEditingController();
+  final FocusNode globalFocusNode = FocusNode();
+  final searchController = SearchController();
   GiangVien? selectedTeacher;
   bool isSearching = false;
 
   final foundTeachers = <GiangVien>{};
 
   int get numFoundTeachers => foundTeachers.length;
-  bool get shouldUserPrompted => searchEditingController.text.trim().isEmpty;
+  bool get shouldUserPrompted => searchController.text.trim().isEmpty;
 
   void closeSearch() {
     isSearching = false;
     searchFocusNode.unfocus();
+    globalFocusNode.requestFocus();
     notifyListeners();
+  }
+
+  Object? openSearch() {
+    isSearching = true;
+    searchController.selection = TextSelection(
+      baseOffset: 0,
+      extentOffset: searchController.text.length,
+    );
+    searchFocusNode.requestFocus();
+    notifyListeners();
+    return null;
   }
 
   TeacherInfoPageState toggleSearch() {
     isSearching = !isSearching;
     if (isSearching) {
-      final currentQuery = searchEditingController.text;
+      final currentQuery = searchController.text;
       final selection = TextSelection(
         baseOffset: 0,
         extentOffset: currentQuery.length,
       );
 
-      searchEditingController.selection = selection;
+      searchController.selection = selection;
     }
+    globalFocusNode.requestFocus();
     notifyListeners();
     return this;
   }
 
-  commitSearch(String query) async {
+  static Duration debounceDuration = const Duration(milliseconds: 400);
+  Timer debounceTimer = Timer(Duration.zero, () {});
+  debounceSearch() {
+    // Cancel previous debounce timer if it's active
+    if (debounceTimer.isActive) {
+      debounceTimer.cancel();
+    }
+
+    // Debounce search
+    debounceTimer = Timer(debounceDuration, () {
+      commitSearch();
+    });
+  }
+
+  commitSearch() async {
+    final query = searchController.text.trim();
     final teachers = await GiangVien.search(query);
 
     foundTeachers.clear();
     foundTeachers.addAll(teachers);
+    globalFocusNode.requestFocus();
 
     isSearching = false; // Close search bar
 
@@ -116,47 +149,27 @@ class ListTeachers extends StatelessWidget {
   }
 }
 
-class SearchBar extends StatelessWidget {
-  final String title;
-
-  const SearchBar({
-    super.key,
-    required this.title,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final state = Provider.of<TeacherInfoPageState>(context);
-    if (state.isSearching) {
-      final node = state.searchFocusNode;
-      FocusScope.of(context).requestFocus(node);
-      return TextField(
-        focusNode: node,
-        controller: state.searchEditingController,
-        decoration: InputDecoration(
-          hintText: title,
-        ),
-        onSubmitted: (String? query) => state.commitSearch(query ?? ""),
-      );
-    } else if (state.shouldUserPrompted) {
-      return Text(title);
-    } else {
-      final query = state.searchEditingController.text.trim();
-      return Text("Tìm giảng viên: '$query'");
-    }
-  }
-}
-
 class SearchToggleButton extends StatelessWidget {
   const SearchToggleButton({super.key});
 
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<TeacherInfoPageState>(context);
-    return IconButton(
-      icon: Icon(state.isSearching ? Icons.close : Icons.search),
-      onPressed: () => state.toggleSearch(),
-    );
+    if (state.isSearching) {
+      // If searching, show close button
+      return IconButton(
+        icon: const Icon(Icons.close),
+        onPressed: () => state.closeSearch(),
+      );
+    } else {
+      return IconButton(
+        icon: Icon(Icons.search),
+        onPressed: Actions.handler<SearchIntent>(
+          context,
+          const SearchIntent(),
+        ),
+      );
+    }
   }
 }
 
@@ -176,10 +189,37 @@ class AddButton extends StatelessWidget {
   }
 }
 
+class MobilePageTeacherShortcutManager extends ShortcutManager {
+  @override
+  get shortcuts => {
+        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyF):
+            const SearchIntent(),
+      };
+}
+
+class TeacherSearchBar extends StatelessWidget {
+  const TeacherSearchBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final state = Provider.of<TeacherInfoPageState>(context);
+    return ListTile(
+      leading: const Icon(Icons.search),
+      title: SearchBar(
+        controller: state.searchController,
+        focusNode: state.searchFocusNode,
+        hintText: "Tìm giảng viên",
+        onChanged: (query) => state.debounceSearch(),
+        onSubmitted: (query) => state.commitSearch(),
+      ),
+    );
+  }
+}
+
 class MobilePageTeacherList extends StatelessWidget {
   static const routeName = "/mobile/teacher_list";
 
-  const MobilePageTeacherList({Key? key}) : super(key: key);
+  const MobilePageTeacherList({super.key});
 
   static Widget initialize() => ChangeNotifierProvider<TeacherInfoPageState>(
         create: (_) => TeacherInfoPageState(),
@@ -188,15 +228,31 @@ class MobilePageTeacherList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final state = Provider.of<TeacherInfoPageState>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        title: SearchBar(title: "Danh sách giảng viên"),
+        title: Text("Danh sách giảng viên"),
         actions: [
           SearchToggleButton(),
           AddButton(),
         ],
       ),
-      body: ListTeachers(),
+      body: Actions(
+        actions: {
+          SearchIntent:
+              CallbackAction(onInvoke: (intent) => state.openSearch()),
+        },
+        child: FocusScope(
+          autofocus: true,
+          canRequestFocus: true,
+          child: Column(
+            children: [
+              TeacherSearchBar(),
+              Expanded(child: ListTeachers()),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

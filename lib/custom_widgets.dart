@@ -1235,6 +1235,7 @@ class TextEditingDialog extends StatelessWidget {
     return AlertDialog(
       title: Text(title),
       content: TextFormField(
+        onTapOutside: (_) => nav.pop(initialText),
         controller: controller,
         autofocus: true,
         keyboardType: keyboardType,
@@ -1450,6 +1451,36 @@ class _InfoTileState<T> extends State<InfoTile<T>> {
           value = newValue;
         });
       },
+    );
+  }
+}
+
+class HeadingListTile extends StatelessWidget {
+  final String title;
+  final Widget? icon;
+  final Widget? trailing;
+
+  const HeadingListTile({
+    super.key,
+    required this.title,
+    this.icon,
+    this.trailing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = ColorScheme.of(context);
+    final textTheme = Theme.of(context).textTheme;
+    final textStyle = textTheme.titleMedium?.copyWith(
+      color: colorScheme.primary,
+      fontWeight: FontWeight.bold,
+    );
+    return ListTile(
+      title: Text(title, style: textStyle),
+      leading: icon,
+      trailing: trailing,
+      dense: true,
+      visualDensity: VisualDensity.compact,
     );
   }
 }

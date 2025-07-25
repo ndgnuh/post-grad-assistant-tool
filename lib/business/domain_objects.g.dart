@@ -441,3 +441,17 @@ Map<String, dynamic> _$$DeTaiThacSiImplToJson(_$DeTaiThacSiImpl instance) =>
       'group': instance.group,
       'nam': instance.nam,
     };
+
+_$TeachingRegistrationImpl _$$TeachingRegistrationImplFromJson(
+        Map<String, dynamic> json) =>
+    _$TeachingRegistrationImpl(
+      teacherId: (json['idGiangVien'] as num).toInt(),
+      courseId: json['maHocPhan'] as String,
+    );
+
+Map<String, dynamic> _$$TeachingRegistrationImplToJson(
+        _$TeachingRegistrationImpl instance) =>
+    <String, dynamic>{
+      'idGiangVien': instance.teacherId,
+      'maHocPhan': instance.courseId,
+    };

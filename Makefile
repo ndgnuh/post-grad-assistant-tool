@@ -1,3 +1,6 @@
+APP_HOME ?= "$(HOME)/Applications/FamiSDH"
+PREFIX ?= "$(HOME)/.local"
+
 dev:
 	flutter run
 
@@ -19,5 +22,12 @@ linux:
 apk:
 	flutter build apk --release
 
+install-apk: apk
+	adb install build/app/outputs/flutter-apk/app-release.apk
+
+install: linux
+	mkdir -p $(APP_HOME)
+	cp build/linux/x64/release/bundle/* -r $(APP_HOME)/
+	ln -s $(APP_HOME)/fami_tools $(PREFIX)/bin/fami-sdh
 
 .PHONY: dev build_runner build build_windows linux apk

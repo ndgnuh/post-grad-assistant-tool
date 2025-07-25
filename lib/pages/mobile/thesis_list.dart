@@ -326,6 +326,26 @@ class ThesisTopicDetailPage extends StatelessWidget {
             title: Text("Giảng viên hướng dẫn"),
             subtitle: Text(teacher.hoTenChucDanh),
           ),
+          ListTile(
+            title: Text("Học viên"),
+            subtitle: Text("${student?.hoTen} [${student?.maHocVien}]"),
+          ),
+          ListTile(
+            title: Text("Số QD Giao"),
+            subtitle: Text(topic.soQdGiao ?? ""),
+          ),
+          ListTile(
+            title: Text("Ngày giao"),
+            subtitle: Text(topic.ngayGiao.toString()),
+          ),
+          ListTile(
+            title: Text("Hạn bảo vệ"),
+            subtitle: Text(topic.hanBaoVe.toString()),
+          ),
+          ListTile(
+            title: Text("Ngày bảo vệ"),
+            subtitle: Text(topic.ngayBaoVe.toString()),
+          ),
         ],
       ),
     );
@@ -347,31 +367,33 @@ class ThesisTopicListPage extends StatelessWidget {
             _ThreeDotMenu(),
           ],
         ),
-        body: Column(children: [
-          _SearchBar(),
-          Expanded(
-            child:
-                Selector<ThesisTopicListPageState, Future<List<DeTaiThacSi>>>(
-              selector: (context, state) => Future.value(
-                state.futureTopics,
-              ),
-              builder: (context, future, _) => FutureBuilder(
-                future: future,
-                builder: (context, connection) {
-                  switch (connection.connectionState) {
-                    case ConnectionState.done:
-                      final topics = connection.data!;
-                      return _TopicListView(topics: topics);
-                    default:
-                      return SizedBox.shrink(
-                        child: CircularProgressIndicator(),
-                      );
-                  }
-                },
+        body: Column(
+          children: [
+            _SearchBar(),
+            Expanded(
+              child:
+                  Selector<ThesisTopicListPageState, Future<List<DeTaiThacSi>>>(
+                selector: (context, state) => Future.value(
+                  state.futureTopics,
+                ),
+                builder: (context, future, _) => FutureBuilder(
+                  future: future,
+                  builder: (context, connection) {
+                    switch (connection.connectionState) {
+                      case ConnectionState.done:
+                        final topics = connection.data!;
+                        return _TopicListView(topics: topics);
+                      default:
+                        return SizedBox.shrink(
+                          child: CircularProgressIndicator(),
+                        );
+                    }
+                  },
+                ),
               ),
             ),
-          ),
-        ]),
+          ],
+        ),
       ),
     );
   }

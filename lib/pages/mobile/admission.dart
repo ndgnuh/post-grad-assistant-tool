@@ -497,7 +497,7 @@ hồ sơ sẽ được gỡ khỏi danh sách xét tuyển""",
                 // Update in the database
                 final student = widget.admission.copyWith(
                   maHocVien: studentId,
-                  email: studentEmail,
+                  emailHust: studentEmail,
                   nienKhoa: classOfYear.nienKhoa,
                   maTrangThai: TrangThaiHocVien.dangHoc,
                 );

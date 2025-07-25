@@ -7,6 +7,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite_common/sqflite_logger.dart';
 
 export 'package:sqflite/sqflite.dart' show Database, Transaction;
 export 'sqlbuilder/sqlbuilder.dart'
@@ -34,7 +35,12 @@ Future<T> transaction<T>(Future<T> Function(Transaction) callback) async {
 
 Future<T> dbSession<T>(Future<T> Function(Database) callback) async {
   final databasePath = await preferences.getDatabasePath();
-  final db = await openDatabase(databasePath!);
+  var factoryWithLogs = SqfliteDatabaseFactoryLogger(
+    databaseFactory,
+    options: SqfliteLoggerOptions(type: SqfliteDatabaseFactoryLoggerType.all),
+  );
+  final db = await factoryWithLogs.openDatabase(databasePath!);
+
   final ret = await callback(db);
   await db.close();
   return ret;

@@ -5,12 +5,17 @@ import 'dart:async';
 
 import 'select_class_of.dart' show PageSelectClassOf, PageSelectClassOfArgs;
 import '../../business/domain_objects.dart';
+import '../../shortcuts.dart';
 
 import 'package:fami_tools/services/database.dart';
 import 'package:fami_tools/services/sqlbuilder/sqlbuilder.dart';
 
 import '../ql_de_tai.dart' show PageQuanLyDeTai;
-import 'thesis_list.dart' show ThesisTopicListPage;
+import 'thesis_list.dart'
+    show
+        ThesisTopicListPage,
+        ThesisTopicDetailPageArguments,
+        ThesisTopicDetailPage;
 
 part 'thesis_assign_list.freezed.dart';
 part 'thesis_assign_list.g.dart';
@@ -75,6 +80,7 @@ abstract class GiaoDeTai with _$GiaoDeTai {
 }
 
 class _State extends ChangeNotifier {
+  final searchController = SearchController();
   final List<GiaoDeTai> listGiaoDeTai = <GiaoDeTai>[];
   NienKhoa? selectedClassOfYear;
 
@@ -138,7 +144,7 @@ class MobilePageThesisAssignList extends StatelessWidget {
             )
           ],
         ),
-        body: Center(
+        body: MyShortcuts(
           child: Column(
             children: [
               _SelectClassOfYearButton(),
@@ -163,13 +169,14 @@ class _ListOfThesis extends StatelessWidget {
         final studentId = thesis.studentId;
 
         final title = "${thesis.studentName} (${thesis.studentCode})";
+        final assigned = thesis.assigned;
 
-        final subtitle = switch (thesis.thesisId) {
-          null => "Chưa giao đề tài",
-          int _ => "${thesis.thesisVietnameseName}\n${thesis.teacherName}",
+        final subtitle = switch (assigned) {
+          false => "Chưa giao đề tài",
+          true => "${thesis.thesisVietnameseName}\n${thesis.teacherName}",
         };
 
-        final icon = switch (thesis.assigned) {
+        final icon = switch (assigned) {
           true => Icons.check_box,
           false => Icons.check_box_outline_blank,
         };
@@ -195,12 +202,30 @@ class _ListOfThesis extends StatelessWidget {
                 )
             ];
           },
-          builder: (context, searchController) => ListTile(
-            leading: Icon(icon),
-            title: Text(title),
-            subtitle: Text(subtitle),
-            onTap: () => searchController.openView(),
-          ),
+          builder: (context, searchController) {
+            final navigator = Navigator.of(context);
+
+            return ListTile(
+              leading: Icon(icon),
+              title: Text(title),
+              subtitle: Text(subtitle),
+              onTap: () async {
+                switch (thesis.thesisId) {
+                  case int id:
+                    final topic = await DeTaiThacSi.getById(id);
+                    final args = ThesisTopicDetailPageArguments(
+                      topic: topic,
+                    );
+                    navigator.pushNamed(
+                      ThesisTopicDetailPage.routeName,
+                      arguments: args,
+                    );
+                  case null:
+                    searchController.openView();
+                }
+              },
+            );
+          },
         );
       },
     );
@@ -212,34 +237,45 @@ class _SelectClassOfYearButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = Provider.of<_State>(context);
 
-    return SearchAnchor(
-      suggestionsBuilder: (context, searchController) async {
-        final query = searchController.text;
-        final classOfYears = await NienKhoa.search(query);
-
-        final suggestions = <Widget>[];
-        for (final classOfYear in classOfYears) {
-          final widget = ListTile(
-            title: Text(classOfYear.nienKhoa),
-            onTap: () {
-              state.setSelectedClassOfYear(classOfYear);
-              searchController.closeView("");
-            },
-          );
-
-          suggestions.add(widget);
-        }
-
-        return suggestions;
+    return Actions(
+      actions: <Type, Action<Intent>>{
+        SearchIntent: CallbackAction<SearchIntent>(
+          onInvoke: (intent) => state.searchController.openView(),
+        ),
       },
-      builder: (context, searchController) => ListTile(
-        leading: Icon(Icons.search),
-        title: const Text('Khóa học viên'),
-        subtitle: switch (state.selectedClassOfYear) {
-          null => const Text("Click để chọn"),
-          NienKhoa nienKhoa => Text(nienKhoa.nienKhoa),
-        },
-        onTap: () => searchController.openView(),
+      child: FocusScope(
+        autofocus: true,
+        child: SearchAnchor(
+          searchController: state.searchController,
+          suggestionsBuilder: (context, searchController) async {
+            final query = searchController.text;
+            final classOfYears = await NienKhoa.search(query);
+
+            final suggestions = <Widget>[];
+            for (final classOfYear in classOfYears) {
+              final widget = ListTile(
+                title: Text(classOfYear.nienKhoa),
+                onTap: () {
+                  state.setSelectedClassOfYear(classOfYear);
+                  searchController.closeView("");
+                },
+              );
+
+              suggestions.add(widget);
+            }
+
+            return suggestions;
+          },
+          builder: (context, searchController) => ListTile(
+            leading: Icon(Icons.search),
+            title: const Text('Khóa học viên'),
+            subtitle: switch (state.selectedClassOfYear) {
+              null => const Text("Click để chọn"),
+              NienKhoa nienKhoa => Text(nienKhoa.nienKhoa),
+            },
+            onTap: () => searchController.openView(),
+          ),
+        ),
       ),
     );
   }

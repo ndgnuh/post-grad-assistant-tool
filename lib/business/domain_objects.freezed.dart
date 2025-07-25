@@ -4524,3 +4524,188 @@ abstract class _DeTaiThacSi extends DeTaiThacSi {
   _$$DeTaiThacSiImplCopyWith<_$DeTaiThacSiImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+TeachingRegistration _$TeachingRegistrationFromJson(Map<String, dynamic> json) {
+  return _TeachingRegistration.fromJson(json);
+}
+
+/// @nodoc
+mixin _$TeachingRegistration {
+  @JsonKey(name: "idGiangVien")
+  int get teacherId => throw _privateConstructorUsedError;
+  @JsonKey(name: "maHocPhan")
+  String get courseId => throw _privateConstructorUsedError;
+
+  /// Serializes this TeachingRegistration to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of TeachingRegistration
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $TeachingRegistrationCopyWith<TeachingRegistration> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TeachingRegistrationCopyWith<$Res> {
+  factory $TeachingRegistrationCopyWith(TeachingRegistration value,
+          $Res Function(TeachingRegistration) then) =
+      _$TeachingRegistrationCopyWithImpl<$Res, TeachingRegistration>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: "idGiangVien") int teacherId,
+      @JsonKey(name: "maHocPhan") String courseId});
+}
+
+/// @nodoc
+class _$TeachingRegistrationCopyWithImpl<$Res,
+        $Val extends TeachingRegistration>
+    implements $TeachingRegistrationCopyWith<$Res> {
+  _$TeachingRegistrationCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of TeachingRegistration
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? teacherId = null,
+    Object? courseId = null,
+  }) {
+    return _then(_value.copyWith(
+      teacherId: null == teacherId
+          ? _value.teacherId
+          : teacherId // ignore: cast_nullable_to_non_nullable
+              as int,
+      courseId: null == courseId
+          ? _value.courseId
+          : courseId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$TeachingRegistrationImplCopyWith<$Res>
+    implements $TeachingRegistrationCopyWith<$Res> {
+  factory _$$TeachingRegistrationImplCopyWith(_$TeachingRegistrationImpl value,
+          $Res Function(_$TeachingRegistrationImpl) then) =
+      __$$TeachingRegistrationImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: "idGiangVien") int teacherId,
+      @JsonKey(name: "maHocPhan") String courseId});
+}
+
+/// @nodoc
+class __$$TeachingRegistrationImplCopyWithImpl<$Res>
+    extends _$TeachingRegistrationCopyWithImpl<$Res, _$TeachingRegistrationImpl>
+    implements _$$TeachingRegistrationImplCopyWith<$Res> {
+  __$$TeachingRegistrationImplCopyWithImpl(_$TeachingRegistrationImpl _value,
+      $Res Function(_$TeachingRegistrationImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of TeachingRegistration
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? teacherId = null,
+    Object? courseId = null,
+  }) {
+    return _then(_$TeachingRegistrationImpl(
+      teacherId: null == teacherId
+          ? _value.teacherId
+          : teacherId // ignore: cast_nullable_to_non_nullable
+              as int,
+      courseId: null == courseId
+          ? _value.courseId
+          : courseId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$TeachingRegistrationImpl implements _TeachingRegistration {
+  const _$TeachingRegistrationImpl(
+      {@JsonKey(name: "idGiangVien") required this.teacherId,
+      @JsonKey(name: "maHocPhan") required this.courseId});
+
+  factory _$TeachingRegistrationImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TeachingRegistrationImplFromJson(json);
+
+  @override
+  @JsonKey(name: "idGiangVien")
+  final int teacherId;
+  @override
+  @JsonKey(name: "maHocPhan")
+  final String courseId;
+
+  @override
+  String toString() {
+    return 'TeachingRegistration(teacherId: $teacherId, courseId: $courseId)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TeachingRegistrationImpl &&
+            (identical(other.teacherId, teacherId) ||
+                other.teacherId == teacherId) &&
+            (identical(other.courseId, courseId) ||
+                other.courseId == courseId));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, teacherId, courseId);
+
+  /// Create a copy of TeachingRegistration
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TeachingRegistrationImplCopyWith<_$TeachingRegistrationImpl>
+      get copyWith =>
+          __$$TeachingRegistrationImplCopyWithImpl<_$TeachingRegistrationImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$TeachingRegistrationImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _TeachingRegistration implements TeachingRegistration {
+  const factory _TeachingRegistration(
+          {@JsonKey(name: "idGiangVien") required final int teacherId,
+          @JsonKey(name: "maHocPhan") required final String courseId}) =
+      _$TeachingRegistrationImpl;
+
+  factory _TeachingRegistration.fromJson(Map<String, dynamic> json) =
+      _$TeachingRegistrationImpl.fromJson;
+
+  @override
+  @JsonKey(name: "idGiangVien")
+  int get teacherId;
+  @override
+  @JsonKey(name: "maHocPhan")
+  String get courseId;
+
+  /// Create a copy of TeachingRegistration
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$TeachingRegistrationImplCopyWith<_$TeachingRegistrationImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}

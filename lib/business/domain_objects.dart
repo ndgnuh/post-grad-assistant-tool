@@ -10,8 +10,29 @@ import '../services/database.dart';
 part 'domain_objects.freezed.dart';
 part 'domain_objects.g.dart';
 
+Future<void> _abstractUpdateAttr<T, S>({
+  required String table,
+  required String idField,
+  required String attrName,
+  required S id,
+  required T value,
+}) async {
+  final query = UpdateQuery()
+    ..update(table)
+    ..set({attrName: value})
+    ..where("$idField = ?", [id]);
+
+  final sql = query.build();
+  return dbSession((db) => db.rawUpdate(sql));
+}
+
 List<T?> prependNull<T>(List<T> values) {
   return [null, for (final value in values) value];
+}
+
+/// Quote string in a double quote
+String quoted(String s) {
+  return '"$s"';
 }
 
 @JsonEnum(valueField: "value")
@@ -373,7 +394,10 @@ class GiangVien with _$GiangVien {
   }
 
   // Tất cả giảng viên
-  static Future<List<GiangVien>> search(String? searchKeyword) async {
+  static Future<List<GiangVien>> search(
+    String? searchKeyword, {
+    bool? isLocalStaff,
+  }) async {
     final query = SelectQuery()
       ..from(table)
       ..selectAll();
@@ -381,11 +405,25 @@ class GiangVien with _$GiangVien {
     if (searchKeyword == "") return [];
 
     if (searchKeyword != null && searchKeyword != "") {
+      final sanitized = searchKeyword.replaceAll(".", "*").replaceAll("@", "*");
       final rowid = SelectQuery()
-        ..select(['rowid'])
+        ..select(["ROWID"])
         ..from("fts_GiangVien")
-        ..where("fts_GiangVien MATCH ?", [searchKeyword]);
+        ..where(
+          "fts_GiangVien MATCH ? or fts_GiangVien MATCH ?",
+          [sanitized, quoted(searchKeyword)],
+        );
       query.where("id in ?", [rowid]);
+    }
+
+    // filter by isLocalStaff
+    switch (isLocalStaff) {
+      case true:
+        query.where("ngoaiTruong = (?)", [0]);
+      case false:
+        query.where("ngoaiTruong != (?)", [1]);
+      default:
+      // do nothing
     }
 
     final sql = query.build();
@@ -393,6 +431,58 @@ class GiangVien with _$GiangVien {
     return dbSessionReadOnly((db) async {
       final rows = await db.rawQuery(sql);
       return [for (final json in rows) GiangVien.fromJson(json)];
+    });
+  }
+
+  // List of teaching courses
+  Future<List<HocPhan>> get teachingCourses async {
+    final courseIdQuery = SelectQuery()
+      ..from("DangKyGiangDay")
+      ..select(["maHocPhan"])
+      ..where("idGiangVien = ?", [id]);
+
+    final courseQuery = SelectQuery()
+      ..selectAll()
+      ..from(HocPhan.table)
+      ..where("maHocPhan in ?", [courseIdQuery]);
+
+    final sql = courseQuery.build();
+
+    return dbSessionReadOnly((db) async {
+      final rows = await db.rawQuery(sql);
+      return [for (final json in rows) HocPhan.fromJson(json)];
+    });
+  }
+
+  // Add teaching course
+  Future<void> addTeachingCourse(String courseId) async {
+    final query = InsertQuery()
+      ..into("DangKyGiangDay")
+      ..insert({
+        "idGiangVien": id,
+        "maHocPhan": courseId,
+      });
+
+    final sql = query.build();
+
+    return dbSession((Database db) async {
+      await db.rawInsert(sql);
+    });
+  }
+
+  // remove teaching course
+  Future<void> removeTeachingCourse(String courseId) async {
+    final query = DeleteQuery()
+      ..deleteFrom("DangKyGiangDay")
+      ..where(
+        "idGiangVien = ? AND maHocPhan = ?",
+        [id, courseId],
+      );
+
+    final sql = query.build();
+
+    return dbSession((Database db) async {
+      await db.rawDelete(sql);
     });
   }
 
@@ -633,6 +723,72 @@ class HocPhan with _$HocPhan {
   factory HocPhan.fromJson(Map<String, dynamic> json) =>
       _$HocPhanFromJson(json);
 
+  /// List of teachers that teach this course.
+  /// Returns a [Future<List<GiangVien>>] objects.
+  Future<List<GiangVien>> get teachingStaffs async {
+    final teacherIdQuery = SelectQuery()
+      ..from("DangKyGiangDay")
+      ..select(["idGiangVien"])
+      ..where("maHocPhan = ?", [maHocPhan]);
+
+    final teacherQuery = SelectQuery()
+      ..selectAll()
+      ..from(GiangVien.table)
+      ..where("id in ?", [teacherIdQuery]);
+
+    final sql = teacherQuery.build();
+
+    return dbSessionReadOnly((db) async {
+      final rows = await db.rawQuery(sql);
+      return [for (final json in rows) GiangVien.fromJson(json)];
+    });
+  }
+
+  /// Assign a teacher to this course.
+  /// Return a [bool] to indicate success or failure.
+  Future<bool> addTeachingStaff(int teacherId) async {
+    final query = InsertQuery()
+      ..into("DangKyGiangDay")
+      ..insert({
+        "maHocPhan": maHocPhan,
+        "idGiangVien": teacherId,
+      });
+
+    final sql = query.build();
+
+    return dbSession((Database db) async {
+      try {
+        await db.rawInsert(sql);
+        return true;
+      } catch (e) {
+        print("Error assigning teacher: $e");
+        return false;
+      }
+    });
+  }
+
+  /// Remove a teacher from teaching this course.
+  Future<bool> removeTeachingStaff(int teacherId) async {
+    final query = DeleteQuery()
+      ..deleteFrom("DangKyGiangDay")
+      ..where(
+        "maHocPhan = ? AND idGiangVien = ?",
+        [maHocPhan, teacherId],
+      );
+
+    final sql = query.build();
+
+    return dbSession((Database db) async {
+      try {
+        await db.rawDelete(sql);
+        return true;
+      } catch (e) {
+        print("Error removing teacher: $e");
+        return false;
+      }
+    });
+  }
+
   static Future<List<HocPhan>> search(String query) async {
     if (query.trim().isEmpty) {
       return [];
@@ -718,13 +874,26 @@ class HocVien with _$HocVien {
   DienTuyenSinh? get dienTuyenSinh => idDienTuyenSinh;
   TrangThaiHocVien? get trangThai => maTrangThai;
 
-  // String get emailHust {
-  //   final nameParts = removeDiacritics(hoTen).split(" ");
-  //   final firstName = nameParts.removeLast();
-  //   final lastInitials = [for (String part in nameParts) part[0]].join();
-  //   final lastMaHv = maHocVien?.substring(2);
-  //   return "$firstName.$lastInitials$lastMaHv@sis.hust.edu.vn";
-  // }
+  Future<void> updateAttribute<T, int>(String attr, T value) =>
+      _abstractUpdateAttr(
+        table: table,
+        idField: "id",
+        id: id,
+        attrName: attr,
+        value: value,
+      );
+
+  Future<void> updateStudentId(String value) =>
+      updateAttribute("maHocVien", value);
+
+  Future<void> updateStudentEmail(String value) =>
+      updateAttribute("emailHust", value);
+
+  Future<void> updatePrivateEmail(String value) =>
+      updateAttribute("email", value);
+
+  Future<void> updatePhoneNumber(String value) =>
+      updateAttribute("dienThoai", value);
 
   static Future<List<HocVien>> getAdmissionList() async {
     final query = SelectQuery()
@@ -1077,6 +1246,25 @@ class DeTaiThacSi with _$DeTaiThacSi {
   factory DeTaiThacSi.fromJson(Map<String, dynamic> json) =>
       _$DeTaiThacSiFromJson(json);
 
+  Future<void> _updateAttr<T>(String attrName, T value) async {
+    final query = UpdateQuery()
+      ..update(table)
+      ..set({attrName: value})
+      ..where("$idField = ?", [id]);
+
+    final sql = query.build();
+    return dbSession((db) => db.rawUpdate(sql));
+  }
+
+  Future<void> setDueDate(DateTime d) =>
+      _updateAttr("hanBaoVe", datetimeToYyyymmdd(d));
+
+  Future<void> setAssignDecision(String value) =>
+      _updateAttr("soQdGiao", value);
+
+  Future<void> setProtectDecision(String value) =>
+      _updateAttr("soQuyetDinhBaoVe", value);
+
   static Future<DeTaiThacSi?> getByStudentId(int idHocVien) async {
     return dbSession((Database db) async {
       final rows = await db.query(
@@ -1108,10 +1296,7 @@ class DeTaiThacSi with _$DeTaiThacSi {
         throw Exception("DeTaiThacSi with id $id not found");
       }
 
-      final deTaiJson = rows.first;
-      deTaiJson["giangVien"] = await GiangVien.getById(
-        deTaiJson["idGiangVien"],
-      );
+      final deTaiJson = await resolveRow(rows.first);
       return DeTaiThacSi.fromJson(deTaiJson);
     });
   }
@@ -1163,26 +1348,31 @@ class DeTaiThacSi with _$DeTaiThacSi {
       final rows = await db.rawQuery(sql);
 
       // query to get GiangVien details
-      resolveRows(Map<String, Object?> rowOrig) async {
-        final row = Map<String, Object?>.from(rowOrig);
-        var query = SelectQuery()
-          ..from(GiangVien.table)
-          ..selectAll()
-          ..where("id = ?", [row["idGiangVien"]]);
-        row["giangVien"] = (await db.rawQuery(query.build())).firstOrNull;
 
-        query = SelectQuery()
-          ..from(HocVien.table)
-          ..selectAll()
-          ..where("id = ?", [row["idHocVien"]]);
-        row["hocVien"] = (await db.rawQuery(query.build())).firstOrNull;
-
-        return row;
-      }
-
-      final resolvedRows = [for (final row in rows) (await resolveRows(row))];
+      final resolvedRows = [for (final row in rows) (await resolveRow(row))];
 
       return [for (final json in resolvedRows) DeTaiThacSi.fromJson(json)];
+    });
+  }
+
+  static Future<Map<String, Object?>> resolveRow(
+    Map<String, Object?> rowOrig,
+  ) async {
+    return dbSessionReadOnly((db) async {
+      final row = Map<String, Object?>.from(rowOrig);
+      var query = SelectQuery()
+        ..from(GiangVien.table)
+        ..selectAll()
+        ..where("id = ?", [row["idGiangVien"]]);
+      row["giangVien"] = (await db.rawQuery(query.build())).firstOrNull;
+
+      query = SelectQuery()
+        ..from(HocVien.table)
+        ..selectAll()
+        ..where("id = ?", [row["idHocVien"]]);
+      row["hocVien"] = (await db.rawQuery(query.build())).firstOrNull;
+
+      return row;
     });
   }
 
@@ -1303,4 +1493,19 @@ class DeTaiThacSi with _$DeTaiThacSi {
         null => null,
         Object id => GiangVien.getById(id),
       };
+}
+
+/// Unused class, should I remove this
+@freezed
+abstract class TeachingRegistration with _$TeachingRegistration {
+  static const table = "DangKyGiangDay";
+  static const idField = "id";
+
+  const factory TeachingRegistration({
+    @JsonKey(name: "idGiangVien") required int teacherId,
+    @JsonKey(name: "maHocPhan") required String courseId,
+  }) = _TeachingRegistration;
+
+  factory TeachingRegistration.fromJson(Map<String, dynamic> json) =>
+      _$TeachingRegistrationFromJson(json);
 }

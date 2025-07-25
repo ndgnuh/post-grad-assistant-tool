@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../business/domain_objects.dart';
 import '../../business_widgets.dart';
 import '../../custom_widgets.dart';
+import '../../shortcuts.dart';
 
 const notAvailableText = "N/A";
 
@@ -19,18 +20,58 @@ void copyToClipboard(String? text) {
   }
 }
 
-class PageState extends ChangeNotifier {
-  GiangVien teacher;
+class TeacherDetailPageState extends ChangeNotifier {
+  final GiangVien teacher;
+  late Future<List<HocPhan>> futureTeachingCourses;
+  final scrollController = ScrollController();
+  final searchController = SearchController();
 
-  PageState(this.teacher);
-
-  setTeacher(GiangVien newTeacher) {
-    teacher = newTeacher;
+  TeacherDetailPageState(this.teacher) {
+    futureTeachingCourses = teacher.teachingCourses;
     notifyListeners();
   }
 
-  refresh() {
+  void refresh() {
+    final offset = scrollController.offset;
+    futureTeachingCourses = teacher.teachingCourses;
     notifyListeners();
+    scrollController.jumpTo(offset);
+  }
+}
+
+class _ListOfTeachingCourses extends StatelessWidget {
+  final Future<List<HocPhan>> futureTeachingCourses;
+
+  const _ListOfTeachingCourses({required this.futureTeachingCourses});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<HocPhan>>(
+      future: futureTeachingCourses,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text("Lỗi: ${snapshot.error}"));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text("Không có khóa học nào"));
+        } else {
+          final courses = snapshot.data!;
+          return ListView.builder(
+            shrinkWrap: true,
+            itemCount: courses.length,
+            itemBuilder: (context, index) {
+              final course = courses[index];
+              return ListTile(
+                title: Text(course.tenTiengViet),
+                subtitle: Text("Mã HP: ${course.maHocPhan}"),
+                autofocus: true,
+              );
+            },
+          );
+        }
+      },
+    );
   }
 }
 
@@ -42,7 +83,7 @@ class TeacherDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final messenger = ScaffoldMessenger.of(context);
-    final state = Provider.of<PageState>(context, listen: true);
+    final state = Provider.of<TeacherDetailPageState>(context, listen: true);
     final teacher = state.teacher;
 
     void copyToClipboardAndNotify(String? text) {
@@ -63,6 +104,7 @@ class TeacherDetail extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return ListView(
+      controller: state.scrollController,
       children: [
         ListTile(
           title: Text(
@@ -151,32 +193,13 @@ class TeacherDetail extends StatelessWidget {
           title: Text("Số điện thoại"),
           leading: const Icon(Icons.phone),
           onLongPress: () => copyToClipboardAndNotify(teacher.sdt),
-          onTap: () async {
-            // Show dialog to edit phone number
-            final newPhone = await showDialog(
-              context: context,
-              builder: (context) => TextEditingDialog(
-                title: "Sửa số điện thoại",
-                initialText: teacher.sdt,
-              ),
-            );
-
-            switch (newPhone) {
-              case String newPhone:
-                final teacherUpdated = await teacher.setSdt(newPhone);
-                state.setTeacher(teacherUpdated);
-            }
-          },
           subtitle: Text(teacher.sdt ?? notAvailableText),
         ),
 
         // Thông tin thanh toán
         // Mã số thuế, tài khoản ngân hàng, tên ngân hàng, chi nhánh
-        ListTile(
-          title: Text(
-            "Thông tin thanh toán",
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
+        HeadingListTile(
+          title: "Thông tin thanh toán",
         ),
         ListTile(
           title: Text("Mã số thuế"),
@@ -196,6 +219,60 @@ class TeacherDetail extends StatelessWidget {
           onLongPress: () => copyToClipboardAndNotify(teacher.nganHang),
           subtitle: Text(teacher.nganHang ?? notAvailableText),
         ),
+
+        HeadingListTile(
+          title: "Học phần giảng dạy",
+        ),
+        SearchAnchor(
+          key: searchAnchorKey,
+          searchController: state.searchController,
+          viewLeading: const Icon(Icons.search),
+          suggestionsBuilder: (context, controller) async {
+            final courses = await HocPhan.search(controller.text);
+
+            return [
+              for (final (i, course) in courses.indexed)
+                ListTile(
+                  autofocus: (i == 0),
+                  title: Text(course.tenTiengViet),
+                  subtitle: Text("Mã HP: ${course.maHocPhan}"),
+                  onTap: () {
+                    try {
+                      teacher.addTeachingCourse(course.maHocPhan);
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Lỗi: ${e.toString()}"),
+                        ),
+                      );
+                    }
+
+                    state.refresh();
+                    controller.clear();
+                    controller.closeView("");
+                    controller.openView();
+                  },
+                )
+            ];
+          },
+          builder: (context, controller) => ListTile(
+            title: Text("Thêm"),
+            leading: const Icon(Icons.add),
+            onTap: () => controller.openView(),
+          ),
+        ),
+        Selector(
+          selector: (context, TeacherDetailPageState state) =>
+              state.futureTeachingCourses,
+          builder: (
+            context,
+            futureTeachingCourses,
+            child,
+          ) =>
+              _ListOfTeachingCourses(
+            futureTeachingCourses: state.futureTeachingCourses,
+          ),
+        ),
       ],
     );
   }
@@ -213,13 +290,24 @@ class MobilePageTeacherDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => PageState(teacher),
-      child: Scaffold(
+      create: (context) => TeacherDetailPageState(teacher),
+      child: Actions(
+        actions: {
+          GoBackIntent: CallbackAction<GoBackIntent>(
+            onInvoke: (intent) {
+              Navigator.pop(context);
+              return null;
+            },
+          ),
+        },
+        child: Scaffold(
           appBar: AppBar(
             title: const Text("Chi tiết giảng viên"),
             actions: [],
           ),
-          body: TeacherDetail(initialTeacher: teacher)),
+          body: TeacherDetail(initialTeacher: teacher),
+        ),
+      ),
     );
   }
 }
