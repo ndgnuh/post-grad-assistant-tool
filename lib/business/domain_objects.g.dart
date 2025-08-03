@@ -267,6 +267,7 @@ _$LopTinChiImpl _$$LopTinChiImplFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num).toInt(),
       maLopHoc: json['maLopHoc'] as String?,
       maHocPhan: json['maHocPhan'] as String,
+      soLuongDangKy: (json['soLuongDangKy'] as num?)?.toInt(),
       idGiangVien: (json['idGiangVien'] as num?)?.toInt(),
       idLopTruong: (json['idLopTruong'] as num?)?.toInt(),
       urlTruyCap: json['urlTruyCap'] as String?,
@@ -275,6 +276,12 @@ _$LopTinChiImpl _$$LopTinChiImplFromJson(Map<String, dynamic> json) =>
       ngayHoc: $enumDecodeNullable(_$NgayTrongTuanEnumMap, json['ngayHoc']),
       tietBatDau: (json['tietBatDau'] as num?)?.toInt(),
       tietKetThuc: (json['tietKetThuc'] as num?)?.toInt(),
+      customBeginDate: json['customBeginDate'] == null
+          ? null
+          : DateTime.parse(json['customBeginDate'] as String),
+      customEndDate: json['customEndDate'] == null
+          ? null
+          : DateTime.parse(json['customEndDate'] as String),
       trangThai:
           $enumDecodeNullable(_$TrangThaiLopTinChiEnumMap, json['trangThai']) ??
               TrangThaiLopTinChi.binhThuong,
@@ -285,6 +292,7 @@ Map<String, dynamic> _$$LopTinChiImplToJson(_$LopTinChiImpl instance) =>
       'id': instance.id,
       'maLopHoc': instance.maLopHoc,
       'maHocPhan': instance.maHocPhan,
+      'soLuongDangKy': instance.soLuongDangKy,
       'idGiangVien': instance.idGiangVien,
       'idLopTruong': instance.idLopTruong,
       'urlTruyCap': instance.urlTruyCap,
@@ -293,6 +301,8 @@ Map<String, dynamic> _$$LopTinChiImplToJson(_$LopTinChiImpl instance) =>
       'ngayHoc': _$NgayTrongTuanEnumMap[instance.ngayHoc],
       'tietBatDau': instance.tietBatDau,
       'tietKetThuc': instance.tietKetThuc,
+      'customBeginDate': instance.customBeginDate?.toIso8601String(),
+      'customEndDate': instance.customEndDate?.toIso8601String(),
       'trangThai': _$TrangThaiLopTinChiEnumMap[instance.trangThai]!,
     };
 
@@ -408,10 +418,14 @@ _$DeTaiThacSiImpl _$$DeTaiThacSiImplFromJson(Map<String, dynamic> json) =>
       soQdBaoVe: json['soQdBaoVe'] as String?,
       ngayBaoVe:
           const MaybeDateSerializer().fromJson(json['ngayBaoVe'] as String?),
-      thanhToan: json['thanhToan'] == null
+      flagTracking: json['flag_tracking'] == null
           ? false
           : const BoolIntSerializer()
-              .fromJson((json['thanhToan'] as num?)?.toInt()),
+              .fromJson((json['flag_tracking'] as num?)?.toInt()),
+      thanhToan: json['flag_payment'] == null
+          ? false
+          : const BoolIntSerializer()
+              .fromJson((json['flag_payment'] as num?)?.toInt()),
       ghiChu: json['ghiChu'] as String?,
       group: json['group'] as String?,
       nam: (json['nam'] as num?)?.toInt(),
@@ -436,7 +450,8 @@ Map<String, dynamic> _$$DeTaiThacSiImplToJson(_$DeTaiThacSiImpl instance) =>
       'hanBaoVe': const MaybeDateSerializer().toJson(instance.hanBaoVe),
       'soQdBaoVe': instance.soQdBaoVe,
       'ngayBaoVe': const MaybeDateSerializer().toJson(instance.ngayBaoVe),
-      'thanhToan': const BoolIntSerializer().toJson(instance.thanhToan),
+      'flag_tracking': const BoolIntSerializer().toJson(instance.flagTracking),
+      'flag_payment': const BoolIntSerializer().toJson(instance.thanhToan),
       'ghiChu': instance.ghiChu,
       'group': instance.group,
       'nam': instance.nam,

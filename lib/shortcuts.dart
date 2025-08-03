@@ -1,9 +1,54 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 final navigationKey = GlobalKey<NavigatorState>();
 final searchAnchorKey = GlobalKey<State<SearchAnchor>>();
+final scaffoldKey = GlobalKey<ScaffoldState>();
 final globalFocusKey = GlobalKey<State<Focus>>();
+final searchFieldKey = GlobalKey<State<TextField>>();
+final shortcutStateKey = GlobalKey<State<CommonShortcuts>>();
+
+class QuickActions {
+  final String title;
+  final IconData? icon;
+  final VoidCallback? onPressed;
+
+  QuickActions({
+    required this.title,
+    this.icon,
+    this.onPressed,
+  });
+}
+
+class CommonShortcuts extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onCreateNew;
+  final VoidCallback? onSearch;
+  final VoidCallback? onPaste;
+  final VoidCallback? onImport;
+
+  const CommonShortcuts({
+    super.key,
+    required this.child,
+    this.onSearch,
+    this.onPaste,
+    this.onCreateNew,
+    this.onImport,
+  });
+
+  @override
+  State<CommonShortcuts> createState() => _CommonShortcutsState();
+}
+
+class _CommonShortcutsState extends State<CommonShortcuts> {
+  VoidCallback? get onCreateNew => widget.onCreateNew;
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
+}
 
 class CopyIntent extends Intent {
   const CopyIntent();

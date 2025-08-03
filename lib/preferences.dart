@@ -6,7 +6,18 @@ import 'dart:io';
 const prefKeys = (
   databasePath: 'database/path',
   databaseDirectory: 'database/directory',
+  darkMode: 'theme/dark-mode',
 );
+
+Future<bool> getDarkMode() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool(prefKeys.darkMode) ?? false;
+}
+
+Future<void> setDarkMode(bool value) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool(prefKeys.darkMode, value);
+}
 
 Future<String?> getDatabaseDirectory() async {
   final prefs = await SharedPreferences.getInstance();

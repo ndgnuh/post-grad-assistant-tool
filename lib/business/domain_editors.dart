@@ -378,3 +378,240 @@ class SearchChoiceState<T> extends State<SearchChoice<T>> {
   //   );
   // }
 }
+
+class CourseSelectionTile extends StatefulWidget {
+  final HocPhan? initialCourse;
+  final ValueNotifier<HocPhan?>? valueNotifier;
+  final ValueChanged<HocPhan?>? onSelected;
+
+  const CourseSelectionTile({
+    super.key,
+    this.initialCourse,
+    this.valueNotifier,
+    this.onSelected,
+  });
+
+  @override
+  State<CourseSelectionTile> createState() => CourseSelectionTileState();
+}
+
+class CourseSelectionTileState extends State<CourseSelectionTile> {
+  late ValueNotifier<HocPhan?> valueNotifier;
+
+  HocPhan? get value => valueNotifier.value;
+
+  @override
+  initState() {
+    super.initState();
+    valueNotifier = widget.valueNotifier ?? ValueNotifier(widget.initialCourse);
+  }
+
+  @override
+  dispose() {
+    if (widget.valueNotifier == null) {
+      valueNotifier.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SearchAnchor(
+      suggestionsBuilder: (context, searchController) async {
+        final listCourses = await HocPhan.search(searchController.text);
+
+        return [
+          for (final course in listCourses)
+            ListTile(
+              onTap: () {
+                searchController.closeView("");
+                valueNotifier.value = course;
+                widget.onSelected?.call(course);
+              },
+              leading: switch (value == course) {
+                true => Icon(Icons.check),
+                false => Icon(null),
+              },
+              title: Text(course.maHocPhan),
+              subtitle: Text(course.tenTiengViet),
+            )
+        ];
+      },
+      builder: (context, searchController) => ValueListenableBuilder(
+        valueListenable: valueNotifier,
+        builder: (context, value, child) {
+          return ListTile(
+            title: Text("Học phần"),
+            subtitle: switch (value) {
+              null => const Text("Chưa chọn"),
+              HocPhan value =>
+                Text("${value.maHocPhan} - ${value.tenTiengViet}"),
+            },
+            onTap: () => searchController.openView(),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class SearchTile<T> extends StatefulWidget {
+  final FutureOr<List<T>> Function(String) searchFunction;
+  final String Function(T?)? itemFormatter;
+  final String? label;
+  final T? initialValue;
+  final ValueChanged<T?>? onSelected;
+  final ValueNotifier<T?>? valueNotifier;
+  final SearchController? searchController;
+
+  const SearchTile({
+    super.key,
+    required this.searchFunction,
+    this.itemFormatter,
+    this.label,
+    this.searchController,
+    this.onSelected,
+    this.initialValue,
+    this.valueNotifier,
+  });
+
+  @override
+  State<SearchTile<T>> createState() => _SearchTileState<T>();
+}
+
+class _SearchTileState<T> extends State<SearchTile<T>> {
+  late ValueNotifier<T?> valueNotifier;
+
+  @override
+  initState() {
+    super.initState();
+    valueNotifier =
+        widget.valueNotifier ?? ValueNotifier<T?>(widget.initialValue);
+  }
+
+  @override
+  dispose() {
+    if (widget.valueNotifier == null) {
+      valueNotifier.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final formatItem = widget.itemFormatter ?? (T? item) => item.toString();
+    return SearchAnchor(
+      searchController: widget.searchController,
+      builder: (context, searchController) {
+        return ListTile(
+          title: Text(widget.label ?? "Tìm kiếm"),
+          subtitle: ValueListenableBuilder(
+            valueListenable: valueNotifier,
+            builder: (context, value, child) {
+              return Text(formatItem(value));
+            },
+          ),
+          onTap: () {
+            searchController.openView();
+            searchController.clear();
+          },
+        );
+      },
+      viewHintText: widget.label,
+      suggestionsBuilder: (context, searchController) async {
+        final query = searchController.text;
+        final results = await widget.searchFunction(query);
+        return [
+          for (final item in results)
+            ListTile(
+              onTap: () {
+                final text = item.toString();
+                valueNotifier.value = item;
+                searchController.closeView(text);
+                widget.onSelected?.call(item);
+              },
+              title: Text(formatItem(item)),
+            )
+        ];
+      },
+    );
+  }
+}
+
+class TeacherSearchTile extends SearchTile<GiangVien> {
+  const TeacherSearchTile({
+    super.key,
+    super.initialValue,
+    super.valueNotifier,
+    super.onSelected,
+    super.searchController,
+    super.itemFormatter,
+    super.label,
+    isLocalStaff,
+    super.searchFunction = _searchFunction,
+  });
+
+  const TeacherSearchTile.local({
+    super.key,
+    super.initialValue,
+    super.valueNotifier,
+    super.onSelected,
+    super.searchController,
+    super.itemFormatter,
+    super.label,
+    super.searchFunction = _searchFunctionLocal,
+  });
+
+  static Future<List<GiangVien>> _searchFunction(String query) =>
+      GiangVien.search(query);
+  static Future<List<GiangVien>> _searchFunctionLocal(String query) =>
+      GiangVien.search(query, isLocalStaff: true);
+}
+
+class ThesisSearchTile extends StatelessWidget {
+  final DeTaiThacSi? initialValue;
+  final ValueNotifier<DeTaiThacSi?>? valueNotifier;
+  final ValueChanged<DeTaiThacSi?>? onSelected;
+  final SearchController? searchController;
+  final String Function(DeTaiThacSi?)? itemFormatter;
+  final String? label;
+  final bool? assigned;
+  final bool? tracked;
+  final bool? paid;
+
+  const ThesisSearchTile({
+    super.key,
+    this.initialValue,
+    this.valueNotifier,
+    this.onSelected,
+    this.searchController,
+    this.itemFormatter,
+    this.label,
+    this.assigned,
+    this.tracked,
+    this.paid,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SearchTile<DeTaiThacSi>(
+      searchFunction: (String query) => DeTaiThacSi.search(
+        searchQuery: query,
+        assigned: assigned,
+        tracked: tracked,
+        paid: paid,
+      ),
+      itemFormatter: itemFormatter ??
+          (DeTaiThacSi? item) => switch (item) {
+                null => "(không)",
+                DeTaiThacSi item =>
+                  "${item.tenTiengViet} (${item.tenTiengAnh})",
+              },
+      label: label ?? "Tìm đề tài",
+      initialValue: initialValue,
+      valueNotifier: valueNotifier,
+      onSelected: onSelected,
+      searchController: searchController,
+    );
+  }
+}

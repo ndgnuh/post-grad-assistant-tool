@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'study_class_list.dart';
+part of 'course_classes.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -25,6 +25,7 @@ mixin _$CourseClassData {
   String get subjectId => throw _privateConstructorUsedError;
   String get subjectName => throw _privateConstructorUsedError;
   int get statusFlag => throw _privateConstructorUsedError;
+  int get numRegistered => throw _privateConstructorUsedError;
   int? get teacherId => throw _privateConstructorUsedError;
   String? get teacherName => throw _privateConstructorUsedError;
   String? get teacherEmail => throw _privateConstructorUsedError;
@@ -51,6 +52,7 @@ abstract class $CourseClassDataCopyWith<$Res> {
       String subjectId,
       String subjectName,
       int statusFlag,
+      int numRegistered,
       int? teacherId,
       String? teacherName,
       String? teacherEmail});
@@ -76,6 +78,7 @@ class _$CourseClassDataCopyWithImpl<$Res, $Val extends CourseClassData>
     Object? subjectId = null,
     Object? subjectName = null,
     Object? statusFlag = null,
+    Object? numRegistered = null,
     Object? teacherId = freezed,
     Object? teacherName = freezed,
     Object? teacherEmail = freezed,
@@ -100,6 +103,10 @@ class _$CourseClassDataCopyWithImpl<$Res, $Val extends CourseClassData>
       statusFlag: null == statusFlag
           ? _value.statusFlag
           : statusFlag // ignore: cast_nullable_to_non_nullable
+              as int,
+      numRegistered: null == numRegistered
+          ? _value.numRegistered
+          : numRegistered // ignore: cast_nullable_to_non_nullable
               as int,
       teacherId: freezed == teacherId
           ? _value.teacherId
@@ -131,6 +138,7 @@ abstract class _$$CourseClassDataImplCopyWith<$Res>
       String subjectId,
       String subjectName,
       int statusFlag,
+      int numRegistered,
       int? teacherId,
       String? teacherName,
       String? teacherEmail});
@@ -154,6 +162,7 @@ class __$$CourseClassDataImplCopyWithImpl<$Res>
     Object? subjectId = null,
     Object? subjectName = null,
     Object? statusFlag = null,
+    Object? numRegistered = null,
     Object? teacherId = freezed,
     Object? teacherName = freezed,
     Object? teacherEmail = freezed,
@@ -178,6 +187,10 @@ class __$$CourseClassDataImplCopyWithImpl<$Res>
       statusFlag: null == statusFlag
           ? _value.statusFlag
           : statusFlag // ignore: cast_nullable_to_non_nullable
+              as int,
+      numRegistered: null == numRegistered
+          ? _value.numRegistered
+          : numRegistered // ignore: cast_nullable_to_non_nullable
               as int,
       teacherId: freezed == teacherId
           ? _value.teacherId
@@ -204,6 +217,7 @@ class _$CourseClassDataImpl extends _CourseClassData {
       required this.subjectId,
       required this.subjectName,
       required this.statusFlag,
+      required this.numRegistered,
       this.teacherId,
       this.teacherName,
       this.teacherEmail})
@@ -223,6 +237,8 @@ class _$CourseClassDataImpl extends _CourseClassData {
   @override
   final int statusFlag;
   @override
+  final int numRegistered;
+  @override
   final int? teacherId;
   @override
   final String? teacherName;
@@ -231,7 +247,7 @@ class _$CourseClassDataImpl extends _CourseClassData {
 
   @override
   String toString() {
-    return 'CourseClassData(classId: $classId, classCode: $classCode, subjectId: $subjectId, subjectName: $subjectName, statusFlag: $statusFlag, teacherId: $teacherId, teacherName: $teacherName, teacherEmail: $teacherEmail)';
+    return 'CourseClassData(classId: $classId, classCode: $classCode, subjectId: $subjectId, subjectName: $subjectName, statusFlag: $statusFlag, numRegistered: $numRegistered, teacherId: $teacherId, teacherName: $teacherName, teacherEmail: $teacherEmail)';
   }
 
   @override
@@ -248,6 +264,8 @@ class _$CourseClassDataImpl extends _CourseClassData {
                 other.subjectName == subjectName) &&
             (identical(other.statusFlag, statusFlag) ||
                 other.statusFlag == statusFlag) &&
+            (identical(other.numRegistered, numRegistered) ||
+                other.numRegistered == numRegistered) &&
             (identical(other.teacherId, teacherId) ||
                 other.teacherId == teacherId) &&
             (identical(other.teacherName, teacherName) ||
@@ -258,8 +276,17 @@ class _$CourseClassDataImpl extends _CourseClassData {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, classId, classCode, subjectId,
-      subjectName, statusFlag, teacherId, teacherName, teacherEmail);
+  int get hashCode => Object.hash(
+      runtimeType,
+      classId,
+      classCode,
+      subjectId,
+      subjectName,
+      statusFlag,
+      numRegistered,
+      teacherId,
+      teacherName,
+      teacherEmail);
 
   /// Create a copy of CourseClassData
   /// with the given fields replaced by the non-null parameter values.
@@ -285,6 +312,7 @@ abstract class _CourseClassData extends CourseClassData {
       required final String subjectId,
       required final String subjectName,
       required final int statusFlag,
+      required final int numRegistered,
       final int? teacherId,
       final String? teacherName,
       final String? teacherEmail}) = _$CourseClassDataImpl;
@@ -303,6 +331,8 @@ abstract class _CourseClassData extends CourseClassData {
   String get subjectName;
   @override
   int get statusFlag;
+  @override
+  int get numRegistered;
   @override
   int? get teacherId;
   @override

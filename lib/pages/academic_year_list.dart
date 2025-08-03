@@ -5,7 +5,7 @@ import 'package:fami_tools/custom_widgets.dart';
 import 'package:fami_tools/business/domain_objects.dart';
 import 'package:intl/intl.dart';
 
-import './mobile/study_class_list.dart' show PageCourseClassList;
+import './mobile/course_classes.dart' show PageCourseClassList;
 
 String toDmy(DateTime date) {
   final formatter = DateFormat('dd/MM/yyyy');

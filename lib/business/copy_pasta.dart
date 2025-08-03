@@ -5,6 +5,7 @@ import 'package:flutter/services.dart'
 import 'package:intl/intl.dart';
 
 import './domain_objects.dart';
+import './../custom_widgets.dart';
 
 String toDmy(DateTime date) {
   final formatter = DateFormat('dd/MM/yyyy');
@@ -153,6 +154,126 @@ Em cảm ơn Thầy, Cô ạ.""";
   );
 }
 
+Future<void> copyThongBaoLopHoc({
+  required BuildContext context,
+  required HocKy semester,
+}) async {
+  final courseClasses = await LopTinChi.getBySemester(semester);
+
+  if (courseClasses.isEmpty) {
+    ScaffoldMessenger.of(context).showMessage(
+      "Không có lớp học nào trong học kỳ này.",
+    );
+    return;
+  }
+
+  final classInfoArrs = [];
+  final cancelledClasses = [];
+  for (final courseClass in courseClasses) {
+    final className = await courseClass.tenLopHoc;
+    switch (courseClass.trangThai) {
+      case TrangThaiLopTinChi.binhThuong:
+        final classUrl = courseClass.urlTruyCap;
+        final text = "- $className: $classUrl";
+        classInfoArrs.add(text);
+      case TrangThaiLopTinChi.huy:
+        cancelledClasses.add("- $className");
+    }
+  }
+
+  final texts = [
+    "Mình gửi link truy cập các lớp học của đợt học ${semester.hocKy}:",
+    classInfoArrs.join('\n'),
+    if (cancelledClasses.isNotEmpty)
+      "\nCác lớp dưới đây bị hủy, các bạn liên hệ với Ban Đào tạo (thầy Huy Hùng) để đăng ký vào các lớp khác nhé:",
+    if (cancelledClasses.isNotEmpty) cancelledClasses.join('\n'),
+  ];
+
+  final text = texts.join('\n');
+
+  copyToClipboard(
+    context: context,
+    text: text,
+    notification: "Đã sao chép thông báo về lớp học.",
+  );
+}
+
+Future<void> copyTeachingAssignment({
+  required BuildContext context,
+  required HocKy semester,
+}) async {
+  final courseClasses = await LopTinChi.getBySemester(semester);
+
+  final List<List<String>> classInfoArrs = [];
+  final dateFormat = DateFormat('dd/MM/yyyy');
+  final fromDay = dateFormat.format(semester.batDauHoc);
+  final toDay = dateFormat.format(semester.ketThucHoc);
+
+  String quote(String value) {
+    value = value.replaceAll('"', '\\"');
+    return "\"$value\"";
+  }
+
+  String sanitizeExcelString(String? value) {
+    if (value == null || value.isEmpty) return "";
+
+    if (value.contains('\n')) {
+      var parts = value.split('\n');
+      parts = [for (final part in parts) quote(part)];
+      print(parts);
+      // Use CHAR(10) to represent new line in Excel
+      print(parts.join(', CHAR(10), '));
+
+      return "=CONCAT(${parts.join(', CHAR(10), ')})";
+    }
+
+    return "=${quote(value)}";
+  }
+
+  for (final (i, courseClass) in courseClasses.indexed) {
+    final teacher = await courseClass.giangVien;
+    final course = await courseClass.hocPhan;
+    final fromDay = dateFormat.format(
+      courseClass.customBeginDate ?? semester.batDauHoc,
+    );
+    final toDay = dateFormat.format(
+      courseClass.customEndDate ?? semester.ketThucHoc,
+    );
+    final fromDayToDay = sanitizeExcelString('$fromDay\n$toDay');
+    final tietHoc = switch ((courseClass.tietBatDau, courseClass.tietKetThuc)) {
+      (int a, int b) => "=\"$a - $b\"",
+      _ => "",
+    };
+    final note = switch (courseClass.trangThai) {
+      TrangThaiLopTinChi.binhThuong => "",
+      TrangThaiLopTinChi.huy => "Hủy",
+    };
+
+    final List<String> row = [
+      (i + 1).toString(),
+      courseClass.maLopHoc.toString(),
+      course.soTinChi.toString(),
+      await courseClass.tenLopHoc,
+      courseClass.ngayHoc?.toString() ?? "",
+      tietHoc.toString(),
+      fromDayToDay,
+      courseClass.phongHoc?.toString() ?? "",
+      teacher?.hoTenChucDanh ?? "",
+      teacher?.donVi ?? "",
+      sanitizeExcelString(teacher?.sdt),
+      note,
+    ];
+    classInfoArrs.add(row);
+  }
+
+  final text = [for (final row in classInfoArrs) row.join('\t')].join('\n');
+  copyToClipboard(
+    context: context,
+    text: text,
+    notification: "Đã sao chép thông tin phân công giảng dạy.",
+  );
+}
+
 class CopyPasta {
   final String name;
   final String content;
@@ -177,4 +298,48 @@ Future<List<CopyPasta>> loadCopyPasta() async {
         content: json["content"],
       )
   ];
+}
+
+enum TeacherPronoun {
+  anh(pronoun: "anh", capitalized: "Anh", greeting: "Em chào anh"),
+  chi(pronoun: "chị", capitalized: "Chị", greeting: "Em chào chị"),
+  thay(pronoun: "thầy", capitalized: "Thầy", greeting: "Em thưa thầy"),
+  co(pronoun: "cô", capitalized: "Cô", greeting: "Em thưa cô");
+
+  final String pronoun;
+  final String capitalized;
+  final String greeting;
+  const TeacherPronoun({
+    required this.pronoun,
+    required this.capitalized,
+    required this.greeting,
+  });
+}
+
+Future<TeacherPronoun?> showPronounSelection({
+  required BuildContext context,
+}) async {
+  return await showDialog<TeacherPronoun>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("Chọn xưng hô"),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: TeacherPronoun.values.map((pronoun) {
+              return RadioListTile<TeacherPronoun?>(
+                value: pronoun,
+                groupValue: null,
+                title: Text(pronoun.capitalized),
+                onChanged: (value) {
+                  Navigator.of(context).pop(value);
+                },
+              );
+            }).toList(),
+          ),
+        ),
+      );
+    },
+  );
 }

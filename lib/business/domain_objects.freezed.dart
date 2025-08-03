@@ -2554,6 +2554,8 @@ mixin _$LopTinChi {
   int get id => throw _privateConstructorUsedError;
   String? get maLopHoc => throw _privateConstructorUsedError;
   String get maHocPhan => throw _privateConstructorUsedError;
+  int? get soLuongDangKy => throw _privateConstructorUsedError;
+  @Deprecated("Chuyển sang dùng bảng phân công dạy")
   int? get idGiangVien => throw _privateConstructorUsedError;
   int? get idLopTruong => throw _privateConstructorUsedError;
   String? get urlTruyCap => throw _privateConstructorUsedError;
@@ -2562,6 +2564,8 @@ mixin _$LopTinChi {
   NgayTrongTuan? get ngayHoc => throw _privateConstructorUsedError;
   int? get tietBatDau => throw _privateConstructorUsedError;
   int? get tietKetThuc => throw _privateConstructorUsedError;
+  DateTime? get customBeginDate => throw _privateConstructorUsedError;
+  DateTime? get customEndDate => throw _privateConstructorUsedError;
   TrangThaiLopTinChi get trangThai => throw _privateConstructorUsedError;
 
   /// Serializes this LopTinChi to a JSON map.
@@ -2583,7 +2587,8 @@ abstract class $LopTinChiCopyWith<$Res> {
       {int id,
       String? maLopHoc,
       String maHocPhan,
-      int? idGiangVien,
+      int? soLuongDangKy,
+      @Deprecated("Chuyển sang dùng bảng phân công dạy") int? idGiangVien,
       int? idLopTruong,
       String? urlTruyCap,
       String? hocKy,
@@ -2591,6 +2596,8 @@ abstract class $LopTinChiCopyWith<$Res> {
       NgayTrongTuan? ngayHoc,
       int? tietBatDau,
       int? tietKetThuc,
+      DateTime? customBeginDate,
+      DateTime? customEndDate,
       TrangThaiLopTinChi trangThai});
 }
 
@@ -2612,6 +2619,7 @@ class _$LopTinChiCopyWithImpl<$Res, $Val extends LopTinChi>
     Object? id = null,
     Object? maLopHoc = freezed,
     Object? maHocPhan = null,
+    Object? soLuongDangKy = freezed,
     Object? idGiangVien = freezed,
     Object? idLopTruong = freezed,
     Object? urlTruyCap = freezed,
@@ -2620,6 +2628,8 @@ class _$LopTinChiCopyWithImpl<$Res, $Val extends LopTinChi>
     Object? ngayHoc = freezed,
     Object? tietBatDau = freezed,
     Object? tietKetThuc = freezed,
+    Object? customBeginDate = freezed,
+    Object? customEndDate = freezed,
     Object? trangThai = null,
   }) {
     return _then(_value.copyWith(
@@ -2635,6 +2645,10 @@ class _$LopTinChiCopyWithImpl<$Res, $Val extends LopTinChi>
           ? _value.maHocPhan
           : maHocPhan // ignore: cast_nullable_to_non_nullable
               as String,
+      soLuongDangKy: freezed == soLuongDangKy
+          ? _value.soLuongDangKy
+          : soLuongDangKy // ignore: cast_nullable_to_non_nullable
+              as int?,
       idGiangVien: freezed == idGiangVien
           ? _value.idGiangVien
           : idGiangVien // ignore: cast_nullable_to_non_nullable
@@ -2667,6 +2681,14 @@ class _$LopTinChiCopyWithImpl<$Res, $Val extends LopTinChi>
           ? _value.tietKetThuc
           : tietKetThuc // ignore: cast_nullable_to_non_nullable
               as int?,
+      customBeginDate: freezed == customBeginDate
+          ? _value.customBeginDate
+          : customBeginDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      customEndDate: freezed == customEndDate
+          ? _value.customEndDate
+          : customEndDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       trangThai: null == trangThai
           ? _value.trangThai
           : trangThai // ignore: cast_nullable_to_non_nullable
@@ -2687,7 +2709,8 @@ abstract class _$$LopTinChiImplCopyWith<$Res>
       {int id,
       String? maLopHoc,
       String maHocPhan,
-      int? idGiangVien,
+      int? soLuongDangKy,
+      @Deprecated("Chuyển sang dùng bảng phân công dạy") int? idGiangVien,
       int? idLopTruong,
       String? urlTruyCap,
       String? hocKy,
@@ -2695,6 +2718,8 @@ abstract class _$$LopTinChiImplCopyWith<$Res>
       NgayTrongTuan? ngayHoc,
       int? tietBatDau,
       int? tietKetThuc,
+      DateTime? customBeginDate,
+      DateTime? customEndDate,
       TrangThaiLopTinChi trangThai});
 }
 
@@ -2714,6 +2739,7 @@ class __$$LopTinChiImplCopyWithImpl<$Res>
     Object? id = null,
     Object? maLopHoc = freezed,
     Object? maHocPhan = null,
+    Object? soLuongDangKy = freezed,
     Object? idGiangVien = freezed,
     Object? idLopTruong = freezed,
     Object? urlTruyCap = freezed,
@@ -2722,6 +2748,8 @@ class __$$LopTinChiImplCopyWithImpl<$Res>
     Object? ngayHoc = freezed,
     Object? tietBatDau = freezed,
     Object? tietKetThuc = freezed,
+    Object? customBeginDate = freezed,
+    Object? customEndDate = freezed,
     Object? trangThai = null,
   }) {
     return _then(_$LopTinChiImpl(
@@ -2737,6 +2765,10 @@ class __$$LopTinChiImplCopyWithImpl<$Res>
           ? _value.maHocPhan
           : maHocPhan // ignore: cast_nullable_to_non_nullable
               as String,
+      soLuongDangKy: freezed == soLuongDangKy
+          ? _value.soLuongDangKy
+          : soLuongDangKy // ignore: cast_nullable_to_non_nullable
+              as int?,
       idGiangVien: freezed == idGiangVien
           ? _value.idGiangVien
           : idGiangVien // ignore: cast_nullable_to_non_nullable
@@ -2769,6 +2801,14 @@ class __$$LopTinChiImplCopyWithImpl<$Res>
           ? _value.tietKetThuc
           : tietKetThuc // ignore: cast_nullable_to_non_nullable
               as int?,
+      customBeginDate: freezed == customBeginDate
+          ? _value.customBeginDate
+          : customBeginDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      customEndDate: freezed == customEndDate
+          ? _value.customEndDate
+          : customEndDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       trangThai: null == trangThai
           ? _value.trangThai
           : trangThai // ignore: cast_nullable_to_non_nullable
@@ -2784,7 +2824,8 @@ class _$LopTinChiImpl extends _LopTinChi {
       {required this.id,
       this.maLopHoc,
       required this.maHocPhan,
-      this.idGiangVien,
+      this.soLuongDangKy,
+      @Deprecated("Chuyển sang dùng bảng phân công dạy") this.idGiangVien,
       this.idLopTruong,
       this.urlTruyCap,
       this.hocKy,
@@ -2792,6 +2833,8 @@ class _$LopTinChiImpl extends _LopTinChi {
       this.ngayHoc,
       this.tietBatDau,
       this.tietKetThuc,
+      this.customBeginDate,
+      this.customEndDate,
       this.trangThai = TrangThaiLopTinChi.binhThuong})
       : super._();
 
@@ -2805,6 +2848,9 @@ class _$LopTinChiImpl extends _LopTinChi {
   @override
   final String maHocPhan;
   @override
+  final int? soLuongDangKy;
+  @override
+  @Deprecated("Chuyển sang dùng bảng phân công dạy")
   final int? idGiangVien;
   @override
   final int? idLopTruong;
@@ -2821,12 +2867,16 @@ class _$LopTinChiImpl extends _LopTinChi {
   @override
   final int? tietKetThuc;
   @override
+  final DateTime? customBeginDate;
+  @override
+  final DateTime? customEndDate;
+  @override
   @JsonKey()
   final TrangThaiLopTinChi trangThai;
 
   @override
   String toString() {
-    return 'LopTinChi(id: $id, maLopHoc: $maLopHoc, maHocPhan: $maHocPhan, idGiangVien: $idGiangVien, idLopTruong: $idLopTruong, urlTruyCap: $urlTruyCap, hocKy: $hocKy, phongHoc: $phongHoc, ngayHoc: $ngayHoc, tietBatDau: $tietBatDau, tietKetThuc: $tietKetThuc, trangThai: $trangThai)';
+    return 'LopTinChi(id: $id, maLopHoc: $maLopHoc, maHocPhan: $maHocPhan, soLuongDangKy: $soLuongDangKy, idGiangVien: $idGiangVien, idLopTruong: $idLopTruong, urlTruyCap: $urlTruyCap, hocKy: $hocKy, phongHoc: $phongHoc, ngayHoc: $ngayHoc, tietBatDau: $tietBatDau, tietKetThuc: $tietKetThuc, customBeginDate: $customBeginDate, customEndDate: $customEndDate, trangThai: $trangThai)';
   }
 
   @override
@@ -2839,6 +2889,8 @@ class _$LopTinChiImpl extends _LopTinChi {
                 other.maLopHoc == maLopHoc) &&
             (identical(other.maHocPhan, maHocPhan) ||
                 other.maHocPhan == maHocPhan) &&
+            (identical(other.soLuongDangKy, soLuongDangKy) ||
+                other.soLuongDangKy == soLuongDangKy) &&
             (identical(other.idGiangVien, idGiangVien) ||
                 other.idGiangVien == idGiangVien) &&
             (identical(other.idLopTruong, idLopTruong) ||
@@ -2853,6 +2905,10 @@ class _$LopTinChiImpl extends _LopTinChi {
                 other.tietBatDau == tietBatDau) &&
             (identical(other.tietKetThuc, tietKetThuc) ||
                 other.tietKetThuc == tietKetThuc) &&
+            (identical(other.customBeginDate, customBeginDate) ||
+                other.customBeginDate == customBeginDate) &&
+            (identical(other.customEndDate, customEndDate) ||
+                other.customEndDate == customEndDate) &&
             (identical(other.trangThai, trangThai) ||
                 other.trangThai == trangThai));
   }
@@ -2864,6 +2920,7 @@ class _$LopTinChiImpl extends _LopTinChi {
       id,
       maLopHoc,
       maHocPhan,
+      soLuongDangKy,
       idGiangVien,
       idLopTruong,
       urlTruyCap,
@@ -2872,6 +2929,8 @@ class _$LopTinChiImpl extends _LopTinChi {
       ngayHoc,
       tietBatDau,
       tietKetThuc,
+      customBeginDate,
+      customEndDate,
       trangThai);
 
   /// Create a copy of LopTinChi
@@ -2895,7 +2954,8 @@ abstract class _LopTinChi extends LopTinChi {
       {required final int id,
       final String? maLopHoc,
       required final String maHocPhan,
-      final int? idGiangVien,
+      final int? soLuongDangKy,
+      @Deprecated("Chuyển sang dùng bảng phân công dạy") final int? idGiangVien,
       final int? idLopTruong,
       final String? urlTruyCap,
       final String? hocKy,
@@ -2903,6 +2963,8 @@ abstract class _LopTinChi extends LopTinChi {
       final NgayTrongTuan? ngayHoc,
       final int? tietBatDau,
       final int? tietKetThuc,
+      final DateTime? customBeginDate,
+      final DateTime? customEndDate,
       final TrangThaiLopTinChi trangThai}) = _$LopTinChiImpl;
   const _LopTinChi._() : super._();
 
@@ -2916,6 +2978,9 @@ abstract class _LopTinChi extends LopTinChi {
   @override
   String get maHocPhan;
   @override
+  int? get soLuongDangKy;
+  @override
+  @Deprecated("Chuyển sang dùng bảng phân công dạy")
   int? get idGiangVien;
   @override
   int? get idLopTruong;
@@ -2931,6 +2996,10 @@ abstract class _LopTinChi extends LopTinChi {
   int? get tietBatDau;
   @override
   int? get tietKetThuc;
+  @override
+  DateTime? get customBeginDate;
+  @override
+  DateTime? get customEndDate;
   @override
   TrangThaiLopTinChi get trangThai;
 
@@ -3913,6 +3982,10 @@ mixin _$DeTaiThacSi {
   String? get soQdBaoVe => throw _privateConstructorUsedError;
   @MaybeDateSerializer()
   DateTime? get ngayBaoVe => throw _privateConstructorUsedError;
+  @JsonKey(name: "flag_tracking")
+  @BoolIntSerializer()
+  bool get flagTracking => throw _privateConstructorUsedError;
+  @JsonKey(name: "flag_payment")
   @BoolIntSerializer()
   bool get thanhToan => throw _privateConstructorUsedError;
   String? get ghiChu => throw _privateConstructorUsedError;
@@ -3953,7 +4026,8 @@ abstract class $DeTaiThacSiCopyWith<$Res> {
       @MaybeDateSerializer() DateTime? hanBaoVe,
       String? soQdBaoVe,
       @MaybeDateSerializer() DateTime? ngayBaoVe,
-      @BoolIntSerializer() bool thanhToan,
+      @JsonKey(name: "flag_tracking") @BoolIntSerializer() bool flagTracking,
+      @JsonKey(name: "flag_payment") @BoolIntSerializer() bool thanhToan,
       String? ghiChu,
       String? group,
       int? nam});
@@ -3994,6 +4068,7 @@ class _$DeTaiThacSiCopyWithImpl<$Res, $Val extends DeTaiThacSi>
     Object? hanBaoVe = freezed,
     Object? soQdBaoVe = freezed,
     Object? ngayBaoVe = freezed,
+    Object? flagTracking = null,
     Object? thanhToan = null,
     Object? ghiChu = freezed,
     Object? group = freezed,
@@ -4068,6 +4143,10 @@ class _$DeTaiThacSiCopyWithImpl<$Res, $Val extends DeTaiThacSi>
           ? _value.ngayBaoVe
           : ngayBaoVe // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      flagTracking: null == flagTracking
+          ? _value.flagTracking
+          : flagTracking // ignore: cast_nullable_to_non_nullable
+              as bool,
       thanhToan: null == thanhToan
           ? _value.thanhToan
           : thanhToan // ignore: cast_nullable_to_non_nullable
@@ -4138,7 +4217,8 @@ abstract class _$$DeTaiThacSiImplCopyWith<$Res>
       @MaybeDateSerializer() DateTime? hanBaoVe,
       String? soQdBaoVe,
       @MaybeDateSerializer() DateTime? ngayBaoVe,
-      @BoolIntSerializer() bool thanhToan,
+      @JsonKey(name: "flag_tracking") @BoolIntSerializer() bool flagTracking,
+      @JsonKey(name: "flag_payment") @BoolIntSerializer() bool thanhToan,
       String? ghiChu,
       String? group,
       int? nam});
@@ -4179,6 +4259,7 @@ class __$$DeTaiThacSiImplCopyWithImpl<$Res>
     Object? hanBaoVe = freezed,
     Object? soQdBaoVe = freezed,
     Object? ngayBaoVe = freezed,
+    Object? flagTracking = null,
     Object? thanhToan = null,
     Object? ghiChu = freezed,
     Object? group = freezed,
@@ -4253,6 +4334,10 @@ class __$$DeTaiThacSiImplCopyWithImpl<$Res>
           ? _value.ngayBaoVe
           : ngayBaoVe // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      flagTracking: null == flagTracking
+          ? _value.flagTracking
+          : flagTracking // ignore: cast_nullable_to_non_nullable
+              as bool,
       thanhToan: null == thanhToan
           ? _value.thanhToan
           : thanhToan // ignore: cast_nullable_to_non_nullable
@@ -4294,7 +4379,12 @@ class _$DeTaiThacSiImpl extends _DeTaiThacSi {
       @MaybeDateSerializer() this.hanBaoVe,
       this.soQdBaoVe,
       @MaybeDateSerializer() this.ngayBaoVe,
-      @BoolIntSerializer() this.thanhToan = false,
+      @JsonKey(name: "flag_tracking")
+      @BoolIntSerializer()
+      this.flagTracking = false,
+      @JsonKey(name: "flag_payment")
+      @BoolIntSerializer()
+      this.thanhToan = false,
       this.ghiChu,
       this.group,
       this.nam})
@@ -4341,7 +4431,11 @@ class _$DeTaiThacSiImpl extends _DeTaiThacSi {
   @MaybeDateSerializer()
   final DateTime? ngayBaoVe;
   @override
-  @JsonKey()
+  @JsonKey(name: "flag_tracking")
+  @BoolIntSerializer()
+  final bool flagTracking;
+  @override
+  @JsonKey(name: "flag_payment")
   @BoolIntSerializer()
   final bool thanhToan;
   @override
@@ -4353,7 +4447,7 @@ class _$DeTaiThacSiImpl extends _DeTaiThacSi {
 
   @override
   String toString() {
-    return 'DeTaiThacSi(id: $id, idGiangVien: $idGiangVien, tenTiengViet: $tenTiengViet, tenTiengAnh: $tenTiengAnh, giangVien: $giangVien, idHocVien: $idHocVien, hocVien: $hocVien, idChuTich: $idChuTich, idPhanBien1: $idPhanBien1, idPhanBien2: $idPhanBien2, idUyVien: $idUyVien, idThuKy: $idThuKy, ngayGiao: $ngayGiao, soQdGiao: $soQdGiao, hanBaoVe: $hanBaoVe, soQdBaoVe: $soQdBaoVe, ngayBaoVe: $ngayBaoVe, thanhToan: $thanhToan, ghiChu: $ghiChu, group: $group, nam: $nam)';
+    return 'DeTaiThacSi(id: $id, idGiangVien: $idGiangVien, tenTiengViet: $tenTiengViet, tenTiengAnh: $tenTiengAnh, giangVien: $giangVien, idHocVien: $idHocVien, hocVien: $hocVien, idChuTich: $idChuTich, idPhanBien1: $idPhanBien1, idPhanBien2: $idPhanBien2, idUyVien: $idUyVien, idThuKy: $idThuKy, ngayGiao: $ngayGiao, soQdGiao: $soQdGiao, hanBaoVe: $hanBaoVe, soQdBaoVe: $soQdBaoVe, ngayBaoVe: $ngayBaoVe, flagTracking: $flagTracking, thanhToan: $thanhToan, ghiChu: $ghiChu, group: $group, nam: $nam)';
   }
 
   @override
@@ -4392,6 +4486,8 @@ class _$DeTaiThacSiImpl extends _DeTaiThacSi {
                 other.soQdBaoVe == soQdBaoVe) &&
             (identical(other.ngayBaoVe, ngayBaoVe) ||
                 other.ngayBaoVe == ngayBaoVe) &&
+            (identical(other.flagTracking, flagTracking) ||
+                other.flagTracking == flagTracking) &&
             (identical(other.thanhToan, thanhToan) ||
                 other.thanhToan == thanhToan) &&
             (identical(other.ghiChu, ghiChu) || other.ghiChu == ghiChu) &&
@@ -4420,6 +4516,7 @@ class _$DeTaiThacSiImpl extends _DeTaiThacSi {
         hanBaoVe,
         soQdBaoVe,
         ngayBaoVe,
+        flagTracking,
         thanhToan,
         ghiChu,
         group,
@@ -4461,7 +4558,10 @@ abstract class _DeTaiThacSi extends DeTaiThacSi {
       @MaybeDateSerializer() final DateTime? hanBaoVe,
       final String? soQdBaoVe,
       @MaybeDateSerializer() final DateTime? ngayBaoVe,
-      @BoolIntSerializer() final bool thanhToan,
+      @JsonKey(name: "flag_tracking")
+      @BoolIntSerializer()
+      final bool flagTracking,
+      @JsonKey(name: "flag_payment") @BoolIntSerializer() final bool thanhToan,
       final String? ghiChu,
       final String? group,
       final int? nam}) = _$DeTaiThacSiImpl;
@@ -4508,6 +4608,11 @@ abstract class _DeTaiThacSi extends DeTaiThacSi {
   @MaybeDateSerializer()
   DateTime? get ngayBaoVe;
   @override
+  @JsonKey(name: "flag_tracking")
+  @BoolIntSerializer()
+  bool get flagTracking;
+  @override
+  @JsonKey(name: "flag_payment")
   @BoolIntSerializer()
   bool get thanhToan;
   @override

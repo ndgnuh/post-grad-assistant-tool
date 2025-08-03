@@ -17,6 +17,8 @@ Future<void> _abstractUpdateAttr<T, S>({
   required S id,
   required T value,
 }) async {
+  print(
+      "Updating attribute $attrName in table $table with id $idField = $id to value: $value");
   final query = UpdateQuery()
     ..update(table)
     ..set({attrName: value})
@@ -383,6 +385,25 @@ class GiangVien with _$GiangVien {
     });
 
     return copyWith(gioiTinh: gioiTinh);
+  }
+
+  static Future<List<GiangVien>> getByCourse(String courseId) async {
+    final query = SelectQuery()
+      ..from("DangKyGiangDay")
+      ..select(["idGiangVien"])
+      ..where("maHocPhan = ?", [courseId]);
+
+    final giangVienQuery = SelectQuery()
+      ..selectAll()
+      ..from(table)
+      ..where("id in ?", [query]);
+
+    final sql = giangVienQuery.build();
+
+    return dbSessionReadOnly((db) async {
+      final rows = await db.rawQuery(sql);
+      return [for (final json in rows) GiangVien.fromJson(json)];
+    });
   }
 
   // Tất cả giảng viên
@@ -924,18 +945,19 @@ class HocVien with _$HocVien {
   }
 
   static Future<List<HocVien>> search(String query) {
+    final query1 = SelectQuery()
+      ..from("fts_HocVien")
+      ..select(["maHocVien"])
+      ..where("fts_HocVien match ?", [query]);
+
+    final query2 = SelectQuery()
+      ..from(table)
+      ..selectAll()
+      ..where("maHocVien in ?", [query1]);
+
+    final sql = query2.build();
+
     return dbSessionReadOnly((Database db) async {
-      final query1 = SelectQuery()
-        ..from("fts_HocVien")
-        ..select(["maHocVien"])
-        ..where("fts_HocVien MATCH ?", [query]);
-
-      final query2 = SelectQuery()
-        ..from(table)
-        ..selectAll()
-        ..where("maHocVien in ?", [query1]);
-
-      final sql = query2.build();
       final rows = await db.rawQuery(sql);
 
       return [for (final json in rows) HocVien.fromJson(json)];
@@ -996,7 +1018,8 @@ class LopTinChi with _$LopTinChi {
     required int id,
     String? maLopHoc,
     required String maHocPhan,
-    int? idGiangVien,
+    int? soLuongDangKy,
+    @Deprecated("Chuyển sang dùng bảng phân công dạy") int? idGiangVien,
     int? idLopTruong,
     String? urlTruyCap,
     String? hocKy,
@@ -1004,11 +1027,56 @@ class LopTinChi with _$LopTinChi {
     NgayTrongTuan? ngayHoc,
     int? tietBatDau,
     int? tietKetThuc,
+    DateTime? customBeginDate,
+    DateTime? customEndDate,
     @Default(TrangThaiLopTinChi.binhThuong) TrangThaiLopTinChi trangThai,
   }) = _LopTinChi;
 
   factory LopTinChi.fromJson(Map<String, dynamic> json) =>
       _$LopTinChiFromJson(json);
+
+  Future<void> _updateAttr<T>(String attr, T value) =>
+      _abstractUpdateAttr<T, int>(
+        table: table,
+        idField: "id",
+        id: id,
+        attrName: attr,
+        value: value,
+      );
+
+  Future<void> updateStatus(TrangThaiLopTinChi status) =>
+      _updateAttr("trangThai", status.value);
+
+  Future<void> updateClassCode(String classCode) =>
+      _updateAttr("maLopHoc", classCode);
+
+  Future<void> updateNumRegistered(int numRegistered) =>
+      _updateAttr("soLuongDangKy", numRegistered);
+
+  Future<void> updateTeacher(int teacherId) =>
+      _updateAttr("idGiangVien", teacherId);
+
+  Future<void> updateRoom(String room) => _updateAttr("phongHoc", room);
+  Future<void> updateStartTime(int startTime) =>
+      _updateAttr("tietBatDau", startTime);
+  Future<void> updateEndTime(int endTime) =>
+      _updateAttr("tietKetThuc", endTime);
+  Future<void> updateDayOfWeek(NgayTrongTuan weekday) =>
+      _updateAttr("ngayHoc", weekday.value);
+
+  Future<void> updateAccessUrl(String url) => _updateAttr("urlTruyCap", url);
+
+  Future<void> updateCustomBeginDate(DateTime? date) =>
+      _updateAttr("customBeginDate", date);
+  Future<void> updateCustomEndDate(DateTime? date) =>
+      _updateAttr("customEndDate", date);
+
+  static Future<LopTinChi> getById(int id) => _getById(
+        id: id,
+        table: table,
+        idField: "id",
+        fromJson: LopTinChi.fromJson,
+      );
 
   static Future<LopTinChi?> getByMaLop(String maLopHoc) => _getById(
         id: maLopHoc,
@@ -1035,6 +1103,25 @@ class LopTinChi with _$LopTinChi {
         idField: "id",
         toJson: toJson,
       );
+
+  static Future<bool> createMultiples(List<LopTinChi> classes) async {
+    final allRows = [
+      for (final courseClass in classes) courseClass.toJson()..remove("id")
+    ];
+    final query = InsertQuery()
+      ..into(table)
+      ..insertAll(allRows);
+    final sql = query.build();
+    return dbSession((Database db) async {
+      try {
+        await db.rawInsert(sql);
+        return true;
+      } catch (e) {
+        print("Error creating new class: $e");
+        return false;
+      }
+    });
+  }
 
   Future<void> update() => _update(
         table: LopTinChi.table,
@@ -1237,7 +1324,14 @@ class DeTaiThacSi with _$DeTaiThacSi {
     @MaybeDateSerializer() DateTime? hanBaoVe,
     String? soQdBaoVe,
     @MaybeDateSerializer() DateTime? ngayBaoVe,
-    @Default(false) @BoolIntSerializer() bool thanhToan,
+    @JsonKey(name: "flag_tracking")
+    @Default(false)
+    @BoolIntSerializer()
+    bool flagTracking,
+    @JsonKey(name: "flag_payment")
+    @Default(false)
+    @BoolIntSerializer()
+    bool thanhToan,
     String? ghiChu,
     String? group,
     int? nam,
@@ -1301,9 +1395,19 @@ class DeTaiThacSi with _$DeTaiThacSi {
     });
   }
 
+  // Set as tracked
+  Future<void> updateTracking(bool value) async {
+    await _updateAttr("flag_tracking", value ? 1 : 0);
+  }
+
+  Future<void> track() => updateTracking(true);
+  Future<void> untrack() => updateTracking(false);
+
   static FutureOr<List<DeTaiThacSi>> search({
-    required String searchQuery,
+    String? searchQuery,
     bool? assigned,
+    bool? tracked,
+    bool? paid,
     Object? idGiangVien, // deprecated
     NienKhoa? nienKhoa,
   }) async {
@@ -1313,13 +1417,27 @@ class DeTaiThacSi with _$DeTaiThacSi {
         ..selectAll();
 
       // Additional filter if query is not empty
-      if (searchQuery.trim().isNotEmpty) {
+      if (searchQuery != null && searchQuery.trim().isNotEmpty) {
         final topicIdQuery = SelectQuery()
           ..from("fts_DeTaiThacSi")
           ..select(["id"])
           ..where("fts_DeTaiThacSi match ?", [searchQuery]);
 
         queryBuilder.where("id in ?", [topicIdQuery]);
+      }
+
+      /// Check if tracking
+      if (tracked == true) {
+        queryBuilder.where("flag_tracking = ?", [1]);
+      } else if (tracked == false) {
+        queryBuilder.where("flag_tracking = ?", [0]);
+      }
+
+      /// Check if paid
+      if (paid == true) {
+        queryBuilder.where("flag_payment = ?", [1]);
+      } else if (paid == false) {
+        queryBuilder.where("flag_payment = ?", [0]);
       }
 
       // Additional filter if class of-year is not empty
@@ -1493,6 +1611,15 @@ class DeTaiThacSi with _$DeTaiThacSi {
         null => null,
         Object id => GiangVien.getById(id),
       };
+
+  Future updateChuTich(int? idGiangVien) =>
+      _updateAttr("idChuTich", idGiangVien);
+  Future updatePhanBien1(int? idGiangVien) =>
+      _updateAttr("idPhanBien1", idGiangVien);
+  Future updatePhanBien2(int? idGiangVien) =>
+      _updateAttr("idPhanBien2", idGiangVien);
+  Future updateThuKy(int? idGiangVien) => _updateAttr("idThuKy", idGiangVien);
+  Future updateUyVien(int? idGiangVien) => _updateAttr("idUyVien", idGiangVien);
 }
 
 /// Unused class, should I remove this
@@ -1509,3 +1636,7 @@ abstract class TeachingRegistration with _$TeachingRegistration {
   factory TeachingRegistration.fromJson(Map<String, dynamic> json) =>
       _$TeachingRegistrationFromJson(json);
 }
+
+typedef Thesis = DeTaiThacSi;
+typedef Teacher = GiangVien;
+typedef Student = HocVien;

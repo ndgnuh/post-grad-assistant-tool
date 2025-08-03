@@ -43,8 +43,14 @@ import 'pages/mobile/admission.dart'
 
 import 'pages/settings.dart' show SettingsPage;
 
-import 'pages/mobile/study_class_list.dart'
-    show PageCourseClassList, PageStudyClassListArgs, PageSelectSemester;
+import 'pages/mobile/course_classes.dart'
+    show
+        PageCourseClassList,
+        PageStudyClassListArgs,
+        PageSelectSemester,
+        CourseClassCreatePage;
+
+import 'pages/thesis_defense/index.dart';
 
 import 'pages/mobile/thesis_list.dart'
     show
@@ -63,12 +69,21 @@ import 'pages/mobile/thesis_assign_list.dart' show MobilePageThesisAssignList;
 import 'pages/mobile/select_class_of.dart'
     show PageSelectClassOf, PageSelectClassOfArgs;
 
+import 'pages/multiple_selection_page.dart'
+    show MultipleSelectionPage, MultipleSelectionPageArgs;
+
+import 'pages/thesis_defense/index.dart';
+
 import '../preferences.dart' as preferences;
 
 final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
-  false => StudentListPage.routeName,
+  // false => StudentListPage.routeName,
+  // false => PageCourseClassList.routeName,
   // false => MobilePageTeacherList.routeName,
+  // false => MobilePageThesisAssignList.routeName,
+  // false => SettingsPage.routeName,
+  false => ThesisDefenseRegisterPage.routeName,
 };
 
 // const initialRoute = SettingsPage.routeName;
@@ -168,6 +183,11 @@ const routes = [
     icon: Icons.book,
   ),
   (
+    route: ThesisDefenseRegisterPage.routeName,
+    label: "Bảo vệ luận văn",
+    icon: null,
+  ),
+  (
     route: PageXetTuyen.routeName,
     label: "Xét tuyển cao học",
     icon: Icons.person_add,
@@ -176,11 +196,6 @@ const routes = [
     route: PageXetTuyenNcs.routeName,
     label: "Xét tuyển NCS",
     icon: PageXetTuyenNcs.icon,
-  ),
-  (
-    route: DangKyBaoVePage.routeName,
-    label: "Nộp hồ sơ bảo vệ",
-    icon: Icons.person_add,
   ),
   (
     route: PagePhanCongHoiDongLuanVanThacSi.routeName,
@@ -278,6 +293,14 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
           return const PageCourseClassList();
       }
 
+    case CourseClassCreatePage.routeName:
+      switch (args) {
+        case HocKy semester:
+          return CourseClassCreatePage(semester: semester);
+        default:
+          return const PageCourseClassList();
+      }
+
     /// Admission pages
     case PageAdmissionList.routeName:
       return const PageAdmissionList();
@@ -306,6 +329,19 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
         default:
           return PageSelectSemester(initialSemester: null);
       }
+    case MultipleSelectionPage.routeName:
+      switch (args) {
+        case MultipleSelectionPageArgs args:
+          return MultipleSelectionPage(
+            options: args.options,
+            titleBuilder: args.titleBuilder,
+            subtitleBuilder: args.subtitleBuilder,
+            onSelected: args.onSelected,
+            title: args.title,
+          );
+        default:
+          return const HomePage();
+      }
 
     /// Thesis topic management pages
     case ThesisTopicListPage.routeName:
@@ -330,6 +366,10 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
         default:
           return const StudentListPage();
       }
+
+    // Thesis defense pages
+    case ThesisDefenseRegisterPage.routeName:
+      return const ThesisDefenseRegisterPage();
 
     /// Drift
     case PageImportHocPhan.routeName:

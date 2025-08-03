@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 
 import 'dart:core';
 import '../drawer.dart';
+import '../shortcuts.dart';
 import '../preferences.dart' as preferences;
 
 class HomePage extends StatelessWidget {

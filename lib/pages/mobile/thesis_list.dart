@@ -5,6 +5,7 @@ import 'dart:async';
 
 import '../../business/domain_objects.dart';
 import '../../custom_widgets.dart';
+import '../../custom_tiles.dart';
 
 class ThesisTopicListPageState extends ChangeNotifier {
   late FutureOr<List<DeTaiThacSi>> futureTopics;
@@ -314,25 +315,26 @@ class ThesisTopicDetailPage extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          ListTile(
-            title: Text("Tên tiếng Việt"),
-            subtitle: Text(topic.tenTiengViet),
+          StringTile(
+            titleText: "Tên tiếng Việt",
+            initialValue: topic.tenTiengViet,
           ),
-          ListTile(
-            title: Text("Tên tiếng Anh"),
-            subtitle: Text(topic.tenTiengAnh),
+          StringTile(
+            titleText: "Tên tiếng Anh",
+            initialValue: topic.tenTiengAnh,
           ),
-          ListTile(
-            title: Text("Giảng viên hướng dẫn"),
-            subtitle: Text(teacher.hoTenChucDanh),
+          StringTile(
+            titleText: "Giảng viên hướng dẫn",
+            initialValue: teacher.hoTenChucDanh,
+            readOnly: true,
           ),
           ListTile(
             title: Text("Học viên"),
             subtitle: Text("${student?.hoTen} [${student?.maHocVien}]"),
           ),
-          ListTile(
-            title: Text("Số QD Giao"),
-            subtitle: Text(topic.soQdGiao ?? ""),
+          StringTile(
+            titleText: "Số QD Giao",
+            initialValue: topic.soQdGiao ?? "",
           ),
           ListTile(
             title: Text("Ngày giao"),
