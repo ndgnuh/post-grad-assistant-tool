@@ -8,30 +8,21 @@ ThemeData getTheme(ThemeData baseTheme) {
     borderRadius: BorderRadius.all(Radius.circular(10)),
   );
 
-  final buttonPadding = EdgeInsets.symmetric(
-    horizontal: 24.0,
-    vertical: 16.0,
-  );
+  final buttonPadding = EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0);
 
   final filledButtonTheme = FilledButtonThemeData(
-    style: FilledButton.styleFrom(
-      shape: buttonShape,
-    ),
+    style: FilledButton.styleFrom(shape: buttonShape, padding: buttonPadding),
   );
 
   final inputDecorationTheme = InputDecorationTheme(
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10.0),
-    ),
+    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
     floatingLabelBehavior: FloatingLabelBehavior.always,
   );
 
   final searchBarTheme = SearchBarThemeData(
     constraints: BoxConstraints.tightFor(height: 50),
     shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-      RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
+      RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
     ),
   );
 
@@ -44,17 +35,11 @@ ThemeData getTheme(ThemeData baseTheme) {
   );
 
   final elevatedButtonTheme = ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-      shape: buttonShape,
-      padding: buttonPadding,
-    ),
+    style: ElevatedButton.styleFrom(shape: buttonShape, padding: buttonPadding),
   );
 
   final textButtonThemeData = TextButtonThemeData(
-    style: TextButton.styleFrom(
-      shape: buttonShape,
-      padding: buttonPadding,
-    ),
+    style: TextButton.styleFrom(shape: buttonShape, padding: buttonPadding),
   );
 
   return baseTheme.copyWith(

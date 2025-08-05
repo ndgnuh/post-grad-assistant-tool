@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gutter/flutter_gutter.dart';
 
 import '../../business/domain_objects.dart';
 import '../../shortcuts.dart';
@@ -32,15 +33,11 @@ class ListTeachers extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = Provider.of<_State>(context);
     if (state.shouldUserPrompted) {
-      return const Center(
-        child: Text("Nhập tên giảng viên để tìm kiếm"),
-      );
+      return const Center(child: Text("Nhập tên giảng viên để tìm kiếm"));
     }
 
     if (state.numFoundTeachers == 0) {
-      return const Center(
-        child: Text("Không tìm thấy giảng viên nào"),
-      );
+      return const Center(child: Text("Không tìm thấy giảng viên nào"));
     }
 
     // https://ui.dev/rwd/develop/browser-feature-support/media-queries-for-common-device-breakpoints
@@ -68,11 +65,8 @@ class ListTeachers extends StatelessWidget {
           SizedBox(
             width: itemWidth,
             height: itemHeight,
-            child: TeacherCard(
-              key: ValueKey(teacher.id),
-              teacher: teacher,
-            ),
-          )
+            child: TeacherCard(key: ValueKey(teacher.id), teacher: teacher),
+          ),
       ],
     );
   }
@@ -81,9 +75,9 @@ class ListTeachers extends StatelessWidget {
 class MobilePageTeacherShortcutManager extends ShortcutManager {
   @override
   get shortcuts => {
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyF):
-            const SearchIntent(),
-      };
+    LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyF):
+        const SearchIntent(),
+  };
 }
 
 class Page extends StatelessWidget {
@@ -96,24 +90,56 @@ class Page extends StatelessWidget {
     return ChangeNotifierProvider<_State>(
       create: (_) => _State(),
       builder: (context, _) {
+        final totalWidth = MediaQuery.of(context).size.width;
+        final smallScreen = totalWidth <= 700;
+
         return Scaffold(
           appBar: AppBar(
             title: Text("Danh sách giảng viên"),
-            actions: [
-              AddButton(),
-            ],
+            actions: [AddButton()],
           ),
           body: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(context.gutter),
             child: Column(
-              spacing: 16,
+              spacing: context.gutter,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TeacherSearchBar(),
+                if (!smallScreen)
+                  IntrinsicHeight(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      spacing: context.gutter,
+                      children: [
+                        Expanded(child: TeacherSearchBar()),
+                        TeacherAddButton(),
+                      ],
+                    ),
+                  ),
+                if (smallScreen) TeacherSearchBar(),
                 Expanded(child: ListTeachers()),
+                if (smallScreen) TeacherAddButton(),
               ],
             ),
           ),
         );
+      },
+    );
+  }
+}
+
+class TeacherAddButton extends StatelessWidget {
+  const TeacherAddButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton.icon(
+      icon: const Icon(Icons.add),
+      label: const Text("Thêm giảng viên"),
+      onPressed: () async {
+        final state = Get.find<_State>();
+        await Get.to(TeacherCreatePage());
+        state.searchNow();
       },
     );
   }
@@ -134,10 +160,7 @@ class SearchToggleButton extends StatelessWidget {
     } else {
       return IconButton(
         icon: Icon(Icons.search),
-        onPressed: Actions.handler<SearchIntent>(
-          context,
-          const SearchIntent(),
-        ),
+        onPressed: Actions.handler<SearchIntent>(context, const SearchIntent()),
       );
     }
   }
@@ -174,10 +197,7 @@ class TeacherCard extends StatelessWidget {
             ListTile(
               titleAlignment: ListTileTitleAlignment.top,
               leading: CircleAvatar(child: const Icon(Icons.person)),
-              title: Text(
-                teacher.hoTenChucDanh,
-                style: titleStyle,
-              ),
+              title: Text(teacher.hoTenChucDanh, style: titleStyle),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -188,10 +208,7 @@ class TeacherCard extends StatelessWidget {
                       children: [
                         WidgetSpan(child: const Icon(Icons.business, size: 16)),
                         WidgetSpan(child: SizedBox(width: 8)),
-                        TextSpan(
-                          text: teacher.donVi,
-                          style: subtitleStyle,
-                        ),
+                        TextSpan(text: teacher.donVi, style: subtitleStyle),
                       ],
                     ),
                   ),
@@ -232,9 +249,11 @@ class TeacherCard extends StatelessWidget {
     );
   }
 
-  void goToTeacherDetails() {
+  void goToTeacherDetails() async {
+    final state = Get.find<_State>();
     final page = TeacherDetailsPage(teacher: teacher);
-    Get.to(page);
+    await Get.to(page);
+    state.searchNow();
   }
 }
 
@@ -253,7 +272,7 @@ class TeacherSearchBar extends StatelessWidget {
         labelText: "Tìm kiếm giảng viên",
       ),
       onChanged: (query) => state.debounceSearch(),
-      onSubmitted: (query) => state.commitSearch(),
+      onSubmitted: (query) => state.searchNow(),
     );
   }
 }
@@ -281,7 +300,7 @@ class _State with ChangeNotifier {
     notifyListeners();
   }
 
-  commitSearch() async {
+  searchNow() async {
     final query = searchController.text.trim();
     final teachers = await GiangVien.search(query);
 
@@ -302,7 +321,7 @@ class _State with ChangeNotifier {
 
     // Debounce search
     debounceTimer = Timer(debounceDuration, () {
-      commitSearch();
+      searchNow();
     });
   }
 
@@ -335,5 +354,19 @@ class _State with ChangeNotifier {
     globalFocusNode.requestFocus();
     notifyListeners();
     return this;
+  }
+
+  _State() {
+    Get.put(this);
+  }
+
+  @override
+  dispose() {
+    searchFocusNode.dispose();
+    globalFocusNode.dispose();
+    searchController.dispose();
+    debounceTimer.cancel();
+    super.dispose();
+    Get.delete<_State>();
   }
 }

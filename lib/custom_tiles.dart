@@ -65,10 +65,7 @@ class _StringTileState extends State<StringTile> {
       title: Text(titleText),
       subtitle: Text(valueNotifier.value),
       leading: widget.leading,
-      trailing: IconButton(
-        icon: Icon(Icons.copy),
-        onPressed: copyCurrentValue,
-      ),
+      trailing: IconButton(icon: Icon(Icons.copy), onPressed: copyCurrentValue),
       onLongPress: copyCurrentValue,
       onTap: () async {
         if (widget.readOnly) {
@@ -152,10 +149,7 @@ class _IntegerTileState extends State<IntegerTile> {
       title: Text(titleText),
       subtitle: Text(value.toString()),
       leading: widget.leading,
-      trailing: IconButton(
-        icon: Icon(Icons.copy),
-        onPressed: copyCurrentValue,
-      ),
+      trailing: IconButton(icon: Icon(Icons.copy), onPressed: copyCurrentValue),
       onLongPress: copyCurrentValue,
       onTap: () async {
         String? newValue = await TextEditingDialog.show(
@@ -237,33 +231,34 @@ class _EnumTileState<T> extends State<EnumTile<T>> {
     }
 
     return ValueListenableBuilder(
-        valueListenable: valueNotifier,
-        builder: (context, value, child) {
-          return ListTile(
-            title: Text(titleText),
-            subtitle: Text(value.toString()),
-            leading: widget.leading,
-            trailing: IconButton(
-              icon: Icon(Icons.copy),
-              onPressed: copyCurrentValue,
-            ),
-            onLongPress: copyCurrentValue,
-            onTap: () async {
-              final newValue = await showDialog<T>(
-                context: context,
-                builder: (context) => EnumSelectionDialog<T>(
-                  title: titleText,
-                  options: widget.options,
-                  initialValue: value,
-                ),
-              );
-              if (newValue != null) {
-                valueNotifier.value = newValue;
-                widget.onUpdate?.call(newValue);
-              }
-            },
-          );
-        });
+      valueListenable: valueNotifier,
+      builder: (context, value, child) {
+        return ListTile(
+          title: Text(titleText),
+          subtitle: Text(value.toString()),
+          leading: widget.leading,
+          trailing: IconButton(
+            icon: Icon(Icons.copy),
+            onPressed: copyCurrentValue,
+          ),
+          onLongPress: copyCurrentValue,
+          onTap: () async {
+            final newValue = await showDialog<T>(
+              context: context,
+              builder: (context) => EnumSelectionDialog<T>(
+                title: titleText,
+                options: widget.options,
+                initialValue: value,
+              ),
+            );
+            if (newValue != null) {
+              valueNotifier.value = newValue;
+              widget.onUpdate?.call(newValue);
+            }
+          },
+        );
+      },
+    );
   }
 }
 
@@ -295,7 +290,7 @@ class EnumSelectionDialog<T> extends StatelessWidget {
               onChanged: (T? newValue) {
                 Navigator.of(context).pop(newValue);
               },
-            )
+            ),
         ],
       ),
       actions: [
@@ -314,6 +309,9 @@ class DateTile extends StatefulWidget {
   final ValueNotifier<DateTime?>? valueNotifier;
   final ValueChanged<DateTime?>? onUpdate;
   final DateTime? initialValue;
+  final DateFormat? dateFormat;
+  final DateTime? firstDate;
+  final DateTime? lastDate;
 
   const DateTile({
     super.key,
@@ -322,6 +320,9 @@ class DateTile extends StatefulWidget {
     this.valueNotifier,
     this.leading,
     this.initialValue,
+    this.dateFormat,
+    this.firstDate,
+    this.lastDate,
   });
 
   @override
@@ -330,12 +331,12 @@ class DateTile extends StatefulWidget {
 
 class _DateTileState extends State<DateTile> {
   late ValueNotifier<DateTime?> valueNotifier;
-
-  DateTime? get value => valueNotifier.value;
+  late DateFormat dateFormat;
 
   @override
   initState() {
     super.initState();
+    dateFormat = widget.dateFormat ?? DateFormat("dd/MM/yyyy");
     valueNotifier = switch (widget.valueNotifier) {
       null => ValueNotifier(widget.initialValue),
       ValueNotifier<DateTime?> notifier => notifier,
@@ -350,43 +351,28 @@ class _DateTileState extends State<DateTile> {
 
   @override
   Widget build(BuildContext context) {
-    final titleText = widget.titleText;
-    final messenger = ScaffoldMessenger.of(context);
-
-    void copyCurrentValue() {
-      if (value == null) {
-        messenger.showMessage("No date selected");
-        return;
-      }
-
-      final text = dateFormat.format(value!);
-      final data = ClipboardData(text: text);
-      Clipboard.setData(data);
-      messenger.showMessage("Copied ");
-    }
-
     return ValueListenableBuilder(
       valueListenable: valueNotifier,
       builder: (context, value, child) {
+        final dateString = switch (value) {
+          null => "N/A",
+          DateTime dateTime => dateFormat.format(dateTime),
+        };
+
         return ListTile(
-          title: Text(titleText),
-          subtitle: Text(value == null ? "N/A" : dateFormat.format(value)),
+          title: Text(widget.titleText),
+          subtitle: Text(dateString),
           leading: widget.leading,
-          trailing: IconButton(
-            icon: Icon(Icons.copy),
-            onPressed: copyCurrentValue,
-          ),
-          onLongPress: copyCurrentValue,
           onTap: () async {
-            final newDate = await showDatePicker(
+            final newValue = await showDatePicker(
               context: context,
               initialDate: value ?? DateTime.now(),
-              firstDate: DateTime(2000),
-              lastDate: DateTime(2100),
+              firstDate: widget.firstDate ?? DateTime(1900),
+              lastDate: widget.lastDate ?? DateTime(2100),
             );
-            if (newDate != null) {
-              valueNotifier.value = newDate;
-              widget.onUpdate?.call(newDate);
+            if (newValue != null) {
+              valueNotifier.value = newValue;
+              widget.onUpdate?.call(newValue);
             }
           },
         );

@@ -39,7 +39,8 @@ Future<void> _abstractUpdateAttr<T, S>({
   required T value,
 }) async {
   print(
-      "Updating attribute $attrName in table $table with id $idField = $id to value: $value");
+    "Updating attribute $attrName in table $table with id $idField = $id to value: $value",
+  );
   final query = UpdateQuery()
     ..update(table)
     ..set({attrName: value})
@@ -93,11 +94,7 @@ Future<T> _getById<T>({
   required T Function(Map<String, Object?>) fromJson,
 }) async {
   return dbSessionReadOnly((db) async {
-    final rows = await db.query(
-      table,
-      where: "$idField = ?",
-      whereArgs: [id],
-    );
+    final rows = await db.query(table, where: "$idField = ?", whereArgs: [id]);
     return fromJson(rows.single);
   });
 }
@@ -129,12 +126,7 @@ Future<void> _update<T>({
     data.remove(field);
   }
   return dbSession((db) async {
-    db.update(
-      table,
-      _sanitize(data),
-      where: "$idField = ?",
-      whereArgs: [id],
-    );
+    db.update(table, _sanitize(data), where: "$idField = ?", whereArgs: [id]);
   });
 }
 
@@ -179,10 +171,7 @@ class DangKyHoc with _$DangKyHoc {
         final idHocVien = hocVien.id;
         final query = InsertQuery()
           ..into(table)
-          ..insert({
-            "idLopTinChi": idLopTinChi,
-            "idHocVien": idHocVien,
-          });
+          ..insert({"idLopTinChi": idLopTinChi, "idHocVien": idHocVien});
 
         final sql = query.build();
         await txn.rawInsert(sql);
@@ -243,29 +232,29 @@ class DeTaiThacSi with _$DeTaiThacSi {
   bool get assigned => idHocVien != null;
 
   Future<GiangVien?> get chuTich async => switch (idChuTich) {
-        null => null,
-        Object id => GiangVien.getById(id),
-      };
+    null => null,
+    Object id => GiangVien.getById(id),
+  };
 
   Future<GiangVien?> get phanBien1 async => switch (idPhanBien1) {
-        null => null,
-        Object id => GiangVien.getById(id),
-      };
+    null => null,
+    Object id => GiangVien.getById(id),
+  };
 
   Future<GiangVien?> get phanBien2 async => switch (idPhanBien2) {
-        null => null,
-        Object id => GiangVien.getById(id),
-      };
+    null => null,
+    Object id => GiangVien.getById(id),
+  };
 
   Future<GiangVien?> get thuKy async => switch (idThuKy) {
-        null => null,
-        Object id => GiangVien.getById(id),
-      };
+    null => null,
+    Object id => GiangVien.getById(id),
+  };
 
   Future<GiangVien?> get uyVien async => switch (idUyVien) {
-        null => null,
-        Object id => GiangVien.getById(id),
-      };
+    null => null,
+    Object id => GiangVien.getById(id),
+  };
 
   Future<void> assignStudent(HocVien? student) async {
     final query = UpdateQuery()
@@ -392,7 +381,7 @@ class DeTaiThacSi with _$DeTaiThacSi {
     return {
       ...rowOrig,
       "giangVien": teacher.toJson(),
-      "hocVien": student?.toJson()
+      "hocVien": student?.toJson(),
     };
   }
 
@@ -482,8 +471,10 @@ class DeTaiThacSi with _$DeTaiThacSi {
         "${HocVien.table}.id = ${DeTaiThacSi.table}.idHocVien",
         studentJoinMode,
       )
-      ..join(GiangVien.table,
-          "${GiangVien.table}.id = ${DeTaiThacSi.table}.idGiangVien");
+      ..join(
+        GiangVien.table,
+        "${GiangVien.table}.id = ${DeTaiThacSi.table}.idGiangVien",
+      );
 
     if (assigned) {
       query.where("idHocVien is not NULL");
@@ -576,15 +567,15 @@ class GiangVien with _$GiangVien {
 
   /// Specialized group
   Future<NhomChuyenMon?> get specializedGroup => dbSessionReadOnly((db) async {
-        final query = SelectQuery()
-          ..from("NhomChuyenMon")
-          ..selectAll()
-          ..where("id = ?", [ncm]);
+    final query = SelectQuery()
+      ..from("NhomChuyenMon")
+      ..selectAll()
+      ..where("id = ?", [ncm]);
 
-        final rows = await db.rawQuery(query.build());
-        if (rows.isEmpty) return null;
-        return NhomChuyenMon.fromJson(rows.first);
-      });
+    final rows = await db.rawQuery(query.build());
+    if (rows.isEmpty) return null;
+    return NhomChuyenMon.fromJson(rows.first);
+  });
 
   // List of teaching courses
   Future<List<HocPhan>> get teachingCourses async {
@@ -610,10 +601,7 @@ class GiangVien with _$GiangVien {
   Future<void> addTeachingCourse(String courseId) async {
     final query = InsertQuery()
       ..into("DangKyGiangDay")
-      ..insert({
-        "idGiangVien": id,
-        "maHocPhan": courseId,
-      });
+      ..insert({"idGiangVien": id, "maHocPhan": courseId});
 
     final sql = query.build();
 
@@ -622,6 +610,7 @@ class GiangVien with _$GiangVien {
     });
   }
 
+  // Create new
   Future<void> create() =>
       _create(table: table, idField: idField, toJson: toJson);
 
@@ -629,10 +618,7 @@ class GiangVien with _$GiangVien {
   Future<void> removeTeachingCourse(String courseId) async {
     final query = DeleteQuery()
       ..deleteFrom("DangKyGiangDay")
-      ..where(
-        "idGiangVien = ? AND maHocPhan = ?",
-        [id, courseId],
-      );
+      ..where("idGiangVien = ? AND maHocPhan = ?", [id, courseId]);
 
     final sql = query.build();
 
@@ -641,32 +627,60 @@ class GiangVien with _$GiangVien {
     });
   }
 
-  Future<GiangVien> setGioiTinh(GioiTinh? gioiTinh) async {
-    var query = UpdateQuery()
-      ..update(table)
-      ..setSingle("gioiTinh", gioiTinh?.value)
-      ..where("id = ?", [id]);
-
-    final sql = query.build();
-    await dbSession((db) async {
-      await db.rawUpdate(sql);
-    });
-
-    return copyWith(gioiTinh: gioiTinh);
+  // Single field updating
+  Future updateField<T>({required String fieldName, required T value}) async {
+    return _abstractUpdateAttr(
+      table: table,
+      idField: idField,
+      attrName: fieldName,
+      id: id,
+      value: value,
+    );
   }
 
-  Future<GiangVien> setSdt(String? sdt) async {
-    var query = UpdateQuery()
-      ..update(table)
-      ..setSingle("sdt", sdt)
-      ..where("id = ?", [id]);
+  Future updateUniversity(String universityName) async {
+    return updateField(fieldName: "donVi", value: universityName);
+  }
 
-    final sql = query.build();
-    await dbSession((db) async {
-      await db.rawUpdate(sql);
-    });
+  Future updateName(String name) async {
+    return updateField(fieldName: "hoTen", value: name);
+  }
 
-    return copyWith(sdt: sdt);
+  Future updateStaffId(String? staffId) async {
+    return updateField(fieldName: "maCanBo", value: staffId);
+  }
+
+  Future updatePhone(String? phone) async {
+    return updateField(fieldName: "sdt", value: phone);
+  }
+
+  Future updateDateOfBirth(DateTime? date) async {
+    final dateString = date != null ? datetimeToYyyymmdd(date) : null;
+    updateField(fieldName: "ngaySinh", value: dateString);
+  }
+
+  Future updateEmail(String? email) async {
+    return updateField(fieldName: "email", value: email);
+  }
+
+  Future updateGroup(int? ncm) async {
+    return updateField(fieldName: "ncm", value: ncm);
+  }
+
+  Future updateGender(GioiTinh? gender) async {
+    return updateField(fieldName: "gioiTinh", value: gender?.value);
+  }
+
+  Future updateTaxCode(String? taxCode) async {
+    return updateField(fieldName: "mst", value: taxCode);
+  }
+
+  Future updateBankAccount(String? bankAccount) async {
+    return updateField(fieldName: "stk", value: bankAccount);
+  }
+
+  Future updateBankName(String? bankName) async {
+    return updateField(fieldName: "nganHang", value: bankName);
   }
 
   Future<void> update() =>
@@ -701,7 +715,11 @@ class GiangVien with _$GiangVien {
 
   // CRUDs
   static Future<GiangVien> getById(id) => _getById(
-      id: id, table: table, idField: idField, fromJson: GiangVien.fromJson);
+    id: id,
+    table: table,
+    idField: idField,
+    fromJson: GiangVien.fromJson,
+  );
 
   // Tất cả giảng viên
   static Future<List<GiangVien>> search(
@@ -715,14 +733,17 @@ class GiangVien with _$GiangVien {
     if (searchKeyword == "") return [];
 
     if (searchKeyword != null && searchKeyword != "") {
+      if (searchKeyword.length < 3) {
+        searchKeyword = searchKeyword.padRight(3, ".");
+      }
       final sanitized = searchKeyword.replaceAll(".", "*").replaceAll("@", "*");
       final rowid = SelectQuery()
         ..select(["ROWID"])
         ..from("fts_GiangVien")
-        ..where(
-          "fts_GiangVien MATCH ? or fts_GiangVien MATCH ?",
-          [sanitized, quoted(searchKeyword)],
-        );
+        ..where("fts_GiangVien MATCH ? or fts_GiangVien MATCH ?", [
+          sanitized,
+          quoted(searchKeyword),
+        ]);
       query.where("id in ?", [rowid]);
     }
 
@@ -915,9 +936,7 @@ class HocKy with _$HocKy {
     return closest;
   }
 
-  static FutureOr<List<HocKy>> search({
-    required String searchQuery,
-  }) async {
+  static FutureOr<List<HocKy>> search({required String searchQuery}) async {
     if (searchQuery.trim().isEmpty) {
       return [];
     }
@@ -980,10 +999,7 @@ class HocPhan with _$HocPhan {
   Future<bool> addTeachingStaff(int teacherId) async {
     final query = InsertQuery()
       ..into("DangKyGiangDay")
-      ..insert({
-        "maHocPhan": maHocPhan,
-        "idGiangVien": teacherId,
-      });
+      ..insert({"maHocPhan": maHocPhan, "idGiangVien": teacherId});
 
     final sql = query.build();
 
@@ -1002,10 +1018,7 @@ class HocPhan with _$HocPhan {
   Future<bool> removeTeachingStaff(int teacherId) async {
     final query = DeleteQuery()
       ..deleteFrom("DangKyGiangDay")
-      ..where(
-        "maHocPhan = ? AND idGiangVien = ?",
-        [maHocPhan, teacherId],
-      );
+      ..where("maHocPhan = ? AND idGiangVien = ?", [maHocPhan, teacherId]);
 
     final sql = query.build();
 
@@ -1023,17 +1036,15 @@ class HocPhan with _$HocPhan {
   @override
   toString() => "$maHocPhan $tenTiengViet $khoiLuong";
 
-  static Future<List<HocPhan>> all() => _all(
-        table: table,
-        fromJson: HocPhan.fromJson,
-      );
+  static Future<List<HocPhan>> all() =>
+      _all(table: table, fromJson: HocPhan.fromJson);
 
   static Future<HocPhan> getById(String id) => _getById(
-        id: id,
-        table: table,
-        idField: idField,
-        fromJson: HocPhan.fromJson,
-      );
+    id: id,
+    table: table,
+    idField: idField,
+    fromJson: HocPhan.fromJson,
+  );
 
   static Future<List<HocPhan>> search(String query) async {
     if (query.trim().isEmpty) {
@@ -1185,7 +1196,11 @@ class HocVien with _$HocVien {
   }
 
   static Future<HocVien> getById(int id) => _getById(
-      id: id, table: table, idField: idField, fromJson: HocVien.fromJson);
+    id: id,
+    table: table,
+    idField: idField,
+    fromJson: HocVien.fromJson,
+  );
   static Future<HocVien> getByMaHocVien(String maHocVien) {
     return _getById(
       id: maHocVien,
@@ -1345,17 +1360,11 @@ class LopTinChi with _$LopTinChi {
     return maLopHoc?.replaceFirst(hp.maHocPhan, hp.tenTiengViet) ?? "";
   }
 
-  Future<void> create() => _create(
-        table: LopTinChi.table,
-        idField: "id",
-        toJson: toJson,
-      );
+  Future<void> create() =>
+      _create(table: LopTinChi.table, idField: "id", toJson: toJson);
 
-  Future<void> update() => _update(
-        table: LopTinChi.table,
-        idField: "id",
-        toJson: toJson,
-      );
+  Future<void> update() =>
+      _update(table: LopTinChi.table, idField: "id", toJson: toJson);
 
   Future<void> updateAccessUrl(String url) => _updateAttr("urlTruyCap", url);
   Future<void> updateClassCode(String classCode) =>
@@ -1397,7 +1406,7 @@ class LopTinChi with _$LopTinChi {
 
   static Future<bool> createMultiples(List<LopTinChi> classes) async {
     final allRows = [
-      for (final courseClass in classes) courseClass.toJson()..remove("id")
+      for (final courseClass in classes) courseClass.toJson()..remove("id"),
     ];
     final query = InsertQuery()
       ..into(table)
@@ -1415,18 +1424,18 @@ class LopTinChi with _$LopTinChi {
   }
 
   static Future<LopTinChi> getById(int id) => _getById(
-        id: id,
-        table: table,
-        idField: "id",
-        fromJson: LopTinChi.fromJson,
-      );
+    id: id,
+    table: table,
+    idField: "id",
+    fromJson: LopTinChi.fromJson,
+  );
 
   static Future<LopTinChi?> getByMaLop(String maLopHoc) => _getById(
-        id: maLopHoc,
-        table: table,
-        idField: "maLopHoc",
-        fromJson: LopTinChi.fromJson,
-      );
+    id: maLopHoc,
+    table: table,
+    idField: "maLopHoc",
+    fromJson: LopTinChi.fromJson,
+  );
 
   static Future<List<LopTinChi>> getBySemester(HocKy semester) async {
     final query = SelectQuery()
@@ -1521,10 +1530,8 @@ enum NgayTrongTuan {
 @freezed
 class NhomChuyenMon with _$NhomChuyenMon {
   static const table = "NhomChuyenMon";
-  const factory NhomChuyenMon({
-    required int id,
-    required String tenNhom,
-  }) = _NhomChuyenMon;
+  const factory NhomChuyenMon({required int id, required String tenNhom}) =
+      _NhomChuyenMon;
 
   factory NhomChuyenMon.fromJson(Map<String, dynamic> json) =>
       _$NhomChuyenMonFromJson(json);
@@ -1533,9 +1540,7 @@ class NhomChuyenMon with _$NhomChuyenMon {
 @freezed
 class NienKhoa with _$NienKhoa {
   static const table = "NienKhoa";
-  const factory NienKhoa({
-    required String nienKhoa,
-  }) = _NienKhoa;
+  const factory NienKhoa({required String nienKhoa}) = _NienKhoa;
 
   factory NienKhoa.fromJson(Map<String, dynamic> json) =>
       _$NienKhoaFromJson(json);
@@ -1662,9 +1667,9 @@ enum TrangThaiLopTinChi {
 
   @override
   toString() => switch (this) {
-        TrangThaiLopTinChi.huy => "Hủy",
-        TrangThaiLopTinChi.binhThuong => "Bình thường",
-      };
+    TrangThaiLopTinChi.huy => "Hủy",
+    TrangThaiLopTinChi.binhThuong => "Bình thường",
+  };
 }
 
 enum VaiTroHoiDong {

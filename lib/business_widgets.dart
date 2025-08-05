@@ -48,11 +48,11 @@ class DialogSelectGender extends StatelessWidget {
   }
 }
 
-class GenderSelectionListTile extends StatefulWidget {
+class GenderTile extends StatefulWidget {
   final GioiTinh? initialGender;
   final ValueChanged<GioiTinh?>? onSelect;
   final Widget? leading;
-  const GenderSelectionListTile({
+  const GenderTile({
     super.key,
     this.initialGender,
     this.onSelect,
@@ -60,11 +60,10 @@ class GenderSelectionListTile extends StatefulWidget {
   });
 
   @override
-  State<GenderSelectionListTile> createState() =>
-      _GenderSelectionListTileState();
+  State<GenderTile> createState() => _GenderTileState();
 }
 
-class _GenderSelectionListTileState extends State<GenderSelectionListTile> {
+class _GenderTileState extends State<GenderTile> {
   late GioiTinh? gender;
 
   @override

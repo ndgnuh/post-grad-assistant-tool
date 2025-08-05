@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'datamodels.dart';
 
 import '../business/domain_objects.dart';
-import '../shortcuts.dart';
 
 import 'pages/lop_tin_chi.dart' show PageLopTinChi;
 import 'pages/home.dart' show HomePage;
@@ -77,9 +75,9 @@ import '../preferences.dart' as preferences;
 
 final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
-  false => StudentListPage.routeName,
+  // false => StudentListPage.routeName,
   // false => PageCourseClassList.routeName,
-  // false => TeacherSearchPage.routeName,
+  false => TeacherSearchPage.routeName,
   // false => MobilePageThesisAssignList.routeName,
   // false => SettingsPage.routeName,
   // false => ThesisDefenseRegisterPage.routeName,
@@ -101,21 +99,14 @@ final initialRoute = switch (kReleaseMode) {
 // const initialRoute = PageXetTuyen.routeName;
 
 // const initialRoute = DraftPage.routeName;
-
 // const initialRoute = PageQuanLyGiangVien.routeName;
 // const initialRoute = PageCopyPasta.routeName;
 // const initialRoute = DangKyBaoVePage.routeName;
 // const initialRoute = PageHanCheHocPhan.routeName;
 // const initialRoute = PageLopTinChi.routeName;
 
-// const initialRoute = "/";
-
 const routes = [
-  (
-    route: HomePage.routeName,
-    label: "Trang chính",
-    icon: Icons.home,
-  ),
+  (route: HomePage.routeName, label: "Trang chính", icon: Icons.home),
   (
     route: TeacherSearchPage.routeName,
     label: "Giảng viên (M)",
@@ -126,11 +117,7 @@ const routes = [
     label: "Giảng viên",
     icon: Icons.person,
   ),
-  (
-    route: StudentListPage.routeName,
-    label: "Học viên (v2)",
-    icon: Icons.person,
-  ),
+  (route: StudentListPage.routeName, label: "Học viên", icon: Icons.person),
   (
     route: MobilePageThesisAssignList.routeName,
     label: "Giao đề tài (v2)",
@@ -154,7 +141,7 @@ const routes = [
   (
     route: PageAdmissionList.routeName,
     label: "Xét tuyển (v2)",
-    icon: Icons.person_add
+    icon: Icons.person_add,
   ),
   (
     route: PageLopTinChi.routeName,
@@ -162,25 +149,12 @@ const routes = [
     icon: Icons.class_rounded,
   ),
   (
-    route: QlHocVien.routeName,
-    label: "Học viên",
-    icon: Icons.person,
-  ),
-  (
     route: PageHanCheHocPhan.routeName,
     label: "Hạn chế học phần",
-    icon: Icons.class_rounded
+    icon: Icons.class_rounded,
   ),
-  (
-    route: PageCourseList.routeName,
-    label: "Học phần",
-    icon: Icons.book,
-  ),
-  (
-    route: PageQuanLyDeTai.routeName,
-    label: "Quản lý đề tài",
-    icon: Icons.book,
-  ),
+  (route: PageCourseList.routeName, label: "Học phần", icon: Icons.book),
+  (route: PageQuanLyDeTai.routeName, label: "Quản lý đề tài", icon: Icons.book),
   (
     route: ThesisDefenseRegisterPage.routeName,
     label: "Bảo vệ luận văn",
@@ -201,16 +175,8 @@ const routes = [
     label: "Phân hội đồng bảo vệ",
     icon: Icons.person_add,
   ),
-  (
-    route: PageCopyPasta.routeName,
-    label: "Văn mẫu",
-    icon: Icons.book,
-  ),
-  (
-    route: SettingsPage.routeName,
-    label: "Cài đặt",
-    icon: Icons.settings,
-  ),
+  (route: PageCopyPasta.routeName, label: "Văn mẫu", icon: Icons.book),
+  (route: SettingsPage.routeName, label: "Cài đặt", icon: Icons.settings),
 ];
 
 Widget buildRoute(BuildContext context, RouteSettings settings) {
@@ -388,10 +354,10 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     case DangKyBaoVePage2.routeName:
       switch (args) {
         case (
-            :final DeTaiThacSi deTai,
-            :final GiangVien giangVien,
-            :final HocVien hocVien,
-          ):
+          :final DeTaiThacSi deTai,
+          :final GiangVien giangVien,
+          :final HocVien hocVien,
+        ):
           return DangKyBaoVePage2(
             deTai: deTai,
             giangVien: giangVien,

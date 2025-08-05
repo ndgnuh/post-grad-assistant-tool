@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gutter/flutter_gutter.dart';
 
 import '../../business/domain_objects.dart';
 import '../../business_widgets.dart';
 import '../../custom_widgets.dart';
+import '../../custom_tiles.dart';
 import '../../shortcuts.dart';
 
 const notAvailableText = "N/A";
@@ -25,10 +27,7 @@ class Page extends StatelessWidget {
   static const routeName = "/mobile/teacher_detail";
   final GiangVien teacher; // this is only the initial teacher data
 
-  const Page({
-    super.key,
-    required this.teacher,
-  });
+  const Page({super.key, required this.teacher});
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +43,11 @@ class Page extends StatelessWidget {
           ),
         },
         child: Scaffold(
-          appBar: AppBar(
-            title: const Text("Chi tiết giảng viên"),
-            actions: [],
+          appBar: AppBar(title: const Text("Chi tiết giảng viên"), actions: []),
+          body: Padding(
+            padding: EdgeInsets.all(context.gutter),
+            child: TeacherDetail(initialTeacher: teacher),
           ),
-          body: TeacherDetail(initialTeacher: teacher),
         ),
       ),
     );
@@ -70,9 +69,7 @@ class TeacherDetail extends StatelessWidget {
       if (text != null && text.isNotEmpty) {
         Clipboard.setData(ClipboardData(text: text));
         messenger.hideCurrentSnackBar();
-        messenger.showSnackBar(
-          SnackBar(content: Text("Đã sao chép: $text")),
-        );
+        messenger.showSnackBar(SnackBar(content: Text("Đã sao chép: $text")));
       } else {
         messenger.hideCurrentSnackBar();
         messenger.showSnackBar(
@@ -86,54 +83,38 @@ class TeacherDetail extends StatelessWidget {
     return ListView(
       controller: state.scrollController,
       children: [
-        ListTile(
-          title: Text(
-            "Thông tin cơ bản",
-            style: textTheme.titleSmall?.copyWith(
-              color: ColorScheme.of(context).outline,
-            ),
-          ),
-        ),
-
-        // Họ tên, mã cán bộ, email, số điện thoại, đơn vị, chuyên ngành
-        ListTile(
-          title: Text("Họ tên"),
+        HeadingListTile(title: "Thông tin cơ bản"),
+        StringTile(
+          titleText: "Họ tên",
           leading: const Icon(Icons.person),
-          onLongPress: () => copyToClipboardAndNotify(teacher.hoTen),
-          subtitle: Text(teacher.hoTen),
+          initialValue: teacher.hoTen,
+          onUpdate: (value) => teacher.updateName(value),
         ),
-        GenderSelectionListTile(
+        GenderTile(
           initialGender: teacher.gioiTinh,
           leading: const Icon(null),
-          onSelect: (newGender) async {
-            await teacher.setGioiTinh(newGender);
-          },
+          onSelect: teacher.updateGender,
         ),
-        ListTile(
-          title: Text("Ngày sinh"),
+        DateTile(
+          titleText: "Ngày sinh",
           leading: const Icon(Icons.cake),
-          subtitle: Text(teacher.ngaySinh?.toLocal().toString().split(' ')[0] ??
-              notAvailableText),
+          initialValue: teacher.ngaySinh,
+          onUpdate: (value) => teacher.updateDateOfBirth(value),
         ),
 
         // Thông tin công tác
-        ListTile(
-          title: Text(
-            "Thông tin công tác",
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
-        ),
-        ListTile(
-          title: Text("Mã cán bộ"),
+        HeadingListTile(title: "Thông tin công tác"),
+        StringTile(
+          titleText: "Mã cán bộ",
           leading: const Icon(Icons.card_membership),
-          onLongPress: () => copyToClipboardAndNotify(teacher.maCanBo),
-          subtitle: Text(teacher.maCanBo ?? notAvailableText),
+          initialValue: teacher.maCanBo ?? "N/A",
+          onUpdate: (value) => teacher.updateStaffId(value),
         ),
-        ListTile(
-          title: Text("Đơn vị"),
+        StringTile(
+          titleText: "Đơn vị",
           leading: const Icon(Icons.school),
-          onLongPress: () => copyToClipboardAndNotify(teacher.donVi),
-          subtitle: Text(teacher.donVi ?? notAvailableText),
+          initialValue: teacher.donVi ?? notAvailableText,
+          onUpdate: (value) => teacher.updateUniversity(value),
         ),
         ListTile(
           title: Text("Chuyên ngành"),
@@ -157,52 +138,44 @@ class TeacherDetail extends StatelessWidget {
         ),
 
         // Thông tin liên hệ
-        ListTile(
-          title: Text(
-            "Thông tin liên hệ",
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
-        ),
-        ListTile(
-          title: Text("Email"),
+        HeadingListTile(title: "Thông tin liên hệ"),
+        StringTile(
+          titleText: "Email",
           leading: const Icon(Icons.email),
-          onLongPress: () => copyToClipboardAndNotify(teacher.email),
-          subtitle: Text(teacher.email ?? notAvailableText),
+          initialValue: teacher.email ?? notAvailableText,
+          onUpdate: (value) => teacher.updateEmail(value),
         ),
-        ListTile(
-          title: Text("Số điện thoại"),
+        StringTile(
+          titleText: "Số điện thoại",
           leading: const Icon(Icons.phone),
-          onLongPress: () => copyToClipboardAndNotify(teacher.sdt),
-          subtitle: Text(teacher.sdt ?? notAvailableText),
+          initialValue: teacher.sdt ?? notAvailableText,
+          onUpdate: (value) => teacher.updatePhone(value),
         ),
 
         // Thông tin thanh toán
         // Mã số thuế, tài khoản ngân hàng, tên ngân hàng, chi nhánh
-        HeadingListTile(
-          title: "Thông tin thanh toán",
-        ),
-        ListTile(
-          title: Text("Mã số thuế"),
-          leading: const Icon(Icons.account_balance),
-          onLongPress: () => copyToClipboardAndNotify(teacher.mst),
-          subtitle: Text(teacher.mst ?? notAvailableText),
-        ),
-        ListTile(
-          title: Text("Tài khoản ngân hàng"),
+        HeadingListTile(title: "Thông tin thanh toán"),
+        StringTile(
+          titleText: "Tài khoản ngân hàng",
           leading: const Icon(Icons.account_balance_wallet),
-          onLongPress: () => copyToClipboardAndNotify(teacher.stk),
-          subtitle: Text(teacher.stk ?? notAvailableText),
+          initialValue: teacher.stk ?? notAvailableText,
+          onUpdate: (value) => teacher.updateBankAccount(value),
         ),
-        ListTile(
-          title: Text("Tên ngân hàng"),
+        StringTile(
+          titleText: "Tên ngân hàng",
+          leading: const Icon(Icons.location_city),
+          initialValue: teacher.nganHang ?? notAvailableText,
+          onUpdate: (value) => teacher.updateBankName(value),
+        ),
+        StringTile(
+          titleText: "Mã số thuế",
           leading: const Icon(Icons.account_balance),
-          onLongPress: () => copyToClipboardAndNotify(teacher.nganHang),
-          subtitle: Text(teacher.nganHang ?? notAvailableText),
+          initialValue: teacher.mst ?? notAvailableText,
+          onUpdate: (value) => teacher.updateTaxCode(value),
         ),
 
-        HeadingListTile(
-          title: "Học phần giảng dạy",
-        ),
+        HeadingListTile(title: "Học phần giảng dạy"),
+
         SearchAnchor(
           key: searchAnchorKey,
           searchController: state.searchController,
@@ -221,9 +194,7 @@ class TeacherDetail extends StatelessWidget {
                       teacher.addTeachingCourse(course.maHocPhan);
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Lỗi: ${e.toString()}"),
-                        ),
+                        SnackBar(content: Text("Lỗi: ${e.toString()}")),
                       );
                     }
 
@@ -232,7 +203,7 @@ class TeacherDetail extends StatelessWidget {
                     controller.closeView("");
                     controller.openView();
                   },
-                )
+                ),
             ];
           },
           builder: (context, controller) => ListTile(
@@ -243,14 +214,10 @@ class TeacherDetail extends StatelessWidget {
         ),
         Selector(
           selector: (context, State state) => state.futureTeachingCourses,
-          builder: (
-            context,
-            futureTeachingCourses,
-            child,
-          ) =>
+          builder: (context, futureTeachingCourses, child) =>
               _ListOfTeachingCourses(
-            futureTeachingCourses: state.futureTeachingCourses,
-          ),
+                futureTeachingCourses: state.futureTeachingCourses,
+              ),
         ),
       ],
     );
