@@ -15,7 +15,7 @@ class _State extends ChangeNotifier {
     if (query.trim().isEmpty) {
       listHocVien.addAll(await HocVien.all());
     } else {
-      listHocVien.addAll(await HocVien.search(query));
+      listHocVien.addAll(await HocVien.search(searchQuery: query));
     }
     notifyListeners();
   }

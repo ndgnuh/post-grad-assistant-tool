@@ -14,6 +14,899 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+DangKyHoc _$DangKyHocFromJson(Map<String, dynamic> json) {
+  return _DangKyHoc.fromJson(json);
+}
+
+/// @nodoc
+mixin _$DangKyHoc {
+  int get idLopTinChi => throw _privateConstructorUsedError;
+  int get idHocVien => throw _privateConstructorUsedError;
+  double? get diemQuaTrinh => throw _privateConstructorUsedError;
+  double? get diemCuoiKy => throw _privateConstructorUsedError;
+
+  /// Serializes this DangKyHoc to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of DangKyHoc
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $DangKyHocCopyWith<DangKyHoc> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DangKyHocCopyWith<$Res> {
+  factory $DangKyHocCopyWith(DangKyHoc value, $Res Function(DangKyHoc) then) =
+      _$DangKyHocCopyWithImpl<$Res, DangKyHoc>;
+  @useResult
+  $Res call(
+      {int idLopTinChi,
+      int idHocVien,
+      double? diemQuaTrinh,
+      double? diemCuoiKy});
+}
+
+/// @nodoc
+class _$DangKyHocCopyWithImpl<$Res, $Val extends DangKyHoc>
+    implements $DangKyHocCopyWith<$Res> {
+  _$DangKyHocCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of DangKyHoc
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? idLopTinChi = null,
+    Object? idHocVien = null,
+    Object? diemQuaTrinh = freezed,
+    Object? diemCuoiKy = freezed,
+  }) {
+    return _then(_value.copyWith(
+      idLopTinChi: null == idLopTinChi
+          ? _value.idLopTinChi
+          : idLopTinChi // ignore: cast_nullable_to_non_nullable
+              as int,
+      idHocVien: null == idHocVien
+          ? _value.idHocVien
+          : idHocVien // ignore: cast_nullable_to_non_nullable
+              as int,
+      diemQuaTrinh: freezed == diemQuaTrinh
+          ? _value.diemQuaTrinh
+          : diemQuaTrinh // ignore: cast_nullable_to_non_nullable
+              as double?,
+      diemCuoiKy: freezed == diemCuoiKy
+          ? _value.diemCuoiKy
+          : diemCuoiKy // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$DangKyHocImplCopyWith<$Res>
+    implements $DangKyHocCopyWith<$Res> {
+  factory _$$DangKyHocImplCopyWith(
+          _$DangKyHocImpl value, $Res Function(_$DangKyHocImpl) then) =
+      __$$DangKyHocImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int idLopTinChi,
+      int idHocVien,
+      double? diemQuaTrinh,
+      double? diemCuoiKy});
+}
+
+/// @nodoc
+class __$$DangKyHocImplCopyWithImpl<$Res>
+    extends _$DangKyHocCopyWithImpl<$Res, _$DangKyHocImpl>
+    implements _$$DangKyHocImplCopyWith<$Res> {
+  __$$DangKyHocImplCopyWithImpl(
+      _$DangKyHocImpl _value, $Res Function(_$DangKyHocImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of DangKyHoc
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? idLopTinChi = null,
+    Object? idHocVien = null,
+    Object? diemQuaTrinh = freezed,
+    Object? diemCuoiKy = freezed,
+  }) {
+    return _then(_$DangKyHocImpl(
+      idLopTinChi: null == idLopTinChi
+          ? _value.idLopTinChi
+          : idLopTinChi // ignore: cast_nullable_to_non_nullable
+              as int,
+      idHocVien: null == idHocVien
+          ? _value.idHocVien
+          : idHocVien // ignore: cast_nullable_to_non_nullable
+              as int,
+      diemQuaTrinh: freezed == diemQuaTrinh
+          ? _value.diemQuaTrinh
+          : diemQuaTrinh // ignore: cast_nullable_to_non_nullable
+              as double?,
+      diemCuoiKy: freezed == diemCuoiKy
+          ? _value.diemCuoiKy
+          : diemCuoiKy // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DangKyHocImpl extends _DangKyHoc {
+  _$DangKyHocImpl(
+      {required this.idLopTinChi,
+      required this.idHocVien,
+      this.diemQuaTrinh,
+      this.diemCuoiKy})
+      : super._();
+
+  factory _$DangKyHocImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DangKyHocImplFromJson(json);
+
+  @override
+  final int idLopTinChi;
+  @override
+  final int idHocVien;
+  @override
+  final double? diemQuaTrinh;
+  @override
+  final double? diemCuoiKy;
+
+  @override
+  String toString() {
+    return 'DangKyHoc(idLopTinChi: $idLopTinChi, idHocVien: $idHocVien, diemQuaTrinh: $diemQuaTrinh, diemCuoiKy: $diemCuoiKy)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DangKyHocImpl &&
+            (identical(other.idLopTinChi, idLopTinChi) ||
+                other.idLopTinChi == idLopTinChi) &&
+            (identical(other.idHocVien, idHocVien) ||
+                other.idHocVien == idHocVien) &&
+            (identical(other.diemQuaTrinh, diemQuaTrinh) ||
+                other.diemQuaTrinh == diemQuaTrinh) &&
+            (identical(other.diemCuoiKy, diemCuoiKy) ||
+                other.diemCuoiKy == diemCuoiKy));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, idLopTinChi, idHocVien, diemQuaTrinh, diemCuoiKy);
+
+  /// Create a copy of DangKyHoc
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DangKyHocImplCopyWith<_$DangKyHocImpl> get copyWith =>
+      __$$DangKyHocImplCopyWithImpl<_$DangKyHocImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DangKyHocImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _DangKyHoc extends DangKyHoc {
+  factory _DangKyHoc(
+      {required final int idLopTinChi,
+      required final int idHocVien,
+      final double? diemQuaTrinh,
+      final double? diemCuoiKy}) = _$DangKyHocImpl;
+  _DangKyHoc._() : super._();
+
+  factory _DangKyHoc.fromJson(Map<String, dynamic> json) =
+      _$DangKyHocImpl.fromJson;
+
+  @override
+  int get idLopTinChi;
+  @override
+  int get idHocVien;
+  @override
+  double? get diemQuaTrinh;
+  @override
+  double? get diemCuoiKy;
+
+  /// Create a copy of DangKyHoc
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$DangKyHocImplCopyWith<_$DangKyHocImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+DeTaiThacSi _$DeTaiThacSiFromJson(Map<String, dynamic> json) {
+  return _DeTaiThacSi.fromJson(json);
+}
+
+/// @nodoc
+mixin _$DeTaiThacSi {
+  int? get id => throw _privateConstructorUsedError;
+  int get idGiangVien => throw _privateConstructorUsedError;
+  String get tenTiengViet => throw _privateConstructorUsedError;
+  String get tenTiengAnh => throw _privateConstructorUsedError;
+  GiangVien get giangVien => throw _privateConstructorUsedError;
+  int? get idHocVien => throw _privateConstructorUsedError;
+  HocVien? get hocVien => throw _privateConstructorUsedError;
+  int? get idChuTich => throw _privateConstructorUsedError;
+  int? get idPhanBien1 => throw _privateConstructorUsedError;
+  int? get idPhanBien2 => throw _privateConstructorUsedError;
+  int? get idUyVien => throw _privateConstructorUsedError;
+  int? get idThuKy => throw _privateConstructorUsedError;
+  @MaybeDateSerializer()
+  DateTime? get ngayGiao => throw _privateConstructorUsedError;
+  String? get soQdGiao => throw _privateConstructorUsedError;
+  @MaybeDateSerializer()
+  DateTime? get hanBaoVe => throw _privateConstructorUsedError;
+  String? get soQdBaoVe => throw _privateConstructorUsedError;
+  @MaybeDateSerializer()
+  DateTime? get ngayBaoVe => throw _privateConstructorUsedError;
+  @JsonKey(name: "flag_tracking")
+  @BoolIntSerializer()
+  bool get flagTracking => throw _privateConstructorUsedError;
+  @JsonKey(name: "flag_payment")
+  @BoolIntSerializer()
+  bool get thanhToan => throw _privateConstructorUsedError;
+  String? get ghiChu => throw _privateConstructorUsedError;
+  String? get group => throw _privateConstructorUsedError;
+  int? get nam => throw _privateConstructorUsedError;
+
+  /// Serializes this DeTaiThacSi to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of DeTaiThacSi
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $DeTaiThacSiCopyWith<DeTaiThacSi> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DeTaiThacSiCopyWith<$Res> {
+  factory $DeTaiThacSiCopyWith(
+          DeTaiThacSi value, $Res Function(DeTaiThacSi) then) =
+      _$DeTaiThacSiCopyWithImpl<$Res, DeTaiThacSi>;
+  @useResult
+  $Res call(
+      {int? id,
+      int idGiangVien,
+      String tenTiengViet,
+      String tenTiengAnh,
+      GiangVien giangVien,
+      int? idHocVien,
+      HocVien? hocVien,
+      int? idChuTich,
+      int? idPhanBien1,
+      int? idPhanBien2,
+      int? idUyVien,
+      int? idThuKy,
+      @MaybeDateSerializer() DateTime? ngayGiao,
+      String? soQdGiao,
+      @MaybeDateSerializer() DateTime? hanBaoVe,
+      String? soQdBaoVe,
+      @MaybeDateSerializer() DateTime? ngayBaoVe,
+      @JsonKey(name: "flag_tracking") @BoolIntSerializer() bool flagTracking,
+      @JsonKey(name: "flag_payment") @BoolIntSerializer() bool thanhToan,
+      String? ghiChu,
+      String? group,
+      int? nam});
+
+  $GiangVienCopyWith<$Res> get giangVien;
+  $HocVienCopyWith<$Res>? get hocVien;
+}
+
+/// @nodoc
+class _$DeTaiThacSiCopyWithImpl<$Res, $Val extends DeTaiThacSi>
+    implements $DeTaiThacSiCopyWith<$Res> {
+  _$DeTaiThacSiCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of DeTaiThacSi
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? idGiangVien = null,
+    Object? tenTiengViet = null,
+    Object? tenTiengAnh = null,
+    Object? giangVien = null,
+    Object? idHocVien = freezed,
+    Object? hocVien = freezed,
+    Object? idChuTich = freezed,
+    Object? idPhanBien1 = freezed,
+    Object? idPhanBien2 = freezed,
+    Object? idUyVien = freezed,
+    Object? idThuKy = freezed,
+    Object? ngayGiao = freezed,
+    Object? soQdGiao = freezed,
+    Object? hanBaoVe = freezed,
+    Object? soQdBaoVe = freezed,
+    Object? ngayBaoVe = freezed,
+    Object? flagTracking = null,
+    Object? thanhToan = null,
+    Object? ghiChu = freezed,
+    Object? group = freezed,
+    Object? nam = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      idGiangVien: null == idGiangVien
+          ? _value.idGiangVien
+          : idGiangVien // ignore: cast_nullable_to_non_nullable
+              as int,
+      tenTiengViet: null == tenTiengViet
+          ? _value.tenTiengViet
+          : tenTiengViet // ignore: cast_nullable_to_non_nullable
+              as String,
+      tenTiengAnh: null == tenTiengAnh
+          ? _value.tenTiengAnh
+          : tenTiengAnh // ignore: cast_nullable_to_non_nullable
+              as String,
+      giangVien: null == giangVien
+          ? _value.giangVien
+          : giangVien // ignore: cast_nullable_to_non_nullable
+              as GiangVien,
+      idHocVien: freezed == idHocVien
+          ? _value.idHocVien
+          : idHocVien // ignore: cast_nullable_to_non_nullable
+              as int?,
+      hocVien: freezed == hocVien
+          ? _value.hocVien
+          : hocVien // ignore: cast_nullable_to_non_nullable
+              as HocVien?,
+      idChuTich: freezed == idChuTich
+          ? _value.idChuTich
+          : idChuTich // ignore: cast_nullable_to_non_nullable
+              as int?,
+      idPhanBien1: freezed == idPhanBien1
+          ? _value.idPhanBien1
+          : idPhanBien1 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      idPhanBien2: freezed == idPhanBien2
+          ? _value.idPhanBien2
+          : idPhanBien2 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      idUyVien: freezed == idUyVien
+          ? _value.idUyVien
+          : idUyVien // ignore: cast_nullable_to_non_nullable
+              as int?,
+      idThuKy: freezed == idThuKy
+          ? _value.idThuKy
+          : idThuKy // ignore: cast_nullable_to_non_nullable
+              as int?,
+      ngayGiao: freezed == ngayGiao
+          ? _value.ngayGiao
+          : ngayGiao // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      soQdGiao: freezed == soQdGiao
+          ? _value.soQdGiao
+          : soQdGiao // ignore: cast_nullable_to_non_nullable
+              as String?,
+      hanBaoVe: freezed == hanBaoVe
+          ? _value.hanBaoVe
+          : hanBaoVe // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      soQdBaoVe: freezed == soQdBaoVe
+          ? _value.soQdBaoVe
+          : soQdBaoVe // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ngayBaoVe: freezed == ngayBaoVe
+          ? _value.ngayBaoVe
+          : ngayBaoVe // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      flagTracking: null == flagTracking
+          ? _value.flagTracking
+          : flagTracking // ignore: cast_nullable_to_non_nullable
+              as bool,
+      thanhToan: null == thanhToan
+          ? _value.thanhToan
+          : thanhToan // ignore: cast_nullable_to_non_nullable
+              as bool,
+      ghiChu: freezed == ghiChu
+          ? _value.ghiChu
+          : ghiChu // ignore: cast_nullable_to_non_nullable
+              as String?,
+      group: freezed == group
+          ? _value.group
+          : group // ignore: cast_nullable_to_non_nullable
+              as String?,
+      nam: freezed == nam
+          ? _value.nam
+          : nam // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ) as $Val);
+  }
+
+  /// Create a copy of DeTaiThacSi
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $GiangVienCopyWith<$Res> get giangVien {
+    return $GiangVienCopyWith<$Res>(_value.giangVien, (value) {
+      return _then(_value.copyWith(giangVien: value) as $Val);
+    });
+  }
+
+  /// Create a copy of DeTaiThacSi
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $HocVienCopyWith<$Res>? get hocVien {
+    if (_value.hocVien == null) {
+      return null;
+    }
+
+    return $HocVienCopyWith<$Res>(_value.hocVien!, (value) {
+      return _then(_value.copyWith(hocVien: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$DeTaiThacSiImplCopyWith<$Res>
+    implements $DeTaiThacSiCopyWith<$Res> {
+  factory _$$DeTaiThacSiImplCopyWith(
+          _$DeTaiThacSiImpl value, $Res Function(_$DeTaiThacSiImpl) then) =
+      __$$DeTaiThacSiImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int? id,
+      int idGiangVien,
+      String tenTiengViet,
+      String tenTiengAnh,
+      GiangVien giangVien,
+      int? idHocVien,
+      HocVien? hocVien,
+      int? idChuTich,
+      int? idPhanBien1,
+      int? idPhanBien2,
+      int? idUyVien,
+      int? idThuKy,
+      @MaybeDateSerializer() DateTime? ngayGiao,
+      String? soQdGiao,
+      @MaybeDateSerializer() DateTime? hanBaoVe,
+      String? soQdBaoVe,
+      @MaybeDateSerializer() DateTime? ngayBaoVe,
+      @JsonKey(name: "flag_tracking") @BoolIntSerializer() bool flagTracking,
+      @JsonKey(name: "flag_payment") @BoolIntSerializer() bool thanhToan,
+      String? ghiChu,
+      String? group,
+      int? nam});
+
+  @override
+  $GiangVienCopyWith<$Res> get giangVien;
+  @override
+  $HocVienCopyWith<$Res>? get hocVien;
+}
+
+/// @nodoc
+class __$$DeTaiThacSiImplCopyWithImpl<$Res>
+    extends _$DeTaiThacSiCopyWithImpl<$Res, _$DeTaiThacSiImpl>
+    implements _$$DeTaiThacSiImplCopyWith<$Res> {
+  __$$DeTaiThacSiImplCopyWithImpl(
+      _$DeTaiThacSiImpl _value, $Res Function(_$DeTaiThacSiImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of DeTaiThacSi
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? idGiangVien = null,
+    Object? tenTiengViet = null,
+    Object? tenTiengAnh = null,
+    Object? giangVien = null,
+    Object? idHocVien = freezed,
+    Object? hocVien = freezed,
+    Object? idChuTich = freezed,
+    Object? idPhanBien1 = freezed,
+    Object? idPhanBien2 = freezed,
+    Object? idUyVien = freezed,
+    Object? idThuKy = freezed,
+    Object? ngayGiao = freezed,
+    Object? soQdGiao = freezed,
+    Object? hanBaoVe = freezed,
+    Object? soQdBaoVe = freezed,
+    Object? ngayBaoVe = freezed,
+    Object? flagTracking = null,
+    Object? thanhToan = null,
+    Object? ghiChu = freezed,
+    Object? group = freezed,
+    Object? nam = freezed,
+  }) {
+    return _then(_$DeTaiThacSiImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      idGiangVien: null == idGiangVien
+          ? _value.idGiangVien
+          : idGiangVien // ignore: cast_nullable_to_non_nullable
+              as int,
+      tenTiengViet: null == tenTiengViet
+          ? _value.tenTiengViet
+          : tenTiengViet // ignore: cast_nullable_to_non_nullable
+              as String,
+      tenTiengAnh: null == tenTiengAnh
+          ? _value.tenTiengAnh
+          : tenTiengAnh // ignore: cast_nullable_to_non_nullable
+              as String,
+      giangVien: null == giangVien
+          ? _value.giangVien
+          : giangVien // ignore: cast_nullable_to_non_nullable
+              as GiangVien,
+      idHocVien: freezed == idHocVien
+          ? _value.idHocVien
+          : idHocVien // ignore: cast_nullable_to_non_nullable
+              as int?,
+      hocVien: freezed == hocVien
+          ? _value.hocVien
+          : hocVien // ignore: cast_nullable_to_non_nullable
+              as HocVien?,
+      idChuTich: freezed == idChuTich
+          ? _value.idChuTich
+          : idChuTich // ignore: cast_nullable_to_non_nullable
+              as int?,
+      idPhanBien1: freezed == idPhanBien1
+          ? _value.idPhanBien1
+          : idPhanBien1 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      idPhanBien2: freezed == idPhanBien2
+          ? _value.idPhanBien2
+          : idPhanBien2 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      idUyVien: freezed == idUyVien
+          ? _value.idUyVien
+          : idUyVien // ignore: cast_nullable_to_non_nullable
+              as int?,
+      idThuKy: freezed == idThuKy
+          ? _value.idThuKy
+          : idThuKy // ignore: cast_nullable_to_non_nullable
+              as int?,
+      ngayGiao: freezed == ngayGiao
+          ? _value.ngayGiao
+          : ngayGiao // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      soQdGiao: freezed == soQdGiao
+          ? _value.soQdGiao
+          : soQdGiao // ignore: cast_nullable_to_non_nullable
+              as String?,
+      hanBaoVe: freezed == hanBaoVe
+          ? _value.hanBaoVe
+          : hanBaoVe // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      soQdBaoVe: freezed == soQdBaoVe
+          ? _value.soQdBaoVe
+          : soQdBaoVe // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ngayBaoVe: freezed == ngayBaoVe
+          ? _value.ngayBaoVe
+          : ngayBaoVe // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      flagTracking: null == flagTracking
+          ? _value.flagTracking
+          : flagTracking // ignore: cast_nullable_to_non_nullable
+              as bool,
+      thanhToan: null == thanhToan
+          ? _value.thanhToan
+          : thanhToan // ignore: cast_nullable_to_non_nullable
+              as bool,
+      ghiChu: freezed == ghiChu
+          ? _value.ghiChu
+          : ghiChu // ignore: cast_nullable_to_non_nullable
+              as String?,
+      group: freezed == group
+          ? _value.group
+          : group // ignore: cast_nullable_to_non_nullable
+              as String?,
+      nam: freezed == nam
+          ? _value.nam
+          : nam // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DeTaiThacSiImpl extends _DeTaiThacSi {
+  const _$DeTaiThacSiImpl(
+      {this.id,
+      required this.idGiangVien,
+      required this.tenTiengViet,
+      required this.tenTiengAnh,
+      required this.giangVien,
+      this.idHocVien,
+      this.hocVien,
+      this.idChuTich,
+      this.idPhanBien1,
+      this.idPhanBien2,
+      this.idUyVien,
+      this.idThuKy,
+      @MaybeDateSerializer() this.ngayGiao,
+      this.soQdGiao,
+      @MaybeDateSerializer() this.hanBaoVe,
+      this.soQdBaoVe,
+      @MaybeDateSerializer() this.ngayBaoVe,
+      @JsonKey(name: "flag_tracking")
+      @BoolIntSerializer()
+      this.flagTracking = false,
+      @JsonKey(name: "flag_payment")
+      @BoolIntSerializer()
+      this.thanhToan = false,
+      this.ghiChu,
+      this.group,
+      this.nam})
+      : super._();
+
+  factory _$DeTaiThacSiImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DeTaiThacSiImplFromJson(json);
+
+  @override
+  final int? id;
+  @override
+  final int idGiangVien;
+  @override
+  final String tenTiengViet;
+  @override
+  final String tenTiengAnh;
+  @override
+  final GiangVien giangVien;
+  @override
+  final int? idHocVien;
+  @override
+  final HocVien? hocVien;
+  @override
+  final int? idChuTich;
+  @override
+  final int? idPhanBien1;
+  @override
+  final int? idPhanBien2;
+  @override
+  final int? idUyVien;
+  @override
+  final int? idThuKy;
+  @override
+  @MaybeDateSerializer()
+  final DateTime? ngayGiao;
+  @override
+  final String? soQdGiao;
+  @override
+  @MaybeDateSerializer()
+  final DateTime? hanBaoVe;
+  @override
+  final String? soQdBaoVe;
+  @override
+  @MaybeDateSerializer()
+  final DateTime? ngayBaoVe;
+  @override
+  @JsonKey(name: "flag_tracking")
+  @BoolIntSerializer()
+  final bool flagTracking;
+  @override
+  @JsonKey(name: "flag_payment")
+  @BoolIntSerializer()
+  final bool thanhToan;
+  @override
+  final String? ghiChu;
+  @override
+  final String? group;
+  @override
+  final int? nam;
+
+  @override
+  String toString() {
+    return 'DeTaiThacSi(id: $id, idGiangVien: $idGiangVien, tenTiengViet: $tenTiengViet, tenTiengAnh: $tenTiengAnh, giangVien: $giangVien, idHocVien: $idHocVien, hocVien: $hocVien, idChuTich: $idChuTich, idPhanBien1: $idPhanBien1, idPhanBien2: $idPhanBien2, idUyVien: $idUyVien, idThuKy: $idThuKy, ngayGiao: $ngayGiao, soQdGiao: $soQdGiao, hanBaoVe: $hanBaoVe, soQdBaoVe: $soQdBaoVe, ngayBaoVe: $ngayBaoVe, flagTracking: $flagTracking, thanhToan: $thanhToan, ghiChu: $ghiChu, group: $group, nam: $nam)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DeTaiThacSiImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.idGiangVien, idGiangVien) ||
+                other.idGiangVien == idGiangVien) &&
+            (identical(other.tenTiengViet, tenTiengViet) ||
+                other.tenTiengViet == tenTiengViet) &&
+            (identical(other.tenTiengAnh, tenTiengAnh) ||
+                other.tenTiengAnh == tenTiengAnh) &&
+            (identical(other.giangVien, giangVien) ||
+                other.giangVien == giangVien) &&
+            (identical(other.idHocVien, idHocVien) ||
+                other.idHocVien == idHocVien) &&
+            (identical(other.hocVien, hocVien) || other.hocVien == hocVien) &&
+            (identical(other.idChuTich, idChuTich) ||
+                other.idChuTich == idChuTich) &&
+            (identical(other.idPhanBien1, idPhanBien1) ||
+                other.idPhanBien1 == idPhanBien1) &&
+            (identical(other.idPhanBien2, idPhanBien2) ||
+                other.idPhanBien2 == idPhanBien2) &&
+            (identical(other.idUyVien, idUyVien) ||
+                other.idUyVien == idUyVien) &&
+            (identical(other.idThuKy, idThuKy) || other.idThuKy == idThuKy) &&
+            (identical(other.ngayGiao, ngayGiao) ||
+                other.ngayGiao == ngayGiao) &&
+            (identical(other.soQdGiao, soQdGiao) ||
+                other.soQdGiao == soQdGiao) &&
+            (identical(other.hanBaoVe, hanBaoVe) ||
+                other.hanBaoVe == hanBaoVe) &&
+            (identical(other.soQdBaoVe, soQdBaoVe) ||
+                other.soQdBaoVe == soQdBaoVe) &&
+            (identical(other.ngayBaoVe, ngayBaoVe) ||
+                other.ngayBaoVe == ngayBaoVe) &&
+            (identical(other.flagTracking, flagTracking) ||
+                other.flagTracking == flagTracking) &&
+            (identical(other.thanhToan, thanhToan) ||
+                other.thanhToan == thanhToan) &&
+            (identical(other.ghiChu, ghiChu) || other.ghiChu == ghiChu) &&
+            (identical(other.group, group) || other.group == group) &&
+            (identical(other.nam, nam) || other.nam == nam));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        idGiangVien,
+        tenTiengViet,
+        tenTiengAnh,
+        giangVien,
+        idHocVien,
+        hocVien,
+        idChuTich,
+        idPhanBien1,
+        idPhanBien2,
+        idUyVien,
+        idThuKy,
+        ngayGiao,
+        soQdGiao,
+        hanBaoVe,
+        soQdBaoVe,
+        ngayBaoVe,
+        flagTracking,
+        thanhToan,
+        ghiChu,
+        group,
+        nam
+      ]);
+
+  /// Create a copy of DeTaiThacSi
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DeTaiThacSiImplCopyWith<_$DeTaiThacSiImpl> get copyWith =>
+      __$$DeTaiThacSiImplCopyWithImpl<_$DeTaiThacSiImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DeTaiThacSiImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _DeTaiThacSi extends DeTaiThacSi {
+  const factory _DeTaiThacSi(
+      {final int? id,
+      required final int idGiangVien,
+      required final String tenTiengViet,
+      required final String tenTiengAnh,
+      required final GiangVien giangVien,
+      final int? idHocVien,
+      final HocVien? hocVien,
+      final int? idChuTich,
+      final int? idPhanBien1,
+      final int? idPhanBien2,
+      final int? idUyVien,
+      final int? idThuKy,
+      @MaybeDateSerializer() final DateTime? ngayGiao,
+      final String? soQdGiao,
+      @MaybeDateSerializer() final DateTime? hanBaoVe,
+      final String? soQdBaoVe,
+      @MaybeDateSerializer() final DateTime? ngayBaoVe,
+      @JsonKey(name: "flag_tracking")
+      @BoolIntSerializer()
+      final bool flagTracking,
+      @JsonKey(name: "flag_payment") @BoolIntSerializer() final bool thanhToan,
+      final String? ghiChu,
+      final String? group,
+      final int? nam}) = _$DeTaiThacSiImpl;
+  const _DeTaiThacSi._() : super._();
+
+  factory _DeTaiThacSi.fromJson(Map<String, dynamic> json) =
+      _$DeTaiThacSiImpl.fromJson;
+
+  @override
+  int? get id;
+  @override
+  int get idGiangVien;
+  @override
+  String get tenTiengViet;
+  @override
+  String get tenTiengAnh;
+  @override
+  GiangVien get giangVien;
+  @override
+  int? get idHocVien;
+  @override
+  HocVien? get hocVien;
+  @override
+  int? get idChuTich;
+  @override
+  int? get idPhanBien1;
+  @override
+  int? get idPhanBien2;
+  @override
+  int? get idUyVien;
+  @override
+  int? get idThuKy;
+  @override
+  @MaybeDateSerializer()
+  DateTime? get ngayGiao;
+  @override
+  String? get soQdGiao;
+  @override
+  @MaybeDateSerializer()
+  DateTime? get hanBaoVe;
+  @override
+  String? get soQdBaoVe;
+  @override
+  @MaybeDateSerializer()
+  DateTime? get ngayBaoVe;
+  @override
+  @JsonKey(name: "flag_tracking")
+  @BoolIntSerializer()
+  bool get flagTracking;
+  @override
+  @JsonKey(name: "flag_payment")
+  @BoolIntSerializer()
+  bool get thanhToan;
+  @override
+  String? get ghiChu;
+  @override
+  String? get group;
+  @override
+  int? get nam;
+
+  /// Create a copy of DeTaiThacSi
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$DeTaiThacSiImplCopyWith<_$DeTaiThacSiImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 GiangVien _$GiangVienFromJson(Map<String, dynamic> json) {
   return _GiangVien.fromJson(json);
 }
@@ -532,225 +1425,6 @@ abstract class _GiangVien extends GiangVien {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GiangVienImplCopyWith<_$GiangVienImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-DangKyHoc _$DangKyHocFromJson(Map<String, dynamic> json) {
-  return _DangKyHoc.fromJson(json);
-}
-
-/// @nodoc
-mixin _$DangKyHoc {
-  int get idLopTinChi => throw _privateConstructorUsedError;
-  int get idHocVien => throw _privateConstructorUsedError;
-  double? get diemQuaTrinh => throw _privateConstructorUsedError;
-  double? get diemCuoiKy => throw _privateConstructorUsedError;
-
-  /// Serializes this DangKyHoc to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of DangKyHoc
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $DangKyHocCopyWith<DangKyHoc> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $DangKyHocCopyWith<$Res> {
-  factory $DangKyHocCopyWith(DangKyHoc value, $Res Function(DangKyHoc) then) =
-      _$DangKyHocCopyWithImpl<$Res, DangKyHoc>;
-  @useResult
-  $Res call(
-      {int idLopTinChi,
-      int idHocVien,
-      double? diemQuaTrinh,
-      double? diemCuoiKy});
-}
-
-/// @nodoc
-class _$DangKyHocCopyWithImpl<$Res, $Val extends DangKyHoc>
-    implements $DangKyHocCopyWith<$Res> {
-  _$DangKyHocCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of DangKyHoc
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? idLopTinChi = null,
-    Object? idHocVien = null,
-    Object? diemQuaTrinh = freezed,
-    Object? diemCuoiKy = freezed,
-  }) {
-    return _then(_value.copyWith(
-      idLopTinChi: null == idLopTinChi
-          ? _value.idLopTinChi
-          : idLopTinChi // ignore: cast_nullable_to_non_nullable
-              as int,
-      idHocVien: null == idHocVien
-          ? _value.idHocVien
-          : idHocVien // ignore: cast_nullable_to_non_nullable
-              as int,
-      diemQuaTrinh: freezed == diemQuaTrinh
-          ? _value.diemQuaTrinh
-          : diemQuaTrinh // ignore: cast_nullable_to_non_nullable
-              as double?,
-      diemCuoiKy: freezed == diemCuoiKy
-          ? _value.diemCuoiKy
-          : diemCuoiKy // ignore: cast_nullable_to_non_nullable
-              as double?,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$DangKyHocImplCopyWith<$Res>
-    implements $DangKyHocCopyWith<$Res> {
-  factory _$$DangKyHocImplCopyWith(
-          _$DangKyHocImpl value, $Res Function(_$DangKyHocImpl) then) =
-      __$$DangKyHocImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {int idLopTinChi,
-      int idHocVien,
-      double? diemQuaTrinh,
-      double? diemCuoiKy});
-}
-
-/// @nodoc
-class __$$DangKyHocImplCopyWithImpl<$Res>
-    extends _$DangKyHocCopyWithImpl<$Res, _$DangKyHocImpl>
-    implements _$$DangKyHocImplCopyWith<$Res> {
-  __$$DangKyHocImplCopyWithImpl(
-      _$DangKyHocImpl _value, $Res Function(_$DangKyHocImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of DangKyHoc
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? idLopTinChi = null,
-    Object? idHocVien = null,
-    Object? diemQuaTrinh = freezed,
-    Object? diemCuoiKy = freezed,
-  }) {
-    return _then(_$DangKyHocImpl(
-      idLopTinChi: null == idLopTinChi
-          ? _value.idLopTinChi
-          : idLopTinChi // ignore: cast_nullable_to_non_nullable
-              as int,
-      idHocVien: null == idHocVien
-          ? _value.idHocVien
-          : idHocVien // ignore: cast_nullable_to_non_nullable
-              as int,
-      diemQuaTrinh: freezed == diemQuaTrinh
-          ? _value.diemQuaTrinh
-          : diemQuaTrinh // ignore: cast_nullable_to_non_nullable
-              as double?,
-      diemCuoiKy: freezed == diemCuoiKy
-          ? _value.diemCuoiKy
-          : diemCuoiKy // ignore: cast_nullable_to_non_nullable
-              as double?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$DangKyHocImpl extends _DangKyHoc {
-  _$DangKyHocImpl(
-      {required this.idLopTinChi,
-      required this.idHocVien,
-      this.diemQuaTrinh,
-      this.diemCuoiKy})
-      : super._();
-
-  factory _$DangKyHocImpl.fromJson(Map<String, dynamic> json) =>
-      _$$DangKyHocImplFromJson(json);
-
-  @override
-  final int idLopTinChi;
-  @override
-  final int idHocVien;
-  @override
-  final double? diemQuaTrinh;
-  @override
-  final double? diemCuoiKy;
-
-  @override
-  String toString() {
-    return 'DangKyHoc(idLopTinChi: $idLopTinChi, idHocVien: $idHocVien, diemQuaTrinh: $diemQuaTrinh, diemCuoiKy: $diemCuoiKy)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$DangKyHocImpl &&
-            (identical(other.idLopTinChi, idLopTinChi) ||
-                other.idLopTinChi == idLopTinChi) &&
-            (identical(other.idHocVien, idHocVien) ||
-                other.idHocVien == idHocVien) &&
-            (identical(other.diemQuaTrinh, diemQuaTrinh) ||
-                other.diemQuaTrinh == diemQuaTrinh) &&
-            (identical(other.diemCuoiKy, diemCuoiKy) ||
-                other.diemCuoiKy == diemCuoiKy));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType, idLopTinChi, idHocVien, diemQuaTrinh, diemCuoiKy);
-
-  /// Create a copy of DangKyHoc
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$DangKyHocImplCopyWith<_$DangKyHocImpl> get copyWith =>
-      __$$DangKyHocImplCopyWithImpl<_$DangKyHocImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$DangKyHocImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _DangKyHoc extends DangKyHoc {
-  factory _DangKyHoc(
-      {required final int idLopTinChi,
-      required final int idHocVien,
-      final double? diemQuaTrinh,
-      final double? diemCuoiKy}) = _$DangKyHocImpl;
-  _DangKyHoc._() : super._();
-
-  factory _DangKyHoc.fromJson(Map<String, dynamic> json) =
-      _$DangKyHocImpl.fromJson;
-
-  @override
-  int get idLopTinChi;
-  @override
-  int get idHocVien;
-  @override
-  double? get diemQuaTrinh;
-  @override
-  double? get diemCuoiKy;
-
-  /// Create a copy of DangKyHoc
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$DangKyHocImplCopyWith<_$DangKyHocImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -3680,6 +4354,191 @@ abstract class _NienKhoa implements NienKhoa {
       throw _privateConstructorUsedError;
 }
 
+TeachingRegistration _$TeachingRegistrationFromJson(Map<String, dynamic> json) {
+  return _TeachingRegistration.fromJson(json);
+}
+
+/// @nodoc
+mixin _$TeachingRegistration {
+  @JsonKey(name: "idGiangVien")
+  int get teacherId => throw _privateConstructorUsedError;
+  @JsonKey(name: "maHocPhan")
+  String get courseId => throw _privateConstructorUsedError;
+
+  /// Serializes this TeachingRegistration to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of TeachingRegistration
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $TeachingRegistrationCopyWith<TeachingRegistration> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TeachingRegistrationCopyWith<$Res> {
+  factory $TeachingRegistrationCopyWith(TeachingRegistration value,
+          $Res Function(TeachingRegistration) then) =
+      _$TeachingRegistrationCopyWithImpl<$Res, TeachingRegistration>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: "idGiangVien") int teacherId,
+      @JsonKey(name: "maHocPhan") String courseId});
+}
+
+/// @nodoc
+class _$TeachingRegistrationCopyWithImpl<$Res,
+        $Val extends TeachingRegistration>
+    implements $TeachingRegistrationCopyWith<$Res> {
+  _$TeachingRegistrationCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of TeachingRegistration
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? teacherId = null,
+    Object? courseId = null,
+  }) {
+    return _then(_value.copyWith(
+      teacherId: null == teacherId
+          ? _value.teacherId
+          : teacherId // ignore: cast_nullable_to_non_nullable
+              as int,
+      courseId: null == courseId
+          ? _value.courseId
+          : courseId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$TeachingRegistrationImplCopyWith<$Res>
+    implements $TeachingRegistrationCopyWith<$Res> {
+  factory _$$TeachingRegistrationImplCopyWith(_$TeachingRegistrationImpl value,
+          $Res Function(_$TeachingRegistrationImpl) then) =
+      __$$TeachingRegistrationImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: "idGiangVien") int teacherId,
+      @JsonKey(name: "maHocPhan") String courseId});
+}
+
+/// @nodoc
+class __$$TeachingRegistrationImplCopyWithImpl<$Res>
+    extends _$TeachingRegistrationCopyWithImpl<$Res, _$TeachingRegistrationImpl>
+    implements _$$TeachingRegistrationImplCopyWith<$Res> {
+  __$$TeachingRegistrationImplCopyWithImpl(_$TeachingRegistrationImpl _value,
+      $Res Function(_$TeachingRegistrationImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of TeachingRegistration
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? teacherId = null,
+    Object? courseId = null,
+  }) {
+    return _then(_$TeachingRegistrationImpl(
+      teacherId: null == teacherId
+          ? _value.teacherId
+          : teacherId // ignore: cast_nullable_to_non_nullable
+              as int,
+      courseId: null == courseId
+          ? _value.courseId
+          : courseId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$TeachingRegistrationImpl implements _TeachingRegistration {
+  const _$TeachingRegistrationImpl(
+      {@JsonKey(name: "idGiangVien") required this.teacherId,
+      @JsonKey(name: "maHocPhan") required this.courseId});
+
+  factory _$TeachingRegistrationImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TeachingRegistrationImplFromJson(json);
+
+  @override
+  @JsonKey(name: "idGiangVien")
+  final int teacherId;
+  @override
+  @JsonKey(name: "maHocPhan")
+  final String courseId;
+
+  @override
+  String toString() {
+    return 'TeachingRegistration(teacherId: $teacherId, courseId: $courseId)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TeachingRegistrationImpl &&
+            (identical(other.teacherId, teacherId) ||
+                other.teacherId == teacherId) &&
+            (identical(other.courseId, courseId) ||
+                other.courseId == courseId));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, teacherId, courseId);
+
+  /// Create a copy of TeachingRegistration
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TeachingRegistrationImplCopyWith<_$TeachingRegistrationImpl>
+      get copyWith =>
+          __$$TeachingRegistrationImplCopyWithImpl<_$TeachingRegistrationImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$TeachingRegistrationImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _TeachingRegistration implements TeachingRegistration {
+  const factory _TeachingRegistration(
+          {@JsonKey(name: "idGiangVien") required final int teacherId,
+          @JsonKey(name: "maHocPhan") required final String courseId}) =
+      _$TeachingRegistrationImpl;
+
+  factory _TeachingRegistration.fromJson(Map<String, dynamic> json) =
+      _$TeachingRegistrationImpl.fromJson;
+
+  @override
+  @JsonKey(name: "idGiangVien")
+  int get teacherId;
+  @override
+  @JsonKey(name: "maHocPhan")
+  String get courseId;
+
+  /// Create a copy of TeachingRegistration
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$TeachingRegistrationImplCopyWith<_$TeachingRegistrationImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 TieuBanXetTuyen _$TieuBanXetTuyenFromJson(Map<String, dynamic> json) {
   return _TieuBanXetTuyen.fromJson(json);
 }
@@ -3954,863 +4813,4 @@ abstract class _TieuBanXetTuyen extends TieuBanXetTuyen {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$TieuBanXetTuyenImplCopyWith<_$TieuBanXetTuyenImpl> get copyWith =>
       throw _privateConstructorUsedError;
-}
-
-DeTaiThacSi _$DeTaiThacSiFromJson(Map<String, dynamic> json) {
-  return _DeTaiThacSi.fromJson(json);
-}
-
-/// @nodoc
-mixin _$DeTaiThacSi {
-  int? get id => throw _privateConstructorUsedError;
-  int get idGiangVien => throw _privateConstructorUsedError;
-  String get tenTiengViet => throw _privateConstructorUsedError;
-  String get tenTiengAnh => throw _privateConstructorUsedError;
-  GiangVien get giangVien => throw _privateConstructorUsedError;
-  int? get idHocVien => throw _privateConstructorUsedError;
-  HocVien? get hocVien => throw _privateConstructorUsedError;
-  int? get idChuTich => throw _privateConstructorUsedError;
-  int? get idPhanBien1 => throw _privateConstructorUsedError;
-  int? get idPhanBien2 => throw _privateConstructorUsedError;
-  int? get idUyVien => throw _privateConstructorUsedError;
-  int? get idThuKy => throw _privateConstructorUsedError;
-  @MaybeDateSerializer()
-  DateTime? get ngayGiao => throw _privateConstructorUsedError;
-  String? get soQdGiao => throw _privateConstructorUsedError;
-  @MaybeDateSerializer()
-  DateTime? get hanBaoVe => throw _privateConstructorUsedError;
-  String? get soQdBaoVe => throw _privateConstructorUsedError;
-  @MaybeDateSerializer()
-  DateTime? get ngayBaoVe => throw _privateConstructorUsedError;
-  @JsonKey(name: "flag_tracking")
-  @BoolIntSerializer()
-  bool get flagTracking => throw _privateConstructorUsedError;
-  @JsonKey(name: "flag_payment")
-  @BoolIntSerializer()
-  bool get thanhToan => throw _privateConstructorUsedError;
-  String? get ghiChu => throw _privateConstructorUsedError;
-  String? get group => throw _privateConstructorUsedError;
-  int? get nam => throw _privateConstructorUsedError;
-
-  /// Serializes this DeTaiThacSi to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of DeTaiThacSi
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $DeTaiThacSiCopyWith<DeTaiThacSi> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $DeTaiThacSiCopyWith<$Res> {
-  factory $DeTaiThacSiCopyWith(
-          DeTaiThacSi value, $Res Function(DeTaiThacSi) then) =
-      _$DeTaiThacSiCopyWithImpl<$Res, DeTaiThacSi>;
-  @useResult
-  $Res call(
-      {int? id,
-      int idGiangVien,
-      String tenTiengViet,
-      String tenTiengAnh,
-      GiangVien giangVien,
-      int? idHocVien,
-      HocVien? hocVien,
-      int? idChuTich,
-      int? idPhanBien1,
-      int? idPhanBien2,
-      int? idUyVien,
-      int? idThuKy,
-      @MaybeDateSerializer() DateTime? ngayGiao,
-      String? soQdGiao,
-      @MaybeDateSerializer() DateTime? hanBaoVe,
-      String? soQdBaoVe,
-      @MaybeDateSerializer() DateTime? ngayBaoVe,
-      @JsonKey(name: "flag_tracking") @BoolIntSerializer() bool flagTracking,
-      @JsonKey(name: "flag_payment") @BoolIntSerializer() bool thanhToan,
-      String? ghiChu,
-      String? group,
-      int? nam});
-
-  $GiangVienCopyWith<$Res> get giangVien;
-  $HocVienCopyWith<$Res>? get hocVien;
-}
-
-/// @nodoc
-class _$DeTaiThacSiCopyWithImpl<$Res, $Val extends DeTaiThacSi>
-    implements $DeTaiThacSiCopyWith<$Res> {
-  _$DeTaiThacSiCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of DeTaiThacSi
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = freezed,
-    Object? idGiangVien = null,
-    Object? tenTiengViet = null,
-    Object? tenTiengAnh = null,
-    Object? giangVien = null,
-    Object? idHocVien = freezed,
-    Object? hocVien = freezed,
-    Object? idChuTich = freezed,
-    Object? idPhanBien1 = freezed,
-    Object? idPhanBien2 = freezed,
-    Object? idUyVien = freezed,
-    Object? idThuKy = freezed,
-    Object? ngayGiao = freezed,
-    Object? soQdGiao = freezed,
-    Object? hanBaoVe = freezed,
-    Object? soQdBaoVe = freezed,
-    Object? ngayBaoVe = freezed,
-    Object? flagTracking = null,
-    Object? thanhToan = null,
-    Object? ghiChu = freezed,
-    Object? group = freezed,
-    Object? nam = freezed,
-  }) {
-    return _then(_value.copyWith(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
-      idGiangVien: null == idGiangVien
-          ? _value.idGiangVien
-          : idGiangVien // ignore: cast_nullable_to_non_nullable
-              as int,
-      tenTiengViet: null == tenTiengViet
-          ? _value.tenTiengViet
-          : tenTiengViet // ignore: cast_nullable_to_non_nullable
-              as String,
-      tenTiengAnh: null == tenTiengAnh
-          ? _value.tenTiengAnh
-          : tenTiengAnh // ignore: cast_nullable_to_non_nullable
-              as String,
-      giangVien: null == giangVien
-          ? _value.giangVien
-          : giangVien // ignore: cast_nullable_to_non_nullable
-              as GiangVien,
-      idHocVien: freezed == idHocVien
-          ? _value.idHocVien
-          : idHocVien // ignore: cast_nullable_to_non_nullable
-              as int?,
-      hocVien: freezed == hocVien
-          ? _value.hocVien
-          : hocVien // ignore: cast_nullable_to_non_nullable
-              as HocVien?,
-      idChuTich: freezed == idChuTich
-          ? _value.idChuTich
-          : idChuTich // ignore: cast_nullable_to_non_nullable
-              as int?,
-      idPhanBien1: freezed == idPhanBien1
-          ? _value.idPhanBien1
-          : idPhanBien1 // ignore: cast_nullable_to_non_nullable
-              as int?,
-      idPhanBien2: freezed == idPhanBien2
-          ? _value.idPhanBien2
-          : idPhanBien2 // ignore: cast_nullable_to_non_nullable
-              as int?,
-      idUyVien: freezed == idUyVien
-          ? _value.idUyVien
-          : idUyVien // ignore: cast_nullable_to_non_nullable
-              as int?,
-      idThuKy: freezed == idThuKy
-          ? _value.idThuKy
-          : idThuKy // ignore: cast_nullable_to_non_nullable
-              as int?,
-      ngayGiao: freezed == ngayGiao
-          ? _value.ngayGiao
-          : ngayGiao // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      soQdGiao: freezed == soQdGiao
-          ? _value.soQdGiao
-          : soQdGiao // ignore: cast_nullable_to_non_nullable
-              as String?,
-      hanBaoVe: freezed == hanBaoVe
-          ? _value.hanBaoVe
-          : hanBaoVe // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      soQdBaoVe: freezed == soQdBaoVe
-          ? _value.soQdBaoVe
-          : soQdBaoVe // ignore: cast_nullable_to_non_nullable
-              as String?,
-      ngayBaoVe: freezed == ngayBaoVe
-          ? _value.ngayBaoVe
-          : ngayBaoVe // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      flagTracking: null == flagTracking
-          ? _value.flagTracking
-          : flagTracking // ignore: cast_nullable_to_non_nullable
-              as bool,
-      thanhToan: null == thanhToan
-          ? _value.thanhToan
-          : thanhToan // ignore: cast_nullable_to_non_nullable
-              as bool,
-      ghiChu: freezed == ghiChu
-          ? _value.ghiChu
-          : ghiChu // ignore: cast_nullable_to_non_nullable
-              as String?,
-      group: freezed == group
-          ? _value.group
-          : group // ignore: cast_nullable_to_non_nullable
-              as String?,
-      nam: freezed == nam
-          ? _value.nam
-          : nam // ignore: cast_nullable_to_non_nullable
-              as int?,
-    ) as $Val);
-  }
-
-  /// Create a copy of DeTaiThacSi
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $GiangVienCopyWith<$Res> get giangVien {
-    return $GiangVienCopyWith<$Res>(_value.giangVien, (value) {
-      return _then(_value.copyWith(giangVien: value) as $Val);
-    });
-  }
-
-  /// Create a copy of DeTaiThacSi
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $HocVienCopyWith<$Res>? get hocVien {
-    if (_value.hocVien == null) {
-      return null;
-    }
-
-    return $HocVienCopyWith<$Res>(_value.hocVien!, (value) {
-      return _then(_value.copyWith(hocVien: value) as $Val);
-    });
-  }
-}
-
-/// @nodoc
-abstract class _$$DeTaiThacSiImplCopyWith<$Res>
-    implements $DeTaiThacSiCopyWith<$Res> {
-  factory _$$DeTaiThacSiImplCopyWith(
-          _$DeTaiThacSiImpl value, $Res Function(_$DeTaiThacSiImpl) then) =
-      __$$DeTaiThacSiImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {int? id,
-      int idGiangVien,
-      String tenTiengViet,
-      String tenTiengAnh,
-      GiangVien giangVien,
-      int? idHocVien,
-      HocVien? hocVien,
-      int? idChuTich,
-      int? idPhanBien1,
-      int? idPhanBien2,
-      int? idUyVien,
-      int? idThuKy,
-      @MaybeDateSerializer() DateTime? ngayGiao,
-      String? soQdGiao,
-      @MaybeDateSerializer() DateTime? hanBaoVe,
-      String? soQdBaoVe,
-      @MaybeDateSerializer() DateTime? ngayBaoVe,
-      @JsonKey(name: "flag_tracking") @BoolIntSerializer() bool flagTracking,
-      @JsonKey(name: "flag_payment") @BoolIntSerializer() bool thanhToan,
-      String? ghiChu,
-      String? group,
-      int? nam});
-
-  @override
-  $GiangVienCopyWith<$Res> get giangVien;
-  @override
-  $HocVienCopyWith<$Res>? get hocVien;
-}
-
-/// @nodoc
-class __$$DeTaiThacSiImplCopyWithImpl<$Res>
-    extends _$DeTaiThacSiCopyWithImpl<$Res, _$DeTaiThacSiImpl>
-    implements _$$DeTaiThacSiImplCopyWith<$Res> {
-  __$$DeTaiThacSiImplCopyWithImpl(
-      _$DeTaiThacSiImpl _value, $Res Function(_$DeTaiThacSiImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of DeTaiThacSi
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = freezed,
-    Object? idGiangVien = null,
-    Object? tenTiengViet = null,
-    Object? tenTiengAnh = null,
-    Object? giangVien = null,
-    Object? idHocVien = freezed,
-    Object? hocVien = freezed,
-    Object? idChuTich = freezed,
-    Object? idPhanBien1 = freezed,
-    Object? idPhanBien2 = freezed,
-    Object? idUyVien = freezed,
-    Object? idThuKy = freezed,
-    Object? ngayGiao = freezed,
-    Object? soQdGiao = freezed,
-    Object? hanBaoVe = freezed,
-    Object? soQdBaoVe = freezed,
-    Object? ngayBaoVe = freezed,
-    Object? flagTracking = null,
-    Object? thanhToan = null,
-    Object? ghiChu = freezed,
-    Object? group = freezed,
-    Object? nam = freezed,
-  }) {
-    return _then(_$DeTaiThacSiImpl(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
-      idGiangVien: null == idGiangVien
-          ? _value.idGiangVien
-          : idGiangVien // ignore: cast_nullable_to_non_nullable
-              as int,
-      tenTiengViet: null == tenTiengViet
-          ? _value.tenTiengViet
-          : tenTiengViet // ignore: cast_nullable_to_non_nullable
-              as String,
-      tenTiengAnh: null == tenTiengAnh
-          ? _value.tenTiengAnh
-          : tenTiengAnh // ignore: cast_nullable_to_non_nullable
-              as String,
-      giangVien: null == giangVien
-          ? _value.giangVien
-          : giangVien // ignore: cast_nullable_to_non_nullable
-              as GiangVien,
-      idHocVien: freezed == idHocVien
-          ? _value.idHocVien
-          : idHocVien // ignore: cast_nullable_to_non_nullable
-              as int?,
-      hocVien: freezed == hocVien
-          ? _value.hocVien
-          : hocVien // ignore: cast_nullable_to_non_nullable
-              as HocVien?,
-      idChuTich: freezed == idChuTich
-          ? _value.idChuTich
-          : idChuTich // ignore: cast_nullable_to_non_nullable
-              as int?,
-      idPhanBien1: freezed == idPhanBien1
-          ? _value.idPhanBien1
-          : idPhanBien1 // ignore: cast_nullable_to_non_nullable
-              as int?,
-      idPhanBien2: freezed == idPhanBien2
-          ? _value.idPhanBien2
-          : idPhanBien2 // ignore: cast_nullable_to_non_nullable
-              as int?,
-      idUyVien: freezed == idUyVien
-          ? _value.idUyVien
-          : idUyVien // ignore: cast_nullable_to_non_nullable
-              as int?,
-      idThuKy: freezed == idThuKy
-          ? _value.idThuKy
-          : idThuKy // ignore: cast_nullable_to_non_nullable
-              as int?,
-      ngayGiao: freezed == ngayGiao
-          ? _value.ngayGiao
-          : ngayGiao // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      soQdGiao: freezed == soQdGiao
-          ? _value.soQdGiao
-          : soQdGiao // ignore: cast_nullable_to_non_nullable
-              as String?,
-      hanBaoVe: freezed == hanBaoVe
-          ? _value.hanBaoVe
-          : hanBaoVe // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      soQdBaoVe: freezed == soQdBaoVe
-          ? _value.soQdBaoVe
-          : soQdBaoVe // ignore: cast_nullable_to_non_nullable
-              as String?,
-      ngayBaoVe: freezed == ngayBaoVe
-          ? _value.ngayBaoVe
-          : ngayBaoVe // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      flagTracking: null == flagTracking
-          ? _value.flagTracking
-          : flagTracking // ignore: cast_nullable_to_non_nullable
-              as bool,
-      thanhToan: null == thanhToan
-          ? _value.thanhToan
-          : thanhToan // ignore: cast_nullable_to_non_nullable
-              as bool,
-      ghiChu: freezed == ghiChu
-          ? _value.ghiChu
-          : ghiChu // ignore: cast_nullable_to_non_nullable
-              as String?,
-      group: freezed == group
-          ? _value.group
-          : group // ignore: cast_nullable_to_non_nullable
-              as String?,
-      nam: freezed == nam
-          ? _value.nam
-          : nam // ignore: cast_nullable_to_non_nullable
-              as int?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$DeTaiThacSiImpl extends _DeTaiThacSi {
-  const _$DeTaiThacSiImpl(
-      {this.id,
-      required this.idGiangVien,
-      required this.tenTiengViet,
-      required this.tenTiengAnh,
-      required this.giangVien,
-      this.idHocVien,
-      this.hocVien,
-      this.idChuTich,
-      this.idPhanBien1,
-      this.idPhanBien2,
-      this.idUyVien,
-      this.idThuKy,
-      @MaybeDateSerializer() this.ngayGiao,
-      this.soQdGiao,
-      @MaybeDateSerializer() this.hanBaoVe,
-      this.soQdBaoVe,
-      @MaybeDateSerializer() this.ngayBaoVe,
-      @JsonKey(name: "flag_tracking")
-      @BoolIntSerializer()
-      this.flagTracking = false,
-      @JsonKey(name: "flag_payment")
-      @BoolIntSerializer()
-      this.thanhToan = false,
-      this.ghiChu,
-      this.group,
-      this.nam})
-      : super._();
-
-  factory _$DeTaiThacSiImpl.fromJson(Map<String, dynamic> json) =>
-      _$$DeTaiThacSiImplFromJson(json);
-
-  @override
-  final int? id;
-  @override
-  final int idGiangVien;
-  @override
-  final String tenTiengViet;
-  @override
-  final String tenTiengAnh;
-  @override
-  final GiangVien giangVien;
-  @override
-  final int? idHocVien;
-  @override
-  final HocVien? hocVien;
-  @override
-  final int? idChuTich;
-  @override
-  final int? idPhanBien1;
-  @override
-  final int? idPhanBien2;
-  @override
-  final int? idUyVien;
-  @override
-  final int? idThuKy;
-  @override
-  @MaybeDateSerializer()
-  final DateTime? ngayGiao;
-  @override
-  final String? soQdGiao;
-  @override
-  @MaybeDateSerializer()
-  final DateTime? hanBaoVe;
-  @override
-  final String? soQdBaoVe;
-  @override
-  @MaybeDateSerializer()
-  final DateTime? ngayBaoVe;
-  @override
-  @JsonKey(name: "flag_tracking")
-  @BoolIntSerializer()
-  final bool flagTracking;
-  @override
-  @JsonKey(name: "flag_payment")
-  @BoolIntSerializer()
-  final bool thanhToan;
-  @override
-  final String? ghiChu;
-  @override
-  final String? group;
-  @override
-  final int? nam;
-
-  @override
-  String toString() {
-    return 'DeTaiThacSi(id: $id, idGiangVien: $idGiangVien, tenTiengViet: $tenTiengViet, tenTiengAnh: $tenTiengAnh, giangVien: $giangVien, idHocVien: $idHocVien, hocVien: $hocVien, idChuTich: $idChuTich, idPhanBien1: $idPhanBien1, idPhanBien2: $idPhanBien2, idUyVien: $idUyVien, idThuKy: $idThuKy, ngayGiao: $ngayGiao, soQdGiao: $soQdGiao, hanBaoVe: $hanBaoVe, soQdBaoVe: $soQdBaoVe, ngayBaoVe: $ngayBaoVe, flagTracking: $flagTracking, thanhToan: $thanhToan, ghiChu: $ghiChu, group: $group, nam: $nam)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$DeTaiThacSiImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.idGiangVien, idGiangVien) ||
-                other.idGiangVien == idGiangVien) &&
-            (identical(other.tenTiengViet, tenTiengViet) ||
-                other.tenTiengViet == tenTiengViet) &&
-            (identical(other.tenTiengAnh, tenTiengAnh) ||
-                other.tenTiengAnh == tenTiengAnh) &&
-            (identical(other.giangVien, giangVien) ||
-                other.giangVien == giangVien) &&
-            (identical(other.idHocVien, idHocVien) ||
-                other.idHocVien == idHocVien) &&
-            (identical(other.hocVien, hocVien) || other.hocVien == hocVien) &&
-            (identical(other.idChuTich, idChuTich) ||
-                other.idChuTich == idChuTich) &&
-            (identical(other.idPhanBien1, idPhanBien1) ||
-                other.idPhanBien1 == idPhanBien1) &&
-            (identical(other.idPhanBien2, idPhanBien2) ||
-                other.idPhanBien2 == idPhanBien2) &&
-            (identical(other.idUyVien, idUyVien) ||
-                other.idUyVien == idUyVien) &&
-            (identical(other.idThuKy, idThuKy) || other.idThuKy == idThuKy) &&
-            (identical(other.ngayGiao, ngayGiao) ||
-                other.ngayGiao == ngayGiao) &&
-            (identical(other.soQdGiao, soQdGiao) ||
-                other.soQdGiao == soQdGiao) &&
-            (identical(other.hanBaoVe, hanBaoVe) ||
-                other.hanBaoVe == hanBaoVe) &&
-            (identical(other.soQdBaoVe, soQdBaoVe) ||
-                other.soQdBaoVe == soQdBaoVe) &&
-            (identical(other.ngayBaoVe, ngayBaoVe) ||
-                other.ngayBaoVe == ngayBaoVe) &&
-            (identical(other.flagTracking, flagTracking) ||
-                other.flagTracking == flagTracking) &&
-            (identical(other.thanhToan, thanhToan) ||
-                other.thanhToan == thanhToan) &&
-            (identical(other.ghiChu, ghiChu) || other.ghiChu == ghiChu) &&
-            (identical(other.group, group) || other.group == group) &&
-            (identical(other.nam, nam) || other.nam == nam));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hashAll([
-        runtimeType,
-        id,
-        idGiangVien,
-        tenTiengViet,
-        tenTiengAnh,
-        giangVien,
-        idHocVien,
-        hocVien,
-        idChuTich,
-        idPhanBien1,
-        idPhanBien2,
-        idUyVien,
-        idThuKy,
-        ngayGiao,
-        soQdGiao,
-        hanBaoVe,
-        soQdBaoVe,
-        ngayBaoVe,
-        flagTracking,
-        thanhToan,
-        ghiChu,
-        group,
-        nam
-      ]);
-
-  /// Create a copy of DeTaiThacSi
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$DeTaiThacSiImplCopyWith<_$DeTaiThacSiImpl> get copyWith =>
-      __$$DeTaiThacSiImplCopyWithImpl<_$DeTaiThacSiImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$DeTaiThacSiImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _DeTaiThacSi extends DeTaiThacSi {
-  const factory _DeTaiThacSi(
-      {final int? id,
-      required final int idGiangVien,
-      required final String tenTiengViet,
-      required final String tenTiengAnh,
-      required final GiangVien giangVien,
-      final int? idHocVien,
-      final HocVien? hocVien,
-      final int? idChuTich,
-      final int? idPhanBien1,
-      final int? idPhanBien2,
-      final int? idUyVien,
-      final int? idThuKy,
-      @MaybeDateSerializer() final DateTime? ngayGiao,
-      final String? soQdGiao,
-      @MaybeDateSerializer() final DateTime? hanBaoVe,
-      final String? soQdBaoVe,
-      @MaybeDateSerializer() final DateTime? ngayBaoVe,
-      @JsonKey(name: "flag_tracking")
-      @BoolIntSerializer()
-      final bool flagTracking,
-      @JsonKey(name: "flag_payment") @BoolIntSerializer() final bool thanhToan,
-      final String? ghiChu,
-      final String? group,
-      final int? nam}) = _$DeTaiThacSiImpl;
-  const _DeTaiThacSi._() : super._();
-
-  factory _DeTaiThacSi.fromJson(Map<String, dynamic> json) =
-      _$DeTaiThacSiImpl.fromJson;
-
-  @override
-  int? get id;
-  @override
-  int get idGiangVien;
-  @override
-  String get tenTiengViet;
-  @override
-  String get tenTiengAnh;
-  @override
-  GiangVien get giangVien;
-  @override
-  int? get idHocVien;
-  @override
-  HocVien? get hocVien;
-  @override
-  int? get idChuTich;
-  @override
-  int? get idPhanBien1;
-  @override
-  int? get idPhanBien2;
-  @override
-  int? get idUyVien;
-  @override
-  int? get idThuKy;
-  @override
-  @MaybeDateSerializer()
-  DateTime? get ngayGiao;
-  @override
-  String? get soQdGiao;
-  @override
-  @MaybeDateSerializer()
-  DateTime? get hanBaoVe;
-  @override
-  String? get soQdBaoVe;
-  @override
-  @MaybeDateSerializer()
-  DateTime? get ngayBaoVe;
-  @override
-  @JsonKey(name: "flag_tracking")
-  @BoolIntSerializer()
-  bool get flagTracking;
-  @override
-  @JsonKey(name: "flag_payment")
-  @BoolIntSerializer()
-  bool get thanhToan;
-  @override
-  String? get ghiChu;
-  @override
-  String? get group;
-  @override
-  int? get nam;
-
-  /// Create a copy of DeTaiThacSi
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$DeTaiThacSiImplCopyWith<_$DeTaiThacSiImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-TeachingRegistration _$TeachingRegistrationFromJson(Map<String, dynamic> json) {
-  return _TeachingRegistration.fromJson(json);
-}
-
-/// @nodoc
-mixin _$TeachingRegistration {
-  @JsonKey(name: "idGiangVien")
-  int get teacherId => throw _privateConstructorUsedError;
-  @JsonKey(name: "maHocPhan")
-  String get courseId => throw _privateConstructorUsedError;
-
-  /// Serializes this TeachingRegistration to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of TeachingRegistration
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $TeachingRegistrationCopyWith<TeachingRegistration> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $TeachingRegistrationCopyWith<$Res> {
-  factory $TeachingRegistrationCopyWith(TeachingRegistration value,
-          $Res Function(TeachingRegistration) then) =
-      _$TeachingRegistrationCopyWithImpl<$Res, TeachingRegistration>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: "idGiangVien") int teacherId,
-      @JsonKey(name: "maHocPhan") String courseId});
-}
-
-/// @nodoc
-class _$TeachingRegistrationCopyWithImpl<$Res,
-        $Val extends TeachingRegistration>
-    implements $TeachingRegistrationCopyWith<$Res> {
-  _$TeachingRegistrationCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of TeachingRegistration
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? teacherId = null,
-    Object? courseId = null,
-  }) {
-    return _then(_value.copyWith(
-      teacherId: null == teacherId
-          ? _value.teacherId
-          : teacherId // ignore: cast_nullable_to_non_nullable
-              as int,
-      courseId: null == courseId
-          ? _value.courseId
-          : courseId // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$TeachingRegistrationImplCopyWith<$Res>
-    implements $TeachingRegistrationCopyWith<$Res> {
-  factory _$$TeachingRegistrationImplCopyWith(_$TeachingRegistrationImpl value,
-          $Res Function(_$TeachingRegistrationImpl) then) =
-      __$$TeachingRegistrationImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: "idGiangVien") int teacherId,
-      @JsonKey(name: "maHocPhan") String courseId});
-}
-
-/// @nodoc
-class __$$TeachingRegistrationImplCopyWithImpl<$Res>
-    extends _$TeachingRegistrationCopyWithImpl<$Res, _$TeachingRegistrationImpl>
-    implements _$$TeachingRegistrationImplCopyWith<$Res> {
-  __$$TeachingRegistrationImplCopyWithImpl(_$TeachingRegistrationImpl _value,
-      $Res Function(_$TeachingRegistrationImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of TeachingRegistration
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? teacherId = null,
-    Object? courseId = null,
-  }) {
-    return _then(_$TeachingRegistrationImpl(
-      teacherId: null == teacherId
-          ? _value.teacherId
-          : teacherId // ignore: cast_nullable_to_non_nullable
-              as int,
-      courseId: null == courseId
-          ? _value.courseId
-          : courseId // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$TeachingRegistrationImpl implements _TeachingRegistration {
-  const _$TeachingRegistrationImpl(
-      {@JsonKey(name: "idGiangVien") required this.teacherId,
-      @JsonKey(name: "maHocPhan") required this.courseId});
-
-  factory _$TeachingRegistrationImpl.fromJson(Map<String, dynamic> json) =>
-      _$$TeachingRegistrationImplFromJson(json);
-
-  @override
-  @JsonKey(name: "idGiangVien")
-  final int teacherId;
-  @override
-  @JsonKey(name: "maHocPhan")
-  final String courseId;
-
-  @override
-  String toString() {
-    return 'TeachingRegistration(teacherId: $teacherId, courseId: $courseId)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$TeachingRegistrationImpl &&
-            (identical(other.teacherId, teacherId) ||
-                other.teacherId == teacherId) &&
-            (identical(other.courseId, courseId) ||
-                other.courseId == courseId));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, teacherId, courseId);
-
-  /// Create a copy of TeachingRegistration
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$TeachingRegistrationImplCopyWith<_$TeachingRegistrationImpl>
-      get copyWith =>
-          __$$TeachingRegistrationImplCopyWithImpl<_$TeachingRegistrationImpl>(
-              this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$TeachingRegistrationImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _TeachingRegistration implements TeachingRegistration {
-  const factory _TeachingRegistration(
-          {@JsonKey(name: "idGiangVien") required final int teacherId,
-          @JsonKey(name: "maHocPhan") required final String courseId}) =
-      _$TeachingRegistrationImpl;
-
-  factory _TeachingRegistration.fromJson(Map<String, dynamic> json) =
-      _$TeachingRegistrationImpl.fromJson;
-
-  @override
-  @JsonKey(name: "idGiangVien")
-  int get teacherId;
-  @override
-  @JsonKey(name: "maHocPhan")
-  String get courseId;
-
-  /// Create a copy of TeachingRegistration
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$TeachingRegistrationImplCopyWith<_$TeachingRegistrationImpl>
-      get copyWith => throw _privateConstructorUsedError;
 }

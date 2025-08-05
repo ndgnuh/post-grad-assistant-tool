@@ -804,7 +804,6 @@ Em cần gửi đăng ký lịch học cho Ban Đào tạo. ${pronoun.capitalize
 """;
 
     copy_pasta.copyToClipboard(
-      context: context,
       text: text,
       notification: "Đã copy thông báo xếp lịch",
     );
@@ -834,7 +833,6 @@ Em cần gửi đăng ký lịch học cho Ban Đào tạo. ${pronoun.capitalize
         "${pronoun.greeting}, đợt học cao học tới có một lớp $courseName, số lượng đăng ký là $nreg học viên, thời gian giảng dạy là $teachingTime. ${pronoun.capitalized} có thể dạy lớp này không ạ?";
 
     copy_pasta.copyToClipboard(
-      context: context,
       text: text,
       notification: "Đã copy thông báo mời dạy",
     );

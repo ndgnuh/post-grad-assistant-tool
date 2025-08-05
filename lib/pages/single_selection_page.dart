@@ -124,7 +124,7 @@ class _State<T> extends ChangeNotifier {
   List<T?> get suggestions {
     return [
       initialSelection,
-      if (includeNull) null,
+      if (includeNull && initialSelection != null) null,
       ..._searchResults.where((item) => item != initialSelection),
     ];
   }

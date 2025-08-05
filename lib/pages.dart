@@ -62,8 +62,7 @@ import 'pages/mobile/thesis_list.dart'
 import 'pages/drift_import.dart' show PageImportHocPhan;
 import 'pages/mobile/students.dart' show StudentListPage, StudentDetailPage;
 
-import 'pages/mobile/teacher_list.dart' show MobilePageTeacherList;
-import 'pages/mobile/teacher_detail.dart' show MobilePageTeacherDetail;
+import 'pages/teachers/index.dart' show TeacherSearchPage, TeacherDetailsPage;
 import 'pages/mobile/thesis_assign_list.dart' show MobilePageThesisAssignList;
 
 import 'pages/mobile/select_class_of.dart'
@@ -78,12 +77,12 @@ import '../preferences.dart' as preferences;
 
 final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
-  // false => StudentListPage.routeName,
+  false => StudentListPage.routeName,
   // false => PageCourseClassList.routeName,
-  // false => MobilePageTeacherList.routeName,
+  // false => TeacherSearchPage.routeName,
   // false => MobilePageThesisAssignList.routeName,
   // false => SettingsPage.routeName,
-  false => ThesisDefenseRegisterPage.routeName,
+  // false => ThesisDefenseRegisterPage.routeName,
 };
 
 // const initialRoute = SettingsPage.routeName;
@@ -118,7 +117,7 @@ const routes = [
     icon: Icons.home,
   ),
   (
-    route: MobilePageTeacherList.routeName,
+    route: TeacherSearchPage.routeName,
     label: "Giảng viên (M)",
     icon: Icons.person,
   ),
@@ -259,12 +258,12 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       }
 
     /// Mobiles
-    case MobilePageTeacherList.routeName:
-      return MobilePageTeacherList.initialize();
-    case MobilePageTeacherDetail.routeName:
+    case TeacherSearchPage.routeName:
+      return TeacherSearchPage();
+    case TeacherDetailsPage.routeName:
       return switch (args) {
-        (GiangVien teacher) => MobilePageTeacherDetail(teacher: teacher),
-        _ => const MobilePageTeacherList(),
+        (GiangVien teacher) => TeacherDetailsPage(teacher: teacher),
+        _ => const TeacherSearchPage(),
       };
 
     case MobilePageThesisAssignList.routeName:

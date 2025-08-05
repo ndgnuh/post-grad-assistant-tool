@@ -134,7 +134,6 @@ Future main() async {
         switch (state) {
           case CommonShortcuts state:
             callback(state);
-            print(123);
         }
       },
     );
@@ -170,8 +169,6 @@ Future main() async {
     databaseFactory = databaseFactoryFfi;
   }
 
-  final database = AppDatabase();
-
   const app = MyApp();
 
   runApp(app);
@@ -193,28 +190,26 @@ class MyApp extends StatelessWidget {
     final themes = Themes();
     Get.put<Themes>(themes);
 
-    return GetMaterialApp(
-      locale: locale,
-      theme: themes.light,
-      darkTheme: themes.dark,
-      onReady: () async {
-        final isDarkMode = await getDarkMode();
-        if (isDarkMode) {
-          Get.changeThemeMode(ThemeMode.dark);
-          Get.changeTheme(themes.dark);
-        } else {
-          Get.changeThemeMode(ThemeMode.light);
-          Get.changeTheme(themes.light);
-        }
-      },
-      // themeMode: ThemeMode.dark,
-      // navigatorKey: navigationKey,
-      // scaffoldMessengerKey: messengerKey,
-      initialRoute: initialRoute,
-      debugShowMaterialGrid: false,
-      debugShowCheckedModeBanner: false,
-      // theme: themeData,
-      onGenerateRoute: onGenerateRoute,
+    return SafeArea(
+      child: GetMaterialApp(
+        locale: locale,
+        theme: themes.light,
+        darkTheme: themes.dark,
+        onReady: () async {
+          final isDarkMode = await getDarkMode();
+          if (isDarkMode) {
+            Get.changeThemeMode(ThemeMode.dark);
+            Get.changeTheme(themes.dark);
+          } else {
+            Get.changeThemeMode(ThemeMode.light);
+            Get.changeTheme(themes.light);
+          }
+        },
+        initialRoute: initialRoute,
+        debugShowMaterialGrid: false,
+        debugShowCheckedModeBanner: false,
+        onGenerateRoute: onGenerateRoute,
+      ),
     );
   }
 }

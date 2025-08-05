@@ -3,11 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:get/get.dart';
 
 import '../../business/domain_objects.dart';
 import '../../business_widgets.dart';
 import '../../custom_widgets.dart';
 import '../../business/copy_pasta.dart';
+import '../multiple_selection_page.dart';
 
 import 'select_class_of.dart';
 
@@ -36,93 +38,151 @@ class _State extends ChangeNotifier {
   _State() {
     loadAdmissionList();
   }
-}
 
-enum _CopyMenuAction {
-  emailAll,
-  emailDirectAdmission,
-  emailInterviewAdmission,
-  interviewInvitation,
-  enrollmentConfirmation,
+  @override
+  dispose() {
+    super.dispose();
+    Get.delete<_State>();
+  }
 }
 
 class _CopyMenu extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final messenger = ScaffoldMessenger.of(context);
+  void copyEmail(List<HocVien> admissionList) {
+    final emails = admissionList
+        .map((ad) => ad.email ?? "")
+        .where((email) => email.isNotEmpty)
+        .join("\n");
 
-    copyAndNotify(String text, String message) {
-      Clipboard.setData(ClipboardData(text: text));
-      messenger.showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+    copyToClipboard(
+      text: emails,
+      notification:
+          "Đã sao chép ${admissionList.length} email(s) vào clipboard.",
+    );
+  }
+
+  void copyEmailAll() {
+    final state = Get.find<_State>();
+    copyEmail(state.admissionList);
+  }
+
+  void copyEmailDirectAdmission() {
+    final state = Get.find<_State>();
+    copyEmail(state.directAdmissionList);
+  }
+
+  void copyEmailInterviewAdmission() {
+    final state = Get.find<_State>();
+    copyEmail(state.interviewAdmissionList);
+  }
+
+  void _copyAdmissionRejection() async {
+    final candidateName = await showDialog<String>(
+      context: Get.context!,
+      builder: (context) => TextEditingDialog(
+        title: "Nhập tên ứng viên",
+        initialText: "",
+        keyboardType: TextInputType.text,
+      ),
+    );
+
+    if (candidateName == null || candidateName.isEmpty) {
+      return;
     }
 
-    final state = Provider.of<_State>(context, listen: true);
-    return PopupMenuButton<_CopyMenuAction>(
-      icon: Icon(Icons.copy),
-      itemBuilder: (context) => [
-        PopupMenuItem(
-          value: _CopyMenuAction.interviewInvitation,
-          child: const Text("Lời mời phỏng vấn"),
+    final selectionPage = MultipleSelectionPage<AdmissionCondition>(
+      title: "Chọn lý do không đủ điều kiện",
+      options: AdmissionCondition.values,
+      subtitleBuilder: <T>(condition) => Text(condition.description),
+      titleBuilder: <T>(condition) => Text(condition.unmetDescription),
+    );
+
+    final failedReasons = await Get.to(selectionPage);
+    if (failedReasons == null || failedReasons.isEmpty) {
+      return;
+    }
+
+    copyAdmissionRejection(
+      candidateName: candidateName,
+      unmetConditions: failedReasons ?? [],
+    );
+  }
+
+  void _copyWrongCategoryEmail() async {
+    final candidateName = await showDialog<String>(
+      context: Get.context!,
+      builder: (context) => TextEditingDialog(
+        title: "Nhập tên ứng viên",
+      ),
+    );
+
+    if (candidateName == null || candidateName.isEmpty) {
+      return;
+    }
+
+    copyAdmissionWrongCategory(
+      candidateName: candidateName,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MenuAnchor(
+      builder: (context, controller, _) => IconButton(
+        icon: const Icon(Icons.copy),
+        tooltip: "Sao chép thông tin xét tuyển",
+        onPressed: () => controller.open(),
+      ),
+      menuChildren: [
+        MenuItemButton(
+          onPressed: () => copyAdmissionInterviewInvitation(),
+          child: const ListTile(
+            title: Text("Lời mời phỏng vấn"),
+            leading: Icon(Icons.copy),
+          ),
         ),
-        PopupMenuItem(
-          value: _CopyMenuAction.enrollmentConfirmation,
-          child: const Text("Thông báo trúng tuyển"),
+        MenuItemButton(
+          onPressed: () => copyAdmissionEnrollmentConfirmation(),
+          child: const ListTile(
+            leading: Icon(Icons.copy),
+            title: Text("Thông báo trúng tuyển"),
+          ),
         ),
-        PopupMenuItem(
-          value: _CopyMenuAction.emailAll,
-          child: const Text("Email (tất cả)"),
+        MenuItemButton(
+          onPressed: _copyWrongCategoryEmail,
+          child: const ListTile(
+            leading: Icon(Icons.copy),
+            title: Text("Thông báo sai diện tuyển sinh"),
+          ),
         ),
-        PopupMenuItem(
-          value: _CopyMenuAction.emailDirectAdmission,
-          child: const Text("Email (tích hợp)"),
+        MenuItemButton(
+          onPressed: _copyAdmissionRejection,
+          child: const ListTile(
+            leading: Icon(Icons.copy),
+            title: Text("Thông báo không đủ điều kiện"),
+          ),
         ),
-        PopupMenuItem(
-          value: _CopyMenuAction.emailInterviewAdmission,
-          child: const Text("Email (phỏng vấn)"),
+        MenuItemButton(
+          onPressed: copyEmailAll,
+          child: const ListTile(
+            leading: Icon(Icons.copy),
+            title: Text("Email (tất cả)"),
+          ),
+        ),
+        MenuItemButton(
+          onPressed: copyEmailDirectAdmission,
+          child: const ListTile(
+            leading: Icon(Icons.copy),
+            title: Text("Email (tích hợp)"),
+          ),
+        ),
+        MenuItemButton(
+          onPressed: copyEmailInterviewAdmission,
+          child: const ListTile(
+            leading: Icon(Icons.copy),
+            title: Text("Email (xét tuyển)"),
+          ),
         ),
       ],
-      onSelected: (value) {
-        // Handle the specific actions based on the selected value
-        switch (value) {
-          case _CopyMenuAction.interviewInvitation:
-            copyAdmissionInterviewInvitation(context: context);
-            return;
-          case _CopyMenuAction.enrollmentConfirmation:
-            copyAdmissionEnrollmentConfirmation(context: context);
-            return;
-          default:
-        }
-
-        // Filter the admission list based on the selected action
-        final admissionList = switch (value) {
-          _CopyMenuAction.emailAll => state.admissionList,
-          _CopyMenuAction.emailDirectAdmission => state.directAdmissionList,
-          _CopyMenuAction.emailInterviewAdmission =>
-            state.interviewAdmissionList,
-          _ => [],
-        };
-
-        // Extract emails from the filtered list
-        final emails = admissionList
-            .map((ad) => ad.email ?? "")
-            .where((email) => email.isNotEmpty)
-            .join("\n");
-
-        // If no emails, show a message
-        // Otherwise, copy to clipboard and show a notification
-        if (emails.isEmpty) {
-          messenger.showSnackBar(
-            const SnackBar(content: Text("Không có email nào để sao chép.")),
-          );
-        } else {
-          copyAndNotify(
-            emails,
-            "Đã sao chép ${admissionList.length} email(s) vào clipboard.",
-          );
-        }
-      },
     );
   }
 }
@@ -183,7 +243,7 @@ class PageAdmissionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => _State(),
+      create: (_) => Get.put<_State>(_State()),
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Danh sách xét tuyển"),

@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gutter/flutter_gutter.dart';
 
 import 'datamodels.dart' show toSqliteDate;
 import 'datamodels.dart' show tryFormatHumanDate;
@@ -68,11 +69,7 @@ Flex HBox({List<int>? flex, required List<Widget> children}) {
     direction: Axis.horizontal,
     children: [
       for (final (i, child) in children.indexed)
-        Flexible(
-          fit: FlexFit.tight,
-          flex: flex[i],
-          child: child,
-        )
+        Flexible(fit: FlexFit.tight, flex: flex[i], child: child),
     ],
   );
 }
@@ -100,11 +97,7 @@ Flex VBox({List<int>? flex, required List<Widget> children}) {
     direction: Axis.vertical,
     children: [
       for (final (i, child) in children.indexed)
-        Flexible(
-          fit: FlexFit.tight,
-          flex: flex[i],
-          child: child,
-        )
+        Flexible(fit: FlexFit.tight, flex: flex[i], child: child),
     ],
   );
 }
@@ -129,10 +122,7 @@ class DateEditingDialog extends StatelessWidget {
     );
     return AlertDialog(
       title: Text(title),
-      content: EzDateInput(
-        controller: controller,
-        label: "Ngày",
-      ),
+      content: EzDateInput(controller: controller, label: "Ngày"),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -188,9 +178,7 @@ class EzBox extends StatelessWidget {
     return SizedBox(
       width: width,
       height: height,
-      child: DecoratedBox(
-        decoration: BoxDecoration(color: color),
-      ),
+      child: DecoratedBox(decoration: BoxDecoration(color: color)),
     );
   }
 }
@@ -227,17 +215,15 @@ class EzController<T> extends ChangeNotifier {
   final bool useFormatController = true;
   T? _value;
 
-  EzController({
-    labelFormatter,
-    value,
-  })  : _value = value,
-        _labelFormatter = labelFormatter,
-        formatController = TextEditingController(
-          text: switch ((labelFormatter, value)) {
-            (String Function(T?) fmt, T? value) => fmt(value),
-            _ => "",
-          },
-        );
+  EzController({labelFormatter, value})
+    : _value = value,
+      _labelFormatter = labelFormatter,
+      formatController = TextEditingController(
+        text: switch ((labelFormatter, value)) {
+          (String Function(T?) fmt, T? value) => fmt(value),
+          _ => "",
+        },
+      );
 
   String Function(T?)? get labelFormatter {
     return _labelFormatter;
@@ -313,9 +299,9 @@ class EzCopy extends StatelessWidget {
             recognizer: TapGestureRecognizer()
               ..onTap = () async {
                 await Clipboard.setData(data);
-                messenger.showSnackBar(SnackBar(
-                  content: Text("Đã copy '$text' vào clipboard"),
-                ));
+                messenger.showSnackBar(
+                  SnackBar(content: Text("Đã copy '$text' vào clipboard")),
+                );
               },
           ),
         ],
@@ -385,9 +371,9 @@ class EzDateInput extends StatelessWidget {
         final correctedMonth = (month > 12) ? 12 : month;
         final correctedDate = switch (correctedMonth) {
           2 => switch (year % 4) {
-              0 => day > 29 ? 29 : day, // Leap year
-              _ => day > 28 ? 28 : day, // Non-leap year
-            },
+            0 => day > 29 ? 29 : day, // Leap year
+            _ => day > 28 ? 28 : day, // Non-leap year
+          },
           4 || 6 || 9 || 11 => day > 30 ? 30 : day, // Months with 30 days
           _ => day > 31 ? 31 : day,
         };
@@ -488,13 +474,14 @@ class EzDatePicker extends StatelessWidget {
         hintText: "Click để chọn",
         labelText: label,
       ),
-      controller: controller?.formatController ??
+      controller:
+          controller?.formatController ??
           TextEditingController(text: valueString ?? ""),
       enabled: enabled,
       readOnly: true,
       onTap: switch (readOnly) {
         true => null,
-        false => (() => trigger(context))
+        false => (() => trigger(context)),
       },
     );
   }
@@ -530,11 +517,7 @@ class EzDmyText extends StatelessWidget {
   final DateTime? date;
   final String? placeholder;
 
-  const EzDmyText(
-    this.date, {
-    super.key,
-    this.placeholder = "N/A",
-  });
+  const EzDmyText(this.date, {super.key, this.placeholder = "N/A"});
 
   @override
   Widget build(BuildContext context) {
@@ -705,23 +688,20 @@ class EzFixed extends StatelessWidget {
   Widget build(BuildContext context) {
     final layout = switch (direction) {
       Axis.horizontal => Row(
-          spacing: spacing,
-          mainAxisAlignment: mainAxisAlignment,
-          crossAxisAlignment: crossAxisAlignment,
-          children: children,
-        ),
+        spacing: spacing,
+        mainAxisAlignment: mainAxisAlignment,
+        crossAxisAlignment: crossAxisAlignment,
+        children: children,
+      ),
       Axis.vertical => Column(
-          spacing: spacing,
-          mainAxisAlignment: mainAxisAlignment,
-          crossAxisAlignment: crossAxisAlignment,
-          children: children,
-        ),
+        spacing: spacing,
+        mainAxisAlignment: mainAxisAlignment,
+        crossAxisAlignment: crossAxisAlignment,
+        children: children,
+      ),
     };
 
-    return Container(
-      padding: margin,
-      child: layout,
-    );
+    return Container(padding: margin, child: layout);
   }
 }
 
@@ -759,10 +739,8 @@ class EzFlex extends StatelessWidget {
             Flexible(
               fit: FlexFit.tight,
               flex: flex?[i] ?? 1,
-              child: Container(
-                child: child,
-              ),
-            )
+              child: Container(child: child),
+            ),
         ],
       ),
     );
@@ -773,11 +751,7 @@ class EzFlex extends StatelessWidget {
 class EzHeader extends StatelessWidget {
   final String text;
   final int level;
-  const EzHeader({
-    super.key,
-    required this.text,
-    required this.level,
-  });
+  const EzHeader({super.key, required this.text, required this.level});
 
   double? get fontSize {
     return switch (level) {
@@ -786,17 +760,14 @@ class EzHeader extends StatelessWidget {
       2 => 18.0,
       3 => 15.0,
       4 => 13.0,
-      _ => 24.0
+      _ => 24.0,
     };
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTextStyle.merge(
-      style: TextStyle(
-        fontSize: fontSize,
-        fontWeight: FontWeight.bold,
-      ),
+      style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
       child: Text(text),
     );
   }
@@ -805,11 +776,7 @@ class EzHeader extends StatelessWidget {
 class EzLink extends StatelessWidget {
   final String text;
   final Function() onPressed;
-  const EzLink({
-    super.key,
-    required this.text,
-    required this.onPressed,
-  });
+  const EzLink({super.key, required this.text, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -840,10 +807,7 @@ abstract class EzPage<T extends ChangeNotifier> extends StatelessWidget {
       create: createState,
       child: Scaffold(
         body: Builder(builder: buildBody),
-        appBar: AppBar(
-          leading: BackButton(),
-          title: Text(pageName),
-        ),
+        appBar: AppBar(leading: BackButton(), title: Text(pageName)),
       ),
     );
   }
@@ -865,12 +829,12 @@ class EzSelectionController<T> extends ChangeNotifier {
     List<T> values = const [],
     T? initialSelection,
     labelFormatter = defaultFormatter,
-  })  : _values = values,
-        _value = initialSelection,
-        _labelFormatter = labelFormatter,
-        labelController = TextEditingController(
-          text: labelFormatter(initialSelection),
-        );
+  }) : _values = values,
+       _value = initialSelection,
+       _labelFormatter = labelFormatter,
+       labelController = TextEditingController(
+         text: labelFormatter(initialSelection),
+       );
 
   String get label {
     return _labelFormatter(_value);
@@ -910,11 +874,7 @@ class EzSelector<S, T> extends StatelessWidget {
   final T Function(BuildContext, S) selector;
   final Widget Function(BuildContext, S, T, Widget?) builder;
 
-  const EzSelector({
-    super.key,
-    required this.builder,
-    required this.selector,
-  });
+  const EzSelector({super.key, required this.builder, required this.selector});
 
   @override
   Widget build(BuildContext context) {
@@ -966,9 +926,7 @@ class EzTable<T> extends StatelessWidget {
       border: border ?? TableBorder.all(),
       children: [
         // Headers
-        TableRow(
-          children: _headers(context),
-        ),
+        TableRow(children: _headers(context)),
         // Data rows
         for (final (rowCount, row) in data.indexed)
           TableRow(
@@ -977,15 +935,15 @@ class EzTable<T> extends StatelessWidget {
                 switch (data) {
                   Widget widget => widget,
                   _ => Container(
-                      padding: padding,
-                      alignment: alignments?[colCount] ?? Alignment.center,
-                      child: Text(
-                        data?.toString() ?? "",
-                        softWrap: dataWrap,
-                        textAlign: textAligns?[colCount] ?? TextAlign.center,
-                      ),
-                    )
-                }
+                    padding: padding,
+                    alignment: alignments?[colCount] ?? Alignment.center,
+                    child: Text(
+                      data?.toString() ?? "",
+                      softWrap: dataWrap,
+                      textAlign: textAligns?[colCount] ?? TextAlign.center,
+                    ),
+                  ),
+                },
             ],
           ),
       ],
@@ -1009,7 +967,7 @@ class EzTable<T> extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              )
+              ),
     ];
   }
 }
@@ -1104,7 +1062,7 @@ class EzTextInput extends StatelessWidget {
           labelText: label,
           floatingLabelBehavior: switch (placeholder) {
             null => FloatingLabelBehavior.auto,
-            _ => FloatingLabelBehavior.always
+            _ => FloatingLabelBehavior.always,
           },
         ),
       ),
@@ -1188,10 +1146,7 @@ abstract class InfoTile<T> extends StatefulWidget {
   State<InfoTile<T>> createState() => _InfoTileState<T>();
 
   // abstract method to tap function
-  Future<T?> onTap({
-    required BuildContext context,
-    required T? currentValue,
-  });
+  Future<T?> onTap({required BuildContext context, required T? currentValue});
 }
 
 class ListOrGrid extends StatelessWidget {
@@ -1351,7 +1306,7 @@ class _EzDropdownState<T> extends State<EzDropdown<T>> {
     final labels = widget.controller.labels;
     final entries = [
       for (final (i, value) in values.indexed)
-        DropdownMenuEntry(value: value, label: labels[i])
+        DropdownMenuEntry(value: value, label: labels[i]),
     ];
     return Focus(
       focusNode: widget.focusNode,
@@ -1385,11 +1340,9 @@ class _EzDropdownState<T> extends State<EzDropdown<T>> {
 
   @override
   void initState() {
-    widget.controller.addListener(
-      () {
-        setState(() {});
-      },
-    );
+    widget.controller.addListener(() {
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -1443,9 +1396,53 @@ extension NonEmptyValue on TextEditingController {
 extension ScaffoldMessengerEzMesage on ScaffoldMessengerState {
   void showMessage(String text) {
     hideCurrentSnackBar();
-    showSnackBar(
-      SnackBar(
-        content: Text(text),
+    showSnackBar(SnackBar(content: Text(text)));
+  }
+}
+
+Function debounced_callback<F extends Function>({
+  required F function,
+  required Duration duration,
+}) {
+  var timer = Timer(duration, () {});
+  debounced() {
+    timer.cancel();
+    timer = Timer(duration, () {
+      function();
+    });
+  }
+
+  return debounced as Function;
+}
+
+class IconText extends StatelessWidget {
+  final String text;
+  final IconData icon;
+  final double? iconSize;
+  final Color? iconColor;
+  final TextStyle? style;
+
+  const IconText({
+    super.key,
+    required this.text,
+    required this.icon,
+    this.style,
+    this.iconSize = 16,
+    this.iconColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      overflow: TextOverflow.ellipsis,
+      text: TextSpan(
+        children: [
+          WidgetSpan(
+            child: Icon(icon, size: iconSize ?? 16.0, color: iconColor),
+          ),
+          WidgetSpan(child: SizedBox(width: context.gutterTiny)),
+          TextSpan(text: text, style: style),
+        ],
       ),
     );
   }

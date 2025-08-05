@@ -46,7 +46,7 @@ class DeTaiThsEditingController extends ChangeNotifier {
   final tenTiengAnh = TextEditingController();
   final hocVien = SearchChoiceController(
     nullable: true,
-    searchFunction: HocVien.search,
+    searchFunction: (text) => HocVien.search(searchQuery: text),
     labelFormatter: (HocVien? hv) => switch (hv) {
       null => "Không",
       HocVien hv => "${hv.maHocVien} - ${hv.hoTen}",
