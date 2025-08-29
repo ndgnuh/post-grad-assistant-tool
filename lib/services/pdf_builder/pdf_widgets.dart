@@ -9,6 +9,57 @@ const double inch = PdfPageFormat.inch;
 const double mm = PdfPageFormat.mm;
 const double cm = PdfPageFormat.cm;
 
+enum IsoPageFormat {
+  horizontalA4(),
+  verticalA4(),
+  horizontalA5(),
+  verticalA5();
+
+  PdfPageFormat get pdfPageFormat {
+    final a4Width = 21.0 * PdfPageFormat.cm;
+    final a4Height = 29.7 * PdfPageFormat.cm;
+    final a5Width = 14.8 * PdfPageFormat.cm;
+    final a5Height = 21.0 * PdfPageFormat.cm;
+    switch (this) {
+      case IsoPageFormat.horizontalA4:
+        return PdfPageFormat(a4Height, a4Width);
+      case IsoPageFormat.verticalA4:
+        return PdfPageFormat(a4Width, a4Height);
+      case IsoPageFormat.horizontalA5:
+        return PdfPageFormat(a5Height, a5Width);
+      case IsoPageFormat.verticalA5:
+        return PdfPageFormat(a5Width, a5Height);
+    }
+  }
+}
+
+// class EzMultiPage extends StatelessWidget {
+//   final List<Widget> children;
+//   final IsoPageFormat pageFormat;
+//   final double baseFontSize;
+//
+//   EzMultiPage({
+//     required this.children,
+//     this.pageFormat = IsoPageFormat.horizontalA4,
+//     this.baseFontSize = 11.0,
+//   });
+//
+//   @override
+//   Widget build(Context context) {
+//     final pageFormat_ = switch (pageFormat) {
+//       IsoPageFormat.horizontalA4 => PdfPageFormat.a4.landscape,
+//       IsoPageFormat.verticalA4 => PdfPageFormat.a4,
+//       IsoPageFormat.horizontalA5 => PdfPageFormat.a5.landscape,
+//       IsoPageFormat.verticalA5 => PdfPageFormat.a5,
+//     };
+//
+//     // return MultiPage(
+//     //   pageFormat: pageFormat_,
+//     //   build: (Context context) => children,
+//     // );
+//   }
+// }
+
 class EzTextModifier extends StatelessWidget {
   final String text;
   final double? fontSize;
@@ -54,7 +105,7 @@ class EzItalic extends EzTextModifier {
 
 class EzBoldItalic extends EzTextModifier {
   EzBoldItalic(super.text, {super.fontSize})
-      : super(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic);
+    : super(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic);
 }
 
 /// Provide vertical skip
@@ -90,7 +141,7 @@ class EzDotfillTile extends StatelessWidget {
             height: (theme.defaultTextStyle.fontSize ?? 10) * 0.5,
             borderStyle: BorderStyle.dotted,
           ),
-        )
+        ),
       ],
     );
   }
@@ -197,7 +248,7 @@ class EzTable<T> extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              )
+              ),
     ];
   }
 
@@ -231,10 +282,28 @@ class EzTable<T> extends StatelessWidget {
                           textAlign: textAligns?[colCount] ?? TextAlign.center,
                           style: theme.defaultTextStyle.copyWith(),
                         ),
-                      )
+                      ),
             ],
           ),
       ],
     );
+  }
+}
+
+extension MoneyFormatter on num {
+  String formatMoney() {
+    final String formatted = toString();
+    final characters = formatted.split('');
+
+    final outputChars = <String>[];
+
+    for (final (i, c) in characters.reversed.indexed) {
+      if (i != 0 && i % 3 == 0) {
+        outputChars.add('.');
+      }
+      outputChars.add(c);
+    }
+
+    return outputChars.reversed.join('');
   }
 }

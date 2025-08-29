@@ -1,18 +1,211 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'dart:async';
 
 import 'custom_widgets.dart';
 
+typedef Formatter<T> = String Function(T? value);
+
 final dateFormat = DateFormat("dd/MM/yyyy");
 
-class StringTile extends StatefulWidget {
+/// A class to hold the value returned from a dialog.
+/// This is used to distinguish between a successful dialog result and a cancelled one.
+/// A successful dialog will return a [DialogValue] with the not-[null] property [value].
+/// A cancelled dialog will return [null], while a successful dialog with null value
+/// will return a [DialogValue] with [value] field set to [null].
+class DialogValue<T> {
+  final T? value;
+
+  DialogValue(this.value);
+}
+
+class InformationTile<T> extends StatefulWidget {
+  final String titleText;
+  final Widget? leading;
+  final T? initialValue;
+  final String Function(T? value)? formatValue;
+  final ValueNotifier<T?>? valueNotifier;
+  final ValueChanged<T?>? onUpdate;
+  final bool readOnly;
+  final FutureOr<DialogValue<T>?> Function(
+    BuildContext context,
+    ValueNotifier<T?>,
+  )?
+  showEditingDialog;
+
+  const InformationTile({
+    super.key,
+    required this.titleText,
+    required this.initialValue,
+    this.onUpdate,
+    this.valueNotifier,
+    this.leading,
+    this.readOnly = false,
+    this.formatValue,
+    this.showEditingDialog,
+  });
+
+  @override
+  State<InformationTile<T>> createState() => _InformationTileState<T>();
+}
+
+class _InformationTileState<T> extends State<InformationTile<T>> {
+  late ValueNotifier<T?> valueNotifier;
+
+  T? get value => valueNotifier.value;
+
+  @override
+  initState() {
+    super.initState();
+    valueNotifier = switch (widget.valueNotifier) {
+      null => ValueNotifier(widget.initialValue),
+      ValueNotifier<T?> notifier => notifier,
+    };
+  }
+
+  @override
+  dispose() {
+    super.dispose();
+    if (widget.valueNotifier == null) valueNotifier.dispose();
+  }
+
+  void copyCurrentValue(BuildContext context) {
+    final data = ClipboardData(text: value.toString());
+    Clipboard.setData(data);
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showMessage("Copied $value");
+  }
+
+  void showEditDialog(BuildContext context) async {
+    if (widget.readOnly == true) {
+      return;
+    }
+
+    final dialogValue = await widget.showEditingDialog!(context, valueNotifier);
+    switch (dialogValue) {
+      case DialogValue value:
+        valueNotifier.value = value.value;
+        widget.onUpdate?.call(value.value);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final titleText = widget.titleText;
+    final readOnly = widget.readOnly;
+
+    final editButton = readOnly
+        ? null
+        : IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () => showEditDialog(context),
+          );
+
+    return GestureDetector(
+      onSecondaryTap: () => showEditDialog(context),
+      child: ValueListenableBuilder(
+        valueListenable: valueNotifier,
+        builder: (context, value, child) {
+          final valueText = switch (widget.formatValue) {
+            null => value.toString(),
+            String Function(T? value) formatter => formatter(value),
+          };
+
+          return ListTile(
+            title: Text(titleText),
+            subtitle: Text(valueText),
+            leading: widget.leading,
+            trailing: editButton,
+            onTap: () => copyCurrentValue(context),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class TextEditingDialog2 extends StatelessWidget {
+  final String? initialText;
+  final String title;
+  final bool highlightOnFocus;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+
+  const TextEditingDialog2({
+    super.key,
+    this.initialText,
+    this.highlightOnFocus = true,
+    this.keyboardType,
+    this.inputFormatters,
+    required this.title,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = TextEditingController(text: initialText);
+    if (highlightOnFocus) {
+      controller.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: controller.text.length,
+      );
+    }
+
+    final nav = Navigator.of(context);
+
+    return AlertDialog(
+      title: Text(title),
+      content: TextFormField(
+        controller: controller,
+        autofocus: true,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
+        onSaved: (String? value) => nav.pop(DialogValue(value)),
+        onFieldSubmitted: (String? value) => nav.pop(DialogValue(value)),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => nav.pop(DialogValue(initialText)),
+          child: const Text("Hủy"),
+        ),
+        TextButton(
+          onPressed: () => nav.pop(DialogValue(controller.text)),
+          child: const Text("Lưu"),
+        ),
+      ],
+    );
+  }
+
+  static FutureOr<DialogValue<String>> show({
+    required BuildContext context,
+    required String title,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+    bool highlightOnFocus = true,
+    String? initialValue,
+  }) async {
+    return await showDialog(
+      context: context,
+      builder: (context) => TextEditingDialog2(
+        highlightOnFocus: highlightOnFocus,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
+        title: title,
+        initialText: initialValue,
+      ),
+    );
+  }
+}
+
+class StringTile extends StatelessWidget {
   final String titleText;
   final Widget? leading;
   final String initialValue;
   final ValueNotifier<String>? valueNotifier;
-  final ValueChanged<String>? onUpdate;
+  final ValueChanged<String?>? onUpdate;
   final bool readOnly;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextInputType? keyboardType;
 
   const StringTile({
     super.key,
@@ -22,80 +215,39 @@ class StringTile extends StatefulWidget {
     this.valueNotifier,
     this.leading,
     this.initialValue = "",
+    this.inputFormatters,
+    this.keyboardType,
   });
 
   @override
-  State<StringTile> createState() => _StringTileState();
-}
-
-class _StringTileState extends State<StringTile> {
-  late ValueNotifier<String> valueNotifier;
-
-  String get value => valueNotifier.value;
-
-  @override
-  initState() {
-    super.initState();
-    valueNotifier = switch (widget.valueNotifier) {
-      null => ValueNotifier(widget.initialValue),
-      ValueNotifier<String> notifier => notifier,
-    };
-
-    valueNotifier.addListener(() => setState(() {}));
-  }
-
-  @override
-  dispose() {
-    super.dispose();
-    if (widget.valueNotifier == null) valueNotifier.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final titleText = widget.titleText;
-    final messenger = ScaffoldMessenger.of(context);
-
-    void copyCurrentValue() {
-      final data = ClipboardData(text: value);
-      Clipboard.setData(data);
-      messenger.showMessage("Copied $value");
-    }
-
-    return ListTile(
-      title: Text(titleText),
-      subtitle: Text(valueNotifier.value),
-      leading: widget.leading,
-      trailing: IconButton(icon: Icon(Icons.copy), onPressed: copyCurrentValue),
-      onLongPress: copyCurrentValue,
-      onTap: () async {
-        if (widget.readOnly) {
-          return copyCurrentValue();
-        }
-
-        String? newValue = await TextEditingDialog.show(
+    return InformationTile<String>(
+      titleText: titleText,
+      initialValue: initialValue,
+      valueNotifier: valueNotifier,
+      onUpdate: onUpdate,
+      leading: leading,
+      readOnly: readOnly,
+      formatValue: (value) => value ?? "",
+      showEditingDialog: (context, valueNotifier) async {
+        return await TextEditingDialog2.show(
           title: titleText,
           context: context,
-          initialValue: value,
+          initialValue: valueNotifier.value,
+          inputFormatters: inputFormatters,
+          keyboardType: keyboardType,
         );
-
-        switch (newValue) {
-          case String newString:
-            valueNotifier.value = newString;
-            if (widget.onUpdate is ValueChanged<String>) {
-              widget.onUpdate!(newString);
-            }
-        }
       },
     );
   }
 }
 
-class IntegerTile extends StatefulWidget {
+class IntegerTile extends StatelessWidget {
   final String titleText;
   final Widget? leading;
   final int initialValue;
   final ValueNotifier<int>? valueNotifier;
-  final ValueChanged<int>? onUpdate;
+  final ValueChanged<int?>? onUpdate;
   final bool readOnly;
 
   const IntegerTile({
@@ -109,69 +261,88 @@ class IntegerTile extends StatefulWidget {
   });
 
   @override
-  State<IntegerTile> createState() => _IntegerTileState();
-}
-
-class _IntegerTileState extends State<IntegerTile> {
-  late ValueNotifier<int> valueNotifier;
-
-  int get value => valueNotifier.value;
-
-  @override
-  initState() {
-    super.initState();
-    valueNotifier = switch (widget.valueNotifier) {
-      null => ValueNotifier(widget.initialValue),
-      ValueNotifier<int> notifier => notifier,
-    };
-
-    valueNotifier.addListener(() => setState(() {}));
-  }
-
-  @override
-  dispose() {
-    super.dispose();
-    if (widget.valueNotifier == null) valueNotifier.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final titleText = widget.titleText;
-    final messenger = ScaffoldMessenger.of(context);
-
-    void copyCurrentValue() {
-      final data = ClipboardData(text: value.toString());
-      Clipboard.setData(data);
-      messenger.showMessage("Copied $value");
-    }
-
-    return ListTile(
-      title: Text(titleText),
-      subtitle: Text(value.toString()),
-      leading: widget.leading,
-      trailing: IconButton(icon: Icon(Icons.copy), onPressed: copyCurrentValue),
-      onLongPress: copyCurrentValue,
-      onTap: () async {
-        String? newValue = await TextEditingDialog.show(
+    return InformationTile<int>(
+      titleText: titleText,
+      initialValue: initialValue,
+      valueNotifier: valueNotifier,
+      onUpdate: onUpdate,
+      leading: leading,
+      readOnly: readOnly,
+      formatValue: (value) => value?.toString() ?? "0",
+      showEditingDialog: (context, valueNotifier) async {
+        final dialogValue = await TextEditingDialog2.show(
           title: titleText,
           context: context,
-          initialValue: value.toString(),
+          initialValue: valueNotifier.value.toString(),
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         );
 
-        switch (newValue) {
-          case String newString:
-            try {
-              final int newInt = int.parse(newString);
-              valueNotifier.value = newInt;
-              if (widget.onUpdate is ValueChanged<int>) {
-                widget.onUpdate!(newInt);
-              }
-            } catch (e) {
-              messenger.showMessage("Invalid integer: $newString");
-            }
+        final parsed = int.tryParse(dialogValue.value ?? "");
+        if (parsed != null) {
+          return DialogValue(parsed);
+        } else {
+          return null;
         }
+      },
+    );
+  }
+}
+
+class SingleSelectionTile<T> extends StatelessWidget {
+  final String titleText;
+  final Widget? leading;
+  final T? initialValue;
+  final List<T?> options;
+  final ValueNotifier<T?>? valueNotifier;
+  final ValueChanged<T?>? onUpdate;
+  final Formatter<T>? valueFormatter;
+
+  const SingleSelectionTile({
+    super.key,
+    required this.titleText,
+    required this.options,
+    this.initialValue,
+    this.onUpdate,
+    this.valueNotifier,
+    this.leading,
+    this.valueFormatter,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InformationTile<T>(
+      titleText: titleText,
+      initialValue: initialValue,
+      valueNotifier: valueNotifier,
+      onUpdate: onUpdate,
+      leading: leading,
+      formatValue: valueFormatter ?? (x) => x.toString(),
+      showEditingDialog: (context, valueNotifier) async {
+        return await showDialog<DialogValue<T>?>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(titleText),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final option in options)
+                    RadioListTile<T?>(
+                      title: Text(option.toString()),
+                      value: option,
+                      groupValue: valueNotifier.value,
+                      onChanged: (T? newValue) {
+                        final dialogValue = DialogValue(newValue);
+                        Navigator.of(context).pop(dialogValue);
+                      },
+                    ),
+                ],
+              ),
+            ),
+          ),
+        );
       },
     );
   }

@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,155 +9,266 @@ part of 'phan_cong_hoi_dong_lvths.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
 /// @nodoc
 mixin _$FilterState {
-  bool get showGraduated => throw _privateConstructorUsedError;
-  bool? get showSelected => throw _privateConstructorUsedError;
 
-  /// Create a copy of _FilterState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$FilterStateCopyWith<_FilterState> get copyWith =>
-      throw _privateConstructorUsedError;
+ bool get showGraduated; bool? get showSelected;
+/// Create a copy of _FilterState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$FilterStateCopyWith<_FilterState> get copyWith => __$FilterStateCopyWithImpl<_FilterState>(this as _FilterState, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FilterState&&(identical(other.showGraduated, showGraduated) || other.showGraduated == showGraduated)&&(identical(other.showSelected, showSelected) || other.showSelected == showSelected));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,showGraduated,showSelected);
+
+@override
+String toString() {
+  return '_FilterState(showGraduated: $showGraduated, showSelected: $showSelected)';
+}
+
+
 }
 
 /// @nodoc
-abstract class _$FilterStateCopyWith<$Res> {
-  factory _$FilterStateCopyWith(
-          _FilterState value, $Res Function(_FilterState) then) =
-      __$FilterStateCopyWithImpl<$Res, _FilterState>;
-  @useResult
-  $Res call({bool showGraduated, bool? showSelected});
-}
+abstract mixin class _$FilterStateCopyWith<$Res>  {
+  factory _$FilterStateCopyWith(_FilterState value, $Res Function(_FilterState) _then) = __$FilterStateCopyWithImpl;
+@useResult
+$Res call({
+ bool showGraduated, bool? showSelected
+});
 
+
+
+
+}
 /// @nodoc
-class __$FilterStateCopyWithImpl<$Res, $Val extends _FilterState>
+class __$FilterStateCopyWithImpl<$Res>
     implements _$FilterStateCopyWith<$Res> {
-  __$FilterStateCopyWithImpl(this._value, this._then);
+  __$FilterStateCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final _FilterState _self;
+  final $Res Function(_FilterState) _then;
 
-  /// Create a copy of _FilterState
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? showGraduated = null,
-    Object? showSelected = freezed,
-  }) {
-    return _then(_value.copyWith(
-      showGraduated: null == showGraduated
-          ? _value.showGraduated
-          : showGraduated // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showSelected: freezed == showSelected
-          ? _value.showSelected
-          : showSelected // ignore: cast_nullable_to_non_nullable
-              as bool?,
-    ) as $Val);
-  }
+/// Create a copy of _FilterState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? showGraduated = null,Object? showSelected = freezed,}) {
+  return _then(_self.copyWith(
+showGraduated: null == showGraduated ? _self.showGraduated : showGraduated // ignore: cast_nullable_to_non_nullable
+as bool,showSelected: freezed == showSelected ? _self.showSelected : showSelected // ignore: cast_nullable_to_non_nullable
+as bool?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [_FilterState].
+extension _FilterStatePatterns on _FilterState {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( __FilterState value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case __FilterState() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( __FilterState value)  $default,){
+final _that = this;
+switch (_that) {
+case __FilterState():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( __FilterState value)?  $default,){
+final _that = this;
+switch (_that) {
+case __FilterState() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool showGraduated,  bool? showSelected)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case __FilterState() when $default != null:
+return $default(_that.showGraduated,_that.showSelected);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool showGraduated,  bool? showSelected)  $default,) {final _that = this;
+switch (_that) {
+case __FilterState():
+return $default(_that.showGraduated,_that.showSelected);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool showGraduated,  bool? showSelected)?  $default,) {final _that = this;
+switch (_that) {
+case __FilterState() when $default != null:
+return $default(_that.showGraduated,_that.showSelected);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
-abstract class _$$_FilterStateImplCopyWith<$Res>
-    implements _$FilterStateCopyWith<$Res> {
-  factory _$$_FilterStateImplCopyWith(
-          _$_FilterStateImpl value, $Res Function(_$_FilterStateImpl) then) =
-      __$$_FilterStateImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({bool showGraduated, bool? showSelected});
+
+
+class __FilterState implements _FilterState {
+   __FilterState({this.showGraduated = false, this.showSelected});
+  
+
+@override@JsonKey() final  bool showGraduated;
+@override final  bool? showSelected;
+
+/// Create a copy of _FilterState
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$_FilterStateCopyWith<__FilterState> get copyWith => __$_FilterStateCopyWithImpl<__FilterState>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is __FilterState&&(identical(other.showGraduated, showGraduated) || other.showGraduated == showGraduated)&&(identical(other.showSelected, showSelected) || other.showSelected == showSelected));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,showGraduated,showSelected);
+
+@override
+String toString() {
+  return '_FilterState(showGraduated: $showGraduated, showSelected: $showSelected)';
+}
+
+
 }
 
 /// @nodoc
-class __$$_FilterStateImplCopyWithImpl<$Res>
-    extends __$FilterStateCopyWithImpl<$Res, _$_FilterStateImpl>
-    implements _$$_FilterStateImplCopyWith<$Res> {
-  __$$_FilterStateImplCopyWithImpl(
-      _$_FilterStateImpl _value, $Res Function(_$_FilterStateImpl) _then)
-      : super(_value, _then);
+abstract mixin class _$_FilterStateCopyWith<$Res> implements _$FilterStateCopyWith<$Res> {
+  factory _$_FilterStateCopyWith(__FilterState value, $Res Function(__FilterState) _then) = __$_FilterStateCopyWithImpl;
+@override @useResult
+$Res call({
+ bool showGraduated, bool? showSelected
+});
 
-  /// Create a copy of _FilterState
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? showGraduated = null,
-    Object? showSelected = freezed,
-  }) {
-    return _then(_$_FilterStateImpl(
-      showGraduated: null == showGraduated
-          ? _value.showGraduated
-          : showGraduated // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showSelected: freezed == showSelected
-          ? _value.showSelected
-          : showSelected // ignore: cast_nullable_to_non_nullable
-              as bool?,
-    ));
-  }
+
+
+
 }
-
 /// @nodoc
+class __$_FilterStateCopyWithImpl<$Res>
+    implements _$_FilterStateCopyWith<$Res> {
+  __$_FilterStateCopyWithImpl(this._self, this._then);
 
-class _$_FilterStateImpl implements __FilterState {
-  _$_FilterStateImpl({this.showGraduated = false, this.showSelected});
+  final __FilterState _self;
+  final $Res Function(__FilterState) _then;
 
-  @override
-  @JsonKey()
-  final bool showGraduated;
-  @override
-  final bool? showSelected;
-
-  @override
-  String toString() {
-    return '_FilterState(showGraduated: $showGraduated, showSelected: $showSelected)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$_FilterStateImpl &&
-            (identical(other.showGraduated, showGraduated) ||
-                other.showGraduated == showGraduated) &&
-            (identical(other.showSelected, showSelected) ||
-                other.showSelected == showSelected));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, showGraduated, showSelected);
-
-  /// Create a copy of _FilterState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_FilterStateImplCopyWith<_$_FilterStateImpl> get copyWith =>
-      __$$_FilterStateImplCopyWithImpl<_$_FilterStateImpl>(this, _$identity);
+/// Create a copy of _FilterState
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? showGraduated = null,Object? showSelected = freezed,}) {
+  return _then(__FilterState(
+showGraduated: null == showGraduated ? _self.showGraduated : showGraduated // ignore: cast_nullable_to_non_nullable
+as bool,showSelected: freezed == showSelected ? _self.showSelected : showSelected // ignore: cast_nullable_to_non_nullable
+as bool?,
+  ));
 }
 
-abstract class __FilterState implements _FilterState {
-  factory __FilterState({final bool showGraduated, final bool? showSelected}) =
-      _$_FilterStateImpl;
 
-  @override
-  bool get showGraduated;
-  @override
-  bool? get showSelected;
-
-  /// Create a copy of _FilterState
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$_FilterStateImplCopyWith<_$_FilterStateImpl> get copyWith =>
-      throw _privateConstructorUsedError;
 }
+
+// dart format on

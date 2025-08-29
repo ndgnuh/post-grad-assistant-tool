@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../business/domain_objects.dart';
@@ -32,7 +31,7 @@ class Page extends StatelessWidget {
                   trailing: IconButton(
                     icon: Icon(Icons.arrow_forward),
                     onPressed: () {
-                      Get.toNamed('/council/${thesis.id}');
+                      Navigator.pushNamed(context, '/council/${thesis.id}');
                     },
                   ),
                 ),

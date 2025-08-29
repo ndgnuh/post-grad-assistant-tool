@@ -130,6 +130,8 @@ Future<void> _update<T>({
   });
 }
 
+typedef Cohort = NienKhoa;
+typedef Semester = HocKy;
 typedef ClassOfYear = NienKhoa;
 
 typedef Student = HocVien;
@@ -148,7 +150,7 @@ class BoolIntSerializer implements JsonConverter<bool, int?> {
 }
 
 @freezed
-class DangKyHoc with _$DangKyHoc {
+abstract class DangKyHoc with _$DangKyHoc {
   static const table = "DangKyHoc";
   factory DangKyHoc({
     required int idLopTinChi,
@@ -189,16 +191,34 @@ class DateSerializer implements JsonConverter<DateTime, String> {
 }
 
 @freezed
-class DeTaiThacSi with _$DeTaiThacSi {
+abstract class ThesisProxy with _$ThesisProxy {
+  const factory ThesisProxy({
+    required Thesis thesis,
+    required Teacher supervisor,
+    Student? student,
+    Teacher? president,
+    Teacher? reviewer1,
+    Teacher? reviewer2,
+    Teacher? secretary,
+    Teacher? member,
+  }) = _ThesisProxy;
+
+  factory ThesisProxy.fromJson(Map<String, dynamic> json) =>
+      _$ThesisProxyFromJson(json);
+}
+
+@freezed
+abstract class DeTaiThacSi with _$DeTaiThacSi {
   static const table = "DeTaiThacSi";
 
   static const idField = "id";
+  const DeTaiThacSi._();
   const factory DeTaiThacSi({
     int? id,
     required int idGiangVien,
     required String tenTiengViet,
     required String tenTiengAnh,
-    required GiangVien giangVien,
+    required GiangVien giangVien, // TODO: remove this shit and use a proxy
     int? idHocVien,
     HocVien? hocVien,
     int? idChuTich,
@@ -227,7 +247,20 @@ class DeTaiThacSi with _$DeTaiThacSi {
   factory DeTaiThacSi.fromJson(Map<String, dynamic> json) =>
       _$DeTaiThacSiFromJson(json);
 
-  const DeTaiThacSi._();
+  Future<ThesisProxy> get proxy async => ThesisProxy(
+    thesis: this,
+    supervisor: await Teacher.getById(idGiangVien),
+    student: idHocVien == null ? null : await Student.getById(idHocVien!),
+    president: idChuTich == null ? null : await GiangVien.getById(idChuTich!),
+    reviewer1: idPhanBien1 == null
+        ? null
+        : await GiangVien.getById(idPhanBien1!),
+    reviewer2: idPhanBien2 == null
+        ? null
+        : await GiangVien.getById(idPhanBien2!),
+    secretary: idThuKy == null ? null : await GiangVien.getById(idThuKy!),
+    member: idUyVien == null ? null : await GiangVien.getById(idUyVien!),
+  );
 
   bool get assigned => idHocVien != null;
 
@@ -284,11 +317,17 @@ class DeTaiThacSi with _$DeTaiThacSi {
   Future<void> setAssignDecision(String value) =>
       _updateAttr("soQdGiao", value);
 
-  Future<void> setDueDate(DateTime d) =>
-      _updateAttr("hanBaoVe", datetimeToYyyymmdd(d));
+  Future<void> setAssignDate(DateTime? d) =>
+      _updateAttr("ngayGiao", d == null ? null : datetimeToYyyymmdd(d));
 
-  Future<void> setProtectDecision(String value) =>
+  Future<void> setDefenseDueDate(DateTime? d) =>
+      _updateAttr("hanBaoVe", d == null ? null : datetimeToYyyymmdd(d));
+
+  Future<void> setDefenseDecision(String value) =>
       _updateAttr("soQuyetDinhBaoVe", value);
+
+  Future<void> setDefenseDate(DateTime? d) =>
+      _updateAttr("ngayBaoVe", d == null ? null : datetimeToYyyymmdd(d));
 
   Future<void> track() => updateTracking(true);
 
@@ -526,12 +565,16 @@ enum DienTuyenSinh {
 }
 
 @freezed
-class GiangVien with _$GiangVien {
+abstract class GiangVien with _$GiangVien {
   static const table = "GiangVien";
   static const idField = "id";
   factory GiangVien({
     required int id,
     required String hoTen,
+    @JsonKey(name: "ngoaiTruong")
+    @BoolIntSerializer()
+    @Default(false)
+    bool isForeign,
     String? maCanBo,
     String? donVi,
     String? chuyenNganh,
@@ -562,6 +605,16 @@ class GiangVien with _$GiangVien {
       (HocHam a, null) => "${a.short} $hoTen",
       (null, HocVi a) => "${a.short} $hoTen",
       _ => hoTen,
+    };
+  }
+
+  /// Chức danh, ví dụ: PGS. TS.
+  String get chucDanh {
+    return switch ((hocHam, hocVi)) {
+      (HocHam a, HocVi b) => "${a.short} ${b.short}",
+      (HocHam a, null) => a.short,
+      (null, HocVi a) => a.short,
+      _ => "",
     };
   }
 
@@ -636,6 +689,30 @@ class GiangVien with _$GiangVien {
       id: id,
       value: value,
     );
+  }
+
+  Future updateAcademicDegree({HocVi? degree, String? value}) async {
+    if (degree != null) {
+      await updateField(fieldName: "hocVi", value: degree.value);
+    } else if (value != null) {
+      await updateField(fieldName: "hocVi", value: value);
+    } else {
+      throw ArgumentError(
+        "Either degree or value must be provided to update academic degree.",
+      );
+    }
+  }
+
+  Future updateAcademicRank({HocHam? rank, String? value}) async {
+    if (rank != null) {
+      await updateField(fieldName: "hocHam", value: rank.value);
+    } else if (value != null) {
+      await updateField(fieldName: "hocHam", value: value);
+    } else {
+      throw ArgumentError(
+        "Either rank or value must be provided to update academic rank.",
+      );
+    }
   }
 
   Future updateUniversity(String universityName) async {
@@ -779,6 +856,8 @@ enum GioiTinh {
   toString() => label;
 }
 
+typedef Gender = GioiTinh;
+
 @JsonEnum(valueField: "value")
 enum HocHam {
   gs("GS", "GS.", "Giáo sư"),
@@ -794,7 +873,7 @@ enum HocHam {
 }
 
 @freezed
-class HocKy with _$HocKy {
+abstract class HocKy with _$HocKy {
   static const table = "HocKy";
   const factory HocKy({
     required String hocKy,
@@ -957,7 +1036,7 @@ class HocKy with _$HocKy {
 }
 
 @freezed
-class HocPhan with _$HocPhan {
+abstract class HocPhan with _$HocPhan {
   static const table = "HocPhan";
   static const idField = "maHocPhan";
   const factory HocPhan({
@@ -1071,6 +1150,7 @@ class HocPhan with _$HocPhan {
 
 @JsonEnum(valueField: "value")
 enum HocVi {
+  cuNhan('CN', "CN.", 'Cử nhân'),
   kySu('KS', "KS.", 'Kỹ sư'),
   thacSi('ThS', "ThS.", 'Thạc sĩ'),
   tienSi('TS', "TS.", 'Tiến sĩ'),
@@ -1086,7 +1166,7 @@ enum HocVi {
 }
 
 @freezed
-class HocVien with _$HocVien {
+abstract class HocVien with _$HocVien {
   static const table = "HocVien";
   static const idField = "id";
 
@@ -1250,7 +1330,7 @@ class HocVien with _$HocVien {
 }
 
 @freezed
-class HoiDongLVTS with _$HoiDongLVTS {
+abstract class HoiDongLVTS with _$HoiDongLVTS {
   static const table = "HoiDongLVTS";
   const factory HoiDongLVTS({
     required int id,
@@ -1291,7 +1371,7 @@ enum KhoiKienThuc {
 }
 
 @freezed
-class LopTinChi with _$LopTinChi {
+abstract class LopTinChi with _$LopTinChi {
   static const table = "LopTinChi";
   const factory LopTinChi({
     required int id,
@@ -1480,7 +1560,7 @@ class MaybeDateSerializer implements JsonConverter<DateTime?, String?> {
 }
 
 @freezed
-class NamTaiChinh with _$NamTaiChinh {
+abstract class NamTaiChinh with _$NamTaiChinh {
   static const table = "NamTaiChinh";
   const factory NamTaiChinh({
     required String nam,
@@ -1528,7 +1608,7 @@ enum NgayTrongTuan {
 }
 
 @freezed
-class NhomChuyenMon with _$NhomChuyenMon {
+abstract class NhomChuyenMon with _$NhomChuyenMon {
   static const table = "NhomChuyenMon";
   const factory NhomChuyenMon({required int id, required String tenNhom}) =
       _NhomChuyenMon;
@@ -1538,7 +1618,7 @@ class NhomChuyenMon with _$NhomChuyenMon {
 }
 
 @freezed
-class NienKhoa with _$NienKhoa {
+abstract class NienKhoa with _$NienKhoa {
   static const table = "NienKhoa";
   const factory NienKhoa({required String nienKhoa}) = _NienKhoa;
 
@@ -1583,7 +1663,7 @@ abstract class TeachingRegistration with _$TeachingRegistration {
 }
 
 @freezed
-class TieuBanXetTuyen with _$TieuBanXetTuyen {
+abstract class TieuBanXetTuyen with _$TieuBanXetTuyen {
   static const table = "TieuBanXetTuyen";
   const factory TieuBanXetTuyen({
     required int id,

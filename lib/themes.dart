@@ -1,26 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_gutter/flutter_gutter.dart';
+import 'dart:io';
 
-ThemeData getTheme(ThemeData baseTheme) {
-  final colorScheme = baseTheme.colorScheme;
-
+ThemeData getTheme({
+  required ThemeData baseTheme,
+  required BuildContext context,
+}) {
   final buttonShape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(10)),
+    borderRadius: BorderRadius.all(
+      Radius.circular(
+        context.gutterSmall,
+      ),
+    ),
   );
 
-  final buttonPadding = EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0);
+  final buttonPadding = EdgeInsets.symmetric(
+    horizontal: context.gutter,
+    vertical: (context.gutterSmall + context.gutter) / 2,
+  );
 
   final filledButtonTheme = FilledButtonThemeData(
-    style: FilledButton.styleFrom(shape: buttonShape, padding: buttonPadding),
+    style: FilledButton.styleFrom(
+      shape: buttonShape,
+      padding: buttonPadding,
+    ),
   );
 
   final inputDecorationTheme = InputDecorationTheme(
-    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(context.gutterSmall),
+    ),
     floatingLabelBehavior: FloatingLabelBehavior.always,
   );
 
   final searchBarTheme = SearchBarThemeData(
     constraints: BoxConstraints.tightFor(height: 50),
+    side: WidgetStateProperty.all<BorderSide>(
+      BorderSide(width: 1.0),
+    ),
     shape: WidgetStateProperty.all<RoundedRectangleBorder>(
       RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
     ),
@@ -29,20 +46,48 @@ ThemeData getTheme(ThemeData baseTheme) {
   final outlinedButtonTheme = OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       shape: buttonShape,
-      side: BorderSide(color: colorScheme.primary),
       padding: buttonPadding,
     ),
   );
 
   final elevatedButtonTheme = ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(shape: buttonShape, padding: buttonPadding),
+    style: ElevatedButton.styleFrom(
+      shape: buttonShape,
+      padding: buttonPadding,
+    ),
   );
 
   final textButtonThemeData = TextButtonThemeData(
-    style: TextButton.styleFrom(shape: buttonShape, padding: buttonPadding),
+    style: TextButton.styleFrom(
+      shape: buttonShape,
+      padding: buttonPadding,
+    ),
   );
 
-  return baseTheme.copyWith(
+  final colorScheme = ColorScheme.fromSeed(
+    seedColor: Colors.deepPurple,
+    brightness: baseTheme.brightness,
+  );
+
+  // See this doc
+  // https: //api.flutter.dev/flutter/material/TextTheme-class.html
+  // final typography = switch (baseTheme.brightness) {
+  //   Brightness.dark => Typography.whiteMountainView,
+  //   Brightness.light => Typography.blackMountainView,
+  // };
+  //
+  // // final textTheme = TextTheme.of(context).apply(
+  // final fontSizeFactor = Platform.isLinux ? 1.25 : 1.0;
+  // final fontSizeDelta = Platform.isLinux ? 4.0 : 0.0;
+  // final textTheme = typography
+  //     .merge(Typography.tall2021)
+  //     .apply(fontSizeDelta: fontSizeDelta);
+
+  return ThemeData.from(
+    colorScheme: colorScheme,
+    // textTheme: textTheme,
+    useMaterial3: true,
+  ).copyWith(
     outlinedButtonTheme: outlinedButtonTheme,
     elevatedButtonTheme: elevatedButtonTheme,
     inputDecorationTheme: inputDecorationTheme,
@@ -53,6 +98,16 @@ ThemeData getTheme(ThemeData baseTheme) {
 }
 
 class Themes {
-  ThemeData get dark => getTheme(ThemeData.dark());
-  ThemeData get light => getTheme(ThemeData.light());
+  final BuildContext context;
+  Themes(this.context);
+
+  ThemeData get dark => getTheme(
+    baseTheme: ThemeData.dark(useMaterial3: true),
+    context: context,
+  );
+
+  ThemeData get light => getTheme(
+    baseTheme: ThemeData.light(useMaterial3: true),
+    context: context,
+  );
 }

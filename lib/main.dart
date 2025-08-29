@@ -3,12 +3,12 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'business/drift_orm.dart';
+// import 'business/drift_orm.dart' as orm;
 import 'pages.dart';
 import 'shortcuts.dart';
 import 'themes.dart';
@@ -30,11 +30,7 @@ Future main() async {
       identifier: 'go-back',
     ),
     keyDownHandler: (hotKey) {
-      if (Get.isDialogOpen ?? false) {
-        Get.back(closeOverlays: true);
-      } else {
-        Get.back();
-      }
+      //TODO
     },
   );
 
@@ -169,42 +165,89 @@ Future main() async {
     databaseFactory = databaseFactoryFfi;
   }
 
-  const app = MyApp();
+  // final AcademicGroupNames = [
+  //   "Khoa học dữ liệu và ứng dụng",
+  //   "Cơ sở toán học cho tin học và hệ thống thông tin",
+  //   "Tối ưu và tính toán khoa học",
+  //   "Xác suất thống kê và ứng dụng",
+  //   "Giải tích",
+  //   "Đại số",
+  // ];
 
-  runApp(app);
+  // final db = orm.AppDatabaseV2();
+  // for (final group in AcademicGroupNames) {
+  //   final insertion = db
+  //       .into(db.academicGroup)
+  //       .insert(
+  //         orm.AcademicGroupCompanion.insert(
+  //           title: group,
+  //         ),
+  //       );
+  //
+  //   await insertion;
+  // }
+  // db
+  //     .into(db.profile)
+  //     .insert(
+  //       orm.ProfileCompanion.insert(
+  //         name: 'Default User',
+  //         phoneNumber: orm.Value('0123456789'),
+  //         address: orm.Value('123 Default St.'),
+  //         email: orm.Value('default'),
+  //         gender: orm.Gender.unknown,
+  //       ),
+  //     );
+
+  const app = MyApp();
+  runApp(
+    ProviderScope(
+      // child: GlobalTextScalingWrapper(child: app),
+      child: app,
+    ),
+  );
 }
 
 final messengerKey = GlobalKey<ScaffoldMessengerState>();
 
-class MyApp extends StatelessWidget {
+// class GlobalTextScalingWrapper extends ConsumerWidget {
+//   final Widget child;
+//   const GlobalTextScalingWrapper({super.key, required this.child});
+//
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final textScaleFactorState = ref.watch(textScaleFactorProvider);
+//
+//     final defaultTextScaleFactor = Platform.isLinux ? 1.25 : 1.0;
+//
+//     final textScaleFactor = switch (textScaleFactorState) {
+//       AsyncData(:final value) => value ?? defaultTextScaleFactor,
+//       _ => defaultTextScaleFactor,
+//     };
+//     return child;
+//   }
+// }
+
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDarkModeState = ref.watch(isDarkModeProvider);
+
+    final isDarkMode = switch (isDarkModeState) {
+      AsyncData(:final value) => value,
+      _ => false,
+    };
+
     // Function to get lighter color from a color
-
-    final colorScheme = ColorScheme.of(context);
-
-    final locale = Locale.fromSubtags(languageCode: "vi-VN");
-
-    final themes = Themes();
-    Get.put<Themes>(themes);
-
+    final themes = Themes(context);
+    final locale = Locale('vi', 'VN');
     return SafeArea(
-      child: GetMaterialApp(
+      child: MaterialApp(
         locale: locale,
-        theme: themes.light,
         darkTheme: themes.dark,
-        onReady: () async {
-          final isDarkMode = await getDarkMode();
-          if (isDarkMode) {
-            Get.changeThemeMode(ThemeMode.dark);
-            Get.changeTheme(themes.dark);
-          } else {
-            Get.changeThemeMode(ThemeMode.light);
-            Get.changeTheme(themes.light);
-          }
-        },
+        theme: themes.light,
+        themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
         initialRoute: initialRoute,
         debugShowMaterialGrid: false,
         debugShowCheckedModeBanner: false,

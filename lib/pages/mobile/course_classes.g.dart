@@ -6,9 +6,8 @@ part of 'course_classes.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$CourseClassDataImpl _$$CourseClassDataImplFromJson(
-        Map<String, dynamic> json) =>
-    _$CourseClassDataImpl(
+_CourseClassData _$CourseClassDataFromJson(Map<String, dynamic> json) =>
+    _CourseClassData(
       classId: (json['classId'] as num).toInt(),
       classCode: json['classCode'] as String,
       subjectId: json['subjectId'] as String,
@@ -20,8 +19,7 @@ _$CourseClassDataImpl _$$CourseClassDataImplFromJson(
       teacherEmail: json['teacherEmail'] as String?,
     );
 
-Map<String, dynamic> _$$CourseClassDataImplToJson(
-        _$CourseClassDataImpl instance) =>
+Map<String, dynamic> _$CourseClassDataToJson(_CourseClassData instance) =>
     <String, dynamic>{
       'classId': instance.classId,
       'classCode': instance.classCode,

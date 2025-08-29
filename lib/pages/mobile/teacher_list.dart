@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../business/domain_objects.dart';
@@ -70,16 +69,22 @@ class ListTeachers extends StatelessWidget {
                 icon: const Icon(Icons.edit),
                 onPressed: () {
                   // Navigate to edit teacher page
-                  Navigator.pushNamed(context, "/mobile/edit_teacher",
-                      arguments: teacher);
+                  Navigator.pushNamed(
+                    context,
+                    "/mobile/edit_teacher",
+                    arguments: teacher,
+                  );
                 },
               ),
               IconButton(
                 icon: const Icon(Icons.info),
                 onPressed: () {
                   // Navigate to view details page
-                  Navigator.pushNamed(context, "/mobile/teacher_details",
-                      arguments: teacher);
+                  Navigator.pushNamed(
+                    context,
+                    "/mobile/teacher_details",
+                    arguments: teacher,
+                  );
                 },
               ),
             ],
@@ -108,8 +113,9 @@ class MobilePageTeacherList extends StatelessWidget {
       ),
       body: Actions(
         actions: {
-          SearchIntent:
-              CallbackAction(onInvoke: (intent) => state.openSearch()),
+          SearchIntent: CallbackAction(
+            onInvoke: (intent) => state.openSearch(),
+          ),
         },
         child: FocusScope(
           autofocus: true,
@@ -126,17 +132,17 @@ class MobilePageTeacherList extends StatelessWidget {
   }
 
   static Widget initialize() => ChangeNotifierProvider<TeacherInfoPageState>(
-        create: (_) => TeacherInfoPageState(),
-        child: const MobilePageTeacherList(),
-      );
+    create: (_) => TeacherInfoPageState(),
+    child: const MobilePageTeacherList(),
+  );
 }
 
 class MobilePageTeacherShortcutManager extends ShortcutManager {
   @override
   get shortcuts => {
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyF):
-            const SearchIntent(),
-      };
+    LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyF):
+        const SearchIntent(),
+  };
 }
 
 class SearchToggleButton extends StatelessWidget {
@@ -171,7 +177,7 @@ class TeacherCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: goToTeacherDetails,
+      onTap: () => goToTeacherDetails(context),
       child: Card(
         child: ListTile(
           title: Text(teacher.hoTenChucDanh),
@@ -191,9 +197,13 @@ class TeacherCard extends StatelessWidget {
     );
   }
 
-  void goToTeacherDetails() {
-    final page = TeacherDetailsPage(teacher: teacher);
-    Get.to(page);
+  void goToTeacherDetails(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TeacherDetailsPage(teacher: teacher),
+      ),
+    );
   }
 }
 

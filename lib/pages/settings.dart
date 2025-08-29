@@ -3,12 +3,12 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../themes.dart';
+import '../custom_tiles.dart';
 import '../preferences.dart';
 
 class PageInitialSetup extends StatelessWidget {
@@ -88,15 +88,6 @@ class _DatabaseTile extends StatelessWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  late ValueNotifier<bool> darkModeNotifier;
-
-  @override
-  initState() {
-    super.initState();
-    // Listen to theme changes
-    darkModeNotifier = ValueNotifier<bool>(Get.isDarkMode);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,31 +95,105 @@ class _SettingsPageState extends State<SettingsPage> {
       body: ListView(
         children: [
           _DatabaseTile(),
-          ValueListenableBuilder(
-            valueListenable: darkModeNotifier,
-            builder: (context, bool isDarkMode, child) => SwitchListTile(
-              value: isDarkMode,
-              title: const Text("Dark mode"),
-              subtitle: switch (isDarkMode) {
-                true => const Text("Dark mode is enabled"),
-                false => const Text("Dark mode is disabled"),
-              },
-              onChanged: (shouldBeDark) {
-                final themes = Get.find<Themes>();
-                if (shouldBeDark) {
-                  Get.changeThemeMode(ThemeMode.dark);
-                  Get.changeTheme(themes.dark);
-                } else {
-                  Get.changeThemeMode(ThemeMode.light);
-                  Get.changeTheme(themes.light);
-                }
-                darkModeNotifier.value = shouldBeDark;
-                setDarkMode(shouldBeDark);
-              },
-            ),
-          ),
+          _DarkModeSwitchTile(),
+          MyNameSettingTile(),
+          MyDivisionSettingTile(),
         ],
       ),
+    );
+  }
+}
+
+class _DarkModeSwitchTile extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDarkModeState = ref.watch(isDarkModeProvider);
+
+    final isDarkMode = switch (isDarkModeState) {
+      AsyncData(:final value) => value,
+      _ => false,
+    };
+
+    return SwitchListTile(
+      value: isDarkMode,
+      title: const Text("Dark mode"),
+      subtitle: switch (isDarkMode) {
+        true => const Text("Dark mode is enabled"),
+        false => const Text("Dark mode is disabled"),
+      },
+      onChanged: (shouldBeDark) async {
+        await setDarkMode(shouldBeDark);
+        ref.invalidate(isDarkModeProvider);
+      },
+    );
+  }
+}
+
+class MyDivisionSettingTile extends ConsumerWidget {
+  final String title;
+  const MyDivisionSettingTile({super.key, this.title = "Đơn vị công tác"});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final myDivisionState = ref.watch(myDivisionProvider);
+
+    final myDivisionText = switch (myDivisionState) {
+      AsyncData(:final value) => value,
+      AsyncLoading() => "Loading...",
+      AsyncError(:final error) => "Error: $error",
+    };
+
+    return ListTile(
+      title: Text(title),
+      subtitle: Text(myDivisionText),
+      onTap: () async {
+        final newDivision = await showDialog(
+          context: context,
+          builder: (context) => TextEditingDialog2(
+            title: title,
+            initialText: myDivisionText,
+          ),
+        );
+
+        switch (newDivision) {
+          case DialogValue(:final value):
+            await ref.read(myDivisionProvider.notifier).setDivision(value);
+        }
+      },
+    );
+  }
+}
+
+class MyNameSettingTile extends ConsumerWidget {
+  final String title;
+  const MyNameSettingTile({super.key, this.title = "Tên dùng trong văn bản"});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final myNameState = ref.watch(myNameProvider);
+
+    final myNameText = switch (myNameState) {
+      AsyncData(:final value) => value,
+      _ => null,
+    };
+
+    return ListTile(
+      title: Text(title),
+      subtitle: Text(myNameText ?? "Chưa đặt tên"),
+      onTap: () async {
+        final newName = await showDialog(
+          context: context,
+          builder: (context) => TextEditingDialog2(
+            title: title,
+            initialText: myNameText ?? "",
+          ),
+        );
+
+        switch (newName) {
+          case DialogValue(:final value):
+            await ref.read(myNameProvider.notifier).setName(value);
+        }
+      },
     );
   }
 }

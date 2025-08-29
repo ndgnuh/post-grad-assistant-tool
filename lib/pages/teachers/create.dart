@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
-import 'package:get/get.dart';
 
 import '../../business/domain_objects.dart';
 import '../../custom_widgets.dart';
@@ -10,15 +9,7 @@ import '../../custom_widgets.dart';
 class _State extends ChangeNotifier {
   int? editingId;
 
-  _State({this.editingId}) {
-    Get.put<_State>(this);
-  }
-
-  @override
-  void dispose() {
-    Get.delete<_State>();
-    super.dispose();
-  }
+  _State({this.editingId});
 }
 
 class Page extends StatelessWidget {
@@ -51,7 +42,7 @@ class TeacherForm extends StatelessWidget {
   const TeacherForm({super.key});
   @override
   Widget build(BuildContext context) {
-    final titleStyle = context.textTheme.titleMedium?.copyWith(
+    final titleStyle = TextTheme.of(context).titleMedium?.copyWith(
       fontWeight: FontWeight.bold,
     );
 
@@ -88,7 +79,7 @@ class _SaveButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: () {
         // Handle form submission
-        Get.back();
+        Navigator.pop(context);
       },
       child: const Text("Lưu"),
     );

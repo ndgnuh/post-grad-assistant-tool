@@ -1,13 +1,11 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:sqflite/sqflite.dart' as sqflite;
-import 'package:path_provider/path_provider.dart' as path_provider;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common/sqflite_logger.dart';
+
+// for DatabaseProvider
+import 'package:riverpod/riverpod.dart';
 
 export 'package:sqflite/sqflite.dart' show Database, Transaction;
 export 'sqlbuilder/sqlbuilder.dart'
@@ -24,6 +22,22 @@ Future initSqlite() async {
 }
 
 final defaultDatabasePath = path.join(path.current, "fami.sqlite3");
+
+final databaseProvider = FutureProvider<Database>((ref) async {
+  final databasePath = await ref.watch(preferences.databasePathProvider.future);
+  final db = await openDatabase(databasePath ?? defaultDatabasePath);
+  return db;
+});
+
+final readOnlyDatabaseProvider = FutureProvider<Database>((ref) async {
+  final databasePath = await ref.watch(preferences.databasePathProvider.future);
+  final db = await openDatabase(
+    databasePath ?? defaultDatabasePath,
+    readOnly: true,
+    singleInstance: false,
+  );
+  return db;
+});
 
 Future<T> transaction<T>(Future<T> Function(Transaction) callback) async {
   final databasePath = await preferences.getDatabasePath();

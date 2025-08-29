@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 
@@ -137,8 +136,13 @@ class TeacherAddButton extends StatelessWidget {
       icon: const Icon(Icons.add),
       label: const Text("Thêm giảng viên"),
       onPressed: () async {
-        final state = Get.find<_State>();
-        await Get.to(TeacherCreatePage());
+        final state = context.read<_State>();
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TeacherCreatePage(),
+          ),
+        );
         state.searchNow();
       },
     );
@@ -189,7 +193,13 @@ class TeacherCard extends StatelessWidget {
 
     return Card(
       child: InkWell(
-        onTap: goToTeacherDetails,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TeacherDetailsPage(id: teacher.id),
+          ),
+        ),
+
         borderRadius: BorderRadius.circular(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -247,13 +257,6 @@ class TeacherCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void goToTeacherDetails() async {
-    final state = Get.find<_State>();
-    final page = TeacherDetailsPage(teacher: teacher);
-    await Get.to(page);
-    state.searchNow();
   }
 }
 
@@ -356,10 +359,6 @@ class _State with ChangeNotifier {
     return this;
   }
 
-  _State() {
-    Get.put(this);
-  }
-
   @override
   dispose() {
     searchFocusNode.dispose();
@@ -367,6 +366,5 @@ class _State with ChangeNotifier {
     searchController.dispose();
     debounceTimer.cancel();
     super.dispose();
-    Get.delete<_State>();
   }
 }

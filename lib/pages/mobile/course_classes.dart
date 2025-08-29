@@ -77,7 +77,8 @@ Future<void> pasteClassesFromClipboard({
       builder: (context) => AlertDialog(
         title: Text('Lỗi khi dán dữ liệu'),
         content: Text(
-            'Copy cột "Mã lớp học phần", "Tên lớp học phần", "Số HV đăng ký" từ file hướng "Kết quả đăng ký" mà Ban Đào tạo gửi, sau đó nhấn "Ok" để tiếp tục.'),
+          'Copy cột "Mã lớp học phần", "Tên lớp học phần", "Số HV đăng ký" từ file hướng "Kết quả đăng ký" mà Ban Đào tạo gửi, sau đó nhấn "Ok" để tiếp tục.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -90,9 +91,9 @@ Future<void> pasteClassesFromClipboard({
   }
 
   // Show confirmation dialog
-  final classesNames = await Future.wait(
-    [for (final c in classes) c.tenLopHoc],
-  );
+  final classesNames = await Future.wait([
+    for (final c in classes) c.tenLopHoc,
+  ]);
 
   final confirm = await showDialog<bool>(
     context: context,
@@ -179,15 +180,8 @@ abstract class CourseClassData with _$CourseClassData {
         "GiangVien.email as teacherEmail",
         "LopTinChi.soLuongDangKy as numRegistered",
       ])
-      ..join(
-        "HocPhan",
-        "LopTinChi.maHocPhan = HocPhan.maHocPhan",
-      )
-      ..join(
-        "GiangVien",
-        "LopTinChi.idGiangVien = GiangVien.id",
-        JoinType.left,
-      )
+      ..join("HocPhan", "LopTinChi.maHocPhan = HocPhan.maHocPhan")
+      ..join("GiangVien", "LopTinChi.idGiangVien = GiangVien.id", JoinType.left)
       ..where("hocKy = ?", [semester.hocKy]);
 
     final sql = query.build();
@@ -208,29 +202,31 @@ class PageCourseClassListState extends ChangeNotifier {
     if (semester == null) return;
 
     _selectedSemester = semester;
-    CourseClassData.getBySemester(semester).then((classes) {
-      studyClasses.clear();
-      studyClasses.addAll(classes);
-      notifyListeners();
-    }).catchError((error) {
-      print('Error fetching classes: $error');
-    });
+    CourseClassData.getBySemester(semester)
+        .then((classes) {
+          studyClasses.clear();
+          studyClasses.addAll(classes);
+          notifyListeners();
+        })
+        .catchError((error) {
+          print('Error fetching classes: $error');
+        });
   }
 
-  PageCourseClassListState({
-    HocKy? initialSemester,
-  }) {
+  PageCourseClassListState({HocKy? initialSemester}) {
     // Initialize with the current semester
     switch (initialSemester) {
       case HocKy currentSemester:
         selectedSemester = currentSemester;
         break;
       default:
-        HocKy.getClosest().then((semester) {
-          selectedSemester = semester;
-        }).catchError((error) {
-          print('Error fetching closest semester: $error');
-        });
+        HocKy.getClosest()
+            .then((semester) {
+              selectedSemester = semester;
+            })
+            .catchError((error) {
+              print('Error fetching closest semester: $error');
+            });
     }
   }
 
@@ -252,18 +248,17 @@ class _GotoMenu extends StatelessWidget {
             );
 
             if (state.selectedSemester == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Chưa chọn đợt học')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text('Chưa chọn đợt học')));
               return;
             }
 
-            final args = PageAcademicYearArgument(
-              state.selectedSemester!,
-              (HocKy semester) {
-                state.selectedSemester = semester;
-              },
-            );
+            final args = PageAcademicYearArgument(state.selectedSemester!, (
+              HocKy semester,
+            ) {
+              state.selectedSemester = semester;
+            });
 
             Navigator.pushNamed(
               context,
@@ -363,19 +358,14 @@ class PageCourseClassList extends StatelessWidget {
 
   final HocKy? initialSemester;
 
-  const PageCourseClassList({
-    super.key,
-    this.initialSemester,
-  });
+  const PageCourseClassList({super.key, this.initialSemester});
 
   @override
   Widget build(BuildContext context) {
     final navigator = Navigator.of(context);
 
     return ChangeNotifierProvider(
-      create: (_) => PageCourseClassListState(
-        initialSemester: initialSemester,
-      ),
+      create: (_) => PageCourseClassListState(initialSemester: initialSemester),
       builder: (context, child) {
         final messenger = ScaffoldMessenger.of(context);
         final state = Provider.of<PageCourseClassListState>(context);
@@ -392,9 +382,8 @@ class PageCourseClassList extends StatelessWidget {
           },
           onSearch: () {
             final route = MaterialPageRoute(
-              builder: (context) => PageSelectSemester(
-                initialSemester: state.selectedSemester,
-              ),
+              builder: (context) =>
+                  PageSelectSemester(initialSemester: state.selectedSemester),
             );
             navigator.push(route).then((value) {
               if (value is HocKy) {
@@ -412,10 +401,7 @@ class PageCourseClassList extends StatelessWidget {
           child: Scaffold(
             appBar: AppBar(
               title: Text('Danh sách lớp học phần'),
-              actions: [
-                _CopyMenu(),
-                _GotoMenu(),
-              ],
+              actions: [_CopyMenu(), _GotoMenu()],
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () => Navigator.pop(context),
@@ -446,21 +432,23 @@ class _AddClassTile extends StatelessWidget {
       selector: (context, state) => state.selectedSemester,
       builder: (context, selectedSemester, _) => switch (selectedSemester) {
         HocKy selectedSemester => ListTile(
-            title: Text("Thêm lớp học phần"),
-            subtitle: Text("Click để thêm"),
-            leading: Icon(Icons.add),
-            onTap: () {
-              Navigator.pushNamed(
+          title: Text("Thêm lớp học phần"),
+          subtitle: Text("Click để thêm"),
+          leading: Icon(Icons.add),
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              CourseClassCreatePage.routeName,
+              arguments: selectedSemester,
+            ).then((_) {
+              // Refresh the class list after adding a new class
+              Provider.of<PageCourseClassListState>(
                 context,
-                CourseClassCreatePage.routeName,
-                arguments: selectedSemester,
-              ).then((_) {
-                // Refresh the class list after adding a new class
-                Provider.of<PageCourseClassListState>(context, listen: false)
-                    .selectedSemester = selectedSemester;
-              });
-            },
-          ),
+                listen: false,
+              ).selectedSemester = selectedSemester;
+            });
+          },
+        ),
         null => SizedBox.shrink(),
       },
     );
@@ -484,9 +472,9 @@ class _ListOfClasses extends StatelessWidget {
           final subtitle = switch (classInfo.isCancelled) {
             true => "Lớp học phần đã bị hủy",
             false => switch (classInfo.teacherName) {
-                null => "Chưa có giảng viên",
-                _ => "Giảng viên: ${classInfo.teacherName}",
-              }
+              null => "Chưa có giảng viên",
+              _ => "Giảng viên: ${classInfo.teacherName}",
+            },
           };
 
           final subtitle2 = "Số lượng đăng ký: ${classInfo.numRegistered}";
@@ -504,10 +492,7 @@ class _ListOfClasses extends StatelessWidget {
             leading: Icon(icon),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(subtitle),
-                Text(subtitle2),
-              ],
+              children: [Text(subtitle), Text(subtitle2)],
             ),
             onTap: () async {
               final route = MaterialPageRoute(
@@ -515,9 +500,7 @@ class _ListOfClasses extends StatelessWidget {
                   editingId: classInfo.classId,
                   semester: state.selectedSemester!,
                 ),
-                settings: RouteSettings(
-                  name: CourseClassCreatePage.routeName,
-                ),
+                settings: RouteSettings(name: CourseClassCreatePage.routeName),
               );
               navigator.push(route);
               state.selectedSemester = state.selectedSemester;
@@ -571,10 +554,7 @@ class PageSelectSemester extends StatelessWidget {
   static const routeName = '/select/semester';
   final HocKy? initialSemester;
 
-  const PageSelectSemester({
-    super.key,
-    this.initialSemester,
-  });
+  const PageSelectSemester({super.key, this.initialSemester});
 
   @override
   Widget build(BuildContext context) {
@@ -623,8 +603,9 @@ class _CourseClassCreatePageState extends State<CourseClassCreatePage> {
   final ValueNotifier<GiangVien?> teacher = ValueNotifier(null);
   final ValueNotifier<int> numRegistered = ValueNotifier(0);
 
-  final ValueNotifier<NgayTrongTuan?> dayOfWeek =
-      ValueNotifier(null); // Mặc định là thứ 2
+  final ValueNotifier<NgayTrongTuan?> dayOfWeek = ValueNotifier(
+    null,
+  ); // Mặc định là thứ 2
   final ValueNotifier<int?> startTime = ValueNotifier(null);
   final ValueNotifier<int?> endTime = ValueNotifier(null);
   final ValueNotifier<String> room = ValueNotifier("");
@@ -665,7 +646,8 @@ class _CourseClassCreatePageState extends State<CourseClassCreatePage> {
     if (courseClass == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text("Không tìm thấy lớp học phần với ID $editingId")),
+          content: Text("Không tìm thấy lớp học phần với ID $editingId"),
+        ),
       );
       return;
     }
@@ -768,9 +750,9 @@ class _CourseClassCreatePageState extends State<CourseClassCreatePage> {
   void copyThongBaoXepLich() async {
     switch (editingCourseClass) {
       case null:
-        ScaffoldMessenger.of(context).showMessage(
-          "Vui lòng tạo hoặc chỉnh sửa lớp học phần trước",
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showMessage("Vui lòng tạo hoặc chỉnh sửa lớp học phần trước");
         return;
     }
 
@@ -785,8 +767,9 @@ class _CourseClassCreatePageState extends State<CourseClassCreatePage> {
     );
 
     if (deadline == null) {
-      ScaffoldMessenger.of(context)
-          .showMessage("Bạn đã hủy chọn ngày xếp lịch");
+      ScaffoldMessenger.of(
+        context,
+      ).showMessage("Bạn đã hủy chọn ngày xếp lịch");
       return;
     }
 
@@ -798,7 +781,8 @@ class _CourseClassCreatePageState extends State<CourseClassCreatePage> {
       return;
     }
 
-    final text = """Em chào ${pronoun.pronoun}. Chào các bạn học viên.
+    final text =
+        """Em chào ${pronoun.pronoun}. Chào các bạn học viên.
 
 Em cần gửi đăng ký lịch học cho Ban Đào tạo. ${pronoun.capitalized} và các bạn thống nhất lịch học trong tuần trước ngày ${deadlineString} giúp em với ạ. Danh sách lớp em sẽ gửi qua email sau ạ.
 """;
@@ -812,9 +796,9 @@ Em cần gửi đăng ký lịch học cho Ban Đào tạo. ${pronoun.capitalize
   void copyMoiDay() async {
     switch (editingCourseClass) {
       case null:
-        ScaffoldMessenger.of(context).showMessage(
-          "Vui lòng tạo hoặc chỉnh sửa lớp học phần trước",
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showMessage("Vui lòng tạo hoặc chỉnh sửa lớp học phần trước");
         return;
     }
 
@@ -895,9 +879,13 @@ Em cần gửi đăng ký lịch học cho Ban Đào tạo. ${pronoun.capitalize
               },
             ),
           ),
-          CourseSelectionTile(
-            valueNotifier: course,
-          ),
+          if (editingCourseClass != null)
+            ListTile(
+              title: Text("Học phần"),
+              subtitle: Text(course.value.toString()),
+            )
+          else
+            CourseSelectionTile(valueNotifier: course),
           StringTile(
             titleText: "Mã lớp học phần",
             valueNotifier: classCode,
@@ -911,7 +899,8 @@ Em cần gửi đăng ký lịch học cho Ban Đào tạo. ${pronoun.capitalize
           IntegerTile(
             titleText: "Số lượng đăng ký",
             valueNotifier: numRegistered,
-            onUpdate: editingCourseClass?.updateNumRegistered,
+            onUpdate: (int? value) =>
+                editingCourseClass?.updateNumRegistered(value ?? 0),
           ),
           EnumTile<TrangThaiLopTinChi>(
             titleText: "Trạng thái lớp",
@@ -931,14 +920,14 @@ Em cần gửi đăng ký lịch học cho Ban Đào tạo. ${pronoun.capitalize
           StringTile(
             titleText: "URL truy cập lớp học",
             valueNotifier: accessUrl,
-            onUpdate: editingCourseClass?.updateAccessUrl,
+            onUpdate: (v) => editingCourseClass?.updateAccessUrl(v!),
           ),
 
           // Where and when to study
           StringTile(
             titleText: "Phòng học",
             valueNotifier: room,
-            onUpdate: editingCourseClass?.updateRoom,
+            onUpdate: (v) => editingCourseClass?.updateRoom(v!),
           ),
 
           // Macro date
@@ -998,9 +987,7 @@ Em cần gửi đăng ký lịch học cho Ban Đào tạo. ${pronoun.capitalize
 
               if (selectedTeacher != null) {
                 teacher.value = selectedTeacher;
-                editingCourseClass?.updateTeacher(
-                  selectedTeacher.id,
-                );
+                editingCourseClass?.updateTeacher(selectedTeacher.id);
               }
             },
           ),
@@ -1019,9 +1006,7 @@ Em cần gửi đăng ký lịch học cho Ban Đào tạo. ${pronoun.capitalize
 class _SelectTeacherForCoursePage extends StatefulWidget {
   final String courseId;
 
-  const _SelectTeacherForCoursePage({
-    required this.courseId,
-  });
+  const _SelectTeacherForCoursePage({required this.courseId});
 
   @override
   State<_SelectTeacherForCoursePage> createState() =>
@@ -1053,9 +1038,7 @@ class _SelectTeacherForCoursePageState
     final courseId = widget.courseId;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Chọn giảng viên cho $courseId"),
-      ),
+      appBar: AppBar(title: Text("Chọn giảng viên cho $courseId")),
       body: ListView.builder(
         itemCount: teachers.length,
         itemBuilder: (context, index) {

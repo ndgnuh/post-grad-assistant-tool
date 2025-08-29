@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:fami_tools/custom_widgets.dart';
 import 'package:fami_tools/business/domain_objects.dart';
 import 'package:intl/intl.dart';
 
 import './mobile/course_classes.dart' show PageCourseClassList;
+import './../../business/pods.dart';
 
 String toDmy(DateTime date) {
   final formatter = DateFormat('dd/MM/yyyy');
@@ -39,7 +41,8 @@ class CopyPasta {
   }
 
   void copyThongBaoDangKyHoc() {
-    final text = """
+    final text =
+        """
 Đợt học $tenDotHoc mở đăng ký từ $ngayMoDangKy đến $ngayDongDangKy.
 Các bạn nhớ đăng ký học đúng thời gian nhé!""";
     copyToClipboard(
@@ -49,7 +52,8 @@ Các bạn nhớ đăng ký học đúng thời gian nhé!""";
   }
 
   void copyThongBaoGiangDay() {
-    final text = """
+    final text =
+        """
 Kính gửi các Thầy, các Cô,
 
 Em gửi danh sách lớp của các lớp cao học của đợt học $tenDotHoc kèm với bảng điểm quá trình và bảng điểm cuối kỳ. Các lớp sẽ học từ ngày $ngayBatDauHoc đến $ngayKetThucHoc.
@@ -71,7 +75,8 @@ Thầy, Cô cho học viên thi, điền đủ thông tin ngày thi và nộp l�
   }
 
   void copyNhacNhoNopDiem() {
-    final text = """
+    final text =
+        """
 Kính gửi các Thầy, các Cô,
 
 Ngày $ngayKetThucHoc là ngày kết thúc của đợt học $tenDotHoc.
@@ -120,12 +125,10 @@ class _GotoMenu extends StatelessWidget {
 
 class AcademicYearTile extends StatelessWidget {
   final HocKy hocKy;
-  final ValueChanged<HocKy>? onUpdate;
 
   const AcademicYearTile({
     super.key,
     required this.hocKy,
-    this.onUpdate,
   });
 
   @override
@@ -141,22 +144,17 @@ class AcademicYearTile extends StatelessWidget {
       "Thời gian học: $batDauHoc - $ketThucHoc",
       "Hạn nhập điểm: $hanNhapDiem",
     ];
+
+    final navigator = Navigator.of(context);
+
     return ListTile(
       title: Text(hocKy.hocKy),
       subtitle: Text(subtiles.join('\n')),
       onTap: () async {
-        final updatedYear = await Navigator.pushNamed(
-          context,
-          PageAcademicYearEdit.routeName,
-          arguments: PageAcademicYearArgument(
-            hocKy,
-            onUpdate,
-          ),
+        final route = MaterialPageRoute(
+          builder: (context) => PageAcademicYearEdit(hocKy: hocKy),
         );
-        switch ((onUpdate, updatedYear)) {
-          case (ValueChanged<HocKy?> callback, HocKy? updatedYear):
-            callback(updatedYear);
-        }
+        await navigator.push(route);
       },
     );
   }
@@ -353,15 +351,13 @@ class PageAcademicYearArgument {
   PageAcademicYearArgument(this.hocKy, this.onUpdate);
 }
 
-class PageAcademicYearEdit extends StatefulWidget {
+class PageAcademicYearEdit extends ConsumerStatefulWidget {
   static const routeName = '/academic_year/edit';
   final HocKy hocKy;
-  final ValueChanged<HocKy>? onUpdate;
 
   const PageAcademicYearEdit({
     super.key,
     required this.hocKy,
-    this.onUpdate,
   });
 
   factory PageAcademicYearEdit.fromArguments(
@@ -369,15 +365,15 @@ class PageAcademicYearEdit extends StatefulWidget {
   ) {
     return PageAcademicYearEdit(
       hocKy: args.hocKy,
-      onUpdate: args.onUpdate,
     );
   }
 
   @override
-  State<PageAcademicYearEdit> createState() => _PageAcademicYearEditState();
+  ConsumerState<PageAcademicYearEdit> createState() =>
+      _PageAcademicYearEditState();
 }
 
-class _PageAcademicYearEditState extends State<PageAcademicYearEdit> {
+class _PageAcademicYearEditState extends ConsumerState<PageAcademicYearEdit> {
   late HocKy academicYear;
   late ValueNotifier<HocKy> notifier;
 
@@ -386,13 +382,10 @@ class _PageAcademicYearEditState extends State<PageAcademicYearEdit> {
     super.initState();
     academicYear = widget.hocKy;
     notifier = ValueNotifier(academicYear);
-
-    if (widget.onUpdate != null) {
-      // If an update callback is provided, listen to changes
-      notifier.addListener(() {
-        widget.onUpdate!(notifier.value);
-      });
-    }
+    notifier.addListener(() {
+      // Update the academic year when the notifier changes
+      ref.invalidate(allAcademicYearsProvider);
+    });
   }
 
   @override
@@ -660,7 +653,9 @@ class _PageAcademicYearListState extends State<PageAcademicYearList> {
             icon: const Icon(Icons.add),
             onPressed: () async {
               await Navigator.pushNamed(
-                  context, PageAcademicYearCreate.routeName);
+                context,
+                PageAcademicYearCreate.routeName,
+              );
               setState(() {
                 _academicYearsFuture = HocKy.all();
               });
@@ -668,41 +663,29 @@ class _PageAcademicYearListState extends State<PageAcademicYearList> {
           ),
         ],
       ),
-      body: FutureBuilder<List<HocKy>>(
-        future: _academicYearsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text("No academic years found."));
-          }
-
-          final listAcademicYears = snapshot.data!;
-          return ListView.builder(
-            itemCount: listAcademicYears.length,
-            itemBuilder: (context, index) {
-              final academicYear = listAcademicYears[index];
-              return AcademicYearTile(
-                hocKy: academicYear,
-                onUpdate: (HocKy? updatedHocKy) {
-                  if (updatedHocKy == null) {
-                    setState(() {
-                      _academicYearsFuture = HocKy.all();
-                    });
-                  } else {
-                    _academicYears[index] = updatedHocKy;
-                    setState(() {
-                      _academicYears = _academicYears;
-                    });
-                  }
-                },
-              );
-            },
-          );
-        },
-      ),
+      body: _AcademicYearList(),
     );
+  }
+}
+
+class _AcademicYearList extends ConsumerWidget {
+  Widget _buildAcademicYearList(List<HocKy> academicYears) {
+    return ListView.builder(
+      itemCount: academicYears.length,
+      itemBuilder: (context, index) {
+        final academicYear = academicYears[index];
+        return AcademicYearTile(hocKy: academicYear);
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final future = ref.watch(allAcademicYearsProvider);
+    return switch (future) {
+      AsyncLoading() => const Center(child: CircularProgressIndicator()),
+      AsyncError(:final error) => Text("Error: $error"),
+      AsyncData(:final value) => _buildAcademicYearList(value),
+    };
   }
 }

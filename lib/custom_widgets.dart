@@ -4,20 +4,20 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:diacritic/diacritic.dart';
 
 import 'datamodels.dart' show toSqliteDate;
 import 'datamodels.dart' show tryFormatHumanDate;
 import 'datamodels.dart' show tryParseDMY;
 
-export 'custom_widgets/dropdown_giangvien.dart' show DropdownGiangVien;
-export 'custom_widgets/dropdowns.dart' show DropdownFromEnums;
-export 'custom_widgets/dropdowns.dart' show DropdownFromSql;
-export 'custom_widgets/dropdowns.dart' show DropdownNienKhoa;
-export 'custom_widgets/file_picker_input.dart' show FilePickerInput;
+export 'custom_widgets/menu_dialog.dart'
+    show MenuDialog, showMenuDialog, MenuDialogItem;
+export 'custom_widgets/directory_picker.dart';
+export 'custom_widgets/datetime_picker.dart';
+export 'custom_widgets/expanded_scrollview.dart';
 
 String defaultFormatter(Object? obj) {
   return obj?.toString() ?? "";
@@ -1149,55 +1149,6 @@ abstract class InfoTile<T> extends StatefulWidget {
   Future<T?> onTap({required BuildContext context, required T? currentValue});
 }
 
-class ListOrGrid extends StatelessWidget {
-  final int crossAxisCount;
-  final bool shrinkWrap;
-  final Axis scrollDirection;
-  final List<Widget> children;
-  final double? mainAxisSpacing;
-  final double? crossAxisSpacing;
-
-  const ListOrGrid({
-    super.key,
-    this.shrinkWrap = false,
-    this.scrollDirection = Axis.vertical,
-    this.crossAxisCount = 3,
-    this.mainAxisSpacing,
-    this.crossAxisSpacing,
-    required this.children,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (GetPlatform.isMobile) {
-      // On mobile, use list view
-      return buildList(context);
-    } else {
-      // On desktop, use grid view
-      return buildGrid(context);
-    }
-  }
-
-  Widget buildGrid(BuildContext context) {
-    return GridView.count(
-      mainAxisSpacing: mainAxisSpacing ?? 0.0,
-      crossAxisSpacing: crossAxisSpacing ?? 0.0,
-      scrollDirection: scrollDirection,
-      crossAxisCount: crossAxisCount,
-      shrinkWrap: shrinkWrap,
-      children: children,
-    );
-  }
-
-  Widget buildList(BuildContext context) {
-    return ListView(
-      scrollDirection: scrollDirection,
-      shrinkWrap: shrinkWrap,
-      children: children,
-    );
-  }
-}
-
 class TextEditingDialog extends StatelessWidget {
   final String? initialText;
   final String title;
@@ -1415,6 +1366,7 @@ Function debounced_callback<F extends Function>({
   return debounced as Function;
 }
 
+/// A text widget that displays an icon and text together.
 class IconText extends StatelessWidget {
   final String text;
   final IconData icon;
@@ -1445,5 +1397,114 @@ class IconText extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// Easy grid with fixed number of columns.
+class EzGrid extends StatelessWidget {
+  final int crossAxisCount;
+  final List<Widget> children;
+  final double? spacing;
+  final EdgeInsetsGeometry? margin;
+
+  const EzGrid({
+    super.key,
+    required this.crossAxisCount,
+    required this.children,
+    this.spacing,
+    this.margin,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (crossAxisCount <= 0) {
+      throw ArgumentError("crossAxisCount must be greater than 0");
+    }
+
+    // If crossAxisCount is 1, use a ListView
+    if (crossAxisCount == 1) {
+      return ListView(children: children);
+    }
+
+    final numChildren = children.length;
+    final numRows = (numChildren / crossAxisCount).ceil();
+
+    // Partition children into rows
+    final childrenPartitions = <List<Widget>>[];
+    for (int i = 0; i < numRows; i++) {
+      final start = i * crossAxisCount;
+      final end = start + crossAxisCount;
+      childrenPartitions.add(
+        children.sublist(start, end.clamp(0, numChildren)),
+      );
+    }
+
+    final actualSpacing = spacing ?? context.gutterSmall;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final itemWidth =
+            constraints.maxWidth / crossAxisCount -
+            actualSpacing * (crossAxisCount - 1) / crossAxisCount;
+
+        // Check if last row is full, if not then add spacer
+        if (childrenPartitions.isNotEmpty &&
+            childrenPartitions.last.length < crossAxisCount) {
+          final lastRow = childrenPartitions.last;
+          final spacerCount = crossAxisCount - lastRow.length;
+          childrenPartitions.last.addAll(
+            List.generate(spacerCount, (_) => Spacer()),
+          );
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            spacing: spacing ?? context.gutterSmall,
+            children: [
+              for (final row in childrenPartitions)
+                IntrinsicHeight(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    spacing: actualSpacing,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (final child in row)
+                        SizedBox(width: itemWidth, child: child),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+extension ContextLargeScreenOrNot on BuildContext {
+  bool get isLargeScreen800 {
+    return MediaQuery.sizeOf(this).width >= 800;
+  }
+
+  bool get isLargeScreen600 {
+    return MediaQuery.sizeOf(this).width >= 800;
+  }
+}
+
+extension StringSlugify on String {
+  String slugify({
+    bool removeAccents = true,
+    String? replaceSpaces = "_",
+    bool toLowerCase = false,
+  }) {
+    String slug = this;
+    if (removeAccents) slug = removeDiacritics(slug);
+    if (toLowerCase) slug = slug.toLowerCase();
+    if (replaceSpaces != null) {
+      slug = slug.replaceAll(RegExp(r'\s+'), replaceSpaces);
+    }
+    slug = slug.trim();
+    return slug;
   }
 }

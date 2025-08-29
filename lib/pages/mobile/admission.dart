@@ -3,18 +3,104 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:get/get.dart';
 
 import '../../business/domain_objects.dart';
 import '../../business_widgets.dart';
 import '../../custom_widgets.dart';
 import '../../business/copy_pasta.dart';
+import '../../business/copy_pasta.dart' as copy_pasta;
 import '../multiple_selection_page.dart';
 
 import 'select_class_of.dart';
 
-part 'admission.freezed.dart';
-part 'admission.g.dart';
+class _PageActions {
+  BuildContext context;
+
+  _PageActions(this.context);
+
+  _State get state => context.read<_State>();
+  NavigatorState get navigator => Navigator.of(context);
+  ScaffoldMessengerState get messenger => ScaffoldMessenger.of(context);
+
+  void copyEmail(List<HocVien> admissionList) {
+    final emails = admissionList
+        .map((ad) => ad.email ?? "")
+        .where((email) => email.isNotEmpty)
+        .join("\n");
+
+    copyToClipboard(
+      context: context,
+      text: emails,
+      notification:
+          "Đã sao chép ${admissionList.length} email(s) vào clipboard.",
+    );
+  }
+
+  void copyEmailAll() {
+    copyEmail(state.admissionList);
+  }
+
+  void copyEmailDirectAdmission() {
+    copyEmail(state.directAdmissionList);
+  }
+
+  void copyEmailInterviewAdmission() {
+    copyEmail(state.interviewAdmissionList);
+  }
+
+  void copyAdmissionRejection() async {
+    final candidateName = await showDialog<String>(
+      context: context,
+      builder: (context) => TextEditingDialog(
+        title: "Nhập tên ứng viên",
+        initialText: "",
+        keyboardType: TextInputType.text,
+      ),
+    );
+
+    if (candidateName == null || candidateName.isEmpty) {
+      return;
+    }
+
+    final selectionPage = MultipleSelectionPage<AdmissionCondition>(
+      title: "Chọn lý do không đủ điều kiện",
+      options: AdmissionCondition.values,
+      subtitleBuilder: <T>(condition) => Text(condition.description),
+      titleBuilder: <T>(condition) => Text(condition.unmetDescription),
+    );
+
+    final failedReasons = await navigator.push<Set<AdmissionCondition>?>(
+      MaterialPageRoute(
+        builder: (context) => selectionPage,
+      ),
+    );
+    if (failedReasons == null || failedReasons.isEmpty) {
+      return;
+    }
+
+    copy_pasta.copyAdmissionRejection(
+      candidateName: candidateName,
+      unmetConditions: failedReasons.toList(),
+    );
+  }
+
+  void copyWrongCategoryEmail() async {
+    final candidateName = await showDialog<String>(
+      context: context,
+      builder: (context) => TextEditingDialog(
+        title: "Nhập tên ứng viên",
+      ),
+    );
+
+    if (candidateName == null || candidateName.isEmpty) {
+      return;
+    }
+
+    copyAdmissionWrongCategory(
+      candidateName: candidateName,
+    );
+  }
+}
 
 class _State extends ChangeNotifier {
   List<HocVien> admissionList = [];
@@ -38,94 +124,12 @@ class _State extends ChangeNotifier {
   _State() {
     loadAdmissionList();
   }
-
-  @override
-  dispose() {
-    super.dispose();
-    Get.delete<_State>();
-  }
 }
 
 class _CopyMenu extends StatelessWidget {
-  void copyEmail(List<HocVien> admissionList) {
-    final emails = admissionList
-        .map((ad) => ad.email ?? "")
-        .where((email) => email.isNotEmpty)
-        .join("\n");
-
-    copyToClipboard(
-      text: emails,
-      notification:
-          "Đã sao chép ${admissionList.length} email(s) vào clipboard.",
-    );
-  }
-
-  void copyEmailAll() {
-    final state = Get.find<_State>();
-    copyEmail(state.admissionList);
-  }
-
-  void copyEmailDirectAdmission() {
-    final state = Get.find<_State>();
-    copyEmail(state.directAdmissionList);
-  }
-
-  void copyEmailInterviewAdmission() {
-    final state = Get.find<_State>();
-    copyEmail(state.interviewAdmissionList);
-  }
-
-  void _copyAdmissionRejection() async {
-    final candidateName = await showDialog<String>(
-      context: Get.context!,
-      builder: (context) => TextEditingDialog(
-        title: "Nhập tên ứng viên",
-        initialText: "",
-        keyboardType: TextInputType.text,
-      ),
-    );
-
-    if (candidateName == null || candidateName.isEmpty) {
-      return;
-    }
-
-    final selectionPage = MultipleSelectionPage<AdmissionCondition>(
-      title: "Chọn lý do không đủ điều kiện",
-      options: AdmissionCondition.values,
-      subtitleBuilder: <T>(condition) => Text(condition.description),
-      titleBuilder: <T>(condition) => Text(condition.unmetDescription),
-    );
-
-    final failedReasons = await Get.to(selectionPage);
-    if (failedReasons == null || failedReasons.isEmpty) {
-      return;
-    }
-
-    copyAdmissionRejection(
-      candidateName: candidateName,
-      unmetConditions: failedReasons ?? [],
-    );
-  }
-
-  void _copyWrongCategoryEmail() async {
-    final candidateName = await showDialog<String>(
-      context: Get.context!,
-      builder: (context) => TextEditingDialog(
-        title: "Nhập tên ứng viên",
-      ),
-    );
-
-    if (candidateName == null || candidateName.isEmpty) {
-      return;
-    }
-
-    copyAdmissionWrongCategory(
-      candidateName: candidateName,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final actions = _PageActions(context);
     return MenuAnchor(
       builder: (context, controller, _) => IconButton(
         icon: const Icon(Icons.copy),
@@ -134,7 +138,7 @@ class _CopyMenu extends StatelessWidget {
       ),
       menuChildren: [
         MenuItemButton(
-          onPressed: () => copyAdmissionInterviewInvitation(),
+          onPressed: actions.copyEmailInterviewAdmission,
           child: const ListTile(
             title: Text("Lời mời phỏng vấn"),
             leading: Icon(Icons.copy),
@@ -148,35 +152,35 @@ class _CopyMenu extends StatelessWidget {
           ),
         ),
         MenuItemButton(
-          onPressed: _copyWrongCategoryEmail,
+          onPressed: actions.copyWrongCategoryEmail,
           child: const ListTile(
             leading: Icon(Icons.copy),
             title: Text("Thông báo sai diện tuyển sinh"),
           ),
         ),
         MenuItemButton(
-          onPressed: _copyAdmissionRejection,
+          onPressed: actions.copyAdmissionRejection,
           child: const ListTile(
             leading: Icon(Icons.copy),
             title: Text("Thông báo không đủ điều kiện"),
           ),
         ),
         MenuItemButton(
-          onPressed: copyEmailAll,
+          onPressed: actions.copyEmailAll,
           child: const ListTile(
             leading: Icon(Icons.copy),
             title: Text("Email (tất cả)"),
           ),
         ),
         MenuItemButton(
-          onPressed: copyEmailDirectAdmission,
+          onPressed: actions.copyEmailDirectAdmission,
           child: const ListTile(
             leading: Icon(Icons.copy),
             title: Text("Email (tích hợp)"),
           ),
         ),
         MenuItemButton(
-          onPressed: copyEmailInterviewAdmission,
+          onPressed: actions.copyEmailInterviewAdmission,
           child: const ListTile(
             leading: Icon(Icons.copy),
             title: Text("Email (xét tuyển)"),
@@ -219,10 +223,13 @@ class _AdmissionListView extends StatelessWidget {
               title: Text(admission.hoTen),
               subtitle: Text(subtitle),
               onTap: () async {
-                await Navigator.pushNamed(
+                await Navigator.push(
                   context,
-                  PageAdmissionDetail.routeName,
-                  arguments: PageAdmissionDetailArgs(admission: admission),
+                  MaterialPageRoute(
+                    builder: (context) => PageAdmissionDetail(
+                      admission: admission,
+                    ),
+                  ),
                 );
                 // Reload the list after returning
                 await state.loadAdmissionList();
@@ -243,7 +250,7 @@ class PageAdmissionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => Get.put<_State>(_State()),
+      create: (_) => _State(),
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Danh sách xét tuyển"),
@@ -273,24 +280,9 @@ class PageAdmissionList extends StatelessWidget {
   }
 }
 
-@freezed
-abstract class PageAdmissionDetailArgs with _$PageAdmissionDetailArgs {
-  const PageAdmissionDetailArgs._();
-  factory PageAdmissionDetailArgs({
-    required HocVien admission,
-  }) = _PageAdmissionDetailArgs;
-
-  factory PageAdmissionDetailArgs.fromJson(Map<String, dynamic> json) =>
-      _$PageAdmissionDetailArgsFromJson(json);
-}
-
 class PageAdmissionDetail extends StatefulWidget {
   static const routeName = "/admission/detail";
   final HocVien admission;
-
-  factory PageAdmissionDetail.fromArgs(PageAdmissionDetailArgs args) {
-    return PageAdmissionDetail(admission: args.admission);
-  }
 
   const PageAdmissionDetail({
     super.key,
@@ -350,8 +342,9 @@ class _PageAdmissionDetailState extends State<PageAdmissionDetail> {
           ),
           ListTile(
             title: const Text("Ngày sinh"),
-            subtitle:
-                Text(widget.admission.ngaySinh?.toIso8601String() ?? "N/A"),
+            subtitle: Text(
+              widget.admission.ngaySinh?.toIso8601String() ?? "N/A",
+            ),
           ),
           ListTile(
             title: const Text("Giới tính"),
@@ -475,7 +468,7 @@ class _PageAdmissionDetailState extends State<PageAdmissionDetail> {
                       classOfYearNotifier.value = classOfYear;
                       controller.closeView(null);
                     },
-                  )
+                  ),
               ];
             },
             builder: (context, controller) => ValueListenableBuilder(

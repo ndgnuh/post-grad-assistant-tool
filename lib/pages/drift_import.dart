@@ -22,7 +22,7 @@ class PageImportHocPhan extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final database = Provider.of<AppDatabase>(context, listen: false);
+    final database = Provider.of<AppDatabaseV2>(context, listen: false);
     final messenger = ScaffoldMessenger.of(context);
     return Scaffold(
       appBar: AppBar(title: const Text("Import Học Phần")),
@@ -35,7 +35,7 @@ class PageImportHocPhan extends StatelessWidget {
     );
   }
 
-  Future<void> _importHocPhan(AppDatabase database, messenger) async {
+  Future<void> _importHocPhan(AppDatabaseV2 database, messenger) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['csv'],
@@ -61,8 +61,9 @@ class PageImportHocPhan extends StatelessWidget {
         tenTiengAnh: row['tenTiengAnh'] as String,
         soTinChi: row['soTinChi'] as int,
         khoiLuong: row['khoiLuong'] as String,
-        khoiKienThuc:
-            Value(KhoiKienThuc.fromString(row['khoiKienThuc'] as String)),
+        khoiKienThuc: Value(
+          KhoiKienThuc.fromString(row['khoiKienThuc'] as String),
+        ),
       );
       await database.into(database.hocPhan).insert(hocPhan);
     }

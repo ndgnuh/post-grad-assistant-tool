@@ -8,6 +8,7 @@ import '../../business/domain_objects.dart';
 import '../../custom_tiles.dart';
 import '../../custom_widgets.dart';
 import '../../shortcuts.dart';
+import '../../business/copy_pasta.dart';
 
 class StudentCard extends StatelessWidget {
   static const double width = 480.0;
@@ -104,22 +105,22 @@ class StudentDetailPage extends StatelessWidget {
           StringTile(
             titleText: "Mã học viên",
             initialValue: student.maHocVien ?? "",
-            onUpdate: (value) => student.updateStudentId(value),
+            onUpdate: (value) => student.updateStudentId(value!),
           ),
           StringTile(
             titleText: "Email HUST",
             initialValue: student.emailHust ?? "",
-            onUpdate: (value) => student.updateStudentEmail(value),
+            onUpdate: (value) => student.updateStudentEmail(value!),
           ),
           StringTile(
             titleText: "Điện thoại",
             initialValue: student.dienThoai ?? "",
-            onUpdate: (value) => student.updatePhoneNumber(value),
+            onUpdate: (value) => student.updatePhoneNumber(value!),
           ),
           StringTile(
             titleText: "Email",
             initialValue: student.email ?? "",
-            onUpdate: (value) => student.updatePrivateEmail(value),
+            onUpdate: (value) => student.updatePrivateEmail(value!),
           ),
         ],
       ),
@@ -134,6 +135,9 @@ class StudentListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final totalWidth = MediaQuery.of(context).size.width;
+    final smallScreen = totalWidth < 600;
+
     return ChangeNotifierProvider(
       create: (_) => StudentListPageState(),
       child: CommonShortcuts(
@@ -143,9 +147,21 @@ class StudentListPage extends StatelessWidget {
           body: Padding(
             padding: EdgeInsets.all(context.gutter),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               spacing: context.gutter,
               children: [
-                _StudentSearchBar(),
+                if (!smallScreen)
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      spacing: context.gutterSmall,
+                      children: [
+                        Expanded(child: _StudentSearchBar()),
+                        _CopyButton(),
+                      ],
+                    ),
+                  ),
+                if (smallScreen) _StudentSearchBar(),
                 Expanded(
                   child: Selector(
                     selector: (context, StudentListPageState state) {
@@ -174,6 +190,7 @@ class StudentListPage extends StatelessWidget {
                     },
                   ),
                 ),
+                if (smallScreen) _CopyButton(),
               ],
             ),
           ),
@@ -188,15 +205,63 @@ class StudentListPage extends StatelessWidget {
   }
 }
 
+class _CopyButton extends StatelessWidget {
+  const _CopyButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final messenger = ScaffoldMessenger.of(context);
+
+    return OutlinedButton.icon(
+      icon: Icon(Icons.copy),
+      label: Text('Copy email'),
+      onPressed: () {
+        final state = context.read<StudentListPageState>();
+        final students = state.searchedStudents;
+
+        // No student
+        if (students.isEmpty) {
+          messenger.showSnackBar(
+            SnackBar(content: Text("Không có học viên nào để copy email.")),
+          );
+          return;
+        }
+
+        bool hasMissingEmail = false;
+        final emails = <String>[];
+        for (final student in students) {
+          if (student.emailHust == null) {
+            hasMissingEmail = true;
+          } else {
+            emails.add(student.emailHust!);
+          }
+        }
+
+        final missingMsg = switch (hasMissingEmail) {
+          true => ". Một số học viên không có email HUST",
+          false => ".",
+        };
+
+        copyToClipboard(
+          text: emails.join('\n'),
+          notification: "Đã copy email học viên$missingMsg",
+        );
+      },
+    );
+  }
+}
+
 class StudentListPageState extends ChangeNotifier {
   final searchFocusNode = FocusNode();
   final searchController = TextEditingController();
   final debounceDuration = const Duration(milliseconds: 400);
   late Future<List<HocVien>> futureSearchedStudents;
   late Timer debounceTimer;
+  late List<HocVien> searchedStudents;
 
   StudentListPageState() {
     debounceTimer = Timer(debounceDuration, () {});
+    searchedStudents = [];
     futureSearchedStudents = Future.value([]);
 
     // Search when change
@@ -213,6 +278,14 @@ class StudentListPageState extends ChangeNotifier {
     });
   }
 
+  @override
+  void dispose() {
+    searchFocusNode.dispose();
+    searchController.dispose();
+    debounceTimer.cancel();
+    super.dispose();
+  }
+
   void debounceAndSearch() {
     debounceTimer.cancel();
     debounceTimer = Timer(debounceDuration, () {
@@ -225,12 +298,17 @@ class StudentListPageState extends ChangeNotifier {
     final searchText = searchController.text.trim();
     if (searchText.isEmpty) {
       futureSearchedStudents = Future.value([]);
+      searchedStudents = [];
       notifyListeners();
       return;
     }
 
     futureSearchedStudents =
         HocVien.search(searchQuery: searchText) as Future<List<HocVien>>;
+    futureSearchedStudents.then((data) {
+      searchedStudents = data;
+      notifyListeners();
+    });
     notifyListeners();
   }
 }

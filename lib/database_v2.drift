@@ -1,0 +1,212 @@
+import 'business/business_enums.dart';
+
+-- Academic groups
+create table academic_group (
+    id integer primary key autoincrement,
+    title text not null
+);
+
+
+create table teacher (
+    id integer primary key autoincrement,
+
+    -- basic personal information
+    name text not null,
+    phone text,
+    address text,
+    email text,
+    birthday text,
+    gender text mapped by `const GenderConverter()`,
+
+    -- adminnistration information
+    created_at text not null default current_timestamp,
+    updated_at text not null default current_timestamp,
+    is_active int default 1 check (is_active in (0, 1)),
+    
+    -- payment information
+    bank_account text,
+    bank_name text,
+    tax_code text,
+
+    -- This ID is mostly used for insider teachers
+    -- who are usually staff of the university
+    staff_id text,
+
+    -- Falculty and university information
+    university text,
+    faculty text,
+    academic_group_id integer not null,
+    is_insider int default 0 check (is_insider in (0, 1)),
+
+    -- foreign keys 
+    foreign key (academic_group_id) references academic_group(id) on delete cascade on update cascade
+);
+
+create table course (
+    id integer primary key autoincrement,
+    vietnamese_title text not null,
+    english_title text not null,
+    code text not null unique,
+    credits integer not null,
+    theory_sessions integer not null,
+    practice_sessions integer not null,
+    lab_sessions integer not null,
+    self_study_sessions integer not null,
+    category text not null mapped by `const CourseCategoryConverter()`
+);
+
+create table master_student (
+    id integer primary key autoincrement,
+
+    -- basic information
+    name text not null,
+    phone text not null,
+    address text not null,
+    personal_email text not null,
+    school_email text,
+    birthday text,
+    birthplace text,
+
+    -- adminnistration information timestamps
+    created_at text not null default current_timestamp,
+    updated_at text not null default current_timestamp,
+    start_date text,
+    end_date text,
+    flag_1st_extension int default 0 check (flag_1st_extension in (0, 1)),
+    flag_2nd_extension int default 0 check (flag_2nd_extension in (0, 1)),
+
+    -- Admission Council IDs
+    admision_president_id integer not null references teacher(id) on delete cascade on update cascade,
+    admision_secretary_id integer not null references teacher(id) on delete cascade on update cascade,
+    admision_member_1_id integer not null references teacher(id) on delete cascade on update cascade,
+    admision_member_2_id integer not null references teacher(id) on delete cascade on update cascade,
+    admision_member_3_id integer not null references teacher(id) on delete cascade on update cascade,
+    flag_admission_paid int default 0 check (flag_admission_paid in (0, 1))
+);
+
+create table master_thesis (
+    id integer primary key autoincrement,
+    vietnamese_title text not null,
+    english_title text not null,
+    supervisor_id integer not null,
+    student_id integer,
+
+    created_at text not null default current_timestamp,
+    updated_at text not null default current_timestamp,
+
+    -- FK constraints
+    foreign key (student_id) references master_student(id) on delete cascade on update cascade,
+    foreign key (supervisor_id) references teacher(id) on delete cascade on update cascade
+);
+
+
+create table phd_student (
+    id integer primary key autoincrement,
+
+    -- basic information
+    name text not null,
+    phone text not null,
+    address text not null,
+    personal_email text not null,
+    school_email text,
+    birthday text,
+    gender text mapped by `const GenderConverter()`,
+
+    -- adminnistration information timestamps
+    created_at text not null default current_timestamp,
+    updated_at text not null default current_timestamp,
+    start_date text,
+    end_date text,
+    flag_1st_extension int default 0 check (flag_1st_extension in (0, 1)),
+    flag_2nd_extension int default 0 check (flag_2nd_extension in (0, 1)),
+
+    -- supervisor and phd thesis
+    supervisor_id integer not null references teacher(id) on delete cascade on update cascade,
+    thesis_title text not null,
+
+    -- Admission Council IDs
+    admision_president_id integer not null references teacher(id) on delete cascade on update cascade,
+    admision_secretary_id integer not null references teacher(id) on delete cascade on update cascade,
+    admision_member_1_id integer not null references teacher(id) on delete cascade on update cascade,
+    admision_member_2_id integer not null references teacher(id) on delete cascade on update cascade,
+    admision_member_3_id integer not null references teacher(id) on delete cascade on update cascade,
+    flag_admission_paid int default 0 check (flag_admission_paid in (0, 1)),
+    flag_admission_passed int default 0 check (flag_admission_passed in (0, 1))
+);
+
+-- offical document
+create table official_document (
+    id integer primary key autoincrement,
+    title text not null,
+    description text not null default '',
+    document_number integer not null,
+    document_type text not null,
+    issue_date text not null,
+    file_path text, -- TODO
+    created_at text not null default current_timestamp,
+    updated_at text not null default current_timestamp
+);
+
+create table financial_decision (
+    id integer primary key autoincrement,
+    document_id integer not null,
+
+    -- pay for master thesis defense
+    master_thesis_president_pay int not null default 400000,
+    master_thesis_secretary_pay int not null default 400000,
+    master_thesis_reviewer_pay int not null default 1050000,
+    master_thesis_member_pay int not null default 300000,
+
+    -- pay for master admission
+    master_admission_president_pay int not null default 70000,
+    master_admission_secretary_pay int not null default 70000,
+    master_admission_member_pay int not null default 60000,
+
+    -- pay for phd admission
+    phd_admission_president_pay int not null default 200000,
+    phd_admission_secretary_pay int not null default 200000,
+    phd_admission_member_pay int not null default 150000,
+    phd_admission_assisstant_pay int not null default 150000,
+
+    foreign key (document_id) references official_document(id) on delete cascade on update cascade
+);
+
+-- Teacher register for teaching courses
+create table teaching_registration (
+    id integer primary key autoincrement,
+    course_id integer not null,
+    foreign key (course_id) references course(id) on delete cascade on update cascade
+);
+
+-- Course class is a specific instance of a course being taught by a teacher
+create table course_class (
+    id integer primary key autoincrement,
+    course_id integer not null,
+    teacher_id integer not null,
+    foreign key (course_id) references course(id) on delete cascade on update cascade,
+    foreign key (teacher_id) references teacher(id) on delete cascade on update cascade
+);
+
+-- Teacher assigned to teach a course class
+create table teaching_assignment (
+    id integer primary key autoincrement,
+    course_class_id integer not null,
+    teacher_id integer not null, 
+    weight real not null default 1 check (weight > 0 and weight <= 1),
+    foreign key (course_class_id) references course_class(id) on delete cascade on update cascade,
+    foreign key (teacher_id) references teacher(id) on delete cascade on update cascade
+);
+
+create trigger if not exists "phd_student_update" after update on phd_student
+begin
+    update phd_student set updated_at = current_timestamp where id = old.id;
+end;
+
+-- Update tracking trigger
+create trigger if not exists "teacher_update" after update on teacher
+begin
+    update teacher set updated_at = current_timestamp where id = old.id;
+end;
+
+
+-- vim: ft=sql

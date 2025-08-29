@@ -6,9 +6,8 @@ part of 'ql_de_tai.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$MasterThesisTopicImpl _$$MasterThesisTopicImplFromJson(
-        Map<String, dynamic> json) =>
-    _$MasterThesisTopicImpl(
+_MasterThesisTopic _$MasterThesisTopicFromJson(Map<String, dynamic> json) =>
+    _MasterThesisTopic(
       advisor: json['advisor'] as String,
       nameVi: json['nameVi'] as String,
       nameEn: json['nameEn'] as String,
@@ -17,8 +16,7 @@ _$MasterThesisTopicImpl _$$MasterThesisTopicImplFromJson(
       studentCode: json['studentCode'] as String?,
     );
 
-Map<String, dynamic> _$$MasterThesisTopicImplToJson(
-        _$MasterThesisTopicImpl instance) =>
+Map<String, dynamic> _$MasterThesisTopicToJson(_MasterThesisTopic instance) =>
     <String, dynamic>{
       'advisor': instance.advisor,
       'nameVi': instance.nameVi,

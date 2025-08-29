@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' hide Provider;
 
 import '../../business/domain_objects.dart';
 import '../../business_widgets.dart';
+import '../../business/pods.dart';
 import '../../custom_widgets.dart';
 import '../../custom_tiles.dart';
 import '../../shortcuts.dart';
@@ -23,14 +25,30 @@ void copyToClipboard(String? text) {
   }
 }
 
-class Page extends StatelessWidget {
+class Page extends ConsumerWidget {
   static const routeName = "/mobile/teacher_detail";
-  final GiangVien teacher; // this is only the initial teacher data
+  final int id;
 
-  const Page({super.key, required this.teacher});
+  const Page({super.key, required this.id});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final teacherAsync = ref.watch(teacherByIdProvider(id));
+
+    switch (teacherAsync) {
+      case AsyncLoading():
+        return const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        );
+      case AsyncError(:final error, :final stackTrace):
+        return Scaffold(
+          appBar: AppBar(title: const Text("Chi tiết giảng viên")),
+          body: Center(child: Text("Lỗi: $error\n$stackTrace")),
+        );
+      default:
+    }
+
+    final teacher = teacherAsync.value!;
     return ChangeNotifierProvider(
       create: (context) => State(teacher),
       child: Actions(
@@ -88,12 +106,14 @@ class TeacherDetail extends StatelessWidget {
           titleText: "Họ tên",
           leading: const Icon(Icons.person),
           initialValue: teacher.hoTen,
-          onUpdate: (value) => teacher.updateName(value),
+          onUpdate: (value) => teacher.updateName(value!),
         ),
-        GenderTile(
-          initialGender: teacher.gioiTinh,
-          leading: const Icon(null),
-          onSelect: teacher.updateGender,
+        SingleSelectionTile<Gender>(
+          titleText: "Giới tính",
+          leading: const Icon(Icons.male),
+          options: Gender.values,
+          initialValue: teacher.gioiTinh,
+          onUpdate: teacher.updateGender,
         ),
         DateTile(
           titleText: "Ngày sinh",
@@ -114,27 +134,26 @@ class TeacherDetail extends StatelessWidget {
           titleText: "Đơn vị",
           leading: const Icon(Icons.school),
           initialValue: teacher.donVi ?? notAvailableText,
-          onUpdate: (value) => teacher.updateUniversity(value),
+          onUpdate: (value) => teacher.updateUniversity(value!),
         ),
-        ListTile(
-          title: Text("Chuyên ngành"),
+        StringTile(
+          titleText: "Chuyên ngành",
           leading: const Icon(null),
-          onLongPress: () => copyToClipboardAndNotify(teacher.chuyenNganh),
-          subtitle: Text(teacher.chuyenNganh ?? notAvailableText),
+          initialValue: teacher.chuyenNganh ?? notAvailableText,
         ),
-        ListTile(
-          title: Text("Học hàm"),
+        SingleSelectionTile<HocHam>(
+          options: HocHam.values,
+          titleText: "Học hàm",
           leading: const Icon(null),
-          onLongPress: () =>
-              copyToClipboardAndNotify(teacher.hocHam?.toString()),
-          subtitle: Text(teacher.hocHam?.toString() ?? notAvailableText),
+          initialValue: teacher.hocHam,
+          onUpdate: (rank) => teacher.updateAcademicRank(rank: rank),
         ),
-        ListTile(
-          title: Text("Học vị"),
+        SingleSelectionTile<HocVi>(
+          titleText: "Học vị",
           leading: const Icon(null),
-          onLongPress: () =>
-              copyToClipboardAndNotify(teacher.hocVi?.toString()),
-          subtitle: Text(teacher.hocVi?.toString() ?? notAvailableText),
+          options: HocVi.values,
+          initialValue: teacher.hocVi,
+          onUpdate: (deg) => teacher.updateAcademicDegree(degree: deg),
         ),
 
         // Thông tin liên hệ

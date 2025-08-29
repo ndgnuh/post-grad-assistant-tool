@@ -14,7 +14,6 @@ import 'pages/page_xet_tuyen_ncs.dart' show PageXetTuyenNcs;
 import 'pages/ql_de_tai.dart' show PageQuanLyDeTai;
 import 'pages/han_che_hoc_phan.dart' show PageHanCheHocPhan;
 import 'pages/danh_sach_giang_vien.dart' show PageQuanLyGiangVien;
-import 'pages/page_copy_pasta.dart' show PageCopyPasta;
 import 'pages/ql_hoc_vien.dart' show QlHocVien;
 import 'pages/ql_bieu_mau.dart' show QlBieuMau, DienPhieuDiemThs;
 import 'pages/dang_ky_bao_ve.dart' show DangKyBaoVePage, DangKyBaoVePage2;
@@ -23,6 +22,8 @@ import 'features/manage_thesis_topic/page_export_thesis.dart'
 
 import 'pages/course_management.dart'
     show PageCourseList, PageCourseDetailArgs, PageCourseDetail;
+
+import 'pages/phd_students/index.dart';
 
 import 'pages/academic_year_list.dart'
     show
@@ -50,14 +51,8 @@ import 'pages/mobile/course_classes.dart'
 
 import 'pages/thesis_defense/index.dart';
 
-import 'pages/mobile/thesis_list.dart'
-    show
-        ThesisTopicListPage,
-        ThesisTopicDetailPageArguments,
-        ThesisTopicDetailPage,
-        ThesisTopicAddPage;
+import 'pages/theses/list.dart';
 
-import 'pages/drift_import.dart' show PageImportHocPhan;
 import 'pages/mobile/students.dart' show StudentListPage, StudentDetailPage;
 
 import 'pages/teachers/index.dart' show TeacherSearchPage, TeacherDetailsPage;
@@ -75,12 +70,18 @@ import '../preferences.dart' as preferences;
 
 final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
-  // false => StudentListPage.routeName,
+  // false => DraftPage.routeName,
   // false => PageCourseClassList.routeName,
-  false => TeacherSearchPage.routeName,
+  // false => TeacherSearchPage.routeName,
   // false => MobilePageThesisAssignList.routeName,
+  // false => ThesisListPage.routeName,
   // false => SettingsPage.routeName,
-  // false => ThesisDefenseRegisterPage.routeName,
+  false => ThesisDefenseRegisterPage.routeName,
+  // false => ThesisDefensePaymentPage.routeName,
+  // false => PageAcademicYearList.routeName,
+
+  // false => PhdStudentListPage.routeName,
+  false => PhdStudentCreatePage.routeName,
 };
 
 // const initialRoute = SettingsPage.routeName;
@@ -100,7 +101,6 @@ final initialRoute = switch (kReleaseMode) {
 
 // const initialRoute = DraftPage.routeName;
 // const initialRoute = PageQuanLyGiangVien.routeName;
-// const initialRoute = PageCopyPasta.routeName;
 // const initialRoute = DangKyBaoVePage.routeName;
 // const initialRoute = PageHanCheHocPhan.routeName;
 // const initialRoute = PageLopTinChi.routeName;
@@ -124,7 +124,7 @@ const routes = [
     icon: Icons.assignment_turned_in,
   ),
   (
-    route: ThesisTopicListPage.routeName,
+    route: ThesisListPage.routeName,
     label: "Quản lý đề tài (v2)",
     icon: Icons.assignment_turned_in,
   ),
@@ -175,8 +175,11 @@ const routes = [
     label: "Phân hội đồng bảo vệ",
     icon: Icons.person_add,
   ),
-  (route: PageCopyPasta.routeName, label: "Văn mẫu", icon: Icons.book),
-  (route: SettingsPage.routeName, label: "Cài đặt", icon: Icons.settings),
+  (
+    route: SettingsPage.routeName,
+    label: "Cài đặt",
+    icon: Icons.settings,
+  ),
 ];
 
 Widget buildRoute(BuildContext context, RouteSettings settings) {
@@ -207,8 +210,6 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       return PageHanCheHocPhan();
     case PagePhanCongHoiDongLuanVanThacSi.routeName:
       return PagePhanCongHoiDongLuanVanThacSi();
-    case PageCopyPasta.routeName:
-      return PageCopyPasta();
     case QlHocVien.routeName:
       return QlHocVien();
 
@@ -226,11 +227,6 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     /// Mobiles
     case TeacherSearchPage.routeName:
       return TeacherSearchPage();
-    case TeacherDetailsPage.routeName:
-      return switch (args) {
-        (GiangVien teacher) => TeacherDetailsPage(teacher: teacher),
-        _ => const TeacherSearchPage(),
-      };
 
     case MobilePageThesisAssignList.routeName:
       return const MobilePageThesisAssignList();
@@ -271,13 +267,6 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       return const PageAdmissionList();
     case PageAdmissionCreate.routeName:
       return const PageAdmissionCreate();
-    case PageAdmissionDetail.routeName:
-      switch (args) {
-        case PageAdmissionDetailArgs args:
-          return PageAdmissionDetail.fromArgs(args);
-        default:
-          return const PageAdmissionList();
-      }
 
     /// Selection pages
     case PageSelectClassOf.routeName:
@@ -309,17 +298,8 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       }
 
     /// Thesis topic management pages
-    case ThesisTopicListPage.routeName:
-      return const ThesisTopicListPage();
-    case ThesisTopicAddPage.routeName:
-      return const ThesisTopicAddPage();
-    case ThesisTopicDetailPage.routeName:
-      switch (args) {
-        case ThesisTopicDetailPageArguments args:
-          return ThesisTopicDetailPage.fromArguments(args);
-        default:
-          return ThesisTopicListPage();
-      }
+    case ThesisListPage.routeName:
+      return const ThesisListPage();
 
     /// Student management pages
     case StudentListPage.routeName:
@@ -335,10 +315,14 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     // Thesis defense pages
     case ThesisDefenseRegisterPage.routeName:
       return const ThesisDefenseRegisterPage();
+    case ThesisDefensePaymentPage.routeName:
+      return const ThesisDefensePaymentPage();
 
-    /// Drift
-    case PageImportHocPhan.routeName:
-      return const PageImportHocPhan();
+    // PhD Student pages
+    case PhdStudentListPage.routeName:
+      return const PhdStudentListPage();
+    case PhdStudentCreatePage.routeName:
+      return const PhdStudentCreatePage();
 
     /// Biểu mẫu
     case QlBieuMau.routeName:

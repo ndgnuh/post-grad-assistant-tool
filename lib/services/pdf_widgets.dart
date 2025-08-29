@@ -236,17 +236,21 @@ class EzTopHeader extends StatelessWidget {
   }
 
   Widget flushLeft() {
-    return Row(children: [
-      this,
-      Expanded(child: SizedBox.shrink()),
-    ]);
+    return Row(
+      children: [
+        this,
+        Expanded(child: SizedBox.shrink()),
+      ],
+    );
   }
 
   Widget flushRight() {
-    return Row(children: [
-      Expanded(child: SizedBox.shrink()),
-      this,
-    ]);
+    return Row(
+      children: [
+        Expanded(child: SizedBox.shrink()),
+        this,
+      ],
+    );
   }
 
   @override
@@ -316,7 +320,7 @@ class EzTable<T> extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              )
+              ),
     ];
   }
 
@@ -350,7 +354,7 @@ class EzTable<T> extends StatelessWidget {
                           textAlign: textAligns?[colCount] ?? TextAlign.center,
                           style: theme.defaultTextStyle.copyWith(),
                         ),
-                      )
+                      ),
             ],
           ),
       ],
