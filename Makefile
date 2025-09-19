@@ -1,5 +1,6 @@
-APP_HOME ?= "$(HOME)/Applications/FamiSDH"
+APP_HOME ?= "$(HOME)/Application/FamiSDH"
 PREFIX ?= "$(HOME)/.local"
+GDK_SCALE := 2
 
 dev:
 	flutter run
