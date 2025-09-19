@@ -44,7 +44,7 @@ class MobilePageThesisAssignList extends StatelessWidget {
                     spacing: context.gutter,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Expanded(child: _SelectCohortButton()),
+                      _SelectCohortButton(),
                       Expanded(flex: 2, child: _ThesisSearchBar()),
                       _SelectButton(),
                       _ActionButton(),
@@ -535,32 +535,29 @@ class _SelectCohortButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = Provider.of<_State>(context, listen: false);
+    final cohortsState = ref.watch(cohortsProvider);
+    switch (cohortsState) {
+      case AsyncLoading():
+        return const CircularProgressIndicator();
+      case AsyncError(:final error):
+        return Text('Lỗi khi tải niên khóa: $error');
+      default:
+    }
 
-    return SearchAnchor(
-      builder: (context, searchController) => TextField(
-        decoration: InputDecoration(
-          labelText: "Chọn niên khóa",
-          suffixIcon: const Icon(Icons.arrow_drop_down),
-        ),
-        readOnly: true,
-        controller: controller,
-        onTap: () => searchController.openView(),
+    return DropdownMenu(
+      enableFilter: true,
+      controller: TextEditingController(
+        text: state.selectedClassOfYear?.nienKhoa ?? "",
       ),
-      suggestionsBuilder: (context, searchController) async {
-        final cohorts = await Cohort.search(searchController.text);
-        final suggestions = <Widget>[];
-        for (final classOfYear in cohorts) {
-          final widget = ListTile(
-            title: Text(classOfYear.nienKhoa),
-            onTap: () {
-              controller.text = classOfYear.nienKhoa;
-              state.selectedClassOfYear = classOfYear;
-              searchController.closeView("");
-            },
-          );
-          suggestions.add(widget);
-        }
-        return suggestions;
+      dropdownMenuEntries: [
+        for (final cohort in cohortsState.value!)
+          DropdownMenuEntry(
+            value: cohort,
+            label: cohort.nienKhoa,
+          ),
+      ],
+      onSelected: (value) {
+        state.selectedClassOfYear = value;
       },
     );
   }
