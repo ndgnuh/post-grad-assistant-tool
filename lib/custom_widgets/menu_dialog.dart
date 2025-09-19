@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+@immutable
+sealed class AbstractMenuDialogItem {
+  const AbstractMenuDialogItem();
+}
+
 /// Dialog action for [MenuDialog].
 /// Each action can have a [title], an optional [subtitle],
 /// an optional [icon],
 /// and a function [onTap] that will be called when the action is tapped.
 @immutable
-class MenuDialogItem {
+class MenuDialogItem extends AbstractMenuDialogItem {
   final String title;
   final String? subtitle;
   final IconData? icon;
@@ -20,11 +25,17 @@ class MenuDialogItem {
   });
 }
 
+/// Render a divider in the dialog.
+@immutable
+class MenuDialogDivider extends AbstractMenuDialogItem {
+  const MenuDialogDivider();
+}
+
 /// Show a dialog with list of actions.
 /// The action are defined by [MenuDialogItem].
 Future<void> showMenuDialog(
   BuildContext context, {
-  required List<MenuDialogItem> items,
+  required List<AbstractMenuDialogItem> items,
   bool dismissFirst = true,
 }) async {
   return await showDialog<void>(
@@ -34,7 +45,7 @@ Future<void> showMenuDialog(
 }
 
 class MenuDialog extends StatelessWidget {
-  final List<MenuDialogItem> items;
+  final List<AbstractMenuDialogItem> items;
   final bool dismissFirst;
 
   const MenuDialog({
@@ -51,24 +62,27 @@ class MenuDialog extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         children: [
           for (final action in items)
-            ListTile(
-              key: ValueKey(action),
-              title: Text(action.title),
-              subtitle: (action.subtitle is String)
-                  ? Text(action.subtitle!)
-                  : null,
-              leading: (action.icon != null) ? Icon(action.icon) : null,
-              onTap: () async {
-                if (dismissFirst) navigator.pop();
-                switch (action.onTap) {
-                  case Function callback:
-                    await callback();
-                  default:
-                    break;
-                }
-                if (!dismissFirst) navigator.pop();
-              },
-            ),
+            switch (action) {
+              MenuDialogDivider() => const Divider(height: 1),
+              MenuDialogItem() => ListTile(
+                key: ValueKey(action),
+                title: Text(action.title),
+                subtitle: (action.subtitle is String)
+                    ? Text(action.subtitle!)
+                    : null,
+                leading: (action.icon != null) ? Icon(action.icon) : null,
+                onTap: () async {
+                  if (dismissFirst) navigator.pop();
+                  switch (action.onTap) {
+                    case Function callback:
+                      await callback();
+                    default:
+                      break;
+                  }
+                  if (!dismissFirst) navigator.pop();
+                },
+              ),
+            },
         ],
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'dart:io';
 
 const _magicPreferenceKey = '<widget-selected-directory>';
@@ -73,6 +74,7 @@ class _DirectoryPickerState extends State<DirectoryPicker> {
     final prefs = await SharedPreferences.getInstance();
     final savedDirectory = prefs.getString(key);
     if (savedDirectory != null) {
+      widget.onDirectorySelected?.call(savedDirectory);
       valueNotifier.text = savedDirectory;
     }
     return;
@@ -120,7 +122,7 @@ class _DirectoryPickerState extends State<DirectoryPicker> {
           labelText: widget.labelText ?? "Chọn thư mục",
           hintText: widget.hintText ?? "Click vào icon bên phải để chọn",
           suffixIcon: IconButton(
-            icon: Icon(Icons.folder_open),
+            icon: Icon(Symbols.folder),
             onPressed: () async {
               final dirPath = await FilePicker.platform.getDirectoryPath(
                 lockParentWindow: true,

@@ -47,7 +47,7 @@ class DateTimePicker extends StatefulWidget {
     this.name,
     this.labelText,
     this.initialDateTime,
-    this.controller,
+    required this.controller, // lint error if you forget
     this.onDateTimeSelected,
     this.validator,
     this.hintText = "Click to select date",

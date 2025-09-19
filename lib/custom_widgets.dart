@@ -13,8 +13,7 @@ import 'datamodels.dart' show toSqliteDate;
 import 'datamodels.dart' show tryFormatHumanDate;
 import 'datamodels.dart' show tryParseDMY;
 
-export 'custom_widgets/menu_dialog.dart'
-    show MenuDialog, showMenuDialog, MenuDialogItem;
+export 'custom_widgets/menu_dialog.dart';
 export 'custom_widgets/directory_picker.dart';
 export 'custom_widgets/datetime_picker.dart';
 export 'custom_widgets/expanded_scrollview.dart';

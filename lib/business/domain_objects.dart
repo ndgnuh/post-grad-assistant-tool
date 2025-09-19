@@ -26,6 +26,14 @@ List<T?> prependNull<T>(List<T> values) {
   return [null, for (final value in values) value];
 }
 
+enum CouncilRole {
+  president,
+  reviewer1,
+  reviewer2,
+  secretary,
+  member,
+}
+
 /// Quote string in a double quote
 String quoted(String s) {
   return '"$s"';
@@ -133,12 +141,17 @@ Future<void> _update<T>({
 typedef Cohort = NienKhoa;
 typedef Semester = HocKy;
 typedef ClassOfYear = NienKhoa;
+typedef AcademicYear = HocKy;
+
+typedef AdmissionCouncil = TieuBanXetTuyen;
 
 typedef Student = HocVien;
 
 typedef Teacher = GiangVien;
 
 typedef Thesis = DeTaiThacSi;
+
+typedef AdmissionType = DienTuyenSinh;
 
 class BoolIntSerializer implements JsonConverter<bool, int?> {
   const BoolIntSerializer();
@@ -562,6 +575,14 @@ enum DienTuyenSinh {
 
   @override
   toString() => label;
+
+  static DienTuyenSinh fromWebString(String s) {
+    return switch (s) {
+      "Đăng ký xét tuyển" => DienTuyenSinh.xetTuyen,
+      "Tích hợp-Cử nhân thạc sĩ" => DienTuyenSinh.tichHop,
+      _ => throw ArgumentError("Unknown admission type: $s"),
+    };
+  }
 }
 
 @freezed
@@ -1679,6 +1700,8 @@ abstract class TieuBanXetTuyen with _$TieuBanXetTuyen {
 
   const TieuBanXetTuyen._();
 
+  Future<void> create() => _create(table: table, idField: "id", toJson: toJson);
+
   Future<GiangVien> get chuTich async {
     return await GiangVien.getById(idChuTich);
   }
@@ -1706,6 +1729,18 @@ abstract class TieuBanXetTuyen with _$TieuBanXetTuyen {
     return dbSession((db) async {
       final rows = await db.query(table, orderBy: "nam DESC");
       return [for (final json in rows) TieuBanXetTuyen.fromJson(json)];
+    });
+  }
+
+  static Future<TieuBanXetTuyen?> latest() async {
+    return dbSession((db) async {
+      final rows = await db.query(table, orderBy: "nam DESC", limit: 1);
+      if (rows.isEmpty) {
+        return null;
+      } else {
+        final json = rows.single;
+        return TieuBanXetTuyen.fromJson(json);
+      }
     });
   }
 

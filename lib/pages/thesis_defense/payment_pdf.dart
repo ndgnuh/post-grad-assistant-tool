@@ -356,7 +356,9 @@ Future<Uint8List> buildPaymentSummaryPdf({
           afterTaxAmount.formatMoney(),
           teacher.stk ?? "",
           teacher.nganHang ?? "",
-          teacher.mst ?? "",
+          // New laws requires citizen ID instead of tax code
+          // What??
+          teacher.cccd ?? "",
         ];
         summaryTable.add(rows);
       }
@@ -558,7 +560,7 @@ List<Widget> _buildPaymentSummary({
       afterTaxAmount.formatMoney(),
       teacher.stk ?? "",
       teacher.nganHang ?? "",
-      teacher.mst ?? "",
+      teacher.cccd ?? "",
     ];
     summaryTable.add(rows);
   }
@@ -743,7 +745,7 @@ class PayoutPerTeacher {
       remain.toString(),
       teacher.stk?.toString() ?? "",
       teacher.nganHang?.toString() ?? "",
-      teacher.mst?.toString() ?? "",
+      teacher.cccd?.toString() ?? "",
     ];
   }
 

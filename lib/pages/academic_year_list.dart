@@ -384,7 +384,7 @@ class _PageAcademicYearEditState extends ConsumerState<PageAcademicYearEdit> {
     notifier = ValueNotifier(academicYear);
     notifier.addListener(() {
       // Update the academic year when the notifier changes
-      ref.invalidate(allAcademicYearsProvider);
+      ref.invalidate(academicYearsProvider);
     });
   }
 
@@ -681,7 +681,7 @@ class _AcademicYearList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final future = ref.watch(allAcademicYearsProvider);
+    final future = ref.watch(academicYearsProvider);
     return switch (future) {
       AsyncLoading() => const Center(child: CircularProgressIndicator()),
       AsyncError(:final error) => Text("Error: $error"),

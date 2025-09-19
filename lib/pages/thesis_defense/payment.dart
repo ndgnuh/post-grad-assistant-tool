@@ -317,7 +317,6 @@ class _CouncilTable extends ConsumerWidget {
       null => "!",
     };
 
-    final state = context.read<_State>();
     void goToDetails() async {
       final route = MaterialPageRoute(
         builder: (context) => ThesisDetailPage(thesis: thesis),
@@ -499,7 +498,7 @@ class _PaymentTable extends ConsumerWidget {
                           DataCell(Text(teacher.maCanBo ?? "")),
                           DataCell(Text(teacher.stk ?? "")),
                           DataCell(Text(teacher.nganHang ?? "")),
-                          DataCell(Text(teacher.mst ?? "")),
+                          DataCell(Text(teacher.cccd ?? "")),
                           DataCell(
                             Icon(teacher.isForeign ? Icons.check : Icons.close),
                           ),
@@ -539,7 +538,6 @@ class _TeacherLink extends ConsumerWidget {
         focusedNotifier.value = hovering;
       },
       onTap: () async {
-        final state = context.read<_State>();
         final route = MaterialPageRoute(
           builder: (context) => TeacherDetailsPage(id: teacher.id),
         );

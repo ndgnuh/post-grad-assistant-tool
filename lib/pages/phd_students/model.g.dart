@@ -71,6 +71,9 @@ const _$GioiTinhEnumMap = {GioiTinh.nam: 'M', GioiTinh.nu: 'F'};
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
 @ProviderFor(allPhdCohorts)
 const allPhdCohortsProvider = AllPhdCohortsProvider._();
 
@@ -109,82 +112,3 @@ final class AllPhdCohortsProvider
 }
 
 String _$allPhdCohortsHash() => r'fd796cec5ef7ac3ffcf488e614f2c819e34658f6';
-
-@ProviderFor(phdStudentsByCohorts)
-const phdStudentsByCohortsProvider = PhdStudentsByCohortsFamily._();
-
-final class PhdStudentsByCohortsProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<List<PhdStudent>>,
-          List<PhdStudent>,
-          FutureOr<List<PhdStudent>>
-        >
-    with $FutureModifier<List<PhdStudent>>, $FutureProvider<List<PhdStudent>> {
-  const PhdStudentsByCohortsProvider._({
-    required PhdStudentsByCohortsFamily super.from,
-    required String super.argument,
-  }) : super(
-         retry: null,
-         name: r'phdStudentsByCohortsProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
-
-  @override
-  String debugGetCreateSourceHash() => _$phdStudentsByCohortsHash();
-
-  @override
-  String toString() {
-    return r'phdStudentsByCohortsProvider'
-        ''
-        '($argument)';
-  }
-
-  @$internal
-  @override
-  $FutureProviderElement<List<PhdStudent>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<List<PhdStudent>> create(Ref ref) {
-    final argument = this.argument as String;
-    return phdStudentsByCohorts(ref, argument);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is PhdStudentsByCohortsProvider && other.argument == argument;
-  }
-
-  @override
-  int get hashCode {
-    return argument.hashCode;
-  }
-}
-
-String _$phdStudentsByCohortsHash() =>
-    r'e8be6770dfe637edb7a2d3ff311c6902b13984e4';
-
-final class PhdStudentsByCohortsFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<List<PhdStudent>>, String> {
-  const PhdStudentsByCohortsFamily._()
-    : super(
-        retry: null,
-        name: r'phdStudentsByCohortsProvider',
-        dependencies: null,
-        $allTransitiveDependencies: null,
-        isAutoDispose: true,
-      );
-
-  PhdStudentsByCohortsProvider call(String cohorts) =>
-      PhdStudentsByCohortsProvider._(argument: cohorts, from: this);
-
-  @override
-  String toString() => r'phdStudentsByCohortsProvider';
-}
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

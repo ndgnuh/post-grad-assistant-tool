@@ -34,31 +34,32 @@ MaterialPageRoute ezRoute(Widget page) {
 class _TeacherDataAll extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final allTeachers = ref.watch(allTeachersProvider);
-
-    return allTeachers.when(
-      data: (teachers) {
-        return ListView.builder(
-          itemCount: teachers.length,
-          itemBuilder: (context, index) {
-            final teacher = teachers[index];
-            return ListTile(
-              title: Text(teacher.name ?? ""),
-              subtitle: Text(teacher.gender.toString()),
-            );
-          },
-        );
-      },
-      loading: () => CircularProgressIndicator(),
-      error: (error, stack) => Text('Error: $error'),
-    );
+    return SizedBox();
+    // final allTeachers = ref.watch(allTeachersProvider);
+    //
+    // return allTeachers.when(
+    //   data: (teachers) {
+    //     return ListView.builder(
+    //       itemCount: teachers.length,
+    //       itemBuilder: (context, index) {
+    //         final teacher = teachers[index];
+    //         return ListTile(
+    //           title: Text(teacher.name ?? ""),
+    //           subtitle: Text(teacher.gender.toString()),
+    //         );
+    //       },
+    //     );
+    //   },
+    //   loading: () => CircularProgressIndicator(),
+    //   error: (error, stack) => Text('Error: $error'),
+    // );
   }
 }
 
 class _PageBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dbState = ref.watch(myDriftDatabaseProvider);
+    final dbState = ref.watch(driftDatabaseProvider);
     switch (dbState) {
       case AsyncLoading():
         return CircularProgressIndicator();

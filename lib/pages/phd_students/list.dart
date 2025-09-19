@@ -1,24 +1,12 @@
+import 'package:fami_tools/business/db_v2_providers/phd_students.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
 import '../../custom_widgets.dart';
-import '../../business/drift_orm.dart';
-
-typedef _FilterArgs = ({String? cohort, String searchText});
-
-class _ViewModel {
-  final selectedCohort = ValueNotifier<String?>(null);
-  final searchController = SearchController();
-}
+import './drift_model.dart';
 
 final _viewModelProvider = Provider<_ViewModel>((ref) => _ViewModel());
-final _filterArgsProvider = Provider<_FilterArgs>((ref) {
-  final viewModel = ref.watch(_viewModelProvider);
-  return (
-    cohort: viewModel.selectedCohort.value,
-    searchText: viewModel.searchController.text,
-  );
-});
 
 class PhdStudentListPage extends StatelessWidget {
   static const routeName = '/phd-students';
@@ -67,22 +55,6 @@ class PhdStudentListPage extends StatelessWidget {
   }
 }
 
-class _ListView extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Kiểm tra bộ học NCS
-    final filterArgs = ref.watch(_filterArgsProvider);
-    final noop = filterArgs.cohort == null && filterArgs.searchText.isEmpty;
-    if (noop) {
-      return Center(
-        child: Text("Chọn niên khóa hoặc tìm để hiển thị NCS"),
-      );
-    }
-
-    return Text("Filter: ${filterArgs.cohort}, ${filterArgs.searchText}");
-  }
-}
-
 class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -95,23 +67,10 @@ class _ActionButton extends StatelessWidget {
   }
 }
 
-class _SearchBar extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(_viewModelProvider);
-
-    return SearchBar(
-      controller: viewModel.searchController,
-      hintText: "Tìm kiếm",
-      onChanged: (_) => ref.invalidate(_filterArgsProvider),
-    );
-  }
-}
-
 class _CohortSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cohortsAsync = ref.watch(allPhdCohortsProvider);
+    final cohortsAsync = ref.watch(phdCohortsProvider);
     switch (cohortsAsync) {
       case AsyncLoading():
         return const CircularProgressIndicator();
@@ -120,26 +79,24 @@ class _CohortSelector extends ConsumerWidget {
       default:
     }
 
-    final viewModel = ref.watch(_viewModelProvider);
-    final selectedCohortNotifier = viewModel.selectedCohort;
+    final cohorts = cohortsAsync.value!;
+    final selectedCohort = ref.watch(selectedCohortProvider);
 
-    final cohorts = cohortsAsync.value!.toList()..sort();
-    return DropdownMenu(
+    return DropdownMenu<String?>(
+      initialSelection: selectedCohort,
       onSelected: (value) {
-        selectedCohortNotifier.value = value;
-        ref.invalidate(_filterArgsProvider);
+        final notifier = ref.read(selectedCohortProvider.notifier);
+        notifier.select(value);
       },
-      initialSelection: selectedCohortNotifier.value,
-      hintText: 'Select Cohort',
       dropdownMenuEntries: [
         DropdownMenuEntry<String?>(
           value: null,
-          label: 'Chọn khóa NCS',
+          label: ('Chọn khóa NCS'),
         ),
         ...cohorts.map(
           (cohort) => DropdownMenuEntry<String?>(
             value: cohort,
-            label: cohort,
+            label: (cohort),
           ),
         ),
       ],
@@ -147,10 +104,98 @@ class _CohortSelector extends ConsumerWidget {
   }
 }
 
+class _ListView extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedCohort = ref.watch(selectedCohortProvider);
+    if (selectedCohort == null) {
+      return Center(
+        child: Text("Chọn niên khóa để hiển thị NCS"),
+      );
+    }
+
+    final phdStudentsAsync = ref.watch(filteredPhdStudentsProvider);
+    switch (phdStudentsAsync) {
+      case AsyncLoading():
+        return Center(child: CircularProgressIndicator());
+      case AsyncError(:final error):
+        return Center(child: Text('Error: $error'));
+      default:
+    }
+
+    final phdStudents = phdStudentsAsync.value!;
+
+    return _buildListView(context, phdStudents, ref);
+  }
+
+  Widget _buildListView(
+    BuildContext context,
+    List<PhdStudentViewModel> data,
+    WidgetRef ref,
+  ) {
+    final rows = <DataRow>[];
+    for (final (i, data) in data.indexed) {
+      final student = data.student;
+      final supervisor = data.supervisor;
+      // final secondarySupervisor = data.secondarySupervisor;
+
+      final infos = <String>[
+        (i + 1).toString(),
+        student.name,
+        student.dateOfBirth.toString(),
+        student.phone,
+        student.personalEmail,
+        supervisor.name,
+        student.thesis,
+      ];
+
+      final cells = [for (final info in infos) DataCell(Text(info))];
+      rows.add(DataRow(cells: cells));
+    }
+    return ExpandedScrollView(
+      child: DataTable(
+        columns: [
+          DataColumn(label: Text("STT")),
+          DataColumn(label: Text("Họ tên")),
+          DataColumn(label: Text("Ngày sinh")),
+          DataColumn(label: Text("Số điện thoại")),
+          DataColumn(label: Text("Email")),
+          DataColumn(label: Text("GVHD")),
+          DataColumn(label: Text("Đề tài")),
+        ],
+        rows: rows,
+      ),
+    );
+  }
+}
+
+class _SearchBar extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final viewModel = ref.read(_viewModelProvider);
+    return SearchBar(
+      hintText: "Tìm kiếm",
+      controller: viewModel.searchTextController,
+    );
+  }
+}
+
+@immutable
+class _ViewModel {
+  final ValueNotifier<String?> selectedCohortNotifier = ValueNotifier(null);
+  final SearchController searchTextController = SearchController();
+
+  bool get noop => selectedCohort == null;
+  String? get searchText => searchTextController.text;
+  String? get selectedCohort => selectedCohortNotifier.value;
+}
+
 // class _PhdStudentList extends ConsumerWidget {
 //   @override
 //   Widget build(BuildContext context, WidgetRef ref) {
-//     final allStudents = ref.watch(allPhdStudentsProvider);
+//     final viewModel = ref.read(_viewModelProvider);
+//     final viewModel.selectedCohort.value;
+//     final allStudents = ref.watch(phdStudentsByCohorts());
 //
 //     return allStudents.when(
 //       data: (students) {

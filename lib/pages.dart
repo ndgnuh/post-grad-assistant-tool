@@ -20,10 +20,10 @@ import 'pages/dang_ky_bao_ve.dart' show DangKyBaoVePage, DangKyBaoVePage2;
 import 'features/manage_thesis_topic/page_export_thesis.dart'
     show PageExportThesis;
 
+import 'pages/phd_students/index.dart';
+
 import 'pages/course_management.dart'
     show PageCourseList, PageCourseDetailArgs, PageCourseDetail;
-
-import 'pages/phd_students/index.dart';
 
 import 'pages/academic_year_list.dart'
     show
@@ -33,21 +33,12 @@ import 'pages/academic_year_list.dart'
         PageAcademicYearArgument;
 
 import 'pages/xet_tuyen.dart' show PageXetTuyen;
-import 'pages/mobile/admission.dart'
-    show
-        PageAdmissionList,
-        PageAdmissionDetail,
-        PageAdmissionCreate,
-        PageAdmissionDetailArgs;
+import 'pages/admission/index.dart';
 
 import 'pages/settings.dart' show SettingsPage;
 
 import 'pages/mobile/course_classes.dart'
-    show
-        PageCourseClassList,
-        PageStudyClassListArgs,
-        PageSelectSemester,
-        CourseClassCreatePage;
+    show PageCourseClassList, PageSelectSemester, CourseClassCreatePage;
 
 import 'pages/thesis_defense/index.dart';
 
@@ -55,7 +46,7 @@ import 'pages/theses/list.dart';
 
 import 'pages/mobile/students.dart' show StudentListPage, StudentDetailPage;
 
-import 'pages/teachers/index.dart' show TeacherSearchPage, TeacherDetailsPage;
+import 'pages/teachers/index.dart' show TeacherSearchPage;
 import 'pages/mobile/thesis_assign_list.dart' show MobilePageThesisAssignList;
 
 import 'pages/mobile/select_class_of.dart'
@@ -64,24 +55,21 @@ import 'pages/mobile/select_class_of.dart'
 import 'pages/multiple_selection_page.dart'
     show MultipleSelectionPage, MultipleSelectionPageArgs;
 
-import 'pages/thesis_defense/index.dart';
-
-import '../preferences.dart' as preferences;
-
 final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
+
   // false => DraftPage.routeName,
   // false => PageCourseClassList.routeName,
   // false => TeacherSearchPage.routeName,
   // false => MobilePageThesisAssignList.routeName,
   // false => ThesisListPage.routeName,
   // false => SettingsPage.routeName,
-  false => ThesisDefenseRegisterPage.routeName,
+  // false => ThesisDefenseRegisterPage.routeName,
   // false => ThesisDefensePaymentPage.routeName,
   // false => PageAcademicYearList.routeName,
-
   // false => PhdStudentListPage.routeName,
-  false => PhdStudentCreatePage.routeName,
+  // false => PhdStudentCreatePage.routeName,
+  false => AdmissionListPage.routeName,
 };
 
 // const initialRoute = SettingsPage.routeName;
@@ -117,7 +105,16 @@ const routes = [
     label: "Giảng viên",
     icon: Icons.person,
   ),
-  (route: StudentListPage.routeName, label: "Học viên", icon: Icons.person),
+  (
+    route: StudentListPage.routeName,
+    label: "Học viên",
+    icon: Icons.person,
+  ),
+  (
+    route: PhdStudentListPage.routeName,
+    label: "Nghiên cứu sinh",
+    icon: PageXetTuyenNcs.icon,
+  ),
   (
     route: MobilePageThesisAssignList.routeName,
     label: "Giao đề tài (v2)",
@@ -139,7 +136,7 @@ const routes = [
     icon: Icons.class_,
   ),
   (
-    route: PageAdmissionList.routeName,
+    route: AdmissionListPage.routeName,
     label: "Xét tuyển (v2)",
     icon: Icons.person_add,
   ),
@@ -164,11 +161,6 @@ const routes = [
     route: PageXetTuyen.routeName,
     label: "Xét tuyển cao học",
     icon: Icons.person_add,
-  ),
-  (
-    route: PageXetTuyenNcs.routeName,
-    label: "Xét tuyển NCS",
-    icon: PageXetTuyenNcs.icon,
   ),
   (
     route: PagePhanCongHoiDongLuanVanThacSi.routeName,
@@ -263,10 +255,10 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       }
 
     /// Admission pages
-    case PageAdmissionList.routeName:
-      return const PageAdmissionList();
-    case PageAdmissionCreate.routeName:
-      return const PageAdmissionCreate();
+    case AdmissionListPage.routeName:
+      return const AdmissionListPage();
+    case AdmissionImportPage.routeName:
+      return const AdmissionImportPage();
 
     /// Selection pages
     case PageSelectClassOf.routeName:

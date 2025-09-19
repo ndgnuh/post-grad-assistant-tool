@@ -395,7 +395,7 @@ class _ThesesTableView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final modelState = ref.watch(trackedThesesViewModelProvider);
+    final modelState = ref.watch(trackedThesesViewModelsProvider);
 
     switch (modelState) {
       case AsyncLoading():
@@ -490,66 +490,6 @@ class _ThesesTableView extends ConsumerWidget {
   }
 }
 
-class _CouncilSearchAnchor extends ConsumerWidget {
-  final ValueChanged<int> onAssign;
-  final VoidCallback onClear;
-  final int? initialValue;
-  final String? initialLabel;
-  const _CouncilSearchAnchor({
-    required this.onAssign,
-    required this.initialValue,
-    required this.initialLabel,
-    required this.onClear,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final dbState = ref.watch(myDriftDatabaseProvider);
-    switch (dbState) {
-      case AsyncLoading _:
-        return CircularProgressIndicator();
-      case AsyncError(:final error):
-        return Text('Lỗi tải cơ sở dữ liệu: $error');
-      default:
-    }
-
-    final db = dbState.value!;
-
-    return Wrap(
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        if (initialValue != null)
-          IconButton(
-            icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.error),
-            onPressed: onClear,
-          ),
-        SearchAnchor(
-          suggestionsBuilder: (context, controller) async {
-            final teachers = await db
-                .searchTeacher(
-                  searchText: controller.text,
-                )
-                .get();
-
-            return [
-              for (final teacher in teachers)
-                ListTile(
-                  title: Text(teacher.name),
-                  subtitle: Text(teacher.department ?? ''),
-                  onTap: () => onAssign(teacher.id),
-                ),
-            ];
-          },
-          builder: (context, controller) => InkWell(
-            onTap: () => controller.openView(),
-            child: Text(initialLabel ?? 'Chưa chọn'),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _CouncilMemberItem extends ConsumerWidget {
   final int thesisId;
   final CouncilRole role;
@@ -557,10 +497,30 @@ class _CouncilMemberItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final args = (thesisId: thesisId, role: role);
-    final provider = thesisCouncilMemberProvider(args);
-    final memberState = ref.watch(provider);
-    final notifier = ref.read(provider.notifier);
+    final memberState = switch (role) {
+      CouncilRole.president => ref.watch(thesisPresidentProvider(thesisId)),
+      CouncilRole.reviewer1 => ref.watch(thesisReviewer1Provider(thesisId)),
+      CouncilRole.reviewer2 => ref.watch(thesisReviewer2Provider(thesisId)),
+      CouncilRole.secretary => ref.watch(thesisSecretaryProvider(thesisId)),
+      CouncilRole.member => ref.watch(thesisMemberProvider(thesisId)),
+    };
+
+    final notifier = switch (role) {
+      CouncilRole.president => ref.read(
+        thesisPresidentProvider(thesisId).notifier,
+      ),
+      CouncilRole.reviewer1 => ref.read(
+        thesisReviewer1Provider(thesisId).notifier,
+      ),
+      CouncilRole.reviewer2 => ref.read(
+        thesisReviewer2Provider(thesisId).notifier,
+      ),
+      CouncilRole.secretary => ref.read(
+        thesisSecretaryProvider(thesisId).notifier,
+      ),
+      CouncilRole.member => ref.read(thesisMemberProvider(thesisId).notifier),
+    };
+
     switch (memberState) {
       case AsyncLoading():
         return const CircularProgressIndicator();
@@ -581,7 +541,7 @@ class _CouncilMemberItem extends ConsumerWidget {
           ),
         SearchAnchor(
           suggestionsBuilder: (context, controller) async {
-            final db = await ref.read(myDriftDatabaseProvider.future);
+            final db = await ref.read(driftDatabaseProvider.future);
             final teachers = await db
                 .searchTeacher(searchText: controller.text)
                 .get();

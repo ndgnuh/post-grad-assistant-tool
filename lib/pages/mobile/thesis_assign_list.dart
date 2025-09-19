@@ -7,13 +7,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart' hide Provider;
 
 import '../../business/copy_pasta.dart' as copy_pasta;
 import '../../business/domain_objects.dart';
-import '../../business/pods.dart';
 import '../../custom_widgets.dart';
 import '../../shortcuts.dart';
 import '../single_selection_page.dart';
 import '../theses/list.dart';
 import '../theses/create.dart';
 import '../theses/details.dart';
+import '../../business/db_v1_providers.dart';
 
 class MobilePageThesisAssignList extends StatelessWidget {
   static const String routeName = '/mobile/thesis_assign_list';
@@ -547,9 +547,7 @@ class _SelectCohortButton extends ConsumerWidget {
         onTap: () => searchController.openView(),
       ),
       suggestionsBuilder: (context, searchController) async {
-        final cohorts = await ref.watch(
-          searchCohortsProvider(searchController.text).future,
-        );
+        final cohorts = await Cohort.search(searchController.text);
         final suggestions = <Widget>[];
         for (final classOfYear in cohorts) {
           final widget = ListTile(
@@ -738,9 +736,7 @@ class _ThesisListView extends ConsumerWidget {
       );
     }
 
-    final thesisMapState = ref.watch(
-      getThesisByStudentOfCohortsProvider(cohort),
-    );
+    final thesisMapState = ref.watch(thesisByCohortProvider(cohort));
 
     return switch (thesisMapState) {
       AsyncLoading() => Center(child: CircularProgressIndicator()),

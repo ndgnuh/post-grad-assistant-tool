@@ -1,3 +1,4 @@
+import 'package:fami_tools/business/db_v2_providers/phd_students.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -9,6 +10,67 @@ import '../../custom_widgets.dart';
 
 const _pagePreferenceKey = 'phd_student/create';
 const _lastCohortKey = '$_pagePreferenceKey/cohort';
+
+class GenderPicker extends StatefulWidget {
+  final Gender initialSelection;
+  final ValueChanged<Gender?>? onChanged;
+  final ValueNotifier<Gender>? valueNotifier;
+
+  const GenderPicker({
+    super.key,
+    this.onChanged,
+    this.valueNotifier,
+    this.initialSelection = Gender.unknown,
+  });
+
+  @override
+  State<GenderPicker> createState() => _GenderPickerState();
+}
+
+class _GenderPickerState extends State<GenderPicker> {
+  late ValueNotifier<Gender> notifier;
+
+  @override
+  initState() {
+    final widgetNotifier = widget.valueNotifier;
+    if (widgetNotifier != null) {
+      notifier = widgetNotifier;
+    } else {
+      notifier = ValueNotifier<Gender>(widget.initialSelection);
+    }
+    super.initState();
+  }
+
+  @override
+  dispose() {
+    super.dispose();
+    if (widget.valueNotifier == null) {
+      notifier.dispose();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField(
+      validator: (gender) {
+        if (gender == null) return "Không được để trống";
+        return null;
+      },
+      decoration: InputDecoration(
+        labelText: "Giới tính",
+      ),
+      onChanged: (gender) {
+        notifier.value = gender ?? notifier.value;
+        widget.onChanged?.call(gender);
+      },
+      items: [
+        DropdownMenuItem(value: Gender.male, child: Text("Nam")),
+        DropdownMenuItem(value: Gender.female, child: Text("Nữ")),
+        DropdownMenuItem(value: Gender.unknown, child: Text("Không rõ")),
+      ],
+    );
+  }
+}
 
 Future<String> _getLastCohort() async {
   final prefs = await SharedPreferences.getInstance();
@@ -109,7 +171,7 @@ class PhdStudentCreatePage extends StatelessWidget {
 class _SaveButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dbState = ref.watch(myDriftDatabaseProvider);
+    final dbState = ref.watch(driftDatabaseProvider);
     switch (dbState) {
       case AsyncLoading():
         return const CircularProgressIndicator();
@@ -126,7 +188,8 @@ class _SaveButton extends ConsumerWidget {
           final db = dbState.value!;
           await model.create(db);
           Navigator.of(context).pop();
-          ref.invalidate(allPhdCohortsProvider);
+          ref.invalidate(phdCohortsProvider);
+          ref.invalidate(phdStudentsByCohortProvider);
         }
       },
       child: const Text('Save'),
@@ -162,89 +225,96 @@ class _InformationForm extends ConsumerWidget {
     final formKey = model.formKey;
     final gutter = context.gutter;
 
-    return Form(
-      key: formKey,
-      child: SingleChildScrollView(
-        padding: EdgeInsets.all(gutter),
-        child: Column(
-          spacing: gutter,
-          children: [
-            // Thông tin quản lý chung
-            TextFormField(
-              controller: model.cohortController,
-              decoration: labelText('Khóa tuyển sinh'),
-              validator: notEmptyValidator('Vui lòng nhập khóa học'),
-              onChanged: (value) => _setLastCohort(value),
-            ),
+    return FocusScope(
+      child: Form(
+        key: formKey,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(gutter),
+          child: Column(
+            spacing: gutter,
+            children: [
+              // Thông tin quản lý chung
+              TextFormField(
+                controller: model.cohortController,
+                decoration: labelText('Khóa tuyển sinh'),
+                validator: notEmptyValidator('Vui lòng nhập khóa học'),
+                onChanged: (value) => _setLastCohort(value),
+              ),
 
-            Divider(),
+              Divider(),
 
-            // Thông tin cơ bản
-            TextFormField(
-              controller: model.admissionIdController,
-              decoration: labelText('Mã số hồ sơ tuyển sinh'),
-              validator: notEmptyValidator('Vui lòng nhập mã số NCS'),
-            ),
-            TextFormField(
-              controller: model.nameController,
-              validator: notEmptyValidator('Vui lòng nhập họ tên NCS'),
-              decoration: labelText('Họ tên NCS'),
-            ),
-            DateTimePicker(
-              labelText: 'Ngày sinh',
-              validator: (date) =>
-                  date == null ? 'Vui lòng chọn ngày sinh' : null,
-            ),
-            TextFormField(
-              controller: model.placeOfBirthController,
-              decoration: labelText('Nơi sinh'),
-              validator: notEmptyValidator('Vui lòng chọn ngày sinh'),
-            ),
-            TextFormField(
-              decoration: labelText('Giới tính'),
-              validator: notEmptyValidator('Vui lòng chọn giới tính'),
-            ),
+              // Thông tin cơ bản
+              TextFormField(
+                controller: model.admissionIdController,
+                decoration: labelText('Mã số hồ sơ tuyển sinh'),
+                validator: notEmptyValidator('Vui lòng nhập mã số NCS'),
+              ),
+              TextFormField(
+                controller: model.nameController,
+                validator: notEmptyValidator('Vui lòng nhập họ tên NCS'),
+                decoration: labelText('Họ tên NCS'),
+              ),
+              DateTimePicker(
+                labelText: 'Ngày sinh',
+                validator: (date) =>
+                    date == null ? 'Vui lòng chọn ngày sinh' : null,
+                controller: model.dateOfBirthController,
+              ),
+              TextFormField(
+                controller: model.placeOfBirthController,
+                decoration: labelText('Nơi sinh'),
+                validator: notEmptyValidator('Vui lòng chọn ngày sinh'),
+              ),
 
-            Divider(),
+              GenderPicker(
+                valueNotifier: model.genderController,
+              ),
 
-            // Thông tin liên lạc
-            TextFormField(
-              decoration: labelText('Số điện thoại'),
-              controller: model.phoneController,
-              validator: notEmptyValidator('Không được bỏ trống'),
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              keyboardType: TextInputType.phone,
-            ),
-            TextFormField(
-              decoration: labelText('Email cá nhân'),
-              controller: model.emailController,
-              validator: emailValidator('Không được bỏ trống'),
-            ),
+              // TextFormField(
+              //   decoration: labelText('Giới tính'),
+              //   validator: notEmptyValidator('Vui lòng chọn giới tính'),
+              // ),
+              Divider(),
 
-            Divider(),
+              // Thông tin liên lạc
+              TextFormField(
+                decoration: labelText('Số điện thoại'),
+                controller: model.phoneController,
+                validator: notEmptyValidator('Không được bỏ trống'),
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                keyboardType: TextInputType.phone,
+              ),
+              TextFormField(
+                decoration: labelText('Email cá nhân'),
+                controller: model.emailController,
+                validator: emailValidator('Không được bỏ trống'),
+              ),
 
-            TextFormField(
-              controller: model.specializationController,
-              decoration: labelText('Hướng chuyên sâu'),
-              validator: notEmptyValidator('Không được để trống'),
-            ),
+              Divider(),
 
-            // Thông tin đề tài nghiên cứu
-            TextFormField(
-              controller: model.thesisController,
-              decoration: labelText('Tên đề tài dự kiến'),
-              validator: notEmptyValidator('Không được để trống'),
-            ),
+              // TextFormField(
+              //   controller: model.specializationController,
+              //   decoration: labelText('Hướng chuyên sâu'),
+              //   validator: notEmptyValidator('Không được để trống'),
+              // ),
 
-            _TeacherSelector(
-              secondary: false,
-              valueController: model.supervisorNotifier,
-            ),
-            _TeacherSelector(
-              secondary: true,
-              valueController: model.secondarySupervisorNotifier,
-            ),
-          ],
+              // Thông tin đề tài nghiên cứu
+              TextFormField(
+                controller: model.thesisController,
+                decoration: labelText('Tên đề tài dự kiến'),
+                validator: notEmptyValidator('Không được để trống'),
+              ),
+
+              _TeacherSelector(
+                secondary: false,
+                valueController: model.supervisorNotifier,
+              ),
+              _TeacherSelector(
+                secondary: true,
+                valueController: model.secondarySupervisorNotifier,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -262,7 +332,7 @@ class _TeacherSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dbState = ref.watch(myDriftDatabaseProvider);
+    final dbState = ref.watch(driftDatabaseProvider);
     switch (dbState) {
       case AsyncError(:final error, :final stackTrace):
         return Text('Error: $error\n$stackTrace');
@@ -290,14 +360,8 @@ class _TeacherSelector extends ConsumerWidget {
           searchText: controller.text,
           outsider: false,
         );
-        print(query);
 
         final teachers = await query.get();
-        print(teachers);
-        // final teachers = await Future.wait([
-        //   for (final teacherId in teacherIds)
-        //     ref.watch(teacherByIdProvider(teacherId)),
-        // ]);
 
         return [
           for (final teacher in teachers)
@@ -333,36 +397,3 @@ class _TeacherSelector extends ConsumerWidget {
     );
   }
 }
-
-// class _TeacherListTile extends ConsumerWidget {
-//   final int teacherId;
-//   final VoidCallback? onTap;
-//
-//   const _TeacherListTile({
-//     required this.teacherId,
-//     this.onTap,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final teacherDataAsync = ref.watch(teacherByIdProvider(teacherId));
-//
-//     final titleText = switch (teacherDataAsync) {
-//       AsyncError(:final error) => 'Error: $error',
-//       AsyncLoading() => 'Loading...',
-//       AsyncData(:final value) => value?.name ?? 'Unknown Teacher',
-//     };
-//
-//     final subtitleText = switch (teacherDataAsync) {
-//       AsyncError(:final error) => 'Error: $error',
-//       AsyncLoading() => 'Loading...',
-//       AsyncData(:final value) => value?.personalEmail ?? 'No email',
-//     };
-//
-//     return ListTile(
-//       title: Text(titleText),
-//       subtitle: Text(subtitleText),
-//       onTap: onTap,
-//     );
-//   }
-// }

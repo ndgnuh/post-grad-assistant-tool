@@ -1,6 +1,29 @@
 // This is experimental code for drift ORM
 import 'package:drift/drift.dart';
 
+enum GraduationRank {
+  excellent('Xuất sắc'),
+  good('Giỏi'),
+  fairlyGood('Khá'),
+  average('Trung bình'),
+  poor('Yếu');
+
+  final String label;
+  const GraduationRank(this.label);
+
+  @override
+  String toString() => label;
+
+  static GraduationRank fromString(String fromDb) {
+    for (final rank in GraduationRank.values) {
+      if (rank.label == fromDb.trim()) {
+        return rank;
+      }
+    }
+    throw Exception('Invalid GraduationRank value: $fromDb');
+  }
+}
+
 enum DayOfWeek {
   monday(2, 'Thứ 2'),
   tuesday(3, 'Thứ 3'),
