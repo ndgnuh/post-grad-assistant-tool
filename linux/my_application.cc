@@ -52,8 +52,8 @@ static void my_application_activate(GApplication* application) {
   gtk_widget_show(GTK_WIDGET(window));
 
   // Detect scale factor from GTK (HiDPI support)
-  int scale_factor = gtk_widget_get_scale_factor(GTK_WIDGET(window));
-  g_message("Detected GTK scale factor: %d", scale_factor);
+  // int scale_factor = gtk_widget_get_scale_factor(GTK_WIDGET(window));
+  // g_message("Detected GTK scale factor: %d", scale_factor);
 
   g_autoptr(FlDartProject) project = fl_dart_project_new();
   fl_dart_project_set_dart_entrypoint_arguments(project, self->dart_entrypoint_arguments);
