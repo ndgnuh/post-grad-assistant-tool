@@ -31,6 +31,19 @@ class StudentById extends AsyncNotifier<Student> {
   Future<Student> build() async {
     return await Student.getById(studentId);
   }
+
+  Future<void> updateStatus(TrangThaiHocVien status) async {
+    switch (state) {
+      case AsyncData():
+        break;
+      default:
+        return; //no-op
+    }
+
+    final student = state.value!;
+    await student.updateStatus(status);
+    ref.invalidateSelf();
+  }
 }
 
 class StudentsByCohort extends AsyncNotifier<List<Student>> {

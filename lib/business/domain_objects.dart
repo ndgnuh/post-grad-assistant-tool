@@ -1266,6 +1266,9 @@ abstract class HocVien with _$HocVien {
   Future<void> updateStudentId(String value) =>
       updateAttribute("maHocVien", value);
 
+  Future<void> updateStatus(TrangThaiHocVien status) =>
+      updateAttribute("maTrangThai", status.value);
+
   static Future<List<HocVien>> all() =>
       _all(table: table, fromJson: HocVien.fromJson);
   static Future<List<HocVien>> getAdmissionList() async {
@@ -1759,6 +1762,7 @@ abstract class TieuBanXetTuyen with _$TieuBanXetTuyen {
 
 @JsonEnum(valueField: "value")
 enum TrangThaiHocVien {
+  xetTuyenTriHoan('xt-pending', 'Xét tuyển (hoãn)'),
   xetTuyen('xt', 'Xét tuyển'),
   dangHoc('hoc', 'Đang học'),
   nghiHoc('nghi', 'Thôi học'),

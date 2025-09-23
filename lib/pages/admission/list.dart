@@ -22,6 +22,10 @@ final _interviewLocationController = TextEditingController(text: "");
 
 final _interviewTimeProvider = NotifierProvider(_InterviewDate.new);
 
+final _selectedAdmissionsProvider = AsyncNotifierProvider(
+  _SelectedAdmissionsNotifier.new,
+);
+
 final _selectedIdxProvider = NotifierProvider(_SelectedIdx.new);
 
 final _stateProvider = Provider((ref) => _State());
@@ -55,12 +59,12 @@ class AdmissionListPage extends StatelessWidget {
                     child: _SaveDirectoryPicker(),
                   ),
                   _ProfileDownloadButton(controller: saveDirectoryController),
+                  _SavePaperworkButton(controller: saveDirectoryController),
                   VerticalDivider(),
                   _ImportButton(),
                   _AddButton(),
                   _CopyButton(),
                   VerticalDivider(),
-                  _EnrollButton(),
                   _PaymentButton(),
                 ],
               ),
@@ -78,6 +82,10 @@ class AdmissionListPage extends StatelessWidget {
                   VerticalDivider(),
                   Expanded(child: _EnrollGroupLinkEdit()),
                   _EnrollEmailButton(),
+                  VerticalDivider(),
+                  _DelayButton(),
+                  OutlinedButton(onPressed: null, child: Text("Sửa")),
+                  _EnrollButton(),
                 ],
               ),
             ),
@@ -123,6 +131,7 @@ class _AddButton extends ConsumerWidget {
 
 class _AdmissionTableView extends ConsumerWidget {
   static const columns = [
+    DataColumn(label: Text("Trạng thái")),
     DataColumn(label: Text("Mã hồ sơ")),
     DataColumn(label: Text("Họ và tên")),
     DataColumn(label: Text("Diện tuyển sinh")),
@@ -162,18 +171,19 @@ class _AdmissionTableView extends ConsumerWidget {
         rows: [
           for (final (idx, student) in students.indexed)
             DataRow(
-              selected: selectedId == idx,
+              selected: selectedId.contains(idx),
               onSelectChanged: (selected) {
                 final notifier = ref.read(
                   _selectedIdxProvider.notifier,
                 );
                 if (selected == true) {
-                  notifier.set(idx);
+                  notifier.select(idx);
                 } else {
-                  notifier.set(null);
+                  notifier.deselect(idx);
                 }
               },
               cells: [
+                DataCell(Text(student.trangThai.toString())),
                 DataCell(Text(student.soHoSo ?? "N/A")),
                 DataCell(Text(student.hoTen)),
                 DataCell(Text(student.dienTuyenSinh?.label ?? "N/A")),
@@ -289,6 +299,39 @@ class _CouncilPicker extends ConsumerWidget {
           },
         );
       },
+    );
+  }
+}
+
+class _DelayButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final messenger = ScaffoldMessenger.of(context);
+
+    return OutlinedButton(
+      onPressed: () async {
+        final students = await ref.watch(_selectedAdmissionsProvider.future);
+        final count = students.length;
+
+        for (final student in students) {
+          final notifier = ref.read(studentByIdProvider(student.id).notifier);
+          switch (student.trangThai) {
+            case TrangThaiHocVien.xetTuyenTriHoan:
+              await notifier.updateStatus(TrangThaiHocVien.xetTuyen);
+            default:
+              await notifier.updateStatus(TrangThaiHocVien.xetTuyenTriHoan);
+          }
+        }
+
+        ref.invalidate(activeAdmissionStudentsProvider);
+
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text("Đã cập nhật trạng thái xét tuyển $count học viên."),
+          ),
+        );
+      },
+      child: Text("Hoãn"),
     );
   }
 }
@@ -846,14 +889,14 @@ class _PaymentButton extends StatelessWidget {
   }
 }
 
-class _ProfileDownloadButton extends ConsumerWidget {
+class _SavePaperworkButton extends ConsumerWidget {
   final TextEditingController controller;
-  const _ProfileDownloadButton({required this.controller});
+  const _SavePaperworkButton({required this.controller});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final messenger = ScaffoldMessenger.of(context);
-    final studentState = ref.watch(admissionStudentsProvider);
+    final studentState = ref.watch(activeAdmissionStudentsProvider);
     switch (studentState) {
       case AsyncLoading():
         return const Center(child: CircularProgressIndicator());
@@ -866,7 +909,7 @@ class _ProfileDownloadButton extends ConsumerWidget {
 
     return FilledButton.icon(
       icon: const Icon(Symbols.save),
-      label: Text("Lưu hồ sơ"),
+      label: Text("Lưu mẫu biên bản"),
       onPressed: () async {
         final state = ref.read(_stateProvider);
         final saveDirectory = state.saveDirectory;
@@ -895,6 +938,52 @@ class _ProfileDownloadButton extends ConsumerWidget {
           candidates: students,
           council: council,
         );
+
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(
+              "Đã lưu ${students.length} hồ sơ vào thư mục $saveDirectory",
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ProfileDownloadButton extends ConsumerWidget {
+  final TextEditingController controller;
+  const _ProfileDownloadButton({required this.controller});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final messenger = ScaffoldMessenger.of(context);
+    final studentState = ref.watch(activeAdmissionStudentsProvider);
+    switch (studentState) {
+      case AsyncLoading():
+        return const Center(child: CircularProgressIndicator());
+      case AsyncError():
+        return const Center(child: Text("Lỗi tải dữ liệu."));
+      default:
+    }
+
+    final students = studentState.value!;
+
+    return FilledButton.icon(
+      icon: const Icon(Symbols.download),
+      label: Text("Tải hồ sơ"),
+      onPressed: () async {
+        final state = ref.read(_stateProvider);
+        final saveDirectory = state.saveDirectory;
+
+        if (saveDirectory == null || saveDirectory.isEmpty) {
+          messenger.showSnackBar(
+            const SnackBar(
+              content: Text("Vui lòng chọn thư mục lưu hồ sơ."),
+            ),
+          );
+          return;
+        }
 
         messenger.showSnackBar(
           SnackBar(
@@ -946,12 +1035,52 @@ class _SaveDirectoryPicker extends ConsumerWidget {
   }
 }
 
-/// Which admission is currently selected, if any.
-class _SelectedIdx extends Notifier<int?> {
+class _SelectedAdmissionsNotifier extends AsyncNotifier<List<Student>> {
   @override
-  int? build() => null;
+  Future<List<Student>> build() async {
+    final students = await ref.watch(admissionStudentsProvider.future);
+    final selectedIdx = ref.watch(_selectedIdxProvider);
+    final sortedIdx = selectedIdx.toList()..sort();
+    final selectedStudents = [for (final i in sortedIdx) students[i]];
+    return selectedStudents;
+  }
+}
 
-  void set(int? idx) => state = idx;
+/// Which admission is currently selected, if any.
+class _SelectedIdx extends Notifier<Set<int>> {
+  @override
+  Set<int> build() {
+    ref.watch(admissionStudentsProvider);
+    return {};
+  }
+
+  void clear() {
+    state = {};
+  }
+
+  void deselect(int idx) {
+    state = state.where((i) => i != idx).toSet();
+  }
+
+  void invert() {
+    final allIdxs = {
+      for (
+        var i = 0;
+        i < ref.read(admissionStudentsProvider).value!.length;
+        i++
+      )
+        i,
+    };
+    state = allIdxs.difference(state);
+  }
+
+  void select(int idx) {
+    state = {...state, idx};
+  }
+
+  void set(Set<int> idxs) {
+    state = idxs;
+  }
 }
 
 class _State extends ChangeNotifier {

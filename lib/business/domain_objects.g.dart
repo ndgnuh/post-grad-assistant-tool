@@ -310,6 +310,7 @@ Map<String, dynamic> _$HocVienToJson(_HocVien instance) => <String, dynamic>{
 };
 
 const _$TrangThaiHocVienEnumMap = {
+  TrangThaiHocVien.xetTuyenTriHoan: 'xt-pending',
   TrangThaiHocVien.xetTuyen: 'xt',
   TrangThaiHocVien.dangHoc: 'hoc',
   TrangThaiHocVien.nghiHoc: 'nghi',
