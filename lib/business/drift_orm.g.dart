@@ -3,6 +3,891 @@
 part of 'drift_orm.dart';
 
 // ignore_for_file: type=lint
+class Hocky extends Table with TableInfo<Hocky, SemesterData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  Hocky(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _semesterMeta = const VerificationMeta(
+    'semester',
+  );
+  late final GeneratedColumn<String> semester = GeneratedColumn<String>(
+    'hocKy',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL PRIMARY KEY',
+  );
+  static const VerificationMeta _registrationOpenDateMeta =
+      const VerificationMeta('registrationOpenDate');
+  late final GeneratedColumn<String> registrationOpenDate =
+      GeneratedColumn<String>(
+        'moDangKy',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
+      );
+  static const VerificationMeta _registrationCloseDateMeta =
+      const VerificationMeta('registrationCloseDate');
+  late final GeneratedColumn<String> registrationCloseDate =
+      GeneratedColumn<String>(
+        'dongDangKy',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
+      );
+  static const VerificationMeta _studyStartDateMeta = const VerificationMeta(
+    'studyStartDate',
+  );
+  late final GeneratedColumn<String> studyStartDate = GeneratedColumn<String>(
+    'batDauHoc',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _studyEndDateMeta = const VerificationMeta(
+    'studyEndDate',
+  );
+  late final GeneratedColumn<String> studyEndDate = GeneratedColumn<String>(
+    'ketThucHoc',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _gradeSubmissionDeadlineMeta =
+      const VerificationMeta('gradeSubmissionDeadline');
+  late final GeneratedColumn<String> gradeSubmissionDeadline =
+      GeneratedColumn<String>(
+        'hanNhapDiem',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    semester,
+    registrationOpenDate,
+    registrationCloseDate,
+    studyStartDate,
+    studyEndDate,
+    gradeSubmissionDeadline,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'hocky';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SemesterData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('hocKy')) {
+      context.handle(
+        _semesterMeta,
+        semester.isAcceptableOrUnknown(data['hocKy']!, _semesterMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_semesterMeta);
+    }
+    if (data.containsKey('moDangKy')) {
+      context.handle(
+        _registrationOpenDateMeta,
+        registrationOpenDate.isAcceptableOrUnknown(
+          data['moDangKy']!,
+          _registrationOpenDateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_registrationOpenDateMeta);
+    }
+    if (data.containsKey('dongDangKy')) {
+      context.handle(
+        _registrationCloseDateMeta,
+        registrationCloseDate.isAcceptableOrUnknown(
+          data['dongDangKy']!,
+          _registrationCloseDateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_registrationCloseDateMeta);
+    }
+    if (data.containsKey('batDauHoc')) {
+      context.handle(
+        _studyStartDateMeta,
+        studyStartDate.isAcceptableOrUnknown(
+          data['batDauHoc']!,
+          _studyStartDateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_studyStartDateMeta);
+    }
+    if (data.containsKey('ketThucHoc')) {
+      context.handle(
+        _studyEndDateMeta,
+        studyEndDate.isAcceptableOrUnknown(
+          data['ketThucHoc']!,
+          _studyEndDateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_studyEndDateMeta);
+    }
+    if (data.containsKey('hanNhapDiem')) {
+      context.handle(
+        _gradeSubmissionDeadlineMeta,
+        gradeSubmissionDeadline.isAcceptableOrUnknown(
+          data['hanNhapDiem']!,
+          _gradeSubmissionDeadlineMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_gradeSubmissionDeadlineMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {semester};
+  @override
+  SemesterData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SemesterData(
+      semester: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}hocKy'],
+      )!,
+      registrationOpenDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}moDangKy'],
+      )!,
+      registrationCloseDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}dongDangKy'],
+      )!,
+      studyStartDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}batDauHoc'],
+      )!,
+      studyEndDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ketThucHoc'],
+      )!,
+      gradeSubmissionDeadline: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}hanNhapDiem'],
+      )!,
+    );
+  }
+
+  @override
+  Hocky createAlias(String alias) {
+    return Hocky(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class SemesterData extends DataClass implements Insertable<SemesterData> {
+  final String semester;
+  final String registrationOpenDate;
+  final String registrationCloseDate;
+  final String studyStartDate;
+  final String studyEndDate;
+  final String gradeSubmissionDeadline;
+  const SemesterData({
+    required this.semester,
+    required this.registrationOpenDate,
+    required this.registrationCloseDate,
+    required this.studyStartDate,
+    required this.studyEndDate,
+    required this.gradeSubmissionDeadline,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['hocKy'] = Variable<String>(semester);
+    map['moDangKy'] = Variable<String>(registrationOpenDate);
+    map['dongDangKy'] = Variable<String>(registrationCloseDate);
+    map['batDauHoc'] = Variable<String>(studyStartDate);
+    map['ketThucHoc'] = Variable<String>(studyEndDate);
+    map['hanNhapDiem'] = Variable<String>(gradeSubmissionDeadline);
+    return map;
+  }
+
+  HockyCompanion toCompanion(bool nullToAbsent) {
+    return HockyCompanion(
+      semester: Value(semester),
+      registrationOpenDate: Value(registrationOpenDate),
+      registrationCloseDate: Value(registrationCloseDate),
+      studyStartDate: Value(studyStartDate),
+      studyEndDate: Value(studyEndDate),
+      gradeSubmissionDeadline: Value(gradeSubmissionDeadline),
+    );
+  }
+
+  factory SemesterData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SemesterData(
+      semester: serializer.fromJson<String>(json['hocKy']),
+      registrationOpenDate: serializer.fromJson<String>(json['moDangKy']),
+      registrationCloseDate: serializer.fromJson<String>(json['dongDangKy']),
+      studyStartDate: serializer.fromJson<String>(json['batDauHoc']),
+      studyEndDate: serializer.fromJson<String>(json['ketThucHoc']),
+      gradeSubmissionDeadline: serializer.fromJson<String>(json['hanNhapDiem']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'hocKy': serializer.toJson<String>(semester),
+      'moDangKy': serializer.toJson<String>(registrationOpenDate),
+      'dongDangKy': serializer.toJson<String>(registrationCloseDate),
+      'batDauHoc': serializer.toJson<String>(studyStartDate),
+      'ketThucHoc': serializer.toJson<String>(studyEndDate),
+      'hanNhapDiem': serializer.toJson<String>(gradeSubmissionDeadline),
+    };
+  }
+
+  SemesterData copyWith({
+    String? semester,
+    String? registrationOpenDate,
+    String? registrationCloseDate,
+    String? studyStartDate,
+    String? studyEndDate,
+    String? gradeSubmissionDeadline,
+  }) => SemesterData(
+    semester: semester ?? this.semester,
+    registrationOpenDate: registrationOpenDate ?? this.registrationOpenDate,
+    registrationCloseDate: registrationCloseDate ?? this.registrationCloseDate,
+    studyStartDate: studyStartDate ?? this.studyStartDate,
+    studyEndDate: studyEndDate ?? this.studyEndDate,
+    gradeSubmissionDeadline:
+        gradeSubmissionDeadline ?? this.gradeSubmissionDeadline,
+  );
+  SemesterData copyWithCompanion(HockyCompanion data) {
+    return SemesterData(
+      semester: data.semester.present ? data.semester.value : this.semester,
+      registrationOpenDate: data.registrationOpenDate.present
+          ? data.registrationOpenDate.value
+          : this.registrationOpenDate,
+      registrationCloseDate: data.registrationCloseDate.present
+          ? data.registrationCloseDate.value
+          : this.registrationCloseDate,
+      studyStartDate: data.studyStartDate.present
+          ? data.studyStartDate.value
+          : this.studyStartDate,
+      studyEndDate: data.studyEndDate.present
+          ? data.studyEndDate.value
+          : this.studyEndDate,
+      gradeSubmissionDeadline: data.gradeSubmissionDeadline.present
+          ? data.gradeSubmissionDeadline.value
+          : this.gradeSubmissionDeadline,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SemesterData(')
+          ..write('semester: $semester, ')
+          ..write('registrationOpenDate: $registrationOpenDate, ')
+          ..write('registrationCloseDate: $registrationCloseDate, ')
+          ..write('studyStartDate: $studyStartDate, ')
+          ..write('studyEndDate: $studyEndDate, ')
+          ..write('gradeSubmissionDeadline: $gradeSubmissionDeadline')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    semester,
+    registrationOpenDate,
+    registrationCloseDate,
+    studyStartDate,
+    studyEndDate,
+    gradeSubmissionDeadline,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SemesterData &&
+          other.semester == this.semester &&
+          other.registrationOpenDate == this.registrationOpenDate &&
+          other.registrationCloseDate == this.registrationCloseDate &&
+          other.studyStartDate == this.studyStartDate &&
+          other.studyEndDate == this.studyEndDate &&
+          other.gradeSubmissionDeadline == this.gradeSubmissionDeadline);
+}
+
+class HockyCompanion extends UpdateCompanion<SemesterData> {
+  final Value<String> semester;
+  final Value<String> registrationOpenDate;
+  final Value<String> registrationCloseDate;
+  final Value<String> studyStartDate;
+  final Value<String> studyEndDate;
+  final Value<String> gradeSubmissionDeadline;
+  final Value<int> rowid;
+  const HockyCompanion({
+    this.semester = const Value.absent(),
+    this.registrationOpenDate = const Value.absent(),
+    this.registrationCloseDate = const Value.absent(),
+    this.studyStartDate = const Value.absent(),
+    this.studyEndDate = const Value.absent(),
+    this.gradeSubmissionDeadline = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  HockyCompanion.insert({
+    required String semester,
+    required String registrationOpenDate,
+    required String registrationCloseDate,
+    required String studyStartDate,
+    required String studyEndDate,
+    required String gradeSubmissionDeadline,
+    this.rowid = const Value.absent(),
+  }) : semester = Value(semester),
+       registrationOpenDate = Value(registrationOpenDate),
+       registrationCloseDate = Value(registrationCloseDate),
+       studyStartDate = Value(studyStartDate),
+       studyEndDate = Value(studyEndDate),
+       gradeSubmissionDeadline = Value(gradeSubmissionDeadline);
+  static Insertable<SemesterData> custom({
+    Expression<String>? semester,
+    Expression<String>? registrationOpenDate,
+    Expression<String>? registrationCloseDate,
+    Expression<String>? studyStartDate,
+    Expression<String>? studyEndDate,
+    Expression<String>? gradeSubmissionDeadline,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (semester != null) 'hocKy': semester,
+      if (registrationOpenDate != null) 'moDangKy': registrationOpenDate,
+      if (registrationCloseDate != null) 'dongDangKy': registrationCloseDate,
+      if (studyStartDate != null) 'batDauHoc': studyStartDate,
+      if (studyEndDate != null) 'ketThucHoc': studyEndDate,
+      if (gradeSubmissionDeadline != null)
+        'hanNhapDiem': gradeSubmissionDeadline,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  HockyCompanion copyWith({
+    Value<String>? semester,
+    Value<String>? registrationOpenDate,
+    Value<String>? registrationCloseDate,
+    Value<String>? studyStartDate,
+    Value<String>? studyEndDate,
+    Value<String>? gradeSubmissionDeadline,
+    Value<int>? rowid,
+  }) {
+    return HockyCompanion(
+      semester: semester ?? this.semester,
+      registrationOpenDate: registrationOpenDate ?? this.registrationOpenDate,
+      registrationCloseDate:
+          registrationCloseDate ?? this.registrationCloseDate,
+      studyStartDate: studyStartDate ?? this.studyStartDate,
+      studyEndDate: studyEndDate ?? this.studyEndDate,
+      gradeSubmissionDeadline:
+          gradeSubmissionDeadline ?? this.gradeSubmissionDeadline,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (semester.present) {
+      map['hocKy'] = Variable<String>(semester.value);
+    }
+    if (registrationOpenDate.present) {
+      map['moDangKy'] = Variable<String>(registrationOpenDate.value);
+    }
+    if (registrationCloseDate.present) {
+      map['dongDangKy'] = Variable<String>(registrationCloseDate.value);
+    }
+    if (studyStartDate.present) {
+      map['batDauHoc'] = Variable<String>(studyStartDate.value);
+    }
+    if (studyEndDate.present) {
+      map['ketThucHoc'] = Variable<String>(studyEndDate.value);
+    }
+    if (gradeSubmissionDeadline.present) {
+      map['hanNhapDiem'] = Variable<String>(gradeSubmissionDeadline.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HockyCompanion(')
+          ..write('semester: $semester, ')
+          ..write('registrationOpenDate: $registrationOpenDate, ')
+          ..write('registrationCloseDate: $registrationCloseDate, ')
+          ..write('studyStartDate: $studyStartDate, ')
+          ..write('studyEndDate: $studyEndDate, ')
+          ..write('gradeSubmissionDeadline: $gradeSubmissionDeadline, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Hocphan extends Table with TableInfo<Hocphan, CourseData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  Hocphan(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'maHocPhan',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL PRIMARY KEY',
+  );
+  static const VerificationMeta _vietnameseTitleMeta = const VerificationMeta(
+    'vietnameseTitle',
+  );
+  late final GeneratedColumn<String> vietnameseTitle = GeneratedColumn<String>(
+    'tenTiengViet',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _englishTitleMeta = const VerificationMeta(
+    'englishTitle',
+  );
+  late final GeneratedColumn<String> englishTitle = GeneratedColumn<String>(
+    'tenTiengAnh',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _creditsMeta = const VerificationMeta(
+    'credits',
+  );
+  late final GeneratedColumn<int> credits = GeneratedColumn<int>(
+    'soTinChi',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumnWithTypeConverter<CourseCategory, String>
+  courseCategory = GeneratedColumn<String>(
+    'khoiKienThuc',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  ).withConverter<CourseCategory>(Hocphan.$convertercourseCategory);
+  static const VerificationMeta _workloadMeta = const VerificationMeta(
+    'workload',
+  );
+  late final GeneratedColumn<String> workload = GeneratedColumn<String>(
+    'khoiLuong',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    vietnameseTitle,
+    englishTitle,
+    credits,
+    courseCategory,
+    workload,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'hocphan';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CourseData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('maHocPhan')) {
+      context.handle(
+        _idMeta,
+        id.isAcceptableOrUnknown(data['maHocPhan']!, _idMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('tenTiengViet')) {
+      context.handle(
+        _vietnameseTitleMeta,
+        vietnameseTitle.isAcceptableOrUnknown(
+          data['tenTiengViet']!,
+          _vietnameseTitleMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_vietnameseTitleMeta);
+    }
+    if (data.containsKey('tenTiengAnh')) {
+      context.handle(
+        _englishTitleMeta,
+        englishTitle.isAcceptableOrUnknown(
+          data['tenTiengAnh']!,
+          _englishTitleMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_englishTitleMeta);
+    }
+    if (data.containsKey('soTinChi')) {
+      context.handle(
+        _creditsMeta,
+        credits.isAcceptableOrUnknown(data['soTinChi']!, _creditsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_creditsMeta);
+    }
+    if (data.containsKey('khoiLuong')) {
+      context.handle(
+        _workloadMeta,
+        workload.isAcceptableOrUnknown(data['khoiLuong']!, _workloadMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_workloadMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CourseData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CourseData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}maHocPhan'],
+      )!,
+      vietnameseTitle: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tenTiengViet'],
+      )!,
+      englishTitle: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tenTiengAnh'],
+      )!,
+      credits: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}soTinChi'],
+      )!,
+      courseCategory: Hocphan.$convertercourseCategory.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}khoiKienThuc'],
+        )!,
+      ),
+      workload: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}khoiLuong'],
+      )!,
+    );
+  }
+
+  @override
+  Hocphan createAlias(String alias) {
+    return Hocphan(attachedDatabase, alias);
+  }
+
+  static TypeConverter<CourseCategory, String> $convertercourseCategory =
+      const CourseCategoryConverter();
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class CourseData extends DataClass implements Insertable<CourseData> {
+  final String id;
+  final String vietnameseTitle;
+  final String englishTitle;
+  final int credits;
+  final CourseCategory courseCategory;
+  final String workload;
+  const CourseData({
+    required this.id,
+    required this.vietnameseTitle,
+    required this.englishTitle,
+    required this.credits,
+    required this.courseCategory,
+    required this.workload,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['maHocPhan'] = Variable<String>(id);
+    map['tenTiengViet'] = Variable<String>(vietnameseTitle);
+    map['tenTiengAnh'] = Variable<String>(englishTitle);
+    map['soTinChi'] = Variable<int>(credits);
+    {
+      map['khoiKienThuc'] = Variable<String>(
+        Hocphan.$convertercourseCategory.toSql(courseCategory),
+      );
+    }
+    map['khoiLuong'] = Variable<String>(workload);
+    return map;
+  }
+
+  HocphanCompanion toCompanion(bool nullToAbsent) {
+    return HocphanCompanion(
+      id: Value(id),
+      vietnameseTitle: Value(vietnameseTitle),
+      englishTitle: Value(englishTitle),
+      credits: Value(credits),
+      courseCategory: Value(courseCategory),
+      workload: Value(workload),
+    );
+  }
+
+  factory CourseData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CourseData(
+      id: serializer.fromJson<String>(json['maHocPhan']),
+      vietnameseTitle: serializer.fromJson<String>(json['tenTiengViet']),
+      englishTitle: serializer.fromJson<String>(json['tenTiengAnh']),
+      credits: serializer.fromJson<int>(json['soTinChi']),
+      courseCategory: serializer.fromJson<CourseCategory>(json['khoiKienThuc']),
+      workload: serializer.fromJson<String>(json['khoiLuong']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'maHocPhan': serializer.toJson<String>(id),
+      'tenTiengViet': serializer.toJson<String>(vietnameseTitle),
+      'tenTiengAnh': serializer.toJson<String>(englishTitle),
+      'soTinChi': serializer.toJson<int>(credits),
+      'khoiKienThuc': serializer.toJson<CourseCategory>(courseCategory),
+      'khoiLuong': serializer.toJson<String>(workload),
+    };
+  }
+
+  CourseData copyWith({
+    String? id,
+    String? vietnameseTitle,
+    String? englishTitle,
+    int? credits,
+    CourseCategory? courseCategory,
+    String? workload,
+  }) => CourseData(
+    id: id ?? this.id,
+    vietnameseTitle: vietnameseTitle ?? this.vietnameseTitle,
+    englishTitle: englishTitle ?? this.englishTitle,
+    credits: credits ?? this.credits,
+    courseCategory: courseCategory ?? this.courseCategory,
+    workload: workload ?? this.workload,
+  );
+  CourseData copyWithCompanion(HocphanCompanion data) {
+    return CourseData(
+      id: data.id.present ? data.id.value : this.id,
+      vietnameseTitle: data.vietnameseTitle.present
+          ? data.vietnameseTitle.value
+          : this.vietnameseTitle,
+      englishTitle: data.englishTitle.present
+          ? data.englishTitle.value
+          : this.englishTitle,
+      credits: data.credits.present ? data.credits.value : this.credits,
+      courseCategory: data.courseCategory.present
+          ? data.courseCategory.value
+          : this.courseCategory,
+      workload: data.workload.present ? data.workload.value : this.workload,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CourseData(')
+          ..write('id: $id, ')
+          ..write('vietnameseTitle: $vietnameseTitle, ')
+          ..write('englishTitle: $englishTitle, ')
+          ..write('credits: $credits, ')
+          ..write('courseCategory: $courseCategory, ')
+          ..write('workload: $workload')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    vietnameseTitle,
+    englishTitle,
+    credits,
+    courseCategory,
+    workload,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CourseData &&
+          other.id == this.id &&
+          other.vietnameseTitle == this.vietnameseTitle &&
+          other.englishTitle == this.englishTitle &&
+          other.credits == this.credits &&
+          other.courseCategory == this.courseCategory &&
+          other.workload == this.workload);
+}
+
+class HocphanCompanion extends UpdateCompanion<CourseData> {
+  final Value<String> id;
+  final Value<String> vietnameseTitle;
+  final Value<String> englishTitle;
+  final Value<int> credits;
+  final Value<CourseCategory> courseCategory;
+  final Value<String> workload;
+  final Value<int> rowid;
+  const HocphanCompanion({
+    this.id = const Value.absent(),
+    this.vietnameseTitle = const Value.absent(),
+    this.englishTitle = const Value.absent(),
+    this.credits = const Value.absent(),
+    this.courseCategory = const Value.absent(),
+    this.workload = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  HocphanCompanion.insert({
+    required String id,
+    required String vietnameseTitle,
+    required String englishTitle,
+    required int credits,
+    required CourseCategory courseCategory,
+    required String workload,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       vietnameseTitle = Value(vietnameseTitle),
+       englishTitle = Value(englishTitle),
+       credits = Value(credits),
+       courseCategory = Value(courseCategory),
+       workload = Value(workload);
+  static Insertable<CourseData> custom({
+    Expression<String>? id,
+    Expression<String>? vietnameseTitle,
+    Expression<String>? englishTitle,
+    Expression<int>? credits,
+    Expression<String>? courseCategory,
+    Expression<String>? workload,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'maHocPhan': id,
+      if (vietnameseTitle != null) 'tenTiengViet': vietnameseTitle,
+      if (englishTitle != null) 'tenTiengAnh': englishTitle,
+      if (credits != null) 'soTinChi': credits,
+      if (courseCategory != null) 'khoiKienThuc': courseCategory,
+      if (workload != null) 'khoiLuong': workload,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  HocphanCompanion copyWith({
+    Value<String>? id,
+    Value<String>? vietnameseTitle,
+    Value<String>? englishTitle,
+    Value<int>? credits,
+    Value<CourseCategory>? courseCategory,
+    Value<String>? workload,
+    Value<int>? rowid,
+  }) {
+    return HocphanCompanion(
+      id: id ?? this.id,
+      vietnameseTitle: vietnameseTitle ?? this.vietnameseTitle,
+      englishTitle: englishTitle ?? this.englishTitle,
+      credits: credits ?? this.credits,
+      courseCategory: courseCategory ?? this.courseCategory,
+      workload: workload ?? this.workload,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['maHocPhan'] = Variable<String>(id.value);
+    }
+    if (vietnameseTitle.present) {
+      map['tenTiengViet'] = Variable<String>(vietnameseTitle.value);
+    }
+    if (englishTitle.present) {
+      map['tenTiengAnh'] = Variable<String>(englishTitle.value);
+    }
+    if (credits.present) {
+      map['soTinChi'] = Variable<int>(credits.value);
+    }
+    if (courseCategory.present) {
+      map['khoiKienThuc'] = Variable<String>(
+        Hocphan.$convertercourseCategory.toSql(courseCategory.value),
+      );
+    }
+    if (workload.present) {
+      map['khoiLuong'] = Variable<String>(workload.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HocphanCompanion(')
+          ..write('id: $id, ')
+          ..write('vietnameseTitle: $vietnameseTitle, ')
+          ..write('englishTitle: $englishTitle, ')
+          ..write('credits: $credits, ')
+          ..write('courseCategory: $courseCategory, ')
+          ..write('workload: $workload, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class Giangvien extends Table with TableInfo<Giangvien, TeacherData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -3664,12 +4549,250 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
   }
 }
 
+class DangKyGiangDay extends Table
+    with TableInfo<DangKyGiangDay, TeachingRegistrationData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  DangKyGiangDay(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _teacherIdMeta = const VerificationMeta(
+    'teacherId',
+  );
+  late final GeneratedColumn<int> teacherId = GeneratedColumn<int>(
+    'idGiangVien',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _courseIdMeta = const VerificationMeta(
+    'courseId',
+  );
+  late final GeneratedColumn<String> courseId = GeneratedColumn<String>(
+    'maHocPhan',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [teacherId, courseId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'DangKyGiangDay';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TeachingRegistrationData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('idGiangVien')) {
+      context.handle(
+        _teacherIdMeta,
+        teacherId.isAcceptableOrUnknown(data['idGiangVien']!, _teacherIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_teacherIdMeta);
+    }
+    if (data.containsKey('maHocPhan')) {
+      context.handle(
+        _courseIdMeta,
+        courseId.isAcceptableOrUnknown(data['maHocPhan']!, _courseIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_courseIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {teacherId, courseId};
+  @override
+  TeachingRegistrationData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TeachingRegistrationData(
+      teacherId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}idGiangVien'],
+      )!,
+      courseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}maHocPhan'],
+      )!,
+    );
+  }
+
+  @override
+  DangKyGiangDay createAlias(String alias) {
+    return DangKyGiangDay(attachedDatabase, alias);
+  }
+
+  @override
+  List<String> get customConstraints => const [
+    'PRIMARY KEY(idGiangVien, maHocPhan)',
+    'FOREIGN KEY(idGiangVien)REFERENCES giangvien(id)',
+    'FOREIGN KEY(maHocPhan)REFERENCES hocphan(maHocPhan)',
+  ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class TeachingRegistrationData extends DataClass
+    implements Insertable<TeachingRegistrationData> {
+  final int teacherId;
+  final String courseId;
+  const TeachingRegistrationData({
+    required this.teacherId,
+    required this.courseId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['idGiangVien'] = Variable<int>(teacherId);
+    map['maHocPhan'] = Variable<String>(courseId);
+    return map;
+  }
+
+  DangKyGiangDayCompanion toCompanion(bool nullToAbsent) {
+    return DangKyGiangDayCompanion(
+      teacherId: Value(teacherId),
+      courseId: Value(courseId),
+    );
+  }
+
+  factory TeachingRegistrationData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TeachingRegistrationData(
+      teacherId: serializer.fromJson<int>(json['idGiangVien']),
+      courseId: serializer.fromJson<String>(json['maHocPhan']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'idGiangVien': serializer.toJson<int>(teacherId),
+      'maHocPhan': serializer.toJson<String>(courseId),
+    };
+  }
+
+  TeachingRegistrationData copyWith({int? teacherId, String? courseId}) =>
+      TeachingRegistrationData(
+        teacherId: teacherId ?? this.teacherId,
+        courseId: courseId ?? this.courseId,
+      );
+  TeachingRegistrationData copyWithCompanion(DangKyGiangDayCompanion data) {
+    return TeachingRegistrationData(
+      teacherId: data.teacherId.present ? data.teacherId.value : this.teacherId,
+      courseId: data.courseId.present ? data.courseId.value : this.courseId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TeachingRegistrationData(')
+          ..write('teacherId: $teacherId, ')
+          ..write('courseId: $courseId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(teacherId, courseId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TeachingRegistrationData &&
+          other.teacherId == this.teacherId &&
+          other.courseId == this.courseId);
+}
+
+class DangKyGiangDayCompanion
+    extends UpdateCompanion<TeachingRegistrationData> {
+  final Value<int> teacherId;
+  final Value<String> courseId;
+  final Value<int> rowid;
+  const DangKyGiangDayCompanion({
+    this.teacherId = const Value.absent(),
+    this.courseId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DangKyGiangDayCompanion.insert({
+    required int teacherId,
+    required String courseId,
+    this.rowid = const Value.absent(),
+  }) : teacherId = Value(teacherId),
+       courseId = Value(courseId);
+  static Insertable<TeachingRegistrationData> custom({
+    Expression<int>? teacherId,
+    Expression<String>? courseId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (teacherId != null) 'idGiangVien': teacherId,
+      if (courseId != null) 'maHocPhan': courseId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DangKyGiangDayCompanion copyWith({
+    Value<int>? teacherId,
+    Value<String>? courseId,
+    Value<int>? rowid,
+  }) {
+    return DangKyGiangDayCompanion(
+      teacherId: teacherId ?? this.teacherId,
+      courseId: courseId ?? this.courseId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (teacherId.present) {
+      map['idGiangVien'] = Variable<int>(teacherId.value);
+    }
+    if (courseId.present) {
+      map['maHocPhan'] = Variable<String>(courseId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DangKyGiangDayCompanion(')
+          ..write('teacherId: $teacherId, ')
+          ..write('courseId: $courseId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$MyDriftDatabase extends GeneratedDatabase {
   _$MyDriftDatabase(QueryExecutor e) : super(e);
   $MyDriftDatabaseManager get managers => $MyDriftDatabaseManager(this);
+  late final Hocky hocky = Hocky(this);
+  late final Hocphan hocphan = Hocphan(this);
   late final Giangvien giangvien = Giangvien(this);
   late final Detaithacsi detaithacsi = Detaithacsi(this);
   late final PhdStudent phdStudent = PhdStudent(this);
+  late final DangKyGiangDay dangKyGiangDay = DangKyGiangDay(this);
   Future<int> createPhdStudent({
     required String cohort,
     String? admissionId,
@@ -3832,15 +4955,459 @@ abstract class _$MyDriftDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+    hocky,
+    hocphan,
     giangvien,
     detaithacsi,
     phdStudent,
+    dangKyGiangDay,
   ];
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);
 }
 
+typedef $HockyCreateCompanionBuilder =
+    HockyCompanion Function({
+      required String semester,
+      required String registrationOpenDate,
+      required String registrationCloseDate,
+      required String studyStartDate,
+      required String studyEndDate,
+      required String gradeSubmissionDeadline,
+      Value<int> rowid,
+    });
+typedef $HockyUpdateCompanionBuilder =
+    HockyCompanion Function({
+      Value<String> semester,
+      Value<String> registrationOpenDate,
+      Value<String> registrationCloseDate,
+      Value<String> studyStartDate,
+      Value<String> studyEndDate,
+      Value<String> gradeSubmissionDeadline,
+      Value<int> rowid,
+    });
+
+class $HockyFilterComposer extends Composer<_$MyDriftDatabase, Hocky> {
+  $HockyFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get semester => $composableBuilder(
+    column: $table.semester,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get registrationOpenDate => $composableBuilder(
+    column: $table.registrationOpenDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get registrationCloseDate => $composableBuilder(
+    column: $table.registrationCloseDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get studyStartDate => $composableBuilder(
+    column: $table.studyStartDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get studyEndDate => $composableBuilder(
+    column: $table.studyEndDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get gradeSubmissionDeadline => $composableBuilder(
+    column: $table.gradeSubmissionDeadline,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $HockyOrderingComposer extends Composer<_$MyDriftDatabase, Hocky> {
+  $HockyOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get semester => $composableBuilder(
+    column: $table.semester,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get registrationOpenDate => $composableBuilder(
+    column: $table.registrationOpenDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get registrationCloseDate => $composableBuilder(
+    column: $table.registrationCloseDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get studyStartDate => $composableBuilder(
+    column: $table.studyStartDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get studyEndDate => $composableBuilder(
+    column: $table.studyEndDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get gradeSubmissionDeadline => $composableBuilder(
+    column: $table.gradeSubmissionDeadline,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $HockyAnnotationComposer extends Composer<_$MyDriftDatabase, Hocky> {
+  $HockyAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get semester =>
+      $composableBuilder(column: $table.semester, builder: (column) => column);
+
+  GeneratedColumn<String> get registrationOpenDate => $composableBuilder(
+    column: $table.registrationOpenDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get registrationCloseDate => $composableBuilder(
+    column: $table.registrationCloseDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get studyStartDate => $composableBuilder(
+    column: $table.studyStartDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get studyEndDate => $composableBuilder(
+    column: $table.studyEndDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get gradeSubmissionDeadline => $composableBuilder(
+    column: $table.gradeSubmissionDeadline,
+    builder: (column) => column,
+  );
+}
+
+class $HockyTableManager
+    extends
+        RootTableManager<
+          _$MyDriftDatabase,
+          Hocky,
+          SemesterData,
+          $HockyFilterComposer,
+          $HockyOrderingComposer,
+          $HockyAnnotationComposer,
+          $HockyCreateCompanionBuilder,
+          $HockyUpdateCompanionBuilder,
+          (
+            SemesterData,
+            BaseReferences<_$MyDriftDatabase, Hocky, SemesterData>,
+          ),
+          SemesterData,
+          PrefetchHooks Function()
+        > {
+  $HockyTableManager(_$MyDriftDatabase db, Hocky table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $HockyFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $HockyOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $HockyAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> semester = const Value.absent(),
+                Value<String> registrationOpenDate = const Value.absent(),
+                Value<String> registrationCloseDate = const Value.absent(),
+                Value<String> studyStartDate = const Value.absent(),
+                Value<String> studyEndDate = const Value.absent(),
+                Value<String> gradeSubmissionDeadline = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => HockyCompanion(
+                semester: semester,
+                registrationOpenDate: registrationOpenDate,
+                registrationCloseDate: registrationCloseDate,
+                studyStartDate: studyStartDate,
+                studyEndDate: studyEndDate,
+                gradeSubmissionDeadline: gradeSubmissionDeadline,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String semester,
+                required String registrationOpenDate,
+                required String registrationCloseDate,
+                required String studyStartDate,
+                required String studyEndDate,
+                required String gradeSubmissionDeadline,
+                Value<int> rowid = const Value.absent(),
+              }) => HockyCompanion.insert(
+                semester: semester,
+                registrationOpenDate: registrationOpenDate,
+                registrationCloseDate: registrationCloseDate,
+                studyStartDate: studyStartDate,
+                studyEndDate: studyEndDate,
+                gradeSubmissionDeadline: gradeSubmissionDeadline,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $HockyProcessedTableManager =
+    ProcessedTableManager<
+      _$MyDriftDatabase,
+      Hocky,
+      SemesterData,
+      $HockyFilterComposer,
+      $HockyOrderingComposer,
+      $HockyAnnotationComposer,
+      $HockyCreateCompanionBuilder,
+      $HockyUpdateCompanionBuilder,
+      (SemesterData, BaseReferences<_$MyDriftDatabase, Hocky, SemesterData>),
+      SemesterData,
+      PrefetchHooks Function()
+    >;
+typedef $HocphanCreateCompanionBuilder =
+    HocphanCompanion Function({
+      required String id,
+      required String vietnameseTitle,
+      required String englishTitle,
+      required int credits,
+      required CourseCategory courseCategory,
+      required String workload,
+      Value<int> rowid,
+    });
+typedef $HocphanUpdateCompanionBuilder =
+    HocphanCompanion Function({
+      Value<String> id,
+      Value<String> vietnameseTitle,
+      Value<String> englishTitle,
+      Value<int> credits,
+      Value<CourseCategory> courseCategory,
+      Value<String> workload,
+      Value<int> rowid,
+    });
+
+class $HocphanFilterComposer extends Composer<_$MyDriftDatabase, Hocphan> {
+  $HocphanFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get vietnameseTitle => $composableBuilder(
+    column: $table.vietnameseTitle,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get englishTitle => $composableBuilder(
+    column: $table.englishTitle,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get credits => $composableBuilder(
+    column: $table.credits,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<CourseCategory, CourseCategory, String>
+  get courseCategory => $composableBuilder(
+    column: $table.courseCategory,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<String> get workload => $composableBuilder(
+    column: $table.workload,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $HocphanOrderingComposer extends Composer<_$MyDriftDatabase, Hocphan> {
+  $HocphanOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get vietnameseTitle => $composableBuilder(
+    column: $table.vietnameseTitle,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get englishTitle => $composableBuilder(
+    column: $table.englishTitle,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get credits => $composableBuilder(
+    column: $table.credits,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get courseCategory => $composableBuilder(
+    column: $table.courseCategory,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get workload => $composableBuilder(
+    column: $table.workload,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $HocphanAnnotationComposer extends Composer<_$MyDriftDatabase, Hocphan> {
+  $HocphanAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get vietnameseTitle => $composableBuilder(
+    column: $table.vietnameseTitle,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get englishTitle => $composableBuilder(
+    column: $table.englishTitle,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get credits =>
+      $composableBuilder(column: $table.credits, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<CourseCategory, String> get courseCategory =>
+      $composableBuilder(
+        column: $table.courseCategory,
+        builder: (column) => column,
+      );
+
+  GeneratedColumn<String> get workload =>
+      $composableBuilder(column: $table.workload, builder: (column) => column);
+}
+
+class $HocphanTableManager
+    extends
+        RootTableManager<
+          _$MyDriftDatabase,
+          Hocphan,
+          CourseData,
+          $HocphanFilterComposer,
+          $HocphanOrderingComposer,
+          $HocphanAnnotationComposer,
+          $HocphanCreateCompanionBuilder,
+          $HocphanUpdateCompanionBuilder,
+          (CourseData, BaseReferences<_$MyDriftDatabase, Hocphan, CourseData>),
+          CourseData,
+          PrefetchHooks Function()
+        > {
+  $HocphanTableManager(_$MyDriftDatabase db, Hocphan table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $HocphanFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $HocphanOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $HocphanAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> vietnameseTitle = const Value.absent(),
+                Value<String> englishTitle = const Value.absent(),
+                Value<int> credits = const Value.absent(),
+                Value<CourseCategory> courseCategory = const Value.absent(),
+                Value<String> workload = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => HocphanCompanion(
+                id: id,
+                vietnameseTitle: vietnameseTitle,
+                englishTitle: englishTitle,
+                credits: credits,
+                courseCategory: courseCategory,
+                workload: workload,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String vietnameseTitle,
+                required String englishTitle,
+                required int credits,
+                required CourseCategory courseCategory,
+                required String workload,
+                Value<int> rowid = const Value.absent(),
+              }) => HocphanCompanion.insert(
+                id: id,
+                vietnameseTitle: vietnameseTitle,
+                englishTitle: englishTitle,
+                credits: credits,
+                courseCategory: courseCategory,
+                workload: workload,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $HocphanProcessedTableManager =
+    ProcessedTableManager<
+      _$MyDriftDatabase,
+      Hocphan,
+      CourseData,
+      $HocphanFilterComposer,
+      $HocphanOrderingComposer,
+      $HocphanAnnotationComposer,
+      $HocphanCreateCompanionBuilder,
+      $HocphanUpdateCompanionBuilder,
+      (CourseData, BaseReferences<_$MyDriftDatabase, Hocphan, CourseData>),
+      CourseData,
+      PrefetchHooks Function()
+    >;
 typedef $GiangvienCreateCompanionBuilder =
     GiangvienCompanion Function({
       Value<int> id,
@@ -5435,14 +7002,169 @@ typedef $PhdStudentProcessedTableManager =
       PhdStudentData,
       PrefetchHooks Function()
     >;
+typedef $DangKyGiangDayCreateCompanionBuilder =
+    DangKyGiangDayCompanion Function({
+      required int teacherId,
+      required String courseId,
+      Value<int> rowid,
+    });
+typedef $DangKyGiangDayUpdateCompanionBuilder =
+    DangKyGiangDayCompanion Function({
+      Value<int> teacherId,
+      Value<String> courseId,
+      Value<int> rowid,
+    });
+
+class $DangKyGiangDayFilterComposer
+    extends Composer<_$MyDriftDatabase, DangKyGiangDay> {
+  $DangKyGiangDayFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get teacherId => $composableBuilder(
+    column: $table.teacherId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get courseId => $composableBuilder(
+    column: $table.courseId,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $DangKyGiangDayOrderingComposer
+    extends Composer<_$MyDriftDatabase, DangKyGiangDay> {
+  $DangKyGiangDayOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get teacherId => $composableBuilder(
+    column: $table.teacherId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get courseId => $composableBuilder(
+    column: $table.courseId,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $DangKyGiangDayAnnotationComposer
+    extends Composer<_$MyDriftDatabase, DangKyGiangDay> {
+  $DangKyGiangDayAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get teacherId =>
+      $composableBuilder(column: $table.teacherId, builder: (column) => column);
+
+  GeneratedColumn<String> get courseId =>
+      $composableBuilder(column: $table.courseId, builder: (column) => column);
+}
+
+class $DangKyGiangDayTableManager
+    extends
+        RootTableManager<
+          _$MyDriftDatabase,
+          DangKyGiangDay,
+          TeachingRegistrationData,
+          $DangKyGiangDayFilterComposer,
+          $DangKyGiangDayOrderingComposer,
+          $DangKyGiangDayAnnotationComposer,
+          $DangKyGiangDayCreateCompanionBuilder,
+          $DangKyGiangDayUpdateCompanionBuilder,
+          (
+            TeachingRegistrationData,
+            BaseReferences<
+              _$MyDriftDatabase,
+              DangKyGiangDay,
+              TeachingRegistrationData
+            >,
+          ),
+          TeachingRegistrationData,
+          PrefetchHooks Function()
+        > {
+  $DangKyGiangDayTableManager(_$MyDriftDatabase db, DangKyGiangDay table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $DangKyGiangDayFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $DangKyGiangDayOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $DangKyGiangDayAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> teacherId = const Value.absent(),
+                Value<String> courseId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DangKyGiangDayCompanion(
+                teacherId: teacherId,
+                courseId: courseId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required int teacherId,
+                required String courseId,
+                Value<int> rowid = const Value.absent(),
+              }) => DangKyGiangDayCompanion.insert(
+                teacherId: teacherId,
+                courseId: courseId,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $DangKyGiangDayProcessedTableManager =
+    ProcessedTableManager<
+      _$MyDriftDatabase,
+      DangKyGiangDay,
+      TeachingRegistrationData,
+      $DangKyGiangDayFilterComposer,
+      $DangKyGiangDayOrderingComposer,
+      $DangKyGiangDayAnnotationComposer,
+      $DangKyGiangDayCreateCompanionBuilder,
+      $DangKyGiangDayUpdateCompanionBuilder,
+      (
+        TeachingRegistrationData,
+        BaseReferences<
+          _$MyDriftDatabase,
+          DangKyGiangDay,
+          TeachingRegistrationData
+        >,
+      ),
+      TeachingRegistrationData,
+      PrefetchHooks Function()
+    >;
 
 class $MyDriftDatabaseManager {
   final _$MyDriftDatabase _db;
   $MyDriftDatabaseManager(this._db);
+  $HockyTableManager get hocky => $HockyTableManager(_db, _db.hocky);
+  $HocphanTableManager get hocphan => $HocphanTableManager(_db, _db.hocphan);
   $GiangvienTableManager get giangvien =>
       $GiangvienTableManager(_db, _db.giangvien);
   $DetaithacsiTableManager get detaithacsi =>
       $DetaithacsiTableManager(_db, _db.detaithacsi);
   $PhdStudentTableManager get phdStudent =>
       $PhdStudentTableManager(_db, _db.phdStudent);
+  $DangKyGiangDayTableManager get dangKyGiangDay =>
+      $DangKyGiangDayTableManager(_db, _db.dangKyGiangDay);
 }

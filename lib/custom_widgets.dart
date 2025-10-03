@@ -1,22 +1,38 @@
 import 'dart:async';
 
+import 'package:diacritic/diacritic.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gutter/flutter_gutter.dart';
-import 'package:diacritic/diacritic.dart';
 
 import 'datamodels.dart' show toSqliteDate;
 import 'datamodels.dart' show tryFormatHumanDate;
 import 'datamodels.dart' show tryParseDMY;
 
-export 'custom_widgets/menu_dialog.dart';
-export 'custom_widgets/directory_picker.dart';
 export 'custom_widgets/datetime_picker.dart';
+export 'custom_widgets/directory_picker.dart';
 export 'custom_widgets/expanded_scrollview.dart';
+export 'custom_widgets/menu_dialog.dart';
+export 'custom_widgets/responsive_breakpoints.dart';
+
+Function debounced_callback<F extends Function>({
+  required F function,
+  required Duration duration,
+}) {
+  var timer = Timer(duration, () {});
+  debounced() {
+    timer.cancel();
+    timer = Timer(duration, () {
+      function();
+    });
+  }
+
+  return debounced as Function;
+}
 
 String defaultFormatter(Object? obj) {
   return obj?.toString() ?? "";
@@ -746,6 +762,88 @@ class EzFlex extends StatelessWidget {
   }
 }
 
+/// Easy grid with fixed number of columns.
+class EzGrid extends StatelessWidget {
+  final int crossAxisCount;
+  final List<Widget> children;
+  final double? spacing;
+  final EdgeInsetsGeometry? margin;
+
+  const EzGrid({
+    super.key,
+    required this.crossAxisCount,
+    required this.children,
+    this.spacing,
+    this.margin,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (crossAxisCount <= 0) {
+      throw ArgumentError("crossAxisCount must be greater than 0");
+    }
+
+    // If crossAxisCount is 1, use a ListView
+    if (crossAxisCount == 1) {
+      return ListView(children: children);
+    }
+
+    final numChildren = children.length;
+    final numRows = (numChildren / crossAxisCount).ceil();
+
+    // Partition children into rows
+    final childrenPartitions = <List<Widget>>[];
+    for (int i = 0; i < numRows; i++) {
+      final start = i * crossAxisCount;
+      final end = start + crossAxisCount;
+      childrenPartitions.add(
+        children.sublist(start, end.clamp(0, numChildren)),
+      );
+    }
+
+    final actualSpacing = spacing ?? context.gutterSmall;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final itemWidth =
+            constraints.maxWidth / crossAxisCount -
+            actualSpacing * (crossAxisCount - 1) / crossAxisCount;
+
+        // Check if last row is full, if not then add spacer
+        if (childrenPartitions.isNotEmpty &&
+            childrenPartitions.last.length < crossAxisCount) {
+          final lastRow = childrenPartitions.last;
+          final spacerCount = crossAxisCount - lastRow.length;
+          childrenPartitions.last.addAll(
+            List.generate(spacerCount, (_) => Spacer()),
+          );
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            spacing: spacing ?? context.gutterSmall,
+            children: [
+              for (final row in childrenPartitions)
+                IntrinsicHeight(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    spacing: actualSpacing,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (final child in row)
+                        SizedBox(width: itemWidth, child: child),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
 /// Create header text
 class EzHeader extends StatelessWidget {
   final String text;
@@ -816,6 +914,30 @@ abstract class EzPage<T extends ChangeNotifier> extends StatelessWidget {
 
   /// Page state
   T createState(BuildContext context);
+}
+
+class EzRow extends StatelessWidget {
+  final double? spacing;
+  final List<Widget> children;
+  final MainAxisAlignment mainAxisAlignment;
+  const EzRow({
+    super.key,
+    required this.children,
+    this.spacing,
+    this.mainAxisAlignment = MainAxisAlignment.start,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: mainAxisAlignment,
+        spacing: spacing ?? context.gutter,
+        children: children,
+      ),
+    );
+  }
 }
 
 class EzSelectionController<T> extends ChangeNotifier {
@@ -1124,6 +1246,40 @@ class HeadingListTile extends StatelessWidget {
   }
 }
 
+/// A text widget that displays an icon and text together.
+class IconText extends StatelessWidget {
+  final String text;
+  final IconData icon;
+  final double? iconSize;
+  final Color? iconColor;
+  final TextStyle? style;
+
+  const IconText({
+    super.key,
+    required this.text,
+    required this.icon,
+    this.style,
+    this.iconSize = 16,
+    this.iconColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      overflow: TextOverflow.ellipsis,
+      text: TextSpan(
+        children: [
+          WidgetSpan(
+            child: Icon(icon, size: iconSize ?? 16.0, color: iconColor),
+          ),
+          WidgetSpan(child: SizedBox(width: context.gutterTiny)),
+          TextSpan(text: text, style: style),
+        ],
+      ),
+    );
+  }
+}
+
 // Listtile that have onTap update behavior
 abstract class InfoTile<T> extends StatefulWidget {
   final String title;
@@ -1350,147 +1506,6 @@ extension ScaffoldMessengerEzMesage on ScaffoldMessengerState {
   }
 }
 
-Function debounced_callback<F extends Function>({
-  required F function,
-  required Duration duration,
-}) {
-  var timer = Timer(duration, () {});
-  debounced() {
-    timer.cancel();
-    timer = Timer(duration, () {
-      function();
-    });
-  }
-
-  return debounced as Function;
-}
-
-/// A text widget that displays an icon and text together.
-class IconText extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  final double? iconSize;
-  final Color? iconColor;
-  final TextStyle? style;
-
-  const IconText({
-    super.key,
-    required this.text,
-    required this.icon,
-    this.style,
-    this.iconSize = 16,
-    this.iconColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return RichText(
-      overflow: TextOverflow.ellipsis,
-      text: TextSpan(
-        children: [
-          WidgetSpan(
-            child: Icon(icon, size: iconSize ?? 16.0, color: iconColor),
-          ),
-          WidgetSpan(child: SizedBox(width: context.gutterTiny)),
-          TextSpan(text: text, style: style),
-        ],
-      ),
-    );
-  }
-}
-
-/// Easy grid with fixed number of columns.
-class EzGrid extends StatelessWidget {
-  final int crossAxisCount;
-  final List<Widget> children;
-  final double? spacing;
-  final EdgeInsetsGeometry? margin;
-
-  const EzGrid({
-    super.key,
-    required this.crossAxisCount,
-    required this.children,
-    this.spacing,
-    this.margin,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (crossAxisCount <= 0) {
-      throw ArgumentError("crossAxisCount must be greater than 0");
-    }
-
-    // If crossAxisCount is 1, use a ListView
-    if (crossAxisCount == 1) {
-      return ListView(children: children);
-    }
-
-    final numChildren = children.length;
-    final numRows = (numChildren / crossAxisCount).ceil();
-
-    // Partition children into rows
-    final childrenPartitions = <List<Widget>>[];
-    for (int i = 0; i < numRows; i++) {
-      final start = i * crossAxisCount;
-      final end = start + crossAxisCount;
-      childrenPartitions.add(
-        children.sublist(start, end.clamp(0, numChildren)),
-      );
-    }
-
-    final actualSpacing = spacing ?? context.gutterSmall;
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final itemWidth =
-            constraints.maxWidth / crossAxisCount -
-            actualSpacing * (crossAxisCount - 1) / crossAxisCount;
-
-        // Check if last row is full, if not then add spacer
-        if (childrenPartitions.isNotEmpty &&
-            childrenPartitions.last.length < crossAxisCount) {
-          final lastRow = childrenPartitions.last;
-          final spacerCount = crossAxisCount - lastRow.length;
-          childrenPartitions.last.addAll(
-            List.generate(spacerCount, (_) => Spacer()),
-          );
-        }
-
-        return SingleChildScrollView(
-          child: Column(
-            spacing: spacing ?? context.gutterSmall,
-            children: [
-              for (final row in childrenPartitions)
-                IntrinsicHeight(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: actualSpacing,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      for (final child in row)
-                        SizedBox(width: itemWidth, child: child),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-extension ContextLargeScreenOrNot on BuildContext {
-  bool get isLargeScreen800 {
-    return MediaQuery.sizeOf(this).width >= 800;
-  }
-
-  bool get isLargeScreen600 {
-    return MediaQuery.sizeOf(this).width >= 800;
-  }
-}
-
 extension StringSlugify on String {
   String slugify({
     bool removeAccents = true,
@@ -1505,5 +1520,13 @@ extension StringSlugify on String {
     }
     slug = slug.trim();
     return slug;
+  }
+}
+
+extension ExpandedChildren on Expanded {
+  static List<Expanded> children({required List<Widget> children}) {
+    return [
+      for (final child in children) Expanded(child: child),
+    ];
   }
 }

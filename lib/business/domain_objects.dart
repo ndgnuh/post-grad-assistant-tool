@@ -153,6 +153,8 @@ typedef Thesis = DeTaiThacSi;
 
 typedef AdmissionType = DienTuyenSinh;
 
+typedef Course = HocPhan;
+
 class BoolIntSerializer implements JsonConverter<bool, int?> {
   const BoolIntSerializer();
 
@@ -710,75 +712,6 @@ abstract class GiangVien with _$GiangVien {
       id: id,
       value: value,
     );
-  }
-
-  Future updateAcademicDegree({HocVi? degree, String? value}) async {
-    if (degree != null) {
-      await updateField(fieldName: "hocVi", value: degree.value);
-    } else if (value != null) {
-      await updateField(fieldName: "hocVi", value: value);
-    } else {
-      throw ArgumentError(
-        "Either degree or value must be provided to update academic degree.",
-      );
-    }
-  }
-
-  Future updateAcademicRank({HocHam? rank, String? value}) async {
-    if (rank != null) {
-      await updateField(fieldName: "hocHam", value: rank.value);
-    } else if (value != null) {
-      await updateField(fieldName: "hocHam", value: value);
-    } else {
-      throw ArgumentError(
-        "Either rank or value must be provided to update academic rank.",
-      );
-    }
-  }
-
-  Future updateUniversity(String universityName) async {
-    return updateField(fieldName: "donVi", value: universityName);
-  }
-
-  Future updateName(String name) async {
-    return updateField(fieldName: "hoTen", value: name);
-  }
-
-  Future updateStaffId(String? staffId) async {
-    return updateField(fieldName: "maCanBo", value: staffId);
-  }
-
-  Future updatePhone(String? phone) async {
-    return updateField(fieldName: "sdt", value: phone);
-  }
-
-  Future updateDateOfBirth(DateTime? date) async {
-    final dateString = date != null ? datetimeToYyyymmdd(date) : null;
-    updateField(fieldName: "ngaySinh", value: dateString);
-  }
-
-  Future updateEmail(String? email) async {
-    return updateField(fieldName: "email", value: email);
-  }
-
-  Future updateGroup(int? ncm) async {
-    return updateField(fieldName: "ncm", value: ncm);
-  }
-
-  Future updateGender(GioiTinh? gender) async {
-    return updateField(fieldName: "gioiTinh", value: gender?.value);
-  }
-
-  Future updateTaxCode(String? taxCode) async {
-    return updateField(fieldName: "mst", value: taxCode);
-  }
-
-  Future updateBankAccount(String? bankAccount) async {
-    return updateField(fieldName: "stk", value: bankAccount);
-  }
-
-  Future updateBankName(String? bankName) async {
-    return updateField(fieldName: "nganHang", value: bankName);
   }
 
   Future<void> update() =>
@@ -1644,10 +1577,24 @@ abstract class NhomChuyenMon with _$NhomChuyenMon {
 @freezed
 abstract class NienKhoa with _$NienKhoa {
   static const table = "NienKhoa";
-  const factory NienKhoa({required String nienKhoa}) = _NienKhoa;
+  const NienKhoa._();
+  const factory NienKhoa({
+    required String nienKhoa,
+    // required DateTime startDate,
+    // required DateTime endDate,
+  }) = _NienKhoa;
 
   factory NienKhoa.fromJson(Map<String, dynamic> json) =>
       _$NienKhoaFromJson(json);
+
+  String get id => nienKhoa;
+
+  static Future<Cohort> getById(String cohortId) => _getById(
+    id: cohortId,
+    table: table,
+    idField: "nienKhoa",
+    fromJson: NienKhoa.fromJson,
+  );
 
   static Future<List<NienKhoa>> all() async {
     return dbSession((db) async {

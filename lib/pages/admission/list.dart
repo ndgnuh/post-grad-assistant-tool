@@ -1,5 +1,6 @@
 import 'package:fami_tools/datamodels.dart';
 import 'package:fami_tools/pages/admission/_download.dart';
+import 'package:fami_tools/pages/admission/_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
@@ -14,6 +15,7 @@ import '../multiple_selection_page.dart';
 import './_copy_pasta.dart';
 import './_forms.dart';
 import './_providers.dart';
+import './_widgets.dart';
 import './index.dart';
 
 final _cohortGroupLinkController = TextEditingController(text: "");
@@ -47,47 +49,40 @@ class AdmissionListPage extends StatelessWidget {
         child: Column(
           spacing: context.gutter,
           children: [
-            IntrinsicHeight(
-              child: Row(
-                spacing: context.gutter,
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _CouncilPicker(),
-                  VerticalDivider(),
-                  Expanded(
-                    child: _SaveDirectoryPicker(),
-                  ),
-                  _ProfileDownloadButton(controller: saveDirectoryController),
-                  _SavePaperworkButton(controller: saveDirectoryController),
-                  VerticalDivider(),
-                  _ImportButton(),
-                  _AddButton(),
-                  _CopyButton(),
-                  VerticalDivider(),
-                  _PaymentButton(),
-                ],
-              ),
+            EzRow(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                CouncilSelector(),
+                VerticalDivider(),
+                Expanded(
+                  child: _SaveDirectoryPicker(),
+                ),
+                _ProfileDownloadButton(controller: saveDirectoryController),
+                _SavePaperworkButton(controller: saveDirectoryController),
+                VerticalDivider(),
+                _ImportButton(),
+                _AddButton(),
+                _CopyButton(),
+                VerticalDivider(),
+                _PaymentButton(),
+              ],
             ),
             Divider(),
-            IntrinsicHeight(
-              child: Row(
-                spacing: context.gutter,
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(child: _InterviewLocationEdit()),
-                  Expanded(flex: 2, child: _InterviewDatePicker()),
-                  _InterviewEmailButton(),
-                  VerticalDivider(),
-                  Expanded(child: _EnrollGroupLinkEdit()),
-                  _EnrollEmailButton(),
-                  VerticalDivider(),
-                  _DelayButton(),
-                  OutlinedButton(onPressed: null, child: Text("Sửa")),
-                  _EnrollButton(),
-                ],
-              ),
+            EzRow(
+              spacing: context.gutter,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Expanded(child: _InterviewLocationEdit()),
+                Expanded(flex: 2, child: _InterviewDatePicker()),
+                _InterviewEmailButton(),
+                VerticalDivider(),
+                Expanded(child: _EnrollGroupLinkEdit()),
+                _EnrollEmailButton(),
+                VerticalDivider(),
+                _DelayButton(),
+                OutlinedButton(onPressed: null, child: Text("Sửa")),
+                _EnrollButton(),
+              ],
             ),
             Divider(),
             Expanded(child: _AdmissionTableView()),
@@ -261,42 +256,6 @@ class _CopyButton extends ConsumerWidget {
               ),
             ],
           ),
-        );
-      },
-    );
-  }
-}
-
-class _CouncilPicker extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.read(_stateProvider);
-    final councilsState = ref.watch(admissionCouncilsProvider);
-    switch (councilsState) {
-      case AsyncLoading():
-        return const Center(child: CircularProgressIndicator());
-      case AsyncError():
-        return const Center(child: Text("Lỗi tải dữ liệu."));
-      default:
-    }
-
-    return ValueListenableBuilder(
-      valueListenable: state.selectedCouncilNotifier,
-      builder: (context, value, child) {
-        return DropdownMenu<AdmissionCouncil>(
-          label: const Text("Tiểu ban xét tuyển"),
-
-          initialSelection: value,
-          dropdownMenuEntries: [
-            for (final council in councilsState.value!)
-              DropdownMenuEntry(
-                value: council,
-                label: council.toString(),
-              ),
-          ],
-          onSelected: (council) {
-            state.selectedCouncilNotifier.value = council;
-          },
         );
       },
     );
@@ -889,68 +848,6 @@ class _PaymentButton extends StatelessWidget {
   }
 }
 
-class _SavePaperworkButton extends ConsumerWidget {
-  final TextEditingController controller;
-  const _SavePaperworkButton({required this.controller});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final messenger = ScaffoldMessenger.of(context);
-    final studentState = ref.watch(activeAdmissionStudentsProvider);
-    switch (studentState) {
-      case AsyncLoading():
-        return const Center(child: CircularProgressIndicator());
-      case AsyncError():
-        return const Center(child: Text("Lỗi tải dữ liệu."));
-      default:
-    }
-
-    final students = studentState.value!;
-
-    return FilledButton.icon(
-      icon: const Icon(Symbols.save),
-      label: Text("Lưu mẫu biên bản"),
-      onPressed: () async {
-        final state = ref.read(_stateProvider);
-        final saveDirectory = state.saveDirectory;
-        final council = state.selectedCouncilNotifier.value;
-
-        if (saveDirectory == null || saveDirectory.isEmpty) {
-          messenger.showSnackBar(
-            const SnackBar(
-              content: Text("Vui lòng chọn thư mục lưu hồ sơ."),
-            ),
-          );
-          return;
-        }
-
-        if (council == null) {
-          messenger.showSnackBar(
-            const SnackBar(
-              content: Text("Vui lòng chọn tiểu ban xét tuyển."),
-            ),
-          );
-          return;
-        }
-
-        saveAdmissionForms(
-          saveDirectory: saveDirectory,
-          candidates: students,
-          council: council,
-        );
-
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text(
-              "Đã lưu ${students.length} hồ sơ vào thư mục $saveDirectory",
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
 class _ProfileDownloadButton extends ConsumerWidget {
   final TextEditingController controller;
   const _ProfileDownloadButton({required this.controller});
@@ -1030,6 +927,68 @@ class _SaveDirectoryPicker extends ConsumerWidget {
       onDirectorySelected: (directory) {
         final state = ref.read(_stateProvider);
         state.saveDirectory = directory;
+      },
+    );
+  }
+}
+
+class _SavePaperworkButton extends ConsumerWidget {
+  final TextEditingController controller;
+  const _SavePaperworkButton({required this.controller});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final messenger = ScaffoldMessenger.of(context);
+    final studentState = ref.watch(activeAdmissionStudentsProvider);
+    switch (studentState) {
+      case AsyncLoading():
+        return const Center(child: CircularProgressIndicator());
+      case AsyncError():
+        return const Center(child: Text("Lỗi tải dữ liệu."));
+      default:
+    }
+
+    final students = studentState.value!;
+
+    return FilledButton.icon(
+      icon: const Icon(Symbols.save),
+      label: Text("Lưu mẫu biên bản"),
+      onPressed: () async {
+        final state = ref.read(_stateProvider);
+        final saveDirectory = state.saveDirectory;
+        final council = state.selectedCouncilNotifier.value;
+
+        if (saveDirectory == null || saveDirectory.isEmpty) {
+          messenger.showSnackBar(
+            const SnackBar(
+              content: Text("Vui lòng chọn thư mục lưu hồ sơ."),
+            ),
+          );
+          return;
+        }
+
+        if (council == null) {
+          messenger.showSnackBar(
+            const SnackBar(
+              content: Text("Vui lòng chọn tiểu ban xét tuyển."),
+            ),
+          );
+          return;
+        }
+
+        saveAdmissionForms(
+          saveDirectory: saveDirectory,
+          candidates: students,
+          council: council,
+        );
+
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(
+              "Đã lưu ${students.length} hồ sơ vào thư mục $saveDirectory",
+            ),
+          ),
+        );
       },
     );
   }

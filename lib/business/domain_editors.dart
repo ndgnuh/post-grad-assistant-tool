@@ -249,8 +249,9 @@ class SearchChoiceState<T> extends State<SearchChoice<T>> {
       searchController: controller.formatController,
       viewShape: RoundedRectangleBorder(),
       viewOnClose: () {
-        controller.formatController.text =
-            controller.formatLabel(controller.value);
+        controller.formatController.text = controller.formatLabel(
+          controller.value,
+        );
       },
       builder: (context, searchController) {
         return TextFormField(
@@ -293,7 +294,7 @@ class SearchChoiceState<T> extends State<SearchChoice<T>> {
                 false => Icon(null),
               },
               title: Text(controller.formatLabel(value)),
-            )
+            ),
         ];
       },
     );
@@ -315,7 +316,7 @@ class SearchChoiceState<T> extends State<SearchChoice<T>> {
                 },
                 value: item,
                 label: controller.formatLabel(item),
-              )
+              ),
           ],
           onSelected: (T? value) {
             controller.value = value;
@@ -434,7 +435,7 @@ class CourseSelectionTileState extends State<CourseSelectionTile> {
               },
               title: Text(course.maHocPhan),
               subtitle: Text(course.tenTiengViet),
-            )
+            ),
         ];
       },
       builder: (context, searchController) => ValueListenableBuilder(
@@ -444,8 +445,9 @@ class CourseSelectionTileState extends State<CourseSelectionTile> {
             title: Text("Học phần"),
             subtitle: switch (value) {
               null => const Text("Chưa chọn"),
-              HocPhan value =>
-                Text("${value.maHocPhan} - ${value.tenTiengViet}"),
+              HocPhan value => Text(
+                "${value.maHocPhan} - ${value.tenTiengViet}",
+              ),
             },
             onTap: () => searchController.openView(),
           );
@@ -531,7 +533,7 @@ class _SearchTileState<T> extends State<SearchTile<T>> {
                 widget.onSelected?.call(item);
               },
               title: Text(formatItem(item)),
-            )
+            ),
         ];
       },
     );
@@ -601,12 +603,12 @@ class ThesisSearchTile extends StatelessWidget {
         tracked: tracked,
         paid: paid,
       ),
-      itemFormatter: itemFormatter ??
+      itemFormatter:
+          itemFormatter ??
           (DeTaiThacSi? item) => switch (item) {
-                null => "(không)",
-                DeTaiThacSi item =>
-                  "${item.tenTiengViet} (${item.tenTiengAnh})",
-              },
+            null => "(không)",
+            DeTaiThacSi item => "${item.tenTiengViet} (${item.tenTiengAnh})",
+          },
       label: label ?? "Tìm đề tài",
       initialValue: initialValue,
       valueNotifier: valueNotifier,

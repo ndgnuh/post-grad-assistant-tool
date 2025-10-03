@@ -3687,8 +3687,8 @@ return $default(_that.nienKhoa);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _NienKhoa implements NienKhoa {
-  const _NienKhoa({required this.nienKhoa});
+class _NienKhoa extends NienKhoa {
+  const _NienKhoa({required this.nienKhoa}): super._();
   factory _NienKhoa.fromJson(Map<String, dynamic> json) => _$NienKhoaFromJson(json);
 
 @override final  String nienKhoa;

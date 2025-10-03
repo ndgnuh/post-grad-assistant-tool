@@ -12,7 +12,7 @@ import 'pages/phan_cong_hoi_dong_lvths.dart'
     show PagePhanCongHoiDongLuanVanThacSi;
 import 'pages/page_xet_tuyen_ncs.dart' show PageXetTuyenNcs;
 import 'pages/ql_de_tai.dart' show PageQuanLyDeTai;
-import 'pages/han_che_hoc_phan.dart' show PageHanCheHocPhan;
+import 'pages/han_che_hoc_phan.dart' show CourseLimitingPage;
 import 'pages/danh_sach_giang_vien.dart' show PageQuanLyGiangVien;
 import 'pages/ql_hoc_vien.dart' show QlHocVien;
 import 'pages/ql_bieu_mau.dart' show QlBieuMau, DienPhieuDiemThs;
@@ -69,7 +69,10 @@ final initialRoute = switch (kReleaseMode) {
   // false => PageAcademicYearList.routeName,
   // false => PhdStudentListPage.routeName,
   // false => PhdStudentCreatePage.routeName,
-  false => AdmissionListPage.routeName,
+
+  // false => AdmissionListPage.routeName,
+  // false => AdmissionEnrollmentPage.routeName,
+  false => CourseLimitingPage.routeName,
 };
 
 // const initialRoute = SettingsPage.routeName;
@@ -146,7 +149,7 @@ const routes = [
     icon: Icons.class_rounded,
   ),
   (
-    route: PageHanCheHocPhan.routeName,
+    route: CourseLimitingPage.routeName,
     label: "Hạn chế học phần",
     icon: Icons.class_rounded,
   ),
@@ -198,8 +201,8 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       return PageXetTuyenNcs();
     case PageQuanLyDeTai.routeName:
       return PageQuanLyDeTai();
-    case PageHanCheHocPhan.routeName:
-      return PageHanCheHocPhan();
+    case CourseLimitingPage.routeName:
+      return CourseLimitingPage();
     case PagePhanCongHoiDongLuanVanThacSi.routeName:
       return PagePhanCongHoiDongLuanVanThacSi();
     case QlHocVien.routeName:
@@ -259,6 +262,8 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       return const AdmissionListPage();
     case AdmissionImportPage.routeName:
       return const AdmissionImportPage();
+    case AdmissionEnrollmentPage.routeName:
+      return const AdmissionEnrollmentPage();
 
     /// Selection pages
     case PageSelectClassOf.routeName:

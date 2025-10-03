@@ -66,7 +66,7 @@ enum CourseCategory {
   masterAdvancedSpecialized('nganh-nangcao', 'Kiến thức ngành (nâng cao)'),
   masterPracticalElection('tc-batbuoc', 'Tự chọn bắt buộc'),
   masterNonrestrictedElection('tc-tudo', 'Tự chọn tự do'),
-  phd('phs', 'Học phần sĩ');
+  phd('phd', 'Học phần tiến sĩ');
 
   final String value;
   final String label;

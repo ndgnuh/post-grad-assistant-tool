@@ -15,7 +15,7 @@ class PhdStudentListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gutter = context.gutter;
-    final largeScreen = context.isLargeScreen600;
+    final largeScreen = context.isMediumOrLargerScreen;
 
     return Scaffold(
       appBar: AppBar(

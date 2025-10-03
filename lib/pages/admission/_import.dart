@@ -1,20 +1,77 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fami_tools/business/lop_tin_chi.dart';
 import 'package:fami_tools/datamodels.dart';
-import 'package:fami_tools/services/pdf_builder/drafting.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:intl/intl.dart';
 
-import '../../services/sqlbuilder/sqlbuilder.dart';
-import '../../business/domain_objects.dart';
 import '../../services/database.dart' hide dbSession;
 
 part '_import.freezed.dart';
 part '_import.g.dart';
+
+Future<List<JsonSchema>?> readProfilesFromJson() async {
+  final result = await FilePicker.platform.pickFiles(
+    dialogTitle: "File danh sách",
+    allowMultiple: false,
+  );
+
+  if (result == null) return [];
+
+  final sourceFile = result.paths.first!;
+  final source = await File(sourceFile).readAsString();
+  final parsed = <JsonSchema>[];
+  final data = jsonDecode(source)["records"];
+  for (final row in data) {
+    final parsedRecord = JsonSchema.fromJson(row);
+
+    final bachelorMajor = parsedRecord.bachelorMajor
+        .replaceAll(" ", "")
+        .toLowerCase();
+    final prettifiedBachelorMajor = switch (bachelorMajor) {
+      "toán-tin" => "Toán Tin",
+      "toántin" => "Toán Tin",
+      _ => parsedRecord.bachelorMajor,
+    };
+
+    final university = parsedRecord.bachelorUniversity
+        .replaceAll("  ", " ")
+        .toLowerCase();
+    final prettifiedUniversity = switch (university) {
+      "đại học bách khoa hà nội" => "Đại học Bách khoa Hà Nội",
+      _ => parsedRecord.bachelorUniversity,
+    };
+
+    parsed.add(
+      parsedRecord.copyWith(
+        bachelorMajor: prettifiedBachelorMajor,
+        bachelorUniversity: prettifiedUniversity,
+      ),
+    );
+  }
+
+  return parsed;
+}
+
+Future<void> saveDataToDatabase(List<JsonSchema> data) async {
+  dbSession((Database db) async {
+    for (final row in data) {
+      final student = row.toStudent();
+      // Check if the student with the same admission ID already exists
+      final sql = SelectQuery()
+        ..from(Student.table)
+        ..where("soHoSo = ?", [student.soHoSo])
+        ..limit(1);
+      final ids = await db.rawQuery(sql.build());
+      if (ids.isNotEmpty) {
+        // If exists, skip to the next record
+        continue;
+      }
+
+      await student.create();
+    }
+  });
+}
 
 class AdmissionTypeWebConverter extends JsonConverter<AdmissionType, String> {
   const AdmissionTypeWebConverter();
@@ -131,67 +188,4 @@ abstract class JsonSchema with _$JsonSchema {
     nganhDaoTaoThacSi: masterMajor,
     dinhHuongChuyenSau: specializationOrientation,
   );
-}
-
-Future<List<JsonSchema>?> readProfilesFromJson() async {
-  final result = await FilePicker.platform.pickFiles(
-    dialogTitle: "File danh sách",
-    allowMultiple: false,
-  );
-
-  if (result == null) return [];
-
-  final sourceFile = result.paths.first!;
-  final source = await File(sourceFile).readAsString();
-  final parsed = <JsonSchema>[];
-  final data = jsonDecode(source)["records"];
-  for (final row in data) {
-    final parsedRecord = JsonSchema.fromJson(row);
-
-    final bachelorMajor = parsedRecord.bachelorMajor
-        .replaceAll(" ", "")
-        .toLowerCase();
-    final prettifiedBachelorMajor = switch (bachelorMajor) {
-      "toán-tin" => "Toán Tin",
-      "toántin" => "Toán Tin",
-      _ => parsedRecord.bachelorMajor,
-    };
-
-    final university = parsedRecord.bachelorUniversity
-        .replaceAll("  ", " ")
-        .toLowerCase();
-    final prettifiedUniversity = switch (university) {
-      "đại học bách khoa hà nội" => "Đại học Bách khoa Hà Nội",
-      _ => parsedRecord.bachelorUniversity,
-    };
-
-    parsed.add(
-      parsedRecord.copyWith(
-        bachelorMajor: prettifiedBachelorMajor,
-        bachelorUniversity: prettifiedUniversity,
-      ),
-    );
-  }
-
-  return parsed;
-}
-
-Future<void> saveDataToDatabase(List<JsonSchema> data) async {
-  dbSession((Database db) async {
-    for (final row in data) {
-      final student = row.toStudent();
-      // Check if the student with the same admission ID already exists
-      final sql = SelectQuery()
-        ..from(Student.table)
-        ..where("soHoSo = ?", [student.soHoSo])
-        ..limit(1);
-      final ids = await db.rawQuery(sql.build());
-      if (ids.isNotEmpty) {
-        // If exists, skip to the next record
-        continue;
-      }
-
-      await student.create();
-    }
-  });
 }

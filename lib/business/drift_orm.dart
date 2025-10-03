@@ -5,7 +5,8 @@ import 'package:riverpod/riverpod.dart';
 
 import '../preferences.dart' as preferences;
 import './business_enums.dart';
-export './business_enums.dart' show Gender, AcademicRankConverter, AcademicRank;
+export './business_enums.dart'
+    show Gender, AcademicRankConverter, AcademicRank, CourseCategory;
 
 part 'drift_orm.g.dart';
 

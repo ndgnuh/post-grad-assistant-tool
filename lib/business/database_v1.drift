@@ -1,5 +1,23 @@
 import 'business_enums.dart';
 
+create table "hocky" (
+    "hocKy" TEXT NOT NULL PRIMARY KEY as semester,
+    "moDangKy" TEXT NOT NULL as registrationOpenDate,
+    "dongDangKy" TEXT NOT NULL as registrationCloseDate,
+    "batDauHoc" TEXT NOT NULL as studyStartDate,
+    "ketThucHoc" TEXT NOT NULL as studyEndDate,
+    "hanNhapDiem" TEXT NOT NULL as gradeSubmissionDeadline
+) as SemesterData;
+
+create table "hocphan" (
+    "maHocPhan"	TEXT NOT NULL PRIMARY KEY as id,
+    "tenTiengViet"	TEXT NOT NULL as vietnameseTitle,
+    "tenTiengAnh"	TEXT NOT NULL as englishTitle,
+    "soTinChi"	INTEGER NOT NULL as credits,
+    "khoiKienThuc"	TEXT NOT NULL mapped by `const CourseCategoryConverter()` as courseCategory,
+    "khoiLuong"	TEXT NOT NULL as workload
+) as CourseData;
+
 create table "detaithacsi" (
 	"id" INTEGER PRIMARY KEY AUTOINCREMENT,
 	"idGiangVien"	INTEGER NOT NULL as supervisorId,
@@ -121,6 +139,14 @@ createPhdStudent: INSERT INTO phd_student (
     :supervisor_id,
     :secondary_supervisor_id
 );
+
+create table "DangKyGiangDay" (
+    "idGiangVien" INTEGER NOT NULL AS teacherId,
+    "maHocPhan" TEXT NOT NULL AS courseId,
+    PRIMARY KEY("idGiangVien", "maHocPhan"),
+    FOREIGN KEY("idGiangVien") REFERENCES "giangvien"("id"),
+    FOREIGN KEY("maHocPhan") REFERENCES "hocphan"("maHocPhan")
+) as TeachingRegistrationData;
 
 searchTeacher(
     :searchText as TEXT OR NULL,

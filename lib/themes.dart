@@ -69,6 +69,10 @@ ThemeData getTheme({
     brightness: baseTheme.brightness,
   );
 
+  final dropdownMenuTheme = baseTheme.dropdownMenuTheme.copyWith(
+    inputDecorationTheme: inputDecorationTheme,
+  );
+
   // See this doc
   // https: //api.flutter.dev/flutter/material/TextTheme-class.html
   // final typography = switch (baseTheme.brightness) {
@@ -88,6 +92,7 @@ ThemeData getTheme({
     // textTheme: textTheme,
     useMaterial3: true,
   ).copyWith(
+    dropdownMenuTheme: dropdownMenuTheme,
     outlinedButtonTheme: outlinedButtonTheme,
     elevatedButtonTheme: elevatedButtonTheme,
     inputDecorationTheme: inputDecorationTheme,

@@ -1,7 +1,10 @@
+import 'package:fami_tools/business/drift_orm.dart';
+
 import '../datamodels.dart' show dbSession;
 import '../services/sqlbuilder/sqlbuilder.dart';
 import '../services/pdf_widgets.dart' as pw;
 import 'dart:typed_data';
+import 'copy_pasta.dart';
 
 import 'domain_objects.dart';
 export 'domain_objects.dart' show HocPhan, KhoiKienThuc;
@@ -31,8 +34,9 @@ Future<List<HocPhan>> searchHocPhan({String? keyword = ""}) async {
   if (keyword != null && keyword != "") {
     final like = "%$keyword%";
     query.where(
-        "maHocPhan like ? OR tenTiengAnh like ? or tenTiengViet like ? ",
-        [like, like, like]);
+      "maHocPhan like ? OR tenTiengAnh like ? or tenTiengViet like ? ",
+      [like, like, like],
+    );
   }
 
   final sql = query.build();
@@ -45,8 +49,8 @@ Future<List<HocPhan>> searchHocPhan({String? keyword = ""}) async {
 }
 
 Future<Uint8List> createPdf({
-  required List<HocPhan> listHocPhan,
-  required String hocKy,
+  required List<CourseData> courses,
+  required String semester,
 }) async {
   final pdf = pw.Document(
     theme: await pw.defaultTheme(
@@ -60,17 +64,7 @@ Future<Uint8List> createPdf({
   final month = today.month;
   final year = today.year;
   final greetLine =
-      "Thực hiện kế hoạch giảng dạy cao học học kỳ $hocKy, Khoa Toán - Tin đề xuất danh mục các học phần trong chương trình đào tạo Thạc sĩ các ngành như sau:";
-
-  // Resolve khoi Kien Thuc
-  // TODO: implement proper access function elsewhere
-  Map<HocPhan, String> tenKhoiKienThuc = {};
-  listHocPhan.sort((hp1, hp2) {
-    return hp1.maHocPhan.compareTo(hp2.maHocPhan);
-  });
-  for (final hp in listHocPhan) {
-    tenKhoiKienThuc[hp] = await hp.tenKhoiKienThuc;
-  }
+      "Thực hiện kế hoạch giảng dạy cao học học kỳ $semester, Khoa Toán - Tin đề xuất danh mục các học phần trong chương trình đào tạo Thạc sĩ các ngành như sau:";
 
   final page = pw.MultiPage(
     margin: pw.EdgeInsets.symmetric(
@@ -87,7 +81,7 @@ Future<Uint8List> createPdf({
         pw.EzSkip.medskip(),
         pw.Text(greetLine),
         pw.EzSkip.medskip(),
-        pw.EzTable(
+        pw.EzTable<CourseData>(
           padding: pw.EdgeInsetsDirectional.symmetric(
             vertical: 2 * pw.pt,
             horizontal: 3 * pw.pt,
@@ -98,7 +92,7 @@ Future<Uint8List> createPdf({
           alignments: {
             2: pw.Alignment.centerLeft,
           },
-          data: listHocPhan,
+          data: courses,
           headers: [
             "TT",
             "Mã HP",
@@ -107,18 +101,18 @@ Future<Uint8List> createPdf({
             "Khối kiến thức",
             "Đợt học",
           ],
-          rowBuilder: (int i, HocPhan hp) {
-            String name = "${hp.tenTiengAnh}\n${hp.tenTiengViet}";
+          rowBuilder: (int i, CourseData course) {
+            String name = "${course.englishTitle}\n${course.vietnameseTitle}";
             // if (name.length > 70) {
             //   name = "${hp.tenTiengAnh}\n${hp.tenTiengViet}";
             // }
             return [
               "${i + 1}",
-              hp.maHocPhan,
+              course.id,
               name,
-              hp.khoiLuong,
-              tenKhoiKienThuc[hp],
-              hocKy,
+              course.workload,
+              course.courseCategory.label,
+              semester,
             ];
           },
         ),
