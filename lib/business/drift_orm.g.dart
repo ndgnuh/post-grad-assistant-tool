@@ -4784,6 +4784,1160 @@ class DangKyGiangDayCompanion
   }
 }
 
+class LopTinChi extends Table with TableInfo<LopTinChi, CourseClassData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  LopTinChi(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'PRIMARY KEY AUTOINCREMENT',
+  );
+  static const VerificationMeta _classIdMeta = const VerificationMeta(
+    'classId',
+  );
+  late final GeneratedColumn<String> classId = GeneratedColumn<String>(
+    'maLopHoc',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _courseIdMeta = const VerificationMeta(
+    'courseId',
+  );
+  late final GeneratedColumn<String> courseId = GeneratedColumn<String>(
+    'maHocPhan',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _teacherIdMeta = const VerificationMeta(
+    'teacherId',
+  );
+  late final GeneratedColumn<int> teacherId = GeneratedColumn<int>(
+    'idGiangVien',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _registrationCountMeta = const VerificationMeta(
+    'registrationCount',
+  );
+  late final GeneratedColumn<int> registrationCount = GeneratedColumn<int>(
+    'soLuongDangKy',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0',
+    defaultValue: const CustomExpression('0'),
+  );
+  static const VerificationMeta _accessUrlMeta = const VerificationMeta(
+    'accessUrl',
+  );
+  late final GeneratedColumn<String> accessUrl = GeneratedColumn<String>(
+    'urlTruyCap',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _customBeginDateMeta = const VerificationMeta(
+    'customBeginDate',
+  );
+  late final GeneratedColumn<DateTime> customBeginDate =
+      GeneratedColumn<DateTime>(
+        'customBeginDate',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      );
+  static const VerificationMeta _customEndDateMeta = const VerificationMeta(
+    'customEndDate',
+  );
+  late final GeneratedColumn<DateTime> customEndDate =
+      GeneratedColumn<DateTime>(
+        'customEndDate',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      );
+  static const VerificationMeta _semesterMeta = const VerificationMeta(
+    'semester',
+  );
+  late final GeneratedColumn<String> semester = GeneratedColumn<String>(
+    'hocKy',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _classroomMeta = const VerificationMeta(
+    'classroom',
+  );
+  late final GeneratedColumn<String> classroom = GeneratedColumn<String>(
+    'phongHoc',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _dayOfWeekMeta = const VerificationMeta(
+    'dayOfWeek',
+  );
+  late final GeneratedColumn<String> dayOfWeek = GeneratedColumn<String>(
+    'ngayHoc',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _startPeriodMeta = const VerificationMeta(
+    'startPeriod',
+  );
+  late final GeneratedColumn<int> startPeriod = GeneratedColumn<int>(
+    'tietBatDau',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _endPeriodMeta = const VerificationMeta(
+    'endPeriod',
+  );
+  late final GeneratedColumn<int> endPeriod = GeneratedColumn<int>(
+    'tietKetThuc',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  late final GeneratedColumnWithTypeConverter<CourseClassStatus?, int> status =
+      GeneratedColumn<int>(
+        'trangThai',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      ).withConverter<CourseClassStatus?>(LopTinChi.$converterstatusn);
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    classId,
+    courseId,
+    teacherId,
+    registrationCount,
+    accessUrl,
+    customBeginDate,
+    customEndDate,
+    semester,
+    classroom,
+    dayOfWeek,
+    startPeriod,
+    endPeriod,
+    status,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'LopTinChi';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CourseClassData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('maLopHoc')) {
+      context.handle(
+        _classIdMeta,
+        classId.isAcceptableOrUnknown(data['maLopHoc']!, _classIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_classIdMeta);
+    }
+    if (data.containsKey('maHocPhan')) {
+      context.handle(
+        _courseIdMeta,
+        courseId.isAcceptableOrUnknown(data['maHocPhan']!, _courseIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_courseIdMeta);
+    }
+    if (data.containsKey('idGiangVien')) {
+      context.handle(
+        _teacherIdMeta,
+        teacherId.isAcceptableOrUnknown(data['idGiangVien']!, _teacherIdMeta),
+      );
+    }
+    if (data.containsKey('soLuongDangKy')) {
+      context.handle(
+        _registrationCountMeta,
+        registrationCount.isAcceptableOrUnknown(
+          data['soLuongDangKy']!,
+          _registrationCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('urlTruyCap')) {
+      context.handle(
+        _accessUrlMeta,
+        accessUrl.isAcceptableOrUnknown(data['urlTruyCap']!, _accessUrlMeta),
+      );
+    }
+    if (data.containsKey('customBeginDate')) {
+      context.handle(
+        _customBeginDateMeta,
+        customBeginDate.isAcceptableOrUnknown(
+          data['customBeginDate']!,
+          _customBeginDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('customEndDate')) {
+      context.handle(
+        _customEndDateMeta,
+        customEndDate.isAcceptableOrUnknown(
+          data['customEndDate']!,
+          _customEndDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('hocKy')) {
+      context.handle(
+        _semesterMeta,
+        semester.isAcceptableOrUnknown(data['hocKy']!, _semesterMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_semesterMeta);
+    }
+    if (data.containsKey('phongHoc')) {
+      context.handle(
+        _classroomMeta,
+        classroom.isAcceptableOrUnknown(data['phongHoc']!, _classroomMeta),
+      );
+    }
+    if (data.containsKey('ngayHoc')) {
+      context.handle(
+        _dayOfWeekMeta,
+        dayOfWeek.isAcceptableOrUnknown(data['ngayHoc']!, _dayOfWeekMeta),
+      );
+    }
+    if (data.containsKey('tietBatDau')) {
+      context.handle(
+        _startPeriodMeta,
+        startPeriod.isAcceptableOrUnknown(
+          data['tietBatDau']!,
+          _startPeriodMeta,
+        ),
+      );
+    }
+    if (data.containsKey('tietKetThuc')) {
+      context.handle(
+        _endPeriodMeta,
+        endPeriod.isAcceptableOrUnknown(data['tietKetThuc']!, _endPeriodMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CourseClassData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CourseClassData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      classId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}maLopHoc'],
+      )!,
+      courseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}maHocPhan'],
+      )!,
+      teacherId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}idGiangVien'],
+      ),
+      registrationCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}soLuongDangKy'],
+      )!,
+      accessUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}urlTruyCap'],
+      ),
+      customBeginDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}customBeginDate'],
+      ),
+      customEndDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}customEndDate'],
+      ),
+      semester: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}hocKy'],
+      )!,
+      classroom: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phongHoc'],
+      ),
+      dayOfWeek: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ngayHoc'],
+      ),
+      startPeriod: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}tietBatDau'],
+      ),
+      endPeriod: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}tietKetThuc'],
+      ),
+      status: LopTinChi.$converterstatusn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}trangThai'],
+        ),
+      ),
+    );
+  }
+
+  @override
+  LopTinChi createAlias(String alias) {
+    return LopTinChi(attachedDatabase, alias);
+  }
+
+  static TypeConverter<CourseClassStatus, int> $converterstatus =
+      const CourseClassStatusConverter();
+  static TypeConverter<CourseClassStatus?, int?> $converterstatusn =
+      NullAwareTypeConverter.wrap($converterstatus);
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class CourseClassData extends DataClass implements Insertable<CourseClassData> {
+  final int id;
+  final String classId;
+  final String courseId;
+  final int? teacherId;
+  final int registrationCount;
+  final String? accessUrl;
+  final DateTime? customBeginDate;
+  final DateTime? customEndDate;
+  final String semester;
+  final String? classroom;
+  final String? dayOfWeek;
+  final int? startPeriod;
+  final int? endPeriod;
+  final CourseClassStatus? status;
+  const CourseClassData({
+    required this.id,
+    required this.classId,
+    required this.courseId,
+    this.teacherId,
+    required this.registrationCount,
+    this.accessUrl,
+    this.customBeginDate,
+    this.customEndDate,
+    required this.semester,
+    this.classroom,
+    this.dayOfWeek,
+    this.startPeriod,
+    this.endPeriod,
+    this.status,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['maLopHoc'] = Variable<String>(classId);
+    map['maHocPhan'] = Variable<String>(courseId);
+    if (!nullToAbsent || teacherId != null) {
+      map['idGiangVien'] = Variable<int>(teacherId);
+    }
+    map['soLuongDangKy'] = Variable<int>(registrationCount);
+    if (!nullToAbsent || accessUrl != null) {
+      map['urlTruyCap'] = Variable<String>(accessUrl);
+    }
+    if (!nullToAbsent || customBeginDate != null) {
+      map['customBeginDate'] = Variable<DateTime>(customBeginDate);
+    }
+    if (!nullToAbsent || customEndDate != null) {
+      map['customEndDate'] = Variable<DateTime>(customEndDate);
+    }
+    map['hocKy'] = Variable<String>(semester);
+    if (!nullToAbsent || classroom != null) {
+      map['phongHoc'] = Variable<String>(classroom);
+    }
+    if (!nullToAbsent || dayOfWeek != null) {
+      map['ngayHoc'] = Variable<String>(dayOfWeek);
+    }
+    if (!nullToAbsent || startPeriod != null) {
+      map['tietBatDau'] = Variable<int>(startPeriod);
+    }
+    if (!nullToAbsent || endPeriod != null) {
+      map['tietKetThuc'] = Variable<int>(endPeriod);
+    }
+    if (!nullToAbsent || status != null) {
+      map['trangThai'] = Variable<int>(
+        LopTinChi.$converterstatusn.toSql(status),
+      );
+    }
+    return map;
+  }
+
+  LopTinChiCompanion toCompanion(bool nullToAbsent) {
+    return LopTinChiCompanion(
+      id: Value(id),
+      classId: Value(classId),
+      courseId: Value(courseId),
+      teacherId: teacherId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(teacherId),
+      registrationCount: Value(registrationCount),
+      accessUrl: accessUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(accessUrl),
+      customBeginDate: customBeginDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(customBeginDate),
+      customEndDate: customEndDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(customEndDate),
+      semester: Value(semester),
+      classroom: classroom == null && nullToAbsent
+          ? const Value.absent()
+          : Value(classroom),
+      dayOfWeek: dayOfWeek == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dayOfWeek),
+      startPeriod: startPeriod == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startPeriod),
+      endPeriod: endPeriod == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endPeriod),
+      status: status == null && nullToAbsent
+          ? const Value.absent()
+          : Value(status),
+    );
+  }
+
+  factory CourseClassData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CourseClassData(
+      id: serializer.fromJson<int>(json['id']),
+      classId: serializer.fromJson<String>(json['maLopHoc']),
+      courseId: serializer.fromJson<String>(json['maHocPhan']),
+      teacherId: serializer.fromJson<int?>(json['idGiangVien']),
+      registrationCount: serializer.fromJson<int>(json['soLuongDangKy']),
+      accessUrl: serializer.fromJson<String?>(json['urlTruyCap']),
+      customBeginDate: serializer.fromJson<DateTime?>(json['customBeginDate']),
+      customEndDate: serializer.fromJson<DateTime?>(json['customEndDate']),
+      semester: serializer.fromJson<String>(json['hocKy']),
+      classroom: serializer.fromJson<String?>(json['phongHoc']),
+      dayOfWeek: serializer.fromJson<String?>(json['ngayHoc']),
+      startPeriod: serializer.fromJson<int?>(json['tietBatDau']),
+      endPeriod: serializer.fromJson<int?>(json['tietKetThuc']),
+      status: serializer.fromJson<CourseClassStatus?>(json['trangThai']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'maLopHoc': serializer.toJson<String>(classId),
+      'maHocPhan': serializer.toJson<String>(courseId),
+      'idGiangVien': serializer.toJson<int?>(teacherId),
+      'soLuongDangKy': serializer.toJson<int>(registrationCount),
+      'urlTruyCap': serializer.toJson<String?>(accessUrl),
+      'customBeginDate': serializer.toJson<DateTime?>(customBeginDate),
+      'customEndDate': serializer.toJson<DateTime?>(customEndDate),
+      'hocKy': serializer.toJson<String>(semester),
+      'phongHoc': serializer.toJson<String?>(classroom),
+      'ngayHoc': serializer.toJson<String?>(dayOfWeek),
+      'tietBatDau': serializer.toJson<int?>(startPeriod),
+      'tietKetThuc': serializer.toJson<int?>(endPeriod),
+      'trangThai': serializer.toJson<CourseClassStatus?>(status),
+    };
+  }
+
+  CourseClassData copyWith({
+    int? id,
+    String? classId,
+    String? courseId,
+    Value<int?> teacherId = const Value.absent(),
+    int? registrationCount,
+    Value<String?> accessUrl = const Value.absent(),
+    Value<DateTime?> customBeginDate = const Value.absent(),
+    Value<DateTime?> customEndDate = const Value.absent(),
+    String? semester,
+    Value<String?> classroom = const Value.absent(),
+    Value<String?> dayOfWeek = const Value.absent(),
+    Value<int?> startPeriod = const Value.absent(),
+    Value<int?> endPeriod = const Value.absent(),
+    Value<CourseClassStatus?> status = const Value.absent(),
+  }) => CourseClassData(
+    id: id ?? this.id,
+    classId: classId ?? this.classId,
+    courseId: courseId ?? this.courseId,
+    teacherId: teacherId.present ? teacherId.value : this.teacherId,
+    registrationCount: registrationCount ?? this.registrationCount,
+    accessUrl: accessUrl.present ? accessUrl.value : this.accessUrl,
+    customBeginDate: customBeginDate.present
+        ? customBeginDate.value
+        : this.customBeginDate,
+    customEndDate: customEndDate.present
+        ? customEndDate.value
+        : this.customEndDate,
+    semester: semester ?? this.semester,
+    classroom: classroom.present ? classroom.value : this.classroom,
+    dayOfWeek: dayOfWeek.present ? dayOfWeek.value : this.dayOfWeek,
+    startPeriod: startPeriod.present ? startPeriod.value : this.startPeriod,
+    endPeriod: endPeriod.present ? endPeriod.value : this.endPeriod,
+    status: status.present ? status.value : this.status,
+  );
+  CourseClassData copyWithCompanion(LopTinChiCompanion data) {
+    return CourseClassData(
+      id: data.id.present ? data.id.value : this.id,
+      classId: data.classId.present ? data.classId.value : this.classId,
+      courseId: data.courseId.present ? data.courseId.value : this.courseId,
+      teacherId: data.teacherId.present ? data.teacherId.value : this.teacherId,
+      registrationCount: data.registrationCount.present
+          ? data.registrationCount.value
+          : this.registrationCount,
+      accessUrl: data.accessUrl.present ? data.accessUrl.value : this.accessUrl,
+      customBeginDate: data.customBeginDate.present
+          ? data.customBeginDate.value
+          : this.customBeginDate,
+      customEndDate: data.customEndDate.present
+          ? data.customEndDate.value
+          : this.customEndDate,
+      semester: data.semester.present ? data.semester.value : this.semester,
+      classroom: data.classroom.present ? data.classroom.value : this.classroom,
+      dayOfWeek: data.dayOfWeek.present ? data.dayOfWeek.value : this.dayOfWeek,
+      startPeriod: data.startPeriod.present
+          ? data.startPeriod.value
+          : this.startPeriod,
+      endPeriod: data.endPeriod.present ? data.endPeriod.value : this.endPeriod,
+      status: data.status.present ? data.status.value : this.status,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CourseClassData(')
+          ..write('id: $id, ')
+          ..write('classId: $classId, ')
+          ..write('courseId: $courseId, ')
+          ..write('teacherId: $teacherId, ')
+          ..write('registrationCount: $registrationCount, ')
+          ..write('accessUrl: $accessUrl, ')
+          ..write('customBeginDate: $customBeginDate, ')
+          ..write('customEndDate: $customEndDate, ')
+          ..write('semester: $semester, ')
+          ..write('classroom: $classroom, ')
+          ..write('dayOfWeek: $dayOfWeek, ')
+          ..write('startPeriod: $startPeriod, ')
+          ..write('endPeriod: $endPeriod, ')
+          ..write('status: $status')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    classId,
+    courseId,
+    teacherId,
+    registrationCount,
+    accessUrl,
+    customBeginDate,
+    customEndDate,
+    semester,
+    classroom,
+    dayOfWeek,
+    startPeriod,
+    endPeriod,
+    status,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CourseClassData &&
+          other.id == this.id &&
+          other.classId == this.classId &&
+          other.courseId == this.courseId &&
+          other.teacherId == this.teacherId &&
+          other.registrationCount == this.registrationCount &&
+          other.accessUrl == this.accessUrl &&
+          other.customBeginDate == this.customBeginDate &&
+          other.customEndDate == this.customEndDate &&
+          other.semester == this.semester &&
+          other.classroom == this.classroom &&
+          other.dayOfWeek == this.dayOfWeek &&
+          other.startPeriod == this.startPeriod &&
+          other.endPeriod == this.endPeriod &&
+          other.status == this.status);
+}
+
+class LopTinChiCompanion extends UpdateCompanion<CourseClassData> {
+  final Value<int> id;
+  final Value<String> classId;
+  final Value<String> courseId;
+  final Value<int?> teacherId;
+  final Value<int> registrationCount;
+  final Value<String?> accessUrl;
+  final Value<DateTime?> customBeginDate;
+  final Value<DateTime?> customEndDate;
+  final Value<String> semester;
+  final Value<String?> classroom;
+  final Value<String?> dayOfWeek;
+  final Value<int?> startPeriod;
+  final Value<int?> endPeriod;
+  final Value<CourseClassStatus?> status;
+  const LopTinChiCompanion({
+    this.id = const Value.absent(),
+    this.classId = const Value.absent(),
+    this.courseId = const Value.absent(),
+    this.teacherId = const Value.absent(),
+    this.registrationCount = const Value.absent(),
+    this.accessUrl = const Value.absent(),
+    this.customBeginDate = const Value.absent(),
+    this.customEndDate = const Value.absent(),
+    this.semester = const Value.absent(),
+    this.classroom = const Value.absent(),
+    this.dayOfWeek = const Value.absent(),
+    this.startPeriod = const Value.absent(),
+    this.endPeriod = const Value.absent(),
+    this.status = const Value.absent(),
+  });
+  LopTinChiCompanion.insert({
+    this.id = const Value.absent(),
+    required String classId,
+    required String courseId,
+    this.teacherId = const Value.absent(),
+    this.registrationCount = const Value.absent(),
+    this.accessUrl = const Value.absent(),
+    this.customBeginDate = const Value.absent(),
+    this.customEndDate = const Value.absent(),
+    required String semester,
+    this.classroom = const Value.absent(),
+    this.dayOfWeek = const Value.absent(),
+    this.startPeriod = const Value.absent(),
+    this.endPeriod = const Value.absent(),
+    this.status = const Value.absent(),
+  }) : classId = Value(classId),
+       courseId = Value(courseId),
+       semester = Value(semester);
+  static Insertable<CourseClassData> custom({
+    Expression<int>? id,
+    Expression<String>? classId,
+    Expression<String>? courseId,
+    Expression<int>? teacherId,
+    Expression<int>? registrationCount,
+    Expression<String>? accessUrl,
+    Expression<DateTime>? customBeginDate,
+    Expression<DateTime>? customEndDate,
+    Expression<String>? semester,
+    Expression<String>? classroom,
+    Expression<String>? dayOfWeek,
+    Expression<int>? startPeriod,
+    Expression<int>? endPeriod,
+    Expression<int>? status,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (classId != null) 'maLopHoc': classId,
+      if (courseId != null) 'maHocPhan': courseId,
+      if (teacherId != null) 'idGiangVien': teacherId,
+      if (registrationCount != null) 'soLuongDangKy': registrationCount,
+      if (accessUrl != null) 'urlTruyCap': accessUrl,
+      if (customBeginDate != null) 'customBeginDate': customBeginDate,
+      if (customEndDate != null) 'customEndDate': customEndDate,
+      if (semester != null) 'hocKy': semester,
+      if (classroom != null) 'phongHoc': classroom,
+      if (dayOfWeek != null) 'ngayHoc': dayOfWeek,
+      if (startPeriod != null) 'tietBatDau': startPeriod,
+      if (endPeriod != null) 'tietKetThuc': endPeriod,
+      if (status != null) 'trangThai': status,
+    });
+  }
+
+  LopTinChiCompanion copyWith({
+    Value<int>? id,
+    Value<String>? classId,
+    Value<String>? courseId,
+    Value<int?>? teacherId,
+    Value<int>? registrationCount,
+    Value<String?>? accessUrl,
+    Value<DateTime?>? customBeginDate,
+    Value<DateTime?>? customEndDate,
+    Value<String>? semester,
+    Value<String?>? classroom,
+    Value<String?>? dayOfWeek,
+    Value<int?>? startPeriod,
+    Value<int?>? endPeriod,
+    Value<CourseClassStatus?>? status,
+  }) {
+    return LopTinChiCompanion(
+      id: id ?? this.id,
+      classId: classId ?? this.classId,
+      courseId: courseId ?? this.courseId,
+      teacherId: teacherId ?? this.teacherId,
+      registrationCount: registrationCount ?? this.registrationCount,
+      accessUrl: accessUrl ?? this.accessUrl,
+      customBeginDate: customBeginDate ?? this.customBeginDate,
+      customEndDate: customEndDate ?? this.customEndDate,
+      semester: semester ?? this.semester,
+      classroom: classroom ?? this.classroom,
+      dayOfWeek: dayOfWeek ?? this.dayOfWeek,
+      startPeriod: startPeriod ?? this.startPeriod,
+      endPeriod: endPeriod ?? this.endPeriod,
+      status: status ?? this.status,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (classId.present) {
+      map['maLopHoc'] = Variable<String>(classId.value);
+    }
+    if (courseId.present) {
+      map['maHocPhan'] = Variable<String>(courseId.value);
+    }
+    if (teacherId.present) {
+      map['idGiangVien'] = Variable<int>(teacherId.value);
+    }
+    if (registrationCount.present) {
+      map['soLuongDangKy'] = Variable<int>(registrationCount.value);
+    }
+    if (accessUrl.present) {
+      map['urlTruyCap'] = Variable<String>(accessUrl.value);
+    }
+    if (customBeginDate.present) {
+      map['customBeginDate'] = Variable<DateTime>(customBeginDate.value);
+    }
+    if (customEndDate.present) {
+      map['customEndDate'] = Variable<DateTime>(customEndDate.value);
+    }
+    if (semester.present) {
+      map['hocKy'] = Variable<String>(semester.value);
+    }
+    if (classroom.present) {
+      map['phongHoc'] = Variable<String>(classroom.value);
+    }
+    if (dayOfWeek.present) {
+      map['ngayHoc'] = Variable<String>(dayOfWeek.value);
+    }
+    if (startPeriod.present) {
+      map['tietBatDau'] = Variable<int>(startPeriod.value);
+    }
+    if (endPeriod.present) {
+      map['tietKetThuc'] = Variable<int>(endPeriod.value);
+    }
+    if (status.present) {
+      map['trangThai'] = Variable<int>(
+        LopTinChi.$converterstatusn.toSql(status.value),
+      );
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LopTinChiCompanion(')
+          ..write('id: $id, ')
+          ..write('classId: $classId, ')
+          ..write('courseId: $courseId, ')
+          ..write('teacherId: $teacherId, ')
+          ..write('registrationCount: $registrationCount, ')
+          ..write('accessUrl: $accessUrl, ')
+          ..write('customBeginDate: $customBeginDate, ')
+          ..write('customEndDate: $customEndDate, ')
+          ..write('semester: $semester, ')
+          ..write('classroom: $classroom, ')
+          ..write('dayOfWeek: $dayOfWeek, ')
+          ..write('startPeriod: $startPeriod, ')
+          ..write('endPeriod: $endPeriod, ')
+          ..write('status: $status')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class TeachingAssignment extends Table
+    with TableInfo<TeachingAssignment, TeachingAssignmentData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  TeachingAssignment(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _classIdMeta = const VerificationMeta(
+    'classId',
+  );
+  late final GeneratedColumn<int> classId = GeneratedColumn<int>(
+    'classId',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _teacherIdMeta = const VerificationMeta(
+    'teacherId',
+  );
+  late final GeneratedColumn<int> teacherId = GeneratedColumn<int>(
+    'teacherId',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _orderMeta = const VerificationMeta('order');
+  late final GeneratedColumn<int> order = GeneratedColumn<int>(
+    'order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 1',
+    defaultValue: const CustomExpression('1'),
+  );
+  static const VerificationMeta _contributionMeta = const VerificationMeta(
+    'contribution',
+  );
+  late final GeneratedColumn<double> contribution = GeneratedColumn<double>(
+    'contribution',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 1.0',
+    defaultValue: const CustomExpression('1.0'),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    classId,
+    teacherId,
+    order,
+    contribution,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'TeachingAssignment';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TeachingAssignmentData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('classId')) {
+      context.handle(
+        _classIdMeta,
+        classId.isAcceptableOrUnknown(data['classId']!, _classIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_classIdMeta);
+    }
+    if (data.containsKey('teacherId')) {
+      context.handle(
+        _teacherIdMeta,
+        teacherId.isAcceptableOrUnknown(data['teacherId']!, _teacherIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_teacherIdMeta);
+    }
+    if (data.containsKey('order')) {
+      context.handle(
+        _orderMeta,
+        order.isAcceptableOrUnknown(data['order']!, _orderMeta),
+      );
+    }
+    if (data.containsKey('contribution')) {
+      context.handle(
+        _contributionMeta,
+        contribution.isAcceptableOrUnknown(
+          data['contribution']!,
+          _contributionMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {classId, teacherId};
+  @override
+  TeachingAssignmentData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TeachingAssignmentData(
+      classId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}classId'],
+      )!,
+      teacherId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}teacherId'],
+      )!,
+      order: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}order'],
+      )!,
+      contribution: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}contribution'],
+      )!,
+    );
+  }
+
+  @override
+  TeachingAssignment createAlias(String alias) {
+    return TeachingAssignment(attachedDatabase, alias);
+  }
+
+  @override
+  List<String> get customConstraints => const [
+    'PRIMARY KEY(classId, teacherId)',
+    'FOREIGN KEY(classId)REFERENCES LopTinChi(id)',
+    'FOREIGN KEY(teacherId)REFERENCES GiangVien(id)',
+  ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class TeachingAssignmentData extends DataClass
+    implements Insertable<TeachingAssignmentData> {
+  final int classId;
+  final int teacherId;
+  final int order;
+  final double contribution;
+  const TeachingAssignmentData({
+    required this.classId,
+    required this.teacherId,
+    required this.order,
+    required this.contribution,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['classId'] = Variable<int>(classId);
+    map['teacherId'] = Variable<int>(teacherId);
+    map['order'] = Variable<int>(order);
+    map['contribution'] = Variable<double>(contribution);
+    return map;
+  }
+
+  TeachingAssignmentCompanion toCompanion(bool nullToAbsent) {
+    return TeachingAssignmentCompanion(
+      classId: Value(classId),
+      teacherId: Value(teacherId),
+      order: Value(order),
+      contribution: Value(contribution),
+    );
+  }
+
+  factory TeachingAssignmentData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TeachingAssignmentData(
+      classId: serializer.fromJson<int>(json['classId']),
+      teacherId: serializer.fromJson<int>(json['teacherId']),
+      order: serializer.fromJson<int>(json['order']),
+      contribution: serializer.fromJson<double>(json['contribution']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'classId': serializer.toJson<int>(classId),
+      'teacherId': serializer.toJson<int>(teacherId),
+      'order': serializer.toJson<int>(order),
+      'contribution': serializer.toJson<double>(contribution),
+    };
+  }
+
+  TeachingAssignmentData copyWith({
+    int? classId,
+    int? teacherId,
+    int? order,
+    double? contribution,
+  }) => TeachingAssignmentData(
+    classId: classId ?? this.classId,
+    teacherId: teacherId ?? this.teacherId,
+    order: order ?? this.order,
+    contribution: contribution ?? this.contribution,
+  );
+  TeachingAssignmentData copyWithCompanion(TeachingAssignmentCompanion data) {
+    return TeachingAssignmentData(
+      classId: data.classId.present ? data.classId.value : this.classId,
+      teacherId: data.teacherId.present ? data.teacherId.value : this.teacherId,
+      order: data.order.present ? data.order.value : this.order,
+      contribution: data.contribution.present
+          ? data.contribution.value
+          : this.contribution,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TeachingAssignmentData(')
+          ..write('classId: $classId, ')
+          ..write('teacherId: $teacherId, ')
+          ..write('order: $order, ')
+          ..write('contribution: $contribution')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(classId, teacherId, order, contribution);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TeachingAssignmentData &&
+          other.classId == this.classId &&
+          other.teacherId == this.teacherId &&
+          other.order == this.order &&
+          other.contribution == this.contribution);
+}
+
+class TeachingAssignmentCompanion
+    extends UpdateCompanion<TeachingAssignmentData> {
+  final Value<int> classId;
+  final Value<int> teacherId;
+  final Value<int> order;
+  final Value<double> contribution;
+  final Value<int> rowid;
+  const TeachingAssignmentCompanion({
+    this.classId = const Value.absent(),
+    this.teacherId = const Value.absent(),
+    this.order = const Value.absent(),
+    this.contribution = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TeachingAssignmentCompanion.insert({
+    required int classId,
+    required int teacherId,
+    this.order = const Value.absent(),
+    this.contribution = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : classId = Value(classId),
+       teacherId = Value(teacherId);
+  static Insertable<TeachingAssignmentData> custom({
+    Expression<int>? classId,
+    Expression<int>? teacherId,
+    Expression<int>? order,
+    Expression<double>? contribution,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (classId != null) 'classId': classId,
+      if (teacherId != null) 'teacherId': teacherId,
+      if (order != null) 'order': order,
+      if (contribution != null) 'contribution': contribution,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TeachingAssignmentCompanion copyWith({
+    Value<int>? classId,
+    Value<int>? teacherId,
+    Value<int>? order,
+    Value<double>? contribution,
+    Value<int>? rowid,
+  }) {
+    return TeachingAssignmentCompanion(
+      classId: classId ?? this.classId,
+      teacherId: teacherId ?? this.teacherId,
+      order: order ?? this.order,
+      contribution: contribution ?? this.contribution,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (classId.present) {
+      map['classId'] = Variable<int>(classId.value);
+    }
+    if (teacherId.present) {
+      map['teacherId'] = Variable<int>(teacherId.value);
+    }
+    if (order.present) {
+      map['order'] = Variable<int>(order.value);
+    }
+    if (contribution.present) {
+      map['contribution'] = Variable<double>(contribution.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TeachingAssignmentCompanion(')
+          ..write('classId: $classId, ')
+          ..write('teacherId: $teacherId, ')
+          ..write('order: $order, ')
+          ..write('contribution: $contribution, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$MyDriftDatabase extends GeneratedDatabase {
   _$MyDriftDatabase(QueryExecutor e) : super(e);
   $MyDriftDatabaseManager get managers => $MyDriftDatabaseManager(this);
@@ -4793,6 +5947,8 @@ abstract class _$MyDriftDatabase extends GeneratedDatabase {
   late final Detaithacsi detaithacsi = Detaithacsi(this);
   late final PhdStudent phdStudent = PhdStudent(this);
   late final DangKyGiangDay dangKyGiangDay = DangKyGiangDay(this);
+  late final LopTinChi lopTinChi = LopTinChi(this);
+  late final TeachingAssignment teachingAssignment = TeachingAssignment(this);
   Future<int> createPhdStudent({
     required String cohort,
     String? admissionId,
@@ -4950,6 +6106,14 @@ abstract class _$MyDriftDatabase extends GeneratedDatabase {
     );
   }
 
+  Selectable<String> getAllSemesters() {
+    return customSelect(
+      'SELECT DISTINCT hocKy FROM LopTinChi ORDER BY hocKy DESC',
+      variables: [],
+      readsFrom: {lopTinChi},
+    ).map((QueryRow row) => row.read<String>('hocKy'));
+  }
+
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4961,6 +6125,8 @@ abstract class _$MyDriftDatabase extends GeneratedDatabase {
     detaithacsi,
     phdStudent,
     dangKyGiangDay,
+    lopTinChi,
+    teachingAssignment,
   ];
   @override
   DriftDatabaseOptions get options =>
@@ -7153,6 +8319,572 @@ typedef $DangKyGiangDayProcessedTableManager =
       TeachingRegistrationData,
       PrefetchHooks Function()
     >;
+typedef $LopTinChiCreateCompanionBuilder =
+    LopTinChiCompanion Function({
+      Value<int> id,
+      required String classId,
+      required String courseId,
+      Value<int?> teacherId,
+      Value<int> registrationCount,
+      Value<String?> accessUrl,
+      Value<DateTime?> customBeginDate,
+      Value<DateTime?> customEndDate,
+      required String semester,
+      Value<String?> classroom,
+      Value<String?> dayOfWeek,
+      Value<int?> startPeriod,
+      Value<int?> endPeriod,
+      Value<CourseClassStatus?> status,
+    });
+typedef $LopTinChiUpdateCompanionBuilder =
+    LopTinChiCompanion Function({
+      Value<int> id,
+      Value<String> classId,
+      Value<String> courseId,
+      Value<int?> teacherId,
+      Value<int> registrationCount,
+      Value<String?> accessUrl,
+      Value<DateTime?> customBeginDate,
+      Value<DateTime?> customEndDate,
+      Value<String> semester,
+      Value<String?> classroom,
+      Value<String?> dayOfWeek,
+      Value<int?> startPeriod,
+      Value<int?> endPeriod,
+      Value<CourseClassStatus?> status,
+    });
+
+class $LopTinChiFilterComposer extends Composer<_$MyDriftDatabase, LopTinChi> {
+  $LopTinChiFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get classId => $composableBuilder(
+    column: $table.classId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get courseId => $composableBuilder(
+    column: $table.courseId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get teacherId => $composableBuilder(
+    column: $table.teacherId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get registrationCount => $composableBuilder(
+    column: $table.registrationCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get accessUrl => $composableBuilder(
+    column: $table.accessUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get customBeginDate => $composableBuilder(
+    column: $table.customBeginDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get customEndDate => $composableBuilder(
+    column: $table.customEndDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get semester => $composableBuilder(
+    column: $table.semester,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get classroom => $composableBuilder(
+    column: $table.classroom,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get dayOfWeek => $composableBuilder(
+    column: $table.dayOfWeek,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get startPeriod => $composableBuilder(
+    column: $table.startPeriod,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get endPeriod => $composableBuilder(
+    column: $table.endPeriod,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<CourseClassStatus?, CourseClassStatus, int>
+  get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+}
+
+class $LopTinChiOrderingComposer
+    extends Composer<_$MyDriftDatabase, LopTinChi> {
+  $LopTinChiOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get classId => $composableBuilder(
+    column: $table.classId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get courseId => $composableBuilder(
+    column: $table.courseId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get teacherId => $composableBuilder(
+    column: $table.teacherId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get registrationCount => $composableBuilder(
+    column: $table.registrationCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get accessUrl => $composableBuilder(
+    column: $table.accessUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get customBeginDate => $composableBuilder(
+    column: $table.customBeginDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get customEndDate => $composableBuilder(
+    column: $table.customEndDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get semester => $composableBuilder(
+    column: $table.semester,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get classroom => $composableBuilder(
+    column: $table.classroom,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get dayOfWeek => $composableBuilder(
+    column: $table.dayOfWeek,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get startPeriod => $composableBuilder(
+    column: $table.startPeriod,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get endPeriod => $composableBuilder(
+    column: $table.endPeriod,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $LopTinChiAnnotationComposer
+    extends Composer<_$MyDriftDatabase, LopTinChi> {
+  $LopTinChiAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get classId =>
+      $composableBuilder(column: $table.classId, builder: (column) => column);
+
+  GeneratedColumn<String> get courseId =>
+      $composableBuilder(column: $table.courseId, builder: (column) => column);
+
+  GeneratedColumn<int> get teacherId =>
+      $composableBuilder(column: $table.teacherId, builder: (column) => column);
+
+  GeneratedColumn<int> get registrationCount => $composableBuilder(
+    column: $table.registrationCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get accessUrl =>
+      $composableBuilder(column: $table.accessUrl, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get customBeginDate => $composableBuilder(
+    column: $table.customBeginDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get customEndDate => $composableBuilder(
+    column: $table.customEndDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get semester =>
+      $composableBuilder(column: $table.semester, builder: (column) => column);
+
+  GeneratedColumn<String> get classroom =>
+      $composableBuilder(column: $table.classroom, builder: (column) => column);
+
+  GeneratedColumn<String> get dayOfWeek =>
+      $composableBuilder(column: $table.dayOfWeek, builder: (column) => column);
+
+  GeneratedColumn<int> get startPeriod => $composableBuilder(
+    column: $table.startPeriod,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get endPeriod =>
+      $composableBuilder(column: $table.endPeriod, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<CourseClassStatus?, int> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+}
+
+class $LopTinChiTableManager
+    extends
+        RootTableManager<
+          _$MyDriftDatabase,
+          LopTinChi,
+          CourseClassData,
+          $LopTinChiFilterComposer,
+          $LopTinChiOrderingComposer,
+          $LopTinChiAnnotationComposer,
+          $LopTinChiCreateCompanionBuilder,
+          $LopTinChiUpdateCompanionBuilder,
+          (
+            CourseClassData,
+            BaseReferences<_$MyDriftDatabase, LopTinChi, CourseClassData>,
+          ),
+          CourseClassData,
+          PrefetchHooks Function()
+        > {
+  $LopTinChiTableManager(_$MyDriftDatabase db, LopTinChi table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $LopTinChiFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $LopTinChiOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $LopTinChiAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> classId = const Value.absent(),
+                Value<String> courseId = const Value.absent(),
+                Value<int?> teacherId = const Value.absent(),
+                Value<int> registrationCount = const Value.absent(),
+                Value<String?> accessUrl = const Value.absent(),
+                Value<DateTime?> customBeginDate = const Value.absent(),
+                Value<DateTime?> customEndDate = const Value.absent(),
+                Value<String> semester = const Value.absent(),
+                Value<String?> classroom = const Value.absent(),
+                Value<String?> dayOfWeek = const Value.absent(),
+                Value<int?> startPeriod = const Value.absent(),
+                Value<int?> endPeriod = const Value.absent(),
+                Value<CourseClassStatus?> status = const Value.absent(),
+              }) => LopTinChiCompanion(
+                id: id,
+                classId: classId,
+                courseId: courseId,
+                teacherId: teacherId,
+                registrationCount: registrationCount,
+                accessUrl: accessUrl,
+                customBeginDate: customBeginDate,
+                customEndDate: customEndDate,
+                semester: semester,
+                classroom: classroom,
+                dayOfWeek: dayOfWeek,
+                startPeriod: startPeriod,
+                endPeriod: endPeriod,
+                status: status,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String classId,
+                required String courseId,
+                Value<int?> teacherId = const Value.absent(),
+                Value<int> registrationCount = const Value.absent(),
+                Value<String?> accessUrl = const Value.absent(),
+                Value<DateTime?> customBeginDate = const Value.absent(),
+                Value<DateTime?> customEndDate = const Value.absent(),
+                required String semester,
+                Value<String?> classroom = const Value.absent(),
+                Value<String?> dayOfWeek = const Value.absent(),
+                Value<int?> startPeriod = const Value.absent(),
+                Value<int?> endPeriod = const Value.absent(),
+                Value<CourseClassStatus?> status = const Value.absent(),
+              }) => LopTinChiCompanion.insert(
+                id: id,
+                classId: classId,
+                courseId: courseId,
+                teacherId: teacherId,
+                registrationCount: registrationCount,
+                accessUrl: accessUrl,
+                customBeginDate: customBeginDate,
+                customEndDate: customEndDate,
+                semester: semester,
+                classroom: classroom,
+                dayOfWeek: dayOfWeek,
+                startPeriod: startPeriod,
+                endPeriod: endPeriod,
+                status: status,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $LopTinChiProcessedTableManager =
+    ProcessedTableManager<
+      _$MyDriftDatabase,
+      LopTinChi,
+      CourseClassData,
+      $LopTinChiFilterComposer,
+      $LopTinChiOrderingComposer,
+      $LopTinChiAnnotationComposer,
+      $LopTinChiCreateCompanionBuilder,
+      $LopTinChiUpdateCompanionBuilder,
+      (
+        CourseClassData,
+        BaseReferences<_$MyDriftDatabase, LopTinChi, CourseClassData>,
+      ),
+      CourseClassData,
+      PrefetchHooks Function()
+    >;
+typedef $TeachingAssignmentCreateCompanionBuilder =
+    TeachingAssignmentCompanion Function({
+      required int classId,
+      required int teacherId,
+      Value<int> order,
+      Value<double> contribution,
+      Value<int> rowid,
+    });
+typedef $TeachingAssignmentUpdateCompanionBuilder =
+    TeachingAssignmentCompanion Function({
+      Value<int> classId,
+      Value<int> teacherId,
+      Value<int> order,
+      Value<double> contribution,
+      Value<int> rowid,
+    });
+
+class $TeachingAssignmentFilterComposer
+    extends Composer<_$MyDriftDatabase, TeachingAssignment> {
+  $TeachingAssignmentFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get classId => $composableBuilder(
+    column: $table.classId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get teacherId => $composableBuilder(
+    column: $table.teacherId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get order => $composableBuilder(
+    column: $table.order,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get contribution => $composableBuilder(
+    column: $table.contribution,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $TeachingAssignmentOrderingComposer
+    extends Composer<_$MyDriftDatabase, TeachingAssignment> {
+  $TeachingAssignmentOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get classId => $composableBuilder(
+    column: $table.classId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get teacherId => $composableBuilder(
+    column: $table.teacherId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get order => $composableBuilder(
+    column: $table.order,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get contribution => $composableBuilder(
+    column: $table.contribution,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $TeachingAssignmentAnnotationComposer
+    extends Composer<_$MyDriftDatabase, TeachingAssignment> {
+  $TeachingAssignmentAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get classId =>
+      $composableBuilder(column: $table.classId, builder: (column) => column);
+
+  GeneratedColumn<int> get teacherId =>
+      $composableBuilder(column: $table.teacherId, builder: (column) => column);
+
+  GeneratedColumn<int> get order =>
+      $composableBuilder(column: $table.order, builder: (column) => column);
+
+  GeneratedColumn<double> get contribution => $composableBuilder(
+    column: $table.contribution,
+    builder: (column) => column,
+  );
+}
+
+class $TeachingAssignmentTableManager
+    extends
+        RootTableManager<
+          _$MyDriftDatabase,
+          TeachingAssignment,
+          TeachingAssignmentData,
+          $TeachingAssignmentFilterComposer,
+          $TeachingAssignmentOrderingComposer,
+          $TeachingAssignmentAnnotationComposer,
+          $TeachingAssignmentCreateCompanionBuilder,
+          $TeachingAssignmentUpdateCompanionBuilder,
+          (
+            TeachingAssignmentData,
+            BaseReferences<
+              _$MyDriftDatabase,
+              TeachingAssignment,
+              TeachingAssignmentData
+            >,
+          ),
+          TeachingAssignmentData,
+          PrefetchHooks Function()
+        > {
+  $TeachingAssignmentTableManager(
+    _$MyDriftDatabase db,
+    TeachingAssignment table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $TeachingAssignmentFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $TeachingAssignmentOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $TeachingAssignmentAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> classId = const Value.absent(),
+                Value<int> teacherId = const Value.absent(),
+                Value<int> order = const Value.absent(),
+                Value<double> contribution = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TeachingAssignmentCompanion(
+                classId: classId,
+                teacherId: teacherId,
+                order: order,
+                contribution: contribution,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required int classId,
+                required int teacherId,
+                Value<int> order = const Value.absent(),
+                Value<double> contribution = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TeachingAssignmentCompanion.insert(
+                classId: classId,
+                teacherId: teacherId,
+                order: order,
+                contribution: contribution,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $TeachingAssignmentProcessedTableManager =
+    ProcessedTableManager<
+      _$MyDriftDatabase,
+      TeachingAssignment,
+      TeachingAssignmentData,
+      $TeachingAssignmentFilterComposer,
+      $TeachingAssignmentOrderingComposer,
+      $TeachingAssignmentAnnotationComposer,
+      $TeachingAssignmentCreateCompanionBuilder,
+      $TeachingAssignmentUpdateCompanionBuilder,
+      (
+        TeachingAssignmentData,
+        BaseReferences<
+          _$MyDriftDatabase,
+          TeachingAssignment,
+          TeachingAssignmentData
+        >,
+      ),
+      TeachingAssignmentData,
+      PrefetchHooks Function()
+    >;
 
 class $MyDriftDatabaseManager {
   final _$MyDriftDatabase _db;
@@ -7167,4 +8899,8 @@ class $MyDriftDatabaseManager {
       $PhdStudentTableManager(_db, _db.phdStudent);
   $DangKyGiangDayTableManager get dangKyGiangDay =>
       $DangKyGiangDayTableManager(_db, _db.dangKyGiangDay);
+  $LopTinChiTableManager get lopTinChi =>
+      $LopTinChiTableManager(_db, _db.lopTinChi);
+  $TeachingAssignmentTableManager get teachingAssignment =>
+      $TeachingAssignmentTableManager(_db, _db.teachingAssignment);
 }

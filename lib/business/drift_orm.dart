@@ -5,13 +5,15 @@ import 'package:riverpod/riverpod.dart';
 
 import '../preferences.dart' as preferences;
 import './business_enums.dart';
-export './business_enums.dart'
-    show Gender, AcademicRankConverter, AcademicRank, CourseCategory;
+export './business_enums.dart';
 
 part 'drift_orm.g.dart';
 
 const trueExpr = Constant(true);
 const falseExpr = Constant(false);
+
+// Alias because the original name is not english
+typedef CourseClassCompanion = LopTinChiCompanion;
 
 @DriftDatabase(include: {"database_v1.drift"})
 class MyDriftDatabase extends _$MyDriftDatabase {

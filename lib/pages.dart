@@ -1,59 +1,46 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'datamodels.dart';
+import 'package:flutter/material.dart';
 
 import '../business/domain_objects.dart';
-
-import 'pages/lop_tin_chi.dart' show PageLopTinChi;
-import 'pages/home.dart' show HomePage;
-import 'pages/chi_tiet_giang_vien.dart' show ChiTietGiangVien;
-import 'pages/draft.dart' show DraftPage;
-import 'pages/phan_cong_hoi_dong_lvths.dart'
-    show PagePhanCongHoiDongLuanVanThacSi;
-import 'pages/page_xet_tuyen_ncs.dart' show PageXetTuyenNcs;
-import 'pages/ql_de_tai.dart' show PageQuanLyDeTai;
-import 'pages/han_che_hoc_phan.dart' show CourseLimitingPage;
-import 'pages/danh_sach_giang_vien.dart' show PageQuanLyGiangVien;
-import 'pages/ql_hoc_vien.dart' show QlHocVien;
-import 'pages/ql_bieu_mau.dart' show QlBieuMau, DienPhieuDiemThs;
-import 'pages/dang_ky_bao_ve.dart' show DangKyBaoVePage, DangKyBaoVePage2;
+import 'datamodels.dart';
 import 'features/manage_thesis_topic/page_export_thesis.dart'
     show PageExportThesis;
-
-import 'pages/phd_students/index.dart';
-
-import 'pages/course_management.dart'
-    show PageCourseList, PageCourseDetailArgs, PageCourseDetail;
-
 import 'pages/academic_year_list.dart'
     show
         PageAcademicYearList,
         PageAcademicYearEdit,
         PageAcademicYearCreate,
         PageAcademicYearArgument;
-
-import 'pages/xet_tuyen.dart' show PageXetTuyen;
 import 'pages/admission/index.dart';
-
-import 'pages/settings.dart' show SettingsPage;
-
+import 'pages/chi_tiet_giang_vien.dart' show ChiTietGiangVien;
+import 'pages/course_classes/index.dart';
+import 'pages/course_management.dart'
+    show PageCourseList, PageCourseDetailArgs, PageCourseDetail;
+import 'pages/dang_ky_bao_ve.dart' show DangKyBaoVePage, DangKyBaoVePage2;
+import 'pages/danh_sach_giang_vien.dart' show PageQuanLyGiangVien;
+import 'pages/draft.dart' show DraftPage;
+import 'pages/han_che_hoc_phan.dart' show CourseLimitingPage;
+import 'pages/home.dart' show HomePage;
 import 'pages/mobile/course_classes.dart'
     show PageCourseClassList, PageSelectSemester, CourseClassCreatePage;
-
-import 'pages/thesis_defense/index.dart';
-
-import 'pages/theses/list.dart';
-
-import 'pages/mobile/students.dart' show StudentListPage, StudentDetailPage;
-
-import 'pages/teachers/index.dart' show TeacherSearchPage;
-import 'pages/mobile/thesis_assign_list.dart' show MobilePageThesisAssignList;
-
 import 'pages/mobile/select_class_of.dart'
     show PageSelectClassOf, PageSelectClassOfArgs;
-
+import 'pages/mobile/students.dart' show StudentListPage, StudentDetailPage;
+import 'pages/mobile/thesis_assign_list.dart' show MobilePageThesisAssignList;
 import 'pages/multiple_selection_page.dart'
     show MultipleSelectionPage, MultipleSelectionPageArgs;
+import 'pages/page_xet_tuyen_ncs.dart' show PageXetTuyenNcs;
+import 'pages/phan_cong_hoi_dong_lvths.dart'
+    show PagePhanCongHoiDongLuanVanThacSi;
+import 'pages/phd_students/index.dart';
+import 'pages/ql_bieu_mau.dart' show QlBieuMau, DienPhieuDiemThs;
+import 'pages/ql_de_tai.dart' show PageQuanLyDeTai;
+import 'pages/ql_hoc_vien.dart' show QlHocVien;
+import 'pages/settings.dart' show SettingsPage;
+import 'pages/teachers/index.dart' show TeacherSearchPage;
+import 'pages/theses/list.dart';
+import 'pages/thesis_defense/index.dart';
+import 'pages/xet_tuyen.dart' show PageXetTuyen;
 
 final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
@@ -69,6 +56,7 @@ final initialRoute = switch (kReleaseMode) {
   // false => PageAcademicYearList.routeName,
   // false => PhdStudentListPage.routeName,
   // false => PhdStudentCreatePage.routeName,
+  false => CourseClassListPage.routeName,
 
   // false => AdmissionListPage.routeName,
   // false => AdmissionEnrollmentPage.routeName,
@@ -144,8 +132,8 @@ const routes = [
     icon: Icons.person_add,
   ),
   (
-    route: PageLopTinChi.routeName,
-    label: "Lớp tín chỉ (v1)",
+    route: CourseClassListPage.routeName,
+    label: "Lớp tín chỉ (v3)",
     icon: Icons.class_rounded,
   ),
   (
@@ -191,8 +179,6 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       };
     case HomePage.routeName:
       return HomePage();
-    case PageLopTinChi.routeName:
-      return PageLopTinChi();
     case DraftPage.routeName:
       return DraftPage();
     case PageXetTuyen.routeName:
@@ -207,6 +193,10 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       return PagePhanCongHoiDongLuanVanThacSi();
     case QlHocVien.routeName:
       return QlHocVien();
+
+    // Course classes
+    case CourseClassListPage.routeName:
+      return CourseClassListPage();
 
     // Manage courses
     case PageCourseList.routeName:

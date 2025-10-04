@@ -24,6 +24,15 @@ enum GraduationRank {
   }
 }
 
+enum CourseClassStatus {
+  normal(0, "Bình thường"),
+  canceled(1, "Hủy");
+
+  const CourseClassStatus(this.value, this.label);
+  final int value;
+  final String label;
+}
+
 enum DayOfWeek {
   monday(2, 'Thứ 2'),
   tuesday(3, 'Thứ 3'),
@@ -145,6 +154,23 @@ class AcademicRankConverter extends TypeConverter<AcademicRank?, String?> {
 
   @override
   String toSql(AcademicRank? rank) => rank?.value ?? "";
+}
+
+class CourseClassStatusConverter extends TypeConverter<CourseClassStatus, int> {
+  const CourseClassStatusConverter();
+
+  @override
+  CourseClassStatus fromSql(int fromDb) {
+    for (final status in CourseClassStatus.values) {
+      if (status.value == fromDb) {
+        return status;
+      }
+    }
+    return CourseClassStatus.normal; // Default to normal if not found
+  }
+
+  @override
+  int toSql(CourseClassStatus status) => status.value;
 }
 
 class AcademicDegreeConverter extends TypeConverter<AcademicDegree?, String?> {

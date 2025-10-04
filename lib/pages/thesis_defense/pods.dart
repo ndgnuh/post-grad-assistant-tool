@@ -6,7 +6,7 @@ import '../../business/domain_objects.dart';
 import './payment_pdf.dart';
 
 export '../../business/db_v1_providers.dart'
-    hide teacherByIdProvider, TeacherById;
+    hide teacherByIdProvider, TeacherByIdNotifier;
 export '../../business/db_v2_providers.dart';
 
 const trackingColumn = "flag_tracking";

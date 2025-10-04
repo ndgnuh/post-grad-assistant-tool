@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart' hide Provider;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../business/db_v2_providers.dart' show teachingCoursesProvider;
 import '../../business/domain_objects.dart';
 import '../../business/pods.dart';
-import '../../custom_widgets.dart';
 import '../../custom_tiles.dart';
+import '../../custom_widgets.dart';
 import '../../shortcuts.dart';
-import '../../business/db_v2_providers.dart' show teachingCoursesProvider;
 
 const notAvailableText = "N/A";
 

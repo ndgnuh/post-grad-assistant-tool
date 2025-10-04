@@ -1,18 +1,11 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:provider/provider.dart';
-import 'package:path/path.dart' as path;
 
-import '../custom_widgets.dart';
 import '../business/lop_tin_chi.dart' as domain;
 import '../business/lop_tin_chi.dart';
-
-typedef _Esc<T> = EzSelectionController<T>;
-typedef _TT = TrangThaiLopTinChi;
-const List<int?> _listTietHoc = [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-const List<NgayTrongTuan?> _listNgayHoc = [null, ...NgayTrongTuan.values];
+import '../custom_widgets.dart';
 
 const strings = (
   // Thông báo
@@ -25,228 +18,140 @@ const strings = (
   tooltipCopyDatePeriod: "Copy thời gian giảng dạy",
 );
 
+const List<NgayTrongTuan?> _listNgayHoc = [null, ...NgayTrongTuan.values];
+const List<int?> _listTietHoc = [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 List<T?> withNull<T>(List<T> items) {
   return [null, for (final item in items) item];
 }
 
-class _PageState extends ChangeNotifier {
-  // Các chỉ mục
-  List<LopTinChi> listLopTinChi = [];
-  Map<LopTinChi, GiangVien?> mapGiangVien = {};
-  Map<LopTinChi, HocPhan> mapHocPhan = {};
-  Map<LopTinChi, int> mapCount = {};
+typedef _Esc<T> = EzSelectionController<T>;
 
-  // Trạng thái tìm kiếm
-  _Esc<HocKy?> searchHocKy = _Esc();
-  _Esc<HocPhan?> searchHocPhan = _Esc();
-  _Esc<_TT?> searchTrangThai = _Esc(values: withNull(_TT.values));
+typedef _TT = TrangThaiLopTinChi;
 
-  // Trạng thái edit
-  LopTinChi? editLopTinChi;
-  TextEditingController editUrlTruyCap = TextEditingController();
-  TextEditingController editPhongHoc = TextEditingController();
-  TextEditingController editMaLop = TextEditingController();
-  _Esc<int?> editTietBatDau = _Esc(values: _listTietHoc);
-  _Esc<int?> editTietKetThuc = _Esc(values: _listTietHoc);
-  _Esc<NgayTrongTuan?> editNgayHoc = _Esc(values: _listNgayHoc);
-  _Esc<HocKy?> editHocKy = _Esc();
-  _Esc<HocPhan?> editHocPhan = _Esc();
-  _Esc<_TT> editTrangThai = _Esc(
-    values: _TT.values,
-    initialSelection: _TT.binhThuong,
-  );
-  _Esc<GiangVien?> editGiangVien = _Esc(
-    labelFormatter: (GiangVien? gv) {
-      if (gv == null) return "";
-      return "${gv.hoTenChucDanh} (${gv.email})";
-    },
-  );
+class PageLopTinChi extends StatelessWidget {
+  static const routeName = "/index/lop-tin-chi";
+  const PageLopTinChi({super.key});
 
-  // Cập nhật lớp học
-  update() async {
-    // Cập nhật trên DB
-    editLopTinChi = _valueFromEdits();
-    await editLopTinChi?.update();
-
-    // Load lại dữ liệu
-    await refresh();
-  }
-
-  /// Copy nội dung phân công
-  copyBm09Text() async {
-    switch (searchHocKy.value) {
-      case HocKy hocKy:
-        String content = await makeBm09String(
-          hocKy: hocKy,
-          listLopTinChi: listLopTinChi,
-        );
-        final clipboardData = ClipboardData(text: content);
-        await Clipboard.setData(clipboardData);
-        return true;
-      case null:
-        return false;
-    }
-  }
-
-  /// Copy nội dung phân công
-  copyUrlNotificationText() async {
-    String content = await makeNotificationText(
-      listLopTinChi: listLopTinChi,
-    );
-    final clipboardData = ClipboardData(text: content);
-    await Clipboard.setData(clipboardData);
-    return true;
-  }
-
-  /// Copy tiêu đề phân công
-  copyBm09Title() async {
-    switch (searchHocKy.value) {
-      case HocKy hocKy:
-        final dotHoc = hocKy.hocKy;
-        final namHoc = hocKy.namHoc;
-        final content =
-            "BẢNG PHÂN CÔNG ĐĂNG KÝ GIẢNG DẠY CAO HỌC - HỌC KỲ $dotHoc - NĂM HỌC $namHoc";
-        final clipboardData = ClipboardData(text: content);
-        await Clipboard.setData(clipboardData);
-        return true;
-      case null:
-        return false;
-    }
-  }
-
-  /// Copy thời gian học
-  copyBm09DatePreriod() async {
-    switch (searchHocKy.value) {
-      case HocKy hocKy:
-        final thoiGianHoc = hocKy.thoiGianHoc;
-        final content = "Thời gian học: $thoiGianHoc";
-        final clipboardData = ClipboardData(text: content);
-        await Clipboard.setData(clipboardData);
-        return true;
-      case null:
-        return false;
-    }
-  }
-
-  // Bỏ không chỉnh sửa lớp học nữa
-  unedit() {
-    editLopTinChi = null;
-    ezSetValue(editHocKy, searchHocKy.value);
-    ezSetValue(editGiangVien, null);
-    ezSetValue(editPhongHoc, "");
-    ezSetValue(editHocPhan, null);
-    ezSetValue(editMaLop, "");
-    ezSetValue(editNgayHoc, null);
-    ezSetValue(editTietBatDau, null);
-    ezSetValue(editTietKetThuc, null);
-    ezSetValue(editHocKy, null);
-    ezSetValue(editTrangThai, _TT.binhThuong);
-    ezSetValue(editUrlTruyCap, "");
-    notifyListeners();
-  }
-
-  // Chỉ định form chỉnh sửa lớp học
-  edit(LopTinChi ltc) async {
-    editLopTinChi = ltc;
-    ezSetValue(editHocKy, await ltc.hocKyObject);
-    ezSetValue(editHocPhan, await ltc.hocPhan);
-    ezSetValue(editGiangVien, await ltc.giangVien);
-    ezSetValue(editMaLop, ltc.maLopHoc);
-    ezSetValue(editPhongHoc, ltc.phongHoc);
-    ezSetValue(editNgayHoc, ltc.ngayHoc);
-    ezSetValue(editUrlTruyCap, ltc.urlTruyCap);
-    ezSetValue(editTietBatDau, ltc.tietBatDau);
-    ezSetValue(editTietKetThuc, ltc.tietKetThuc);
-    ezSetValue(editTrangThai, ltc.trangThai);
-    notifyListeners();
-  }
-
-  _valueFromEdits() {
-    return LopTinChi(
-      id: editLopTinChi?.id ?? -1,
-      hocKy: ezGetValue<HocKy?>(editHocKy)?.hocKy,
-      maLopHoc: ezGetValue(editMaLop),
-      maHocPhan: (ezGetValue<HocPhan?>(editHocPhan) as HocPhan).maHocPhan,
-      idGiangVien: ezGetValue<GiangVien?>(editGiangVien)?.id,
-      phongHoc: ezGetValue(editPhongHoc),
-      ngayHoc: ezGetValue<NgayTrongTuan?>(editNgayHoc),
-      tietBatDau: ezGetValue<int?>(editTietBatDau),
-      tietKetThuc: ezGetValue<int?>(editTietKetThuc),
-      urlTruyCap: ezGetValue<String?>(editUrlTruyCap),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back),
+        ),
+        title: Text("Lớp tín chỉ"),
+      ),
+      body: ChangeNotifierProvider(
+        create: (context) => _PageState(),
+        child: EzFlex(
+          flex: [2, 1],
+          direction: Axis.horizontal,
+          children: [
+            EzFixed(
+              margin: EdgeInsets.all(0),
+              direction: Axis.vertical,
+              spacing: 20,
+              children: [
+                _SearchPanel(),
+                Expanded(
+                  child: EzFixed(
+                    margin: EdgeInsets.all(0),
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    direction: Axis.vertical,
+                    children: [
+                      EzHeader(text: "Kết quả tìm kiếm", level: 0),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: _ClassTable(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            _EditPanel(),
+          ],
+        ),
+      ),
     );
   }
+}
 
-  themLop() async {
-    LopTinChi ltc = _valueFromEdits();
-    await ltc.create();
-    await refresh();
-  }
+class _ClassTable extends StatelessWidget {
+  static const columns = [
+    ("Học kỳ", IntrinsicColumnWidth()),
+    ("Mã lớp", IntrinsicColumnWidth()),
+    ("Số TC", IntrinsicColumnWidth()),
+    ("Số HV", IntrinsicColumnWidth()),
+    ("Mã học phần", IntrinsicColumnWidth()),
+    ("Tên học phần", IntrinsicColumnWidth()),
+    ("Phòng học", IntrinsicColumnWidth()),
+    ("Ngày", IntrinsicColumnWidth()),
+    ("Tiết", IntrinsicColumnWidth()),
+    ("URL", IntrinsicColumnWidth()),
+    ("Giảng viên", IntrinsicColumnWidth()),
+    ("Email", IntrinsicColumnWidth()),
+    ("Trạng thái", IntrinsicColumnWidth()),
+    ("", IntrinsicColumnWidth()),
+  ];
 
-  importLop() async {
-    final pickerResult = await FilePicker.platform.pickFiles(
-      dialogTitle: "Chọn file danh sách",
-      allowMultiple: false,
-      type: FileType.custom,
-      allowedExtensions: ["xlsx"],
+  @override
+  Widget build(BuildContext context) {
+    final model = Provider.of<_PageState>(context);
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DataTable(
+        columns: [
+          for (final (label, width) in columns)
+            DataColumn(
+              columnWidth: width,
+              headingRowAlignment: MainAxisAlignment.spaceBetween,
+              label: Text(
+                label,
+                style: TextStyle(
+                  fontVariations: [FontVariation.weight(700)],
+                ),
+              ),
+            ),
+        ],
+        rows: model.listLopTinChi.map((row) {
+          final hocPhan = model.mapHocPhan[row];
+          final giangVien = model.mapGiangVien[row];
+          final soHocVien = model.mapCount[row];
+          return DataRow(
+            selected: model.editLopTinChi == row,
+            onSelectChanged: (_) => model.edit(row),
+            cells: [
+              DataCell(EzCopy(row.hocKy ?? "-")),
+              DataCell(EzCopy(row.maLopHoc ?? "-")),
+              DataCell(EzCopy(hocPhan?.soTinChi.toString() ?? "-")),
+              DataCell(EzCopy(soHocVien.toString())),
+              DataCell(EzCopy(hocPhan?.maHocPhan ?? "-")),
+              DataCell(EzCopy(hocPhan?.tenTiengViet ?? "-")),
+              DataCell(EzCopy(row.phongHoc ?? "")),
+              DataCell(EzCopy(row.ngayHoc?.toString() ?? "")),
+              if (row.tietBatDau != null)
+                DataCell(EzCopy("${row.tietBatDau}-${row.tietKetThuc}"))
+              else
+                DataCell(EzCopy("")),
+              DataCell(EzCopy(row.urlTruyCap ?? "")),
+              DataCell(EzCopy(giangVien?.hoTenChucDanh ?? "-")),
+              DataCell(EzCopy(giangVien?.email ?? "-")),
+              DataCell(EzCopy(row.trangThai.toString())),
+              DataCell(
+                EzLink(
+                  text: "Sửa",
+                  onPressed: () => model.edit(row),
+                ),
+              ),
+            ],
+          );
+        }).toList(),
+      ),
     );
-    final maybeFile = pickerResult?.paths.single;
-
-    switch ((maybeFile, editHocKy.value)) {
-      case (String file, HocKy hocKy):
-        await domain.importFromBangDiem(file, hocKy);
-        refresh();
-        return true;
-      default:
-        print((maybeFile, editHocKy.value));
-        return false;
-    }
-  }
-
-  notify() async {
-    notifyListeners();
-  }
-
-  // Lấy dữ liệu từ DB và load lên trang
-  refresh() async {
-    listLopTinChi = await getLopTinChi(
-      hocKy: searchHocKy.value,
-      hocPhan: searchHocPhan.value,
-      trangThai: searchTrangThai.value,
-    );
-    mapGiangVien = {};
-    mapHocPhan = {};
-    for (final lopTinChi in listLopTinChi) {
-      mapGiangVien[lopTinChi] = await lopTinChi.giangVien;
-      mapHocPhan[lopTinChi] = await lopTinChi.hocPhan;
-      mapCount[lopTinChi] = await lopTinChi.soLuongHocVien;
-    }
-    notifyListeners();
-  }
-
-  // Khởi tạo các chỉ mục dùng trong trang
-  init() async {
-    // Danh mục học kỳ
-    List<HocKy?> listHocKy = (await domain.listHocKy()).reversed.toList();
-    editHocKy.values = [null, for (final hk in listHocKy) hk];
-    searchHocKy.values = [null, for (final hk in listHocKy) hk];
-    searchHocKy.value = listHocKy.first;
-
-    // Danh mục học phần
-    List<HocPhan?> listHocPhan = await domain.listHocPhan();
-    searchHocPhan.values = [null, for (final hk in listHocPhan) hk];
-    editHocPhan.values = [null, for (final hk in listHocPhan) hk];
-
-    // Danh mục giảng viên
-    editGiangVien.values = [
-      null,
-      for (final gv in await domain.listGiangVien()) gv
-    ];
-    await refresh();
-  }
-
-  // Constructor
-  _PageState() {
-    init();
   }
 }
 
@@ -277,7 +182,7 @@ class _EditPanel extends StatelessWidget {
                   label: Text("Hủy"),
                   onPressed: () => model.unedit(),
                   icon: Icon(Icons.delete),
-                )
+                ),
               ],
             ),
           EzDropdown.fullWidth(
@@ -398,6 +303,227 @@ class _EditPanel extends StatelessWidget {
   }
 }
 
+class _PageState extends ChangeNotifier {
+  // Các chỉ mục
+  List<LopTinChi> listLopTinChi = [];
+  Map<LopTinChi, GiangVien?> mapGiangVien = {};
+  Map<LopTinChi, HocPhan> mapHocPhan = {};
+  Map<LopTinChi, int> mapCount = {};
+
+  // Trạng thái tìm kiếm
+  _Esc<HocKy?> searchHocKy = _Esc();
+  _Esc<HocPhan?> searchHocPhan = _Esc();
+  _Esc<_TT?> searchTrangThai = _Esc(values: withNull(_TT.values));
+
+  // Trạng thái edit
+  LopTinChi? editLopTinChi;
+  TextEditingController editUrlTruyCap = TextEditingController();
+  TextEditingController editPhongHoc = TextEditingController();
+  TextEditingController editMaLop = TextEditingController();
+  _Esc<int?> editTietBatDau = _Esc(values: _listTietHoc);
+  _Esc<int?> editTietKetThuc = _Esc(values: _listTietHoc);
+  _Esc<NgayTrongTuan?> editNgayHoc = _Esc(values: _listNgayHoc);
+  _Esc<HocKy?> editHocKy = _Esc();
+  _Esc<HocPhan?> editHocPhan = _Esc();
+  _Esc<_TT> editTrangThai = _Esc(
+    values: _TT.values,
+    initialSelection: _TT.binhThuong,
+  );
+  _Esc<GiangVien?> editGiangVien = _Esc(
+    labelFormatter: (GiangVien? gv) {
+      if (gv == null) return "";
+      return "${gv.hoTenChucDanh} (${gv.email})";
+    },
+  );
+
+  // Constructor
+  _PageState() {
+    init();
+  }
+
+  /// Copy thời gian học
+  Future<bool> copyBm09DatePreriod() async {
+    switch (searchHocKy.value) {
+      case HocKy hocKy:
+        final thoiGianHoc = hocKy.thoiGianHoc;
+        final content = "Thời gian học: $thoiGianHoc";
+        final clipboardData = ClipboardData(text: content);
+        await Clipboard.setData(clipboardData);
+        return true;
+      case null:
+        return false;
+    }
+  }
+
+  /// Copy nội dung phân công
+  Future<bool> copyBm09Text() async {
+    switch (searchHocKy.value) {
+      case HocKy hocKy:
+        String content = await makeBm09String(
+          hocKy: hocKy,
+          listLopTinChi: listLopTinChi,
+        );
+        final clipboardData = ClipboardData(text: content);
+        await Clipboard.setData(clipboardData);
+        return true;
+      case null:
+        return false;
+    }
+  }
+
+  /// Copy tiêu đề phân công
+  Future<bool> copyBm09Title() async {
+    switch (searchHocKy.value) {
+      case HocKy hocKy:
+        final dotHoc = hocKy.hocKy;
+        final namHoc = hocKy.namHoc;
+        final content =
+            "BẢNG PHÂN CÔNG ĐĂNG KÝ GIẢNG DẠY CAO HỌC - HỌC KỲ $dotHoc - NĂM HỌC $namHoc";
+        final clipboardData = ClipboardData(text: content);
+        await Clipboard.setData(clipboardData);
+        return true;
+      case null:
+        return false;
+    }
+  }
+
+  /// Copy nội dung phân công
+  Future<bool> copyUrlNotificationText() async {
+    String content = await makeNotificationText(
+      listLopTinChi: listLopTinChi,
+    );
+    final clipboardData = ClipboardData(text: content);
+    await Clipboard.setData(clipboardData);
+    return true;
+  }
+
+  // Chỉ định form chỉnh sửa lớp học
+  Future<void> edit(LopTinChi ltc) async {
+    editLopTinChi = ltc;
+    ezSetValue(editHocKy, await ltc.hocKyObject);
+    ezSetValue(editHocPhan, await ltc.hocPhan);
+    ezSetValue(editGiangVien, await ltc.giangVien);
+    ezSetValue(editMaLop, ltc.maLopHoc);
+    ezSetValue(editPhongHoc, ltc.phongHoc);
+    ezSetValue(editNgayHoc, ltc.ngayHoc);
+    ezSetValue(editUrlTruyCap, ltc.urlTruyCap);
+    ezSetValue(editTietBatDau, ltc.tietBatDau);
+    ezSetValue(editTietKetThuc, ltc.tietKetThuc);
+    ezSetValue(editTrangThai, ltc.trangThai);
+    notifyListeners();
+  }
+
+  Future<bool> importLop() async {
+    final pickerResult = await FilePicker.platform.pickFiles(
+      dialogTitle: "Chọn file danh sách",
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: ["xlsx"],
+    );
+    final maybeFile = pickerResult?.paths.single;
+
+    switch ((maybeFile, editHocKy.value)) {
+      case (String file, HocKy hocKy):
+        await domain.importFromBangDiem(file, hocKy);
+        refresh();
+        return true;
+      default:
+        print((maybeFile, editHocKy.value));
+        return false;
+    }
+  }
+
+  // Khởi tạo các chỉ mục dùng trong trang
+  Future<void> init() async {
+    // Danh mục học kỳ
+    List<HocKy?> listHocKy = (await domain.listHocKy()).reversed.toList();
+    editHocKy.values = [null, for (final hk in listHocKy) hk];
+    searchHocKy.values = [null, for (final hk in listHocKy) hk];
+    searchHocKy.value = listHocKy.first;
+
+    // Danh mục học phần
+    List<HocPhan?> listHocPhan = await domain.listHocPhan();
+    searchHocPhan.values = [null, for (final hk in listHocPhan) hk];
+    editHocPhan.values = [null, for (final hk in listHocPhan) hk];
+
+    // Danh mục giảng viên
+    editGiangVien.values = [
+      null,
+      for (final gv in await domain.listGiangVien()) gv,
+    ];
+    await refresh();
+  }
+
+  Future<void> notify() async {
+    notifyListeners();
+  }
+
+  // Lấy dữ liệu từ DB và load lên trang
+  Future<void> refresh() async {
+    listLopTinChi = await getLopTinChi(
+      hocKy: searchHocKy.value,
+      hocPhan: searchHocPhan.value,
+      trangThai: searchTrangThai.value,
+    );
+    mapGiangVien = {};
+    mapHocPhan = {};
+    for (final lopTinChi in listLopTinChi) {
+      mapGiangVien[lopTinChi] = await lopTinChi.giangVien;
+      mapHocPhan[lopTinChi] = await lopTinChi.hocPhan;
+      mapCount[lopTinChi] = await lopTinChi.soLuongHocVien;
+    }
+    notifyListeners();
+  }
+
+  Future<void> themLop() async {
+    LopTinChi ltc = _valueFromEdits();
+    await ltc.create();
+    await refresh();
+  }
+
+  // Bỏ không chỉnh sửa lớp học nữa
+  void unedit() {
+    editLopTinChi = null;
+    ezSetValue(editHocKy, searchHocKy.value);
+    ezSetValue(editGiangVien, null);
+    ezSetValue(editPhongHoc, "");
+    ezSetValue(editHocPhan, null);
+    ezSetValue(editMaLop, "");
+    ezSetValue(editNgayHoc, null);
+    ezSetValue(editTietBatDau, null);
+    ezSetValue(editTietKetThuc, null);
+    ezSetValue(editHocKy, null);
+    ezSetValue(editTrangThai, _TT.binhThuong);
+    ezSetValue(editUrlTruyCap, "");
+    notifyListeners();
+  }
+
+  // Cập nhật lớp học
+  Future<void> update() async {
+    // Cập nhật trên DB
+    editLopTinChi = _valueFromEdits();
+    await editLopTinChi?.update();
+
+    // Load lại dữ liệu
+    await refresh();
+  }
+
+  domain.LopTinChi _valueFromEdits() {
+    return LopTinChi(
+      id: editLopTinChi?.id ?? -1,
+      hocKy: ezGetValue<HocKy?>(editHocKy)?.hocKy,
+      maLopHoc: ezGetValue(editMaLop),
+      maHocPhan: (ezGetValue<HocPhan?>(editHocPhan) as HocPhan).maHocPhan,
+      idGiangVien: ezGetValue<GiangVien?>(editGiangVien)?.id,
+      phongHoc: ezGetValue(editPhongHoc),
+      ngayHoc: ezGetValue<NgayTrongTuan?>(editNgayHoc),
+      tietBatDau: ezGetValue<int?>(editTietBatDau),
+      tietKetThuc: ezGetValue<int?>(editTietKetThuc),
+      urlTruyCap: ezGetValue<String?>(editUrlTruyCap),
+    );
+  }
+}
+
 class _SearchPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -427,131 +553,6 @@ class _SearchPanel extends StatelessWidget {
           ],
         );
       },
-    );
-  }
-}
-
-class _ClassTable extends StatelessWidget {
-  static const columns = [
-    ("Học kỳ", IntrinsicColumnWidth()),
-    ("Mã lớp", IntrinsicColumnWidth()),
-    ("Số TC", IntrinsicColumnWidth()),
-    ("Số HV", IntrinsicColumnWidth()),
-    ("Mã học phần", IntrinsicColumnWidth()),
-    ("Tên học phần", IntrinsicColumnWidth()),
-    ("Phòng học", IntrinsicColumnWidth()),
-    ("Ngày", IntrinsicColumnWidth()),
-    ("Tiết", IntrinsicColumnWidth()),
-    ("URL", IntrinsicColumnWidth()),
-    ("Giảng viên", IntrinsicColumnWidth()),
-    ("Email", IntrinsicColumnWidth()),
-    ("Trạng thái", IntrinsicColumnWidth()),
-    ("", IntrinsicColumnWidth()),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    final model = Provider.of<_PageState>(context);
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: DataTable(
-        columns: [
-          for (final (label, width) in columns)
-            DataColumn(
-              columnWidth: width,
-              headingRowAlignment: MainAxisAlignment.spaceBetween,
-              label: Text(
-                label,
-                style: TextStyle(
-                  fontVariations: [FontVariation.weight(700)],
-                ),
-              ),
-            ),
-        ],
-        rows: model.listLopTinChi.map((row) {
-          final hocPhan = model.mapHocPhan[row];
-          final giangVien = model.mapGiangVien[row];
-          final soHocVien = model.mapCount[row];
-          return DataRow(
-            selected: model.editLopTinChi == row,
-            onSelectChanged: (_) => model.edit(row),
-            cells: [
-              DataCell(EzCopy(row.hocKy ?? "-")),
-              DataCell(EzCopy(row.maLopHoc ?? "-")),
-              DataCell(EzCopy(hocPhan?.soTinChi.toString() ?? "-")),
-              DataCell(EzCopy(soHocVien.toString())),
-              DataCell(EzCopy(hocPhan?.maHocPhan ?? "-")),
-              DataCell(EzCopy(hocPhan?.tenTiengViet ?? "-")),
-              DataCell(EzCopy(row.phongHoc ?? "")),
-              DataCell(EzCopy(row.ngayHoc?.toString() ?? "")),
-              if (row.tietBatDau != null)
-                DataCell(EzCopy("${row.tietBatDau}-${row.tietKetThuc}"))
-              else
-                DataCell(EzCopy("")),
-              DataCell(EzCopy(row.urlTruyCap ?? "")),
-              DataCell(EzCopy(giangVien?.hoTenChucDanh ?? "-")),
-              DataCell(EzCopy(giangVien?.email ?? "-")),
-              DataCell(EzCopy(row.trangThai.toString())),
-              DataCell(EzLink(
-                text: "Sửa",
-                onPressed: () => model.edit(row),
-              )),
-            ],
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-
-class PageLopTinChi extends StatelessWidget {
-  static const routeName = "/index/lop-tin-chi";
-  const PageLopTinChi({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back),
-        ),
-        title: Text("Lớp tín chỉ"),
-      ),
-      body: ChangeNotifierProvider(
-        create: (context) => _PageState(),
-        child: EzFlex(
-          flex: [2, 1],
-          direction: Axis.horizontal,
-          children: [
-            EzFixed(
-              margin: EdgeInsets.all(0),
-              direction: Axis.vertical,
-              spacing: 20,
-              children: [
-                _SearchPanel(),
-                Expanded(
-                  child: EzFixed(
-                    margin: EdgeInsets.all(0),
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    direction: Axis.vertical,
-                    children: [
-                      EzHeader(text: "Kết quả tìm kiếm", level: 0),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: _ClassTable(),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-            _EditPanel(),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -108,6 +108,41 @@ create table phd_student (
     foreign key("secondary_supervisor_id") references "giangvien"("id")
 );
 
+create table "DangKyGiangDay" (
+    "idGiangVien" INTEGER NOT NULL AS teacherId,
+    "maHocPhan" TEXT NOT NULL AS courseId,
+    PRIMARY KEY("idGiangVien", "maHocPhan"),
+    FOREIGN KEY("idGiangVien") REFERENCES "giangvien"("id"),
+    FOREIGN KEY("maHocPhan") REFERENCES "hocphan"("maHocPhan")
+) as TeachingRegistrationData;
+
+create table "LopTinChi" (
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "maLopHoc" TEXT NOT NULL AS classId,
+    "maHocPhan" TEXT NOT NULL AS courseId,
+    "idGiangVien" INTEGER AS teacherId,
+    "soLuongDangKy" INTEGER NOT NULL DEFAULT 0 AS registrationCount,
+    "urlTruyCap" TEXT AS accessUrl,
+    "customBeginDate" DATETIME,
+    "customEndDate" DATETIME,
+    "hocKy" TEXT NOT NULL AS semester,
+    "phongHoc" TEXT AS classroom,
+    "ngayHoc" TEXT AS dayOfWeek,
+    "tietBatDau" INTEGER AS startPeriod,
+    "tietKetThuc" INTEGER AS endPeriod,
+    "trangThai" INTEGER mapped by `const CourseClassStatusConverter()` AS status
+) as CourseClassData;
+
+create table "TeachingAssignment" (
+    "classId" INTEGER NOT NULL,
+    "teacherId" INTEGER NOT NULL,
+    "order" INTEGER NOT NULL DEFAULT 1 AS "order",
+    "contribution" REAL NOT NULL DEFAULT 1.0 AS contribution,
+    PRIMARY KEY("classId", "teacherId"),
+    FOREIGN KEY("classId") REFERENCES "LopTinChi"("id"),
+    FOREIGN KEY("teacherId") REFERENCES "GiangVien"("id")
+) as TeachingAssignmentData;
+
 createPhdStudent: INSERT INTO phd_student (
     cohort,
     admission_id,
@@ -140,14 +175,6 @@ createPhdStudent: INSERT INTO phd_student (
     :secondary_supervisor_id
 );
 
-create table "DangKyGiangDay" (
-    "idGiangVien" INTEGER NOT NULL AS teacherId,
-    "maHocPhan" TEXT NOT NULL AS courseId,
-    PRIMARY KEY("idGiangVien", "maHocPhan"),
-    FOREIGN KEY("idGiangVien") REFERENCES "giangvien"("id"),
-    FOREIGN KEY("maHocPhan") REFERENCES "hocphan"("maHocPhan")
-) as TeachingRegistrationData;
-
 searchTeacher(
     :searchText as TEXT OR NULL,
     :outsider as BOOLEAN OR NULL
@@ -178,6 +205,9 @@ setThesis2ndReviewerId: UPDATE detaithacsi SET idPhanBien2 = :teacherId WHERE id
 setThesisSecretaryId: UPDATE detaithacsi SET idThuKy = :teacherId WHERE id = :thesisId;
 setThesisMemberId: UPDATE detaithacsi SET idUyVien = :teacherId WHERE id = :thesisId;
 
+-- course class
+getAllSemesters: SELECT DISTINCT hocKy FROM LopTinChi ORDER BY hocKy DESC;
 
 -- vim: ft=sql
+
 
