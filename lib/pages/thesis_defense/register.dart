@@ -1,61 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
-import 'package:provider/provider.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:provider/provider.dart';
 
-import '../../pages/theses/index.dart' show ThesisDetailPage;
 import '../../business/copy_pasta.dart' show Email, EmailCopyDialog;
+import '../../business/db_v1_providers.dart';
+import '../../business/db_v2_providers.dart';
 import '../../business/domain_objects.dart';
-import '../../business/drift_orm.dart';
 import '../../custom_widgets.dart';
+import '../../pages/theses/index.dart' show ThesisDetailPage;
 import '../single_selection_page.dart';
 import './council.dart' as council;
 import './index.dart';
 import './pods.dart';
 
-typedef Student = HocVien;
 typedef Supervisor = GiangVien;
 typedef Thesis = DeTaiThacSi;
 typedef ThesisDefenseRegisterPageState = _State;
-
-class _ThesisItemActions {
-  final BuildContext context;
-  final WidgetRef ref;
-  final Thesis thesis;
-  const _ThesisItemActions({
-    required this.context,
-    required this.thesis,
-    required this.ref,
-  });
-
-  _State get state => context.read<_State>();
-  NavigatorState get navigator => Navigator.of(context);
-
-  void arrangeCouncil() async {
-    await navigator.push(
-      MaterialPageRoute(
-        builder: (context) =>
-            council.ThesisDefenseCouncilPage(thesisId: thesis.id!),
-      ),
-    );
-    await state.refresh();
-  }
-
-  void goToDetailPage() async {
-    final route = MaterialPageRoute(
-      builder: (context) => ThesisDetailPage(thesis: thesis),
-    );
-    await navigator.push(route);
-    await state.refresh();
-  }
-
-  void untrack() async {
-    final provider = ref.read(trackedThesisIdsProvider.notifier);
-    provider.untrack(thesis.id!);
-  }
-}
 
 class ActionDialog extends ConsumerWidget {
   final Thesis thesis;
@@ -90,6 +51,53 @@ class ActionDialog extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => ActionDialog(thesis: thesis),
+    );
+  }
+}
+
+class ThesisDefenseRegisterPage extends StatelessWidget {
+  static const routeName = "/thesis/defense/register";
+  const ThesisDefenseRegisterPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => _State(),
+      builder: (context, child) {
+        final screenSize = MediaQuery.of(context).size;
+        final isLargeScreen = screenSize.width > 600;
+
+        return Scaffold(
+          appBar: AppBar(title: const Text('Đăng ký bảo vệ')),
+          body: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.all(context.gutter),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: context.gutter,
+                children: [
+                  if (isLargeScreen)
+                    IntrinsicHeight(
+                      child: Row(
+                        spacing: context.gutter,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const Expanded(child: _AddThesisToTrackingButton()),
+                          const Expanded(child: _PageActionButton()),
+                        ],
+                      ),
+                    ),
+                  if (isLargeScreen) Expanded(child: _ThesesTableView()),
+                  if (!isLargeScreen) Expanded(child: _TrackedThesesListView()),
+                  if (!isLargeScreen) const _AddThesisToTrackingButton(),
+                  if (!isLargeScreen) const _PageActionButton(),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -137,118 +145,85 @@ class _AddThesisToTrackingButton extends ConsumerWidget {
   }
 }
 
-class _ThesisCard extends ConsumerWidget {
-  static const width = 600.0;
-  static const height = 300.0;
+class _CouncilMemberItem extends ConsumerWidget {
   final int thesisId;
-
-  const _ThesisCard({required this.thesisId});
+  final CouncilRole role;
+  const _CouncilMemberItem({required this.thesisId, required this.role});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final thesisState = ref.watch(thesisByIdProvider(thesisId));
-    return thesisState.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) =>
-          Center(child: Text("Lỗi khi tải đề tài: $error")),
-      data: (thesis) => Card(
-        child: InkWell(
-          borderRadius: BorderRadius.circular(context.gutterSmall),
-          onTap: () => ActionDialog.show(context, thesis),
-          child: Padding(
-            padding: EdgeInsets.all(context.gutter),
-            child: ListTile(
-              title: Text(
-                "${thesis.hocVien!.maHocVien} ${thesis.hocVien!.hoTen}",
+    final memberState = switch (role) {
+      CouncilRole.president => ref.watch(thesisPresidentProvider(thesisId)),
+      CouncilRole.reviewer1 => ref.watch(thesisReviewer1Provider(thesisId)),
+      CouncilRole.reviewer2 => ref.watch(thesisReviewer2Provider(thesisId)),
+      CouncilRole.secretary => ref.watch(thesisSecretaryProvider(thesisId)),
+      CouncilRole.member => ref.watch(thesisMemberProvider(thesisId)),
+    };
+
+    final notifier = switch (role) {
+      CouncilRole.president => ref.read(
+        thesisPresidentProvider(thesisId).notifier,
+      ),
+      CouncilRole.reviewer1 => ref.read(
+        thesisReviewer1Provider(thesisId).notifier,
+      ),
+      CouncilRole.reviewer2 => ref.read(
+        thesisReviewer2Provider(thesisId).notifier,
+      ),
+      CouncilRole.secretary => ref.read(
+        thesisSecretaryProvider(thesisId).notifier,
+      ),
+      CouncilRole.member => ref.read(thesisMemberProvider(thesisId).notifier),
+    };
+
+    switch (memberState) {
+      case AsyncLoading():
+        return const CircularProgressIndicator();
+      case AsyncError(:final error):
+        return Text('Lỗi tải giảng viên: $error');
+      default:
+    }
+
+    final teacher = memberState.value;
+
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        if (teacher != null)
+          IconButton(
+            icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.error),
+            onPressed: () => notifier.unassign(),
+          ),
+        SearchAnchor(
+          suggestionsBuilder: (context, controller) async {
+            final db = await ref.read(driftDatabaseProvider.future);
+            final teachers = await db
+                .searchTeacher(searchText: controller.text)
+                .get();
+
+            return [
+              for (final teacher in teachers)
+                ListTile(
+                  title: Text(teacher.name),
+                  subtitle: Text(teacher.department ?? ''),
+                  onTap: () async {
+                    controller.closeView("");
+                    await notifier.assign(teacher.id);
+                  },
+                ),
+            ];
+          },
+          builder: (context, controller) => InkWell(
+            onTap: () => controller.openView(),
+            child: Text(
+              teacher?.name ?? 'Chọn',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
               ),
-              subtitle: Text(thesis.tenTiengViet),
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _TrackedThesesListView extends ConsumerWidget {
-  Widget _build(BuildContext context, List<int> thesisIds) {
-    // final totalWidth = MediaQuery.of(context).size.width;
-
-    return ListView.builder(
-      // gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-      //   maxCrossAxisExtent: _ThesisCard.width,
-      //   mainAxisExtent: _ThesisCard.height,
-      //   childAspectRatio: _ThesisCard.width / _ThesisCard.height,
-      //   mainAxisSpacing: context.gutterSmall,
-      //   crossAxisSpacing: context.gutterSmall,
-      // ),
-      // padding: EdgeInsets.all(context.gutter),
-      itemCount: thesisIds.length,
-      itemBuilder: (context, index) {
-        final thesisId = thesisIds[index];
-        return _ThesisCard(thesisId: thesisId);
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final thesisIdsState = ref.watch(trackedThesisIdsProvider);
-
-    switch (thesisIdsState) {
-      case AsyncLoading():
-        return const Center(child: CircularProgressIndicator());
-      case AsyncError(:final error):
-        return Center(child: Text("Lỗi khi tải đề tài $error"));
-      case AsyncData(:final List<int> value):
-        return _build(context, value);
-    }
-  }
-}
-
-class ThesisDefenseRegisterPage extends StatelessWidget {
-  static const routeName = "/thesis/defense/register";
-  const ThesisDefenseRegisterPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => _State(),
-      builder: (context, child) {
-        final screenSize = MediaQuery.of(context).size;
-        final isLargeScreen = screenSize.width > 600;
-
-        return Scaffold(
-          appBar: AppBar(title: const Text('Đăng ký bảo vệ')),
-          body: SafeArea(
-            child: Padding(
-              padding: EdgeInsets.all(context.gutter),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                spacing: context.gutter,
-                children: [
-                  if (isLargeScreen)
-                    IntrinsicHeight(
-                      child: Row(
-                        spacing: context.gutter,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const Expanded(child: _AddThesisToTrackingButton()),
-                          const Expanded(child: _PageActionButton()),
-                        ],
-                      ),
-                    ),
-                  if (isLargeScreen) Expanded(child: _ThesesTableView()),
-                  if (!isLargeScreen) Expanded(child: _TrackedThesesListView()),
-                  if (!isLargeScreen) const _AddThesisToTrackingButton(),
-                  if (!isLargeScreen) const _PageActionButton(),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+      ],
     );
   }
 }
@@ -490,85 +465,108 @@ class _ThesesTableView extends ConsumerWidget {
   }
 }
 
-class _CouncilMemberItem extends ConsumerWidget {
+class _ThesisCard extends ConsumerWidget {
+  static const width = 600.0;
+  static const height = 300.0;
   final int thesisId;
-  final CouncilRole role;
-  const _CouncilMemberItem({required this.thesisId, required this.role});
+
+  const _ThesisCard({required this.thesisId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final memberState = switch (role) {
-      CouncilRole.president => ref.watch(thesisPresidentProvider(thesisId)),
-      CouncilRole.reviewer1 => ref.watch(thesisReviewer1Provider(thesisId)),
-      CouncilRole.reviewer2 => ref.watch(thesisReviewer2Provider(thesisId)),
-      CouncilRole.secretary => ref.watch(thesisSecretaryProvider(thesisId)),
-      CouncilRole.member => ref.watch(thesisMemberProvider(thesisId)),
-    };
-
-    final notifier = switch (role) {
-      CouncilRole.president => ref.read(
-        thesisPresidentProvider(thesisId).notifier,
-      ),
-      CouncilRole.reviewer1 => ref.read(
-        thesisReviewer1Provider(thesisId).notifier,
-      ),
-      CouncilRole.reviewer2 => ref.read(
-        thesisReviewer2Provider(thesisId).notifier,
-      ),
-      CouncilRole.secretary => ref.read(
-        thesisSecretaryProvider(thesisId).notifier,
-      ),
-      CouncilRole.member => ref.read(thesisMemberProvider(thesisId).notifier),
-    };
-
-    switch (memberState) {
-      case AsyncLoading():
-        return const CircularProgressIndicator();
-      case AsyncError(:final error):
-        return Text('Lỗi tải giảng viên: $error');
-      default:
-    }
-
-    final teacher = memberState.value;
-
-    return Wrap(
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        if (teacher != null)
-          IconButton(
-            icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.error),
-            onPressed: () => notifier.unassign(),
-          ),
-        SearchAnchor(
-          suggestionsBuilder: (context, controller) async {
-            final db = await ref.read(driftDatabaseProvider.future);
-            final teachers = await db
-                .searchTeacher(searchText: controller.text)
-                .get();
-
-            return [
-              for (final teacher in teachers)
-                ListTile(
-                  title: Text(teacher.name),
-                  subtitle: Text(teacher.department ?? ''),
-                  onTap: () async {
-                    controller.closeView("");
-                    await notifier.assign(teacher.id);
-                  },
-                ),
-            ];
-          },
-          builder: (context, controller) => InkWell(
-            onTap: () => controller.openView(),
-            child: Text(
-              teacher?.name ?? 'Chọn',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
+    final thesisState = ref.watch(thesisByIdProvider(thesisId));
+    return thesisState.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) =>
+          Center(child: Text("Lỗi khi tải đề tài: $error")),
+      data: (thesis) => Card(
+        child: InkWell(
+          borderRadius: BorderRadius.circular(context.gutterSmall),
+          onTap: () => ActionDialog.show(context, thesis),
+          child: Padding(
+            padding: EdgeInsets.all(context.gutter),
+            child: ListTile(
+              title: Text(
+                "${thesis.hocVien!.maHocVien} ${thesis.hocVien!.hoTen}",
               ),
+              subtitle: Text(thesis.tenTiengViet),
             ),
           ),
         ),
-      ],
+      ),
+    );
+  }
+}
+
+class _ThesisItemActions {
+  final BuildContext context;
+  final WidgetRef ref;
+  final Thesis thesis;
+  const _ThesisItemActions({
+    required this.context,
+    required this.thesis,
+    required this.ref,
+  });
+
+  NavigatorState get navigator => Navigator.of(context);
+  _State get state => context.read<_State>();
+
+  void arrangeCouncil() async {
+    await navigator.push(
+      MaterialPageRoute(
+        builder: (context) =>
+            council.ThesisDefenseCouncilPage(thesisId: thesis.id!),
+      ),
+    );
+    await state.refresh();
+  }
+
+  void goToDetailPage() async {
+    final route = MaterialPageRoute(
+      builder: (context) => ThesisDetailPage(thesis: thesis),
+    );
+    await navigator.push(route);
+    await state.refresh();
+  }
+
+  void untrack() async {
+    final provider = ref.read(trackedThesisIdsProvider.notifier);
+    provider.untrack(thesis.id!);
+  }
+}
+
+class _TrackedThesesListView extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final thesisIdsState = ref.watch(trackedThesisIdsProvider);
+
+    switch (thesisIdsState) {
+      case AsyncLoading():
+        return const Center(child: CircularProgressIndicator());
+      case AsyncError(:final error):
+        return Center(child: Text("Lỗi khi tải đề tài $error"));
+      case AsyncData(:final List<int> value):
+        return _build(context, value);
+    }
+  }
+
+  Widget _build(BuildContext context, List<int> thesisIds) {
+    // final totalWidth = MediaQuery.of(context).size.width;
+
+    return ListView.builder(
+      // gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+      //   maxCrossAxisExtent: _ThesisCard.width,
+      //   mainAxisExtent: _ThesisCard.height,
+      //   childAspectRatio: _ThesisCard.width / _ThesisCard.height,
+      //   mainAxisSpacing: context.gutterSmall,
+      //   crossAxisSpacing: context.gutterSmall,
+      // ),
+      // padding: EdgeInsets.all(context.gutter),
+      itemCount: thesisIds.length,
+      itemBuilder: (context, index) {
+        final thesisId = thesisIds[index];
+        return _ThesisCard(thesisId: thesisId);
+      },
     );
   }
 }

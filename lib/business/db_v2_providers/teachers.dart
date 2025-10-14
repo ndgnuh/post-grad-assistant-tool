@@ -4,11 +4,24 @@ import 'package:riverpod/riverpod.dart';
 import '../drift_orm.dart';
 import '../db_v2_providers.dart';
 
-final insiderTeacherIdsProvider = AsyncNotifierProvider(InsiderTeacherIds.new);
-final insiderTeachersProvider = AsyncNotifierProvider(InsiderTeachers.new);
-final teacherByIdProvider = AsyncNotifierProvider.family(TeacherById.new);
+final insiderTeacherIdsProvider = AsyncNotifierProvider(
+  InsiderTeacherIds.new,
+);
+
+final insiderTeachersProvider = AsyncNotifierProvider(
+  InsiderTeachers.new,
+);
+
+final teacherByIdProvider = AsyncNotifierProvider.family(
+  TeacherById.new,
+);
+
 final teachingCoursesProvider = AsyncNotifierProvider.family(
   TeachingCoursesNotifier.new,
+);
+
+final teacherIdsByCourseProvider = AsyncNotifierProvider.family(
+  TeacherIdsByCourseProvider.new,
 );
 
 class InsiderTeacherIds extends AsyncNotifier<List<int>> {
@@ -102,6 +115,22 @@ class TeachingCoursesNotifier extends AsyncNotifier<Set<CourseData>> {
       ));
     await query.go();
     ref.invalidateSelf();
+  }
+}
+
+/// Ids of teachers that teach a given course
+class TeacherIdsByCourseProvider extends AsyncNotifier<List<int>> {
+  final String courseId;
+  TeacherIdsByCourseProvider(this.courseId);
+
+  @override
+  Future<List<int>> build() async {
+    final db = await ref.watch(driftDatabaseProvider.future);
+    final teacherIds = await db.managers.dangKyGiangDay
+        .filter((d) => d.courseId.equals(courseId))
+        .map((d) => d.teacherId)
+        .get();
+    return teacherIds;
   }
 }
 

@@ -7,12 +7,10 @@ import 'package:intl/intl.dart';
 
 import '../../custom_widgets.dart';
 import './_import.dart';
-import './_providers.dart';
 
-final importListProvider =
-    NotifierProvider<ImportListProvider, List<JsonSchema>>(
-      ImportListProvider.new,
-    );
+final importListProvider = NotifierProvider(
+  ImportListProvider.new,
+);
 
 class AdmissionImportPage extends StatelessWidget {
   static const routeName = '/admission/add';
@@ -81,13 +79,15 @@ class _SaveToDatabaseButton extends ConsumerWidget {
     }
 
     return ElevatedButton(
-      onPressed: () async {
-        await saveDataToDatabase(data);
-        final notifier = ref.read(importListProvider.notifier);
-        notifier.set([]);
-        ref.invalidate(admissionStudentsProvider);
-        navigator.pop();
-      },
+      onPressed: null,
+      // TODO: port to drift
+      // onPressed: () async {
+      // await saveDataToDatabase(data);
+      // final notifier = ref.read(importListProvider.notifier);
+      // notifier.set([]);
+      // ref.invalidate(admissionStudentsProvider);
+      // navigator.pop();
+      // },
       child: Text("Lưu vào CSDL"),
     );
   }

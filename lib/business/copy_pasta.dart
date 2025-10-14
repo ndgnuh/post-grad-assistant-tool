@@ -8,6 +8,22 @@ import './../custom_widgets.dart';
 import './domain_objects.dart';
 import './../shortcuts.dart';
 
+Uri createMailtoLink(Email email) {
+  final recipients = email.recipients.join(',');
+  final queries = {
+    if (email.ccRecipients.isNotEmpty) "cc": email.ccRecipients.join(','),
+    if (email.bccRecipients.isNotEmpty) "bcc": email.bccRecipients.join(','),
+    if (email.subject.isNotEmpty) "subject": (email.subject),
+    if (email.body.isNotEmpty) "body": (email.body),
+  };
+
+  return Uri(
+    scheme: "mailto",
+    path: recipients,
+    query: Uri(queryParameters: queries).query,
+  );
+}
+
 @immutable
 class Email {
   final String subject;
@@ -23,6 +39,8 @@ class Email {
     this.ccRecipients = const {},
     this.bccRecipients = const {},
   });
+
+  Uri get mailtoLink => createMailtoLink(this);
 
   void copySubject() => Clipboard.setData(ClipboardData(text: subject));
 

@@ -1,17 +1,57 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/db_v2_providers.dart';
-
 import '../../business/drift_orm.dart';
+import '../../custom_widgets.dart';
 import './_import_from_clipboard.dart';
 import './_view_model.dart';
-import '../../custom_widgets.dart';
+import './index.dart';
 
 part '_teaching_assignment_dialog.dart';
+
+class CourseClassListPage extends StatelessWidget {
+  static const routeName = "/course_classes/list";
+
+  const CourseClassListPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final gutter = context.responsiveGutter;
+    return Scaffold(
+      appBar: AppBar(title: const Text("Danh sách lớp tín chỉ")),
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.all(gutter),
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: gutter,
+                children: [
+                  Spacer(),
+                  SemesterPicker(),
+                  FilledButton.icon(
+                    onPressed: null,
+                    label: Text("Thêm"),
+                    icon: Icon(Symbols.add),
+                  ),
+                  _ImportButton(),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: gutter),
+            child: Divider(),
+          ),
+          Expanded(child: _CourseClassesView()),
+        ],
+      ),
+    );
+  }
+}
 
 class SemesterPicker extends ConsumerWidget {
   const SemesterPicker({super.key});
@@ -44,6 +84,159 @@ class SemesterPicker extends ConsumerWidget {
         notifier.set(value);
       },
     );
+  }
+}
+
+class _AssignedTeachersButton extends ConsumerWidget {
+  final int classId;
+  const _AssignedTeachersButton({required this.classId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final viewModelAsync = ref.watch(courseClassViewModelByIdProvider(classId));
+    switch (viewModelAsync) {
+      case AsyncLoading():
+        return const CircularProgressIndicator();
+      case AsyncError(:final error):
+        return Text("Error: $error");
+      default:
+    }
+
+    final viewModel = viewModelAsync.value!;
+    final teachers = viewModel.teachers;
+    final text = format(teachers);
+
+    return TextButton(
+      style: TextButton.styleFrom(
+        padding: EdgeInsets.zero,
+        textStyle: TextStyle(fontSize: 14),
+      ),
+      onPressed: () => onPressed(context, initialAssignments: teachers),
+      child: Text(text),
+    );
+  }
+
+  String format(Map<TeacherData, double> teachers) {
+    if (teachers.isEmpty) {
+      return "<Phân công>";
+    }
+
+    // First teacher only
+    if (teachers.length == 1) {
+      return teachers.keys.first.name;
+    }
+
+    // Multiple teachers
+    final lines = <String>[];
+    for (final entry in teachers.entries) {
+      final teacher = entry.key;
+      final contribution = entry.value;
+      final contributionStr = contribution.toStringAsFixed(2);
+      lines.add("${teacher.name} ($contributionStr)");
+    }
+
+    return lines.join("\n");
+  }
+
+  void onPressed(
+    BuildContext context, {
+    required Map<TeacherData, double> initialAssignments,
+  }) async {
+    showDialog(
+      context: context,
+      builder: (context) => _TeachingAssignmentDialog(
+        classId: classId,
+        initialAssignments: initialAssignments,
+      ),
+    );
+  }
+}
+
+class _CourseClassesTableView extends StatelessWidget {
+  static const columns = [
+    DataColumn(label: Text("Mã lớp")),
+    DataColumn(label: Text("Học phần")),
+    DataColumn(label: Text("TC")),
+    DataColumn(label: Text("Giảng viên")),
+    DataColumn(label: Text("Thứ")),
+    DataColumn(label: Text("Tiết")),
+    DataColumn(label: Text("Phòng học")),
+    DataColumn(label: Text("Sĩ số")),
+    DataColumn(label: Text("Trạng thái")),
+  ];
+  final List<CourseClassViewModel> courseClasses;
+  final SemesterData semester;
+
+  const _CourseClassesTableView({
+    required this.courseClasses,
+    required this.semester,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraint) => SingleChildScrollView(
+        padding: EdgeInsetsDirectional.all(context.responsiveGutter),
+        child: SingleChildScrollView(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: constraint.maxWidth,
+              ),
+              child: DataTable(
+                dataRowMaxHeight: double.infinity,
+                columns: columns,
+                rows: rows(context),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<DataRow> rows(BuildContext context) {
+    return courseClasses.map((cc) {
+      final period = switch ((
+        cc.courseClass.startPeriod,
+        cc.courseClass.endPeriod,
+      )) {
+        (int a, int b) when a == b => "$a",
+        (int a, int b) => "$a-$b",
+        _ => "N/A",
+      };
+
+      final course = cc.course;
+      final courseName = "${course.id} ${course.vietnameseTitle}";
+      final creditCount = course.credits.toString();
+      final assignments = cc.teachers;
+
+      final teachers = cc.teachers.keys.map((t) => t.name).join(", ");
+
+      return DataRow(
+        onSelectChanged: (selected) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => TeachingAssignmentPage(
+                courseClassId: cc.courseClass.id,
+              ),
+            ),
+          );
+        },
+        cells: [
+          DataCell(Text(cc.courseClass.classId)),
+          DataCell(Text(courseName)),
+          DataCell(Text(creditCount)),
+          DataCell(_AssignedTeachersButton(classId: cc.courseClass.id)),
+          DataCell(Text(cc.courseClass.dayOfWeek.toString() ?? "N/A")),
+          DataCell(Text(period)),
+          DataCell(Text(cc.courseClass.classroom ?? "N/A")),
+          DataCell(Text(cc.registrationCount.toString())),
+          DataCell(Text(cc.courseClass.status?.label ?? "N/A")),
+        ],
+      );
+    }).toList();
   }
 }
 
@@ -84,126 +277,6 @@ class _CourseClassesView extends ConsumerWidget {
     return _CourseClassesTableView(
       courseClasses: courseClasses,
       semester: selectedSemester,
-    );
-  }
-}
-
-class _CourseClassesTableView extends StatelessWidget {
-  final List<CourseClassViewModel> courseClasses;
-  final SemesterData semester;
-  const _CourseClassesTableView({
-    required this.courseClasses,
-    required this.semester,
-  });
-
-  static const columns = [
-    DataColumn(label: Text("Mã lớp")),
-    DataColumn(label: Text("Học phần")),
-    DataColumn(label: Text("TC")),
-    DataColumn(label: Text("Giảng viên")),
-    DataColumn(label: Text("Thứ")),
-    DataColumn(label: Text("Tiết")),
-    DataColumn(label: Text("Phòng học")),
-    DataColumn(label: Text("Sĩ số")),
-    DataColumn(label: Text("Trạng thái")),
-  ];
-
-  List<DataRow> get rows {
-    return courseClasses.map((cc) {
-      final period = switch ((
-        cc.courseClass.startPeriod,
-        cc.courseClass.endPeriod,
-      )) {
-        (int a, int b) when a == b => "$a",
-        (int a, int b) => "$a-$b",
-        _ => "N/A",
-      };
-
-      final course = cc.course;
-      final courseName = "${course.id} ${course.vietnameseTitle}";
-      final creditCount = course.credits.toString();
-      final assignments = cc.teachers;
-
-      final teachers = cc.teachers.keys.map((t) => t.name).join(", ");
-      return DataRow(
-        cells: [
-          DataCell(Text(cc.courseClass.classId)),
-          DataCell(Text(courseName)),
-          DataCell(Text(creditCount)),
-          DataCell(_AssignedTeachersButton(classId: cc.courseClass.id)),
-          DataCell(Text(cc.courseClass.dayOfWeek.toString() ?? "N/A")),
-          DataCell(Text(period)),
-          DataCell(Text(cc.courseClass.classroom ?? "N/A")),
-          DataCell(Text(cc.courseClass.registrationCount.toString())),
-          DataCell(Text(cc.courseClass.status?.label ?? "N/A")),
-        ],
-      );
-    }).toList();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraint) => SingleChildScrollView(
-        padding: EdgeInsetsDirectional.all(context.responsiveGutter),
-        child: SingleChildScrollView(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minWidth: constraint.maxWidth,
-              ),
-              child: DataTable(
-                dataRowMaxHeight: double.infinity,
-                columns: columns,
-                rows: rows,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class CourseClassListPage extends StatelessWidget {
-  static const routeName = "/course_classes/list";
-
-  const CourseClassListPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final gutter = context.responsiveGutter;
-    return Scaffold(
-      appBar: AppBar(title: const Text("Danh sách lớp tín chỉ")),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(gutter),
-            child: IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                spacing: gutter,
-                children: [
-                  Spacer(),
-                  SemesterPicker(),
-                  FilledButton.icon(
-                    onPressed: null,
-                    label: Text("Thêm"),
-                    icon: Icon(Symbols.add),
-                  ),
-                  _ImportButton(),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: gutter),
-            child: Divider(),
-          ),
-          Expanded(child: _CourseClassesView()),
-        ],
-      ),
     );
   }
 }
@@ -258,71 +331,6 @@ class _ImportButton extends ConsumerWidget {
       },
       label: Text("Import"),
       icon: Icon(Symbols.file_upload),
-    );
-  }
-}
-
-class _AssignedTeachersButton extends ConsumerWidget {
-  final int classId;
-  const _AssignedTeachersButton({required this.classId});
-
-  void onPressed(
-    BuildContext context, {
-    required Map<TeacherData, double> initialAssignments,
-  }) async {
-    showDialog(
-      context: context,
-      builder: (context) => _TeachingAssignmentDialog(
-        classId: classId,
-        initialAssignments: initialAssignments,
-      ),
-    );
-  }
-
-  String format(Map<TeacherData, double> teachers) {
-    if (teachers.isEmpty) {
-      return "<Phân công>";
-    }
-
-    // First teacher only
-    if (teachers.length == 1) {
-      return teachers.keys.first.name;
-    }
-
-    // Multiple teachers
-    final lines = <String>[];
-    for (final entry in teachers.entries) {
-      final teacher = entry.key;
-      final contribution = entry.value;
-      final contributionStr = contribution.toStringAsFixed(2);
-      lines.add("${teacher.name} ($contributionStr)");
-    }
-
-    return lines.join("\n");
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final viewModelAsync = ref.watch(courseClassViewModelByIdProvider(classId));
-    switch (viewModelAsync) {
-      case AsyncLoading():
-        return const CircularProgressIndicator();
-      case AsyncError(:final error):
-        return Text("Error: $error");
-      default:
-    }
-
-    final viewModel = viewModelAsync.value!;
-    final teachers = viewModel.teachers;
-    final text = format(teachers);
-
-    return TextButton(
-      style: TextButton.styleFrom(
-        padding: EdgeInsets.zero,
-        textStyle: TextStyle(fontSize: 14),
-      ),
-      onPressed: () => onPressed(context, initialAssignments: teachers),
-      child: Text(text),
     );
   }
 }

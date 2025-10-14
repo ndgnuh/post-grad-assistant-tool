@@ -1,5 +1,55 @@
 import 'business_enums.dart';
 
+create table "NienKhoa" (
+    "nienKhoa" TEXT NOT NULL PRIMARY KEY as "cohort",
+    "groupUrl" TEXT NOT NULL DEFAULT ("") as "groupUrl"
+) as CohortData;
+
+create table "TieuBanXetTuyen" (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nam TEXT NOT NULL as year,
+    idChuTich INTEGER NOT NULL as presidentId,
+    idThuKy INTEGER NOT NULL as secretaryId,
+    idUyVien1 INTEGER NOT NULL as member1Id,
+    idUyVien2 INTEGER as member2Id,
+    idUyVien3 INTEGER as member3Id,
+    FOREIGN KEY(idChuTich) REFERENCES GiangVien(id),
+    FOREIGN KEY(idThuKy) REFERENCES GiangVien(id),
+    FOREIGN KEY(idUyVien1) REFERENCES GiangVien(id),
+    FOREIGN KEY(idUyVien2) REFERENCES GiangVien(id),
+    FOREIGN KEY(idUyVien3) REFERENCES GiangVien(id)
+) as AdmissionCouncilData;
+
+CREATE TABLE "HocVien" (
+	"id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "soHoSo" TEXT as admissionId,
+	"nienKhoa"	TEXT as cohort,
+	"maHocVien"	TEXT as studentId,
+	"hoTen"	TEXT NOT NULL as name,
+	"ngaySinh"	TEXT mapped by `const YmdDateConverter()` as dateOfBirth,
+	"gioiTinh"	TEXT mapped by `const GenderConverter()` as gender,
+	"noiSinh"	TEXT as placeOfBirth,
+	"dienThoai"	TEXT as phone,
+	"email"	TEXT as personalEmail,
+	"emailHust"	TEXT as schoolEmail,
+    "truongTotNghiepDaiHoc" TEXT as bachelorUniversity,
+    "nganhTotNghiepDaiHoc" TEXT as bachelorMajor,
+    "heTotNghiepDaiHoc" TEXT as bachelorProgram,
+    "xepLoaiTotNghiepDaiHoc" TEXT as bachelorGraduationRank,
+    "ngayTotNghiepDaiHoc" TEXT mapped by `const YmdDateConverter()` as bachelorGraduationDate,
+    "dinhHuongChuyenSau" TEXT as intendedSpecialization,
+    "hocPhanDuocMien" TEXT as exemptedCourses,
+    "nganhDaoTaoThacSi" TEXT as masterMajor,
+	"maTrangThai"	TEXT mapped by `const StudentStatusConverter()` as status,
+    "flag_extend_1" BOOLEAN NOT NULL DEFAULT false as hasHirstExtension,
+    "flag_extend_2" BOOLEAN NOT NULL DEFAULT false as hasSecondExtension,
+	"idTieuBanXetTuyen"	INTEGER as admissionCouncilId,
+    "idDienTuyenSinh" TEXT mapped by `const AdmissionTypeConverter()` as admissionType,
+	"thanhToanXetTuyen"	BOOL NOT NULL DEFAULT false as isAdmissionPaid,
+	FOREIGN KEY(idTieuBanXetTuyen) REFERENCES TieuBanXetTuyen(id),
+	FOREIGN KEY(nienKhoa) REFERENCES NienKhoa(nienKhoa) ON UPDATE CASCADE
+) as StudentData;
+
 create table "hocky" (
     "hocKy" TEXT NOT NULL PRIMARY KEY as semester,
     "moDangKy" TEXT NOT NULL as registrationOpenDate,
@@ -143,6 +193,14 @@ create table "TeachingAssignment" (
     FOREIGN KEY("teacherId") REFERENCES "GiangVien"("id")
 ) as TeachingAssignmentData;
 
+create table "DangKyHoc" (
+    idLopTinChi INTEGER NOT NULL AS courseClassId,
+    idHocVien INTEGER NOT NULL AS studentId,
+    PRIMARY KEY(idLopTinChi, idHocVien),
+    FOREIGN KEY(idLopTinChi) REFERENCES LopTinChi(id),
+    FOREIGN KEY(idHocVien) REFERENCES phd_student(id)
+) as ClassCourseRegistrationData;
+
 createPhdStudent: INSERT INTO phd_student (
     cohort,
     admission_id,
@@ -190,7 +248,7 @@ searchTeacher(
     and (:outsider is null or ngoaitruong = :outsider);
 
 -- Thesis
-getTrackingThesisIds: SELECT id FROM detaithacsi WHERE flag_tracking = 1 order by "group";
+getTrackingThesisIds: SELECT id FROM detaithacsi WHERE flag_tracking = 1 order by "soQdBaoVe";
 trackThesis: UPDATE detaithacsi SET flag_tracking = 1 WHERE id = :thesisId;
 untrackThesis: UPDATE detaithacsi SET flag_tracking = 0 WHERE id = :thesisId;
 

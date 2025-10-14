@@ -1,120 +1,244 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:async';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:diacritic/diacritic.dart' as diacritic;
 
+import '../../business/db_v2_providers.dart';
 import './_widgets.dart';
-import './_providers.dart';
-import '../../custom_widgets.dart';
-import '../../business/domain_objects.dart';
+import 'common.providers.dart';
 
-final _selectedCohortProvider = AsyncNotifierProvider(
-  _SelectedCohortNotifier.new,
-);
-
-class _SelectedCohortNotifier extends AsyncNotifier<Cohort?> {
-  static const String prefKey = 'adminssion/selected_cohort_id';
-  @override
-  FutureOr<Cohort?> build() async {
-    final prefs = await SharedPreferences.getInstance();
-    final cohortId = prefs.getString(prefKey);
-    if (cohortId == null) {
-      return null;
-    }
-    final cohort = await Cohort.getById(cohortId);
-    return cohort;
-  }
-
-  Future<void> setCohort(Cohort? cohort) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    if (cohort == null) {
-      await prefs.remove(prefKey);
-    } else {
-      await prefs.setString(prefKey, cohort.id);
-    }
-    state = AsyncValue.data(cohort);
-  }
-}
-
-class _CohortSelector extends ConsumerWidget {
-  const _CohortSelector();
+class AdmissionEnrollmentPage extends StatelessWidget {
+  static const routeName = '/admission/enrollment';
+  final int studentId;
+  const AdmissionEnrollmentPage({super.key, required this.studentId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cohortsState = ref.watch(cohortsProvider);
-    switch (cohortsState) {
-      case AsyncLoading():
-        return const Center(child: CircularProgressIndicator());
-      case AsyncError():
-        return const Center(child: Text("Lỗi tải dữ liệu."));
-      default:
-    }
-
-    final cohorts = cohortsState.value!;
-
-    return DropdownMenu<Cohort>(
-      label: const Text("Khóa"),
-      dropdownMenuEntries: [
-        for (final cohort in cohorts)
-          DropdownMenuEntry(
-            value: cohort,
-            label: cohort.id,
+  Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    final gutter = context.gutter;
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Nhập học'),
+      ),
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: SizedBox(
+          width: min(width, 960),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(
+              gutter,
+              context.gutterTiny,
+              gutter,
+              context.gutterTiny,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: context.gutterLarge,
+              children: [
+                _StudentInfoSection(studentId: studentId),
+                _EnrollFormSection(studentId: studentId),
+              ],
+            ),
           ),
-      ],
-      onSelected: (cohort) {
-        // set selected cohort
-        ref.read(_selectedCohortProvider.notifier).setCohort(cohort);
-      },
+        ),
+      ),
     );
   }
 }
 
-class AdmissionEnrollmentPage extends StatelessWidget {
-  static const routeName = '/admission/enrollment';
-  const AdmissionEnrollmentPage({super.key});
+class _EnrollFormSection extends ConsumerStatefulWidget {
+  final int studentId;
+
+  const _EnrollFormSection({required this.studentId});
+
+  @override
+  ConsumerState<_EnrollFormSection> createState() => _EnrollFormSectionState();
+}
+
+class _EnrollFormSectionState extends ConsumerState<_EnrollFormSection> {
+  final _formKey = GlobalKey<FormState>();
+  final _studentIdController = TextEditingController();
+  final _schoolEmailController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _studentIdController.addListener(() async {
+      // TODO: this should be its own function (from name and id to email)
+      final studentId = _studentIdController.text.trim();
+      final student = await ref.read(
+        studentByIdProvider(widget.studentId).future,
+      );
+      final studentName = student?.name ?? "Học viên";
+
+      // Cut the first two character of student ID
+      // Normally, it is /^20/
+      final pattern = RegExp(r'^20');
+      final studentIdCut = switch (pattern.firstMatch(studentId)) {
+        null => studentId,
+        _ => studentId.substring(2),
+      };
+
+      // Auto email from student ID
+      // first name is de-accented
+      final firstName = diacritic.removeDiacritics(studentName.split(' ').last);
+      final lastNameInitials = studentName
+          .split(' ')
+          .reversed
+          .skip(1)
+          .map((e) => e[0].toUpperCase())
+          .join();
+
+      // Set the email to controller
+      final emailDomain = "sis.hust.edu.vn";
+      final emailName = "$firstName.$lastNameInitials$studentIdCut";
+      final email = "$emailName@$emailDomain";
+      _schoolEmailController.text = email;
+    });
+  }
+
+  @override
+  void dispose() {
+    _studentIdController.dispose();
+    _schoolEmailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Admission Enrollment'),
-      ),
-      body: Flex(
-        direction: Axis.vertical,
+    return Form(
+      key: _formKey,
+      child: Column(
+        spacing: context.gutter,
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Flexible(
-            child: Padding(
-              padding: EdgeInsets.all(context.gutter),
-              child: EzRow(
-                children: [
-                  CouncilSelector(width: 600),
-                  _CohortSelector(),
-                  FilledButton.icon(
-                    icon: const Icon(Icons.school),
-                    onPressed: null,
-                    label: Text("Nhập học"),
-                  ),
-                ],
-              ),
+          ListTile(title: Text("Nhập học")),
+          CouncilSelector(),
+          CohortSelector(),
+          TextFormField(
+            controller: _studentIdController,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Vui lòng nhập mã học viên';
+              }
+              return null;
+            },
+            decoration: InputDecoration(
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              labelText: "Mã học viên",
+              hintText: "Mã học viên do BĐT cấp",
+              prefixIcon: Icon(Symbols.numbers),
             ),
           ),
-          Flexible(child: const _EnrollmentForm()),
+          TextFormField(
+            controller: _schoolEmailController,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Vui lòng nhập email học viên';
+              }
+              if (!RegExp(r'^[\w-\.]+@sis\.hust\.edu\.vn$').hasMatch(value)) {
+                return 'Email không hợp lệ. Vui lòng sử dụng email @sis.hust.edu.vn';
+              }
+              return null;
+            },
+            decoration: InputDecoration(
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              labelText: "Email",
+              hintText: "Email @sis.hust.edu.vn",
+              prefixIcon: Icon(Symbols.email),
+            ),
+          ),
+
+          // Enroll button
+          EnrollButtonBuilder(
+            studentUid: widget.studentId,
+            builder: (context, callback) => FilledButton.icon(
+              icon: Icon(Symbols.save),
+              label: Text("Nhập học"),
+              onPressed: () {
+                if (!_formKey.currentState!.validate()) return;
+                callback();
+              },
+            ),
+            studentIdController: _studentIdController,
+            schoolEmailController: _schoolEmailController,
+          ),
         ],
       ),
     );
   }
 }
 
-class _EnrollmentForm extends ConsumerWidget {
-  const _EnrollmentForm();
+// class _EnrollmentForm extends ConsumerWidget {
+//   const _EnrollmentForm();
+//
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final studentsState = ref.watch(admissionStudentsProvider);
+//     switch (studentsState) {
+//       case AsyncLoading():
+//         return const Center(child: CircularProgressIndicator());
+//       case AsyncError():
+//         return const Center(child: Text("Lỗi tải dữ liệu."));
+//       default:
+//     }
+//
+//     final students = studentsState.value!;
+//
+//     return SingleChildScrollView(
+//       child: Padding(
+//         padding: EdgeInsets.all(context.gutter),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           spacing: context.gutter,
+//           children: [
+//             for (final student in students)
+//               Flex(
+//                 direction: Axis.horizontal,
+//                 spacing: context.gutter,
+//                 children: [
+//                   Flexible(fit: FlexFit.tight, child: Text(student.hoTen)),
+//                   Flexible(
+//                     fit: FlexFit.tight,
+//                     flex: 3,
+//                     child: TextFormField(
+//                       decoration: InputDecoration(
+//                         floatingLabelBehavior: FloatingLabelBehavior.always,
+//                         labelText: "Mã số sinh viên",
+//                       ),
+//                     ),
+//                   ),
+//                   Flexible(
+//                     fit: FlexFit.tight,
+//                     flex: 3,
+//                     child: TextFormField(
+//                       decoration: InputDecoration(
+//                         floatingLabelBehavior: FloatingLabelBehavior.always,
+//                         labelText: "Email học viên",
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
+class _StudentInfoSection extends ConsumerWidget {
+  final int studentId;
+  const _StudentInfoSection({required this.studentId});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final studentsState = ref.watch(admissionStudentsProvider);
-    switch (studentsState) {
+    final studentAsync = ref.watch(studentByIdProvider(studentId));
+    switch (studentAsync) {
       case AsyncLoading():
         return const Center(child: CircularProgressIndicator());
       case AsyncError():
@@ -122,46 +246,75 @@ class _EnrollmentForm extends ConsumerWidget {
       default:
     }
 
-    final students = studentsState.value!;
+    final student = studentAsync.value!;
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.all(context.gutter),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: context.gutter,
-          children: [
-            for (final student in students)
-              Flex(
-                direction: Axis.horizontal,
-                spacing: context.gutter,
-                children: [
-                  Flexible(fit: FlexFit.tight, child: Text(student.hoTen)),
-                  Flexible(
-                    fit: FlexFit.tight,
-                    flex: 3,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                        labelText: "Mã số sinh viên",
-                      ),
-                    ),
-                  ),
-                  Flexible(
-                    fit: FlexFit.tight,
-                    flex: 3,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                        labelText: "Email học viên",
-                      ),
-                    ),
-                  ),
-                ],
+    copyCallback(String? text) {
+      void callback() {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Không có dữ liệu để sao chép")),
+        );
+        return;
+      }
+
+      void callbackCopy() {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        Clipboard.setData(ClipboardData(text: text as String));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Đã sao chép: $text")),
+        );
+      }
+
+      return text == null ? callback : callbackCopy;
+    }
+
+    return Column(
+      key: ValueKey(studentId),
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(title: Text("Học viên")),
+        Card(
+          child: Column(
+            children: [
+              SizedBox(height: context.gutterTiny),
+              ListTile(
+                leading: Icon(Symbols.numbers),
+                title: Text("Mã số hồ sơ"),
+                subtitle: Text(student.admissionId ?? "N/A"),
+                onTap: copyCallback(student.admissionId),
               ),
-          ],
+              Divider(),
+              ListTile(
+                leading: Icon(Symbols.person),
+                title: Text("Họ tên"),
+                subtitle: Text(student.name),
+                onTap: copyCallback(student.name),
+              ),
+              Divider(),
+              // ListTile(
+              //   leading: Icon(null),
+              //   title: Text("Giới tính"),
+              //   subtitle: Text(student.gender.toString()),
+              // ),
+              // Divider(),
+              ListTile(
+                leading: Icon(Symbols.email),
+                title: Text("Email"),
+                subtitle: Text(student.personalEmail ?? "N/A"),
+                onTap: copyCallback(student.personalEmail),
+              ),
+              // Divider(),
+              // ListTile(
+              //   leading: Icon(Symbols.phone),
+              //   title: Text("Điện thoại"),
+              //   subtitle: Text(student.phone ?? "N/A"),
+              //   onTap: copyCallback(student.phone),
+              // ),
+              SizedBox(height: context.gutterTiny),
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }

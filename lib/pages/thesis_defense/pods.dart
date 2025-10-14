@@ -1,13 +1,9 @@
-import 'package:fami_tools/business/db_v2_providers/thesis.dart';
-import 'package:fami_tools/pages/admission/_providers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../business/db_v1_providers.dart';
+import '../../business/db_v2_providers.dart';
 import '../../business/domain_objects.dart';
 import './payment_pdf.dart';
-
-export '../../business/db_v1_providers.dart'
-    hide teacherByIdProvider, TeacherByIdNotifier;
-export '../../business/db_v2_providers.dart';
 
 const trackingColumn = "flag_tracking";
 

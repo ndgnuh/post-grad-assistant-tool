@@ -14,12 +14,27 @@ final courseClassIdsBySemesterProvider = AsyncNotifierProvider.family(
   CourseClassIdsBySemesterNotifier.new,
 );
 
+/// Provide ids and contibution weights of teachers assigned to a course class
+final teachingAssignmentsProvider = AsyncNotifierProvider.family(
+  TeachingAssignmentsNotifier.new,
+);
+
+/// Provide the teachers assigned to
+/// teach a course class, along with their contribution percentage
 final teachingTeachersProvider = AsyncNotifierProvider.family(
   TeachingTeachersNotifier.new,
 );
 
 final courseClassSemestersProvider = AsyncNotifierProvider(
   CourseClassSemestersNotifier.new,
+);
+
+final studentIdsByCourseClassProvider = AsyncNotifierProvider.family(
+  StudentIdsByCourseClassNotifier.new,
+);
+
+final registrationCountProvider = AsyncNotifierProvider.family(
+  RegistrationCountNotifier.new,
 );
 
 class CourseClassIdsBySemesterNotifier extends AsyncNotifier<List<int>> {
@@ -39,6 +54,22 @@ class CourseClassIdsBySemesterNotifier extends AsyncNotifier<List<int>> {
       );
     final courseClassIds = await query.map((c) => c.id).get();
     return courseClassIds;
+  }
+}
+
+class TeachingAssignmentsNotifier
+    extends AsyncNotifier<List<TeachingAssignmentData>> {
+  final int courseClassId;
+  TeachingAssignmentsNotifier(this.courseClassId);
+
+  @override
+  FutureOr<List<TeachingAssignmentData>> build() async {
+    final db = await ref.watch(driftDatabaseProvider.future);
+    final query = db.teachingAssignment.select()
+      ..where((t) => t.classId.equals(courseClassId))
+      ..orderBy([(t) => OrderingTerm(expression: t.order)]);
+    final assignments = await query.get();
+    return assignments;
   }
 }
 
@@ -118,5 +149,52 @@ class TeachingTeachersNotifier extends AsyncNotifier<Map<TeacherData, double>> {
     // Refetch the data
     ref.invalidateSelf();
     return;
+  }
+}
+
+/// Provide the number of registered students for a course class, if the detailed list is not available, use the count provided from the university.
+/// Here's the messy details:
+/// When the student register for a course class,
+/// we are not sent the detailed list of the students.
+/// The only information available is the number of registered students.
+/// After the registration period is over, the detailed list of students is available to us.
+/// However, we still need the number of registered students during the registration period for certain tasks (cancel or not, inform the teacher, etc).
+class RegistrationCountNotifier extends AsyncNotifier<int> {
+  final int courseClassId;
+  RegistrationCountNotifier(this.courseClassId);
+
+  @override
+  FutureOr<int> build() async {
+    // First, try to get the detailed list of students
+    final studentIds = await ref.watch(
+      studentIdsByCourseClassProvider(courseClassId).future,
+    );
+    if (studentIds.isNotEmpty) {
+      return studentIds.length;
+    }
+
+    // If the detailed list is not available, use the count from the course class record
+    final db = await ref.watch(driftDatabaseProvider.future);
+    final stmt = db.lopTinChi.select()
+      ..where((cc) => cc.id.equals(courseClassId));
+    final count = await stmt
+        .map((cc) => cc.registrationCount)
+        .getSingleOrNull();
+    return count ?? 0;
+  }
+}
+
+class StudentIdsByCourseClassNotifier extends AsyncNotifier<List<int>> {
+  final int courseClassId;
+  StudentIdsByCourseClassNotifier(this.courseClassId);
+
+  @override
+  FutureOr<List<int>> build() async {
+    final db = await ref.watch(driftDatabaseProvider.future);
+    final query = db.dangKyHoc.select()
+      ..where((record) => record.courseClassId.equals(courseClassId))
+      ..orderBy([(t) => OrderingTerm(expression: t.studentId)]);
+    final studentIds = await query.map((scc) => scc.studentId).get();
+    return studentIds;
   }
 }

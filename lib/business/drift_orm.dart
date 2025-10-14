@@ -13,7 +13,15 @@ const trueExpr = Constant(true);
 const falseExpr = Constant(false);
 
 // Alias because the original name is not english
+typedef Student = HocVien;
 typedef CourseClassCompanion = LopTinChiCompanion;
+typedef Cohort = NienKhoa;
+typedef StudentCompanion = HocVienCompanion;
+
+extension Translation on MyDriftDatabase {
+  Student get student => hocVien;
+  Cohort get cohort => nienKhoa;
+}
 
 @DriftDatabase(include: {"database_v1.drift"})
 class MyDriftDatabase extends _$MyDriftDatabase {

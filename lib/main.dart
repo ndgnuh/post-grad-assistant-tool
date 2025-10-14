@@ -19,145 +19,143 @@ Future main() async {
 
   if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
     await hotKeyManager.unregisterAll();
-  }
 
-  /// Hotkey for going back
-  await hotKeyManager.register(
-    HotKey(
-      key: PhysicalKeyboardKey.arrowLeft,
-      modifiers: const [HotKeyModifier.alt],
-      scope: HotKeyScope.inapp,
-      identifier: 'go-back',
-    ),
-    keyDownHandler: (hotKey) {
-      //TODO
-    },
-  );
-
-  /// C-g for the go-to dialog
-  await hotKeyManager.register(
-    HotKey(
-      key: PhysicalKeyboardKey.keyG,
-      modifiers: [HotKeyModifier.control],
-      scope: HotKeyScope.inapp,
-      identifier: 'go-to',
-    ),
-    keyDownHandler: (hotKey) {
-      final currentContext = navigationKey.currentState?.context;
-      switch (currentContext) {
-        case BuildContext context:
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Go to'),
-              content: SizedBox(
-                height: 300,
-                width: 300,
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    ListTile(
-                      title: const Text('Home'),
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        navigationKey.currentState?.pushNamed('/');
-                      },
-                    ),
-                    ListTile(
-                      title: const Text('Settings'),
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        navigationKey.currentState?.pushNamed('/settings');
-                      },
-                    ),
-                    ListTile(
-                      title: const Text('About'),
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        navigationKey.currentState?.pushNamed('/about');
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Close'),
-                ),
-              ],
-            ),
-          );
-      }
-    },
-  );
-
-  /// Hotkey for opening the menu <C-w>
-  await hotKeyManager.register(
-    HotKey(
-      key: PhysicalKeyboardKey.keyW,
-      modifiers: [HotKeyModifier.control],
-      scope: HotKeyScope.inapp,
-      identifier: 'open-menu',
-    ),
-    keyDownHandler: (hotKey) {
-      print("OPEN MENU");
-      final context = navigationKey.currentState?.context;
-      print(context);
-      if (context != null) {
-        Scaffold.of(context).openDrawer();
-      }
-    },
-  );
-
-  registerCommonShortcuts({
-    required String identifier,
-    required key,
-    required Function(CommonShortcuts) callback,
-    modifiers = const [HotKeyModifier.control],
-  }) async {
+    /// Hotkey for going back
     await hotKeyManager.register(
       HotKey(
-        key: key,
-        modifiers: modifiers,
+        key: PhysicalKeyboardKey.arrowLeft,
+        modifiers: const [HotKeyModifier.alt],
         scope: HotKeyScope.inapp,
-        identifier: identifier,
+        identifier: 'go-back',
       ),
       keyDownHandler: (hotKey) {
-        final state = shortcutStateKey.currentState?.widget;
-        print(state);
-        print(state?.onCreateNew);
-        switch (state) {
-          case CommonShortcuts state:
-            callback(state);
+        //TODO
+      },
+    );
+
+    /// C-g for the go-to dialog
+    await hotKeyManager.register(
+      HotKey(
+        key: PhysicalKeyboardKey.keyG,
+        modifiers: [HotKeyModifier.control],
+        scope: HotKeyScope.inapp,
+        identifier: 'go-to',
+      ),
+      keyDownHandler: (hotKey) {
+        final currentContext = navigationKey.currentState?.context;
+        switch (currentContext) {
+          case BuildContext context:
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Go to'),
+                content: SizedBox(
+                  height: 300,
+                  width: 300,
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      ListTile(
+                        title: const Text('Home'),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          navigationKey.currentState?.pushNamed('/');
+                        },
+                      ),
+                      ListTile(
+                        title: const Text('Settings'),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          navigationKey.currentState?.pushNamed('/settings');
+                        },
+                      ),
+                      ListTile(
+                        title: const Text('About'),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          navigationKey.currentState?.pushNamed('/about');
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Close'),
+                  ),
+                ],
+              ),
+            );
         }
       },
     );
+
+    /// Hotkey for opening the menu <C-w>
+    await hotKeyManager.register(
+      HotKey(
+        key: PhysicalKeyboardKey.keyW,
+        modifiers: [HotKeyModifier.control],
+        scope: HotKeyScope.inapp,
+        identifier: 'open-menu',
+      ),
+      keyDownHandler: (hotKey) {
+        print("OPEN MENU");
+        final context = navigationKey.currentState?.context;
+        print(context);
+        if (context != null) {
+          Scaffold.of(context).openDrawer();
+        }
+      },
+    );
+
+    registerCommonShortcuts({
+      required String identifier,
+      required key,
+      required Function(CommonShortcuts) callback,
+      modifiers = const [HotKeyModifier.control],
+    }) async {
+      await hotKeyManager.register(
+        HotKey(
+          key: key,
+          modifiers: modifiers,
+          scope: HotKeyScope.inapp,
+          identifier: identifier,
+        ),
+        keyDownHandler: (hotKey) {
+          final state = shortcutStateKey.currentState?.widget;
+          switch (state) {
+            case CommonShortcuts state:
+              callback(state);
+          }
+        },
+      );
+    }
+
+    registerCommonShortcuts(
+      identifier: 'create-new',
+      key: PhysicalKeyboardKey.keyN,
+      callback: (state) => state.onCreateNew?.call(),
+    );
+
+    registerCommonShortcuts(
+      identifier: 'import',
+      key: PhysicalKeyboardKey.keyI,
+      callback: (state) => state.onImport?.call(),
+    );
+
+    registerCommonShortcuts(
+      identifier: 'paste',
+      key: PhysicalKeyboardKey.keyV,
+      callback: (state) => state.onPaste?.call(),
+    );
+
+    registerCommonShortcuts(
+      identifier: 'search',
+      key: PhysicalKeyboardKey.keyF,
+      callback: (state) => state.onSearch?.call(),
+    );
   }
-
-  registerCommonShortcuts(
-    identifier: 'create-new',
-    key: PhysicalKeyboardKey.keyN,
-    callback: (state) => state.onCreateNew?.call(),
-  );
-
-  registerCommonShortcuts(
-    identifier: 'import',
-    key: PhysicalKeyboardKey.keyI,
-    callback: (state) => state.onImport?.call(),
-  );
-
-  registerCommonShortcuts(
-    identifier: 'paste',
-    key: PhysicalKeyboardKey.keyV,
-    callback: (state) => state.onPaste?.call(),
-  );
-
-  registerCommonShortcuts(
-    identifier: 'search',
-    key: PhysicalKeyboardKey.keyF,
-    callback: (state) => state.onSearch?.call(),
-  );
 
   if (kIsWeb) {
     databaseFactory = databaseFactoryFfiWeb;

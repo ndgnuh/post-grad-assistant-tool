@@ -19,6 +19,21 @@ export 'custom_widgets/expanded_scrollview.dart';
 export 'custom_widgets/menu_dialog.dart';
 export 'custom_widgets/responsive_breakpoints.dart';
 
+const debouncedCallback = debounced_callback;
+
+ValueChanged<T> debouncedValueChanged<T>({
+  required ValueChanged<T> callback,
+  required Duration duration,
+}) {
+  var timer = Timer(duration, () {});
+  void debounced(T value) {
+    timer.cancel();
+    timer = Timer(duration, () => callback(value));
+  }
+
+  return debounced;
+}
+
 Function debounced_callback<F extends Function>({
   required F function,
   required Duration duration,

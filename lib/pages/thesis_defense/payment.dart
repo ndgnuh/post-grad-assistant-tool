@@ -7,6 +7,8 @@ import 'dart:io';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../business/db_v1_providers.dart';
+import '../../business/db_v2_providers.dart';
 import '../teachers/index.dart';
 import '../../business/domain_objects.dart';
 import '../../custom_widgets.dart' show DirectoryPicker;
@@ -588,7 +590,7 @@ class _Actions {
     final messenger = ScaffoldMessenger.of(context);
     final saveDir = state.saveDirectoryController.text;
 
-    final summaryName = "TongHop_ThanhToan.pdf";
+    final summaryName = "TongHop_ThanhToan_x2.pdf";
     final requestName = "YeuCau_ThanhToan.pdf";
     final listingName = "BangKe_ThanhToan.pdf";
     final incomeListingName = "BangKe_ThuNhap.pdf";

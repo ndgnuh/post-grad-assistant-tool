@@ -1,10 +1,11 @@
 import 'dart:io';
 
+import 'package:fami_tools/business/drift_orm.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:pdf/pdf.dart';
 
-import '../../business/domain_objects.dart';
+import '../../business/domain_objects.dart' hide AdmissionType;
 import '../../services/pdf_widgets.dart' as pw;
 
 extension _DateDmy on DateTime {
@@ -16,73 +17,75 @@ extension _DateDmy on DateTime {
 
 Future<void> saveAdmissionForms({
   required String saveDirectory,
-  required List<HocVien> candidates,
-  required TieuBanXetTuyen council,
+  required List<StudentData> candidates,
+  required AdmissionCouncilData council,
 }) async {
-  List<HocVien> candidatesXt = [
+  final year = council.year;
+
+  List<StudentData> candidatesXt = [
     for (final c in candidates)
-      if (c.idDienTuyenSinh == DienTuyenSinh.xetTuyen) c,
+      if (c.admissionType == AdmissionType.interview) c,
   ];
 
-  List<HocVien> candidatesCnThs = [
+  List<StudentData> candidatesCnThs = [
     for (final c in candidates)
-      if (c.idDienTuyenSinh == DienTuyenSinh.tichHop) c,
+      if (c.admissionType == AdmissionType.integrated) c,
   ];
 
   await _buildBang2DanhSachThiSinh(
     candidates: candidatesXt,
     saveDirectory: saveDirectory,
-    year: council.nam,
+    year: year,
   );
   await _buildBang3NhanXet(
     candidates: candidatesXt,
     saveDirectory: saveDirectory,
-    gv: await council.chuTich,
+    gv: await GiangVien.getById(council.presidentId),
     role: "Chủ tịch tiểu ban",
-    year: council.nam,
+    year: year,
   );
   await _buildBang3NhanXet(
     candidates: candidatesXt,
     saveDirectory: saveDirectory,
-    gv: await council.thuKy,
+    gv: await GiangVien.getById(council.secretaryId),
     role: "Thư ký tiểu ban",
-    year: council.nam,
+    year: year,
   );
   await _buildBang3NhanXet(
     candidates: candidatesXt,
     saveDirectory: saveDirectory,
-    gv: await council.uyVien1,
+    gv: await GiangVien.getById(council.member1Id),
     role: "Ủy viên",
-    year: council.nam,
+    year: year,
   );
   await _buildBang3NhanXet(
     candidates: candidatesXt,
     saveDirectory: saveDirectory,
-    gv: await council.uyVien2,
+    gv: await GiangVien.getById(council.member2Id),
     role: "Ủy viên",
-    year: council.nam,
+    year: year,
   );
   await _buildBang3NhanXet(
     candidates: candidatesXt,
     saveDirectory: saveDirectory,
-    gv: await council.uyVien3,
+    gv: await GiangVien.getById(council.member3Id),
     role: "Ủy viên",
-    year: council.nam,
+    year: year,
   );
   await _buildBang4TongHopKq(
     candidates: candidatesXt,
     saveDirectory: saveDirectory,
-    year: council.nam,
+    year: year,
   );
   await _buildBang4TongHopCnths(
     candidates: candidatesCnThs,
     saveDirectory: saveDirectory,
-    year: council.nam,
+    year: year,
   );
 }
 
 Future<pw.Document> _buildBang2DanhSachThiSinh({
-  required List<HocVien> candidates,
+  required List<StudentData> candidates,
   required String saveDirectory,
   required year,
 }) async {
@@ -179,7 +182,7 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
                 pw.Container(
                   padding: padding,
                   child: pw.Text(
-                    hv.soHoSo ?? "",
+                    hv.admissionId ?? "",
                     textAlign: pw.TextAlign.center,
                     softWrap: false,
                   ),
@@ -187,7 +190,7 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
                 pw.Container(
                   padding: padding,
                   child: pw.Text(
-                    hv.hoTen,
+                    hv.name,
                     textAlign: pw.TextAlign.left,
                     softWrap: false,
                   ),
@@ -195,7 +198,7 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
                 pw.Container(
                   padding: padding,
                   child: pw.Text(
-                    hv.gioiTinh.toString(),
+                    hv.gender.toString(),
                     textAlign: pw.TextAlign.center,
                     softWrap: false,
                   ),
@@ -203,7 +206,7 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
                 pw.Container(
                   padding: padding,
                   child: pw.Text(
-                    hv.noiSinh ?? "",
+                    hv.placeOfBirth ?? "",
                     textAlign: pw.TextAlign.center,
                     softWrap: false,
                   ),
@@ -211,22 +214,14 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
                 pw.Container(
                   padding: padding,
                   child: pw.Text(
-                    hv.truongTotNghiepDaiHoc ?? "",
+                    hv.bachelorUniversity ?? "",
                     textAlign: pw.TextAlign.center,
                   ),
                 ),
                 pw.Container(
                   padding: padding,
                   child: pw.Text(
-                    hv.heTotNghiepDaiHoc ?? "",
-                    textAlign: pw.TextAlign.center,
-                    softWrap: false,
-                  ),
-                ),
-                pw.Container(
-                  padding: padding,
-                  child: pw.Text(
-                    hv.nganhTotNghiepDaiHoc ?? "",
+                    hv.bachelorProgram ?? "",
                     textAlign: pw.TextAlign.center,
                     softWrap: false,
                   ),
@@ -234,7 +229,7 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
                 pw.Container(
                   padding: padding,
                   child: pw.Text(
-                    hv.xepLoaiTotNghiepDaiHoc ?? "",
+                    hv.bachelorMajor ?? "",
                     textAlign: pw.TextAlign.center,
                     softWrap: false,
                   ),
@@ -242,7 +237,7 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
                 pw.Container(
                   padding: padding,
                   child: pw.Text(
-                    hv.ngayTotNghiepDaiHoc?.toDmy() ?? "",
+                    hv.bachelorGraduationRank.toString(),
                     textAlign: pw.TextAlign.center,
                     softWrap: false,
                   ),
@@ -250,7 +245,7 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
                 pw.Container(
                   padding: padding,
                   child: pw.Text(
-                    hv.nganhDaoTaoThacSi ?? "",
+                    hv.bachelorGraduationDate?.toDmy() ?? "",
                     textAlign: pw.TextAlign.center,
                     softWrap: false,
                   ),
@@ -258,7 +253,7 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
                 pw.Container(
                   padding: padding,
                   child: pw.Text(
-                    hv.dinhHuongChuyenSau ?? "",
+                    hv.masterMajor ?? "",
                     textAlign: pw.TextAlign.center,
                     softWrap: false,
                   ),
@@ -266,7 +261,15 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
                 pw.Container(
                   padding: padding,
                   child: pw.Text(
-                    hv.hocPhanDuocMien ?? "",
+                    hv.intendedSpecialization ?? "",
+                    textAlign: pw.TextAlign.center,
+                    softWrap: false,
+                  ),
+                ),
+                pw.Container(
+                  padding: padding,
+                  child: pw.Text(
+                    hv.exemptedCourses ?? "",
                     softWrap: false,
                     textAlign: pw.TextAlign.center,
                   ),
@@ -300,7 +303,7 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
 }
 
 Future<pw.Document> _buildBang3NhanXet({
-  required List<HocVien> candidates,
+  required List<StudentData> candidates,
   required String saveDirectory,
   required GiangVien gv,
   required String role,
@@ -376,18 +379,18 @@ Future<pw.Document> _buildBang3NhanXet({
         "Tổng điểm",
       ];
 
-      final tbl = pw.EzTable<HocVien>(
+      final tbl = pw.EzTable<StudentData>(
         headers: headers,
         data: candidates,
         rowBuilder: (i, hv) {
           return [
             i + 1,
-            hv.soHoSo,
-            hv.hoTen,
-            hv.ngaySinh?.toDmy(),
-            hv.gioiTinh,
-            hv.nganhDaoTaoThacSi,
-            hv.dinhHuongChuyenSau,
+            hv.admissionId,
+            hv.name,
+            hv.dateOfBirth?.toDmy(),
+            hv.gender.toString(),
+            hv.masterMajor,
+            hv.intendedSpecialization,
           ];
         },
       );
@@ -429,7 +432,7 @@ Future<pw.Document> _buildBang3NhanXet({
 }
 
 Future<pw.Document> _buildBang4TongHopCnths({
-  required List<HocVien> candidates,
+  required List<StudentData> candidates,
   required String saveDirectory,
   required String year,
 }) async {
@@ -474,17 +477,17 @@ Future<pw.Document> _buildBang4TongHopCnths({
         ],
       );
 
-      final tbl = pw.EzTable<HocVien>(
+      final tbl = pw.EzTable<StudentData>(
         data: candidates,
-        rowBuilder: (i, HocVien hv) => [
+        rowBuilder: (i, StudentData hv) => [
           (i + 1).toString(),
-          hv.soHoSo,
-          hv.hoTen,
-          hv.ngaySinh?.toDmy(),
-          hv.gioiTinh,
-          hv.nganhDaoTaoThacSi,
-          hv.dinhHuongChuyenSau,
-          hv.hocPhanDuocMien,
+          hv.admissionId,
+          hv.name,
+          hv.dateOfBirth?.toDmy(),
+          hv.gender.toString(),
+          hv.masterMajor,
+          hv.intendedSpecialization,
+          hv.exemptedCourses ?? "",
         ],
         headers: [
           "TT",
@@ -534,7 +537,7 @@ Future<pw.Document> _buildBang4TongHopCnths({
 }
 
 Future<pw.Document> _buildBang4TongHopKq({
-  required List<HocVien> candidates,
+  required List<StudentData> candidates,
   required String saveDirectory,
   required String year,
 }) async {
@@ -586,16 +589,16 @@ Future<pw.Document> _buildBang4TongHopKq({
         "Ủy viên 2",
         "Ủy viên 3",
       ];
-      final tbl = pw.EzTable<HocVien>(
+      final tbl = pw.EzTable<StudentData>(
         data: candidates,
-        rowBuilder: (i, HocVien hv) => [
+        rowBuilder: (i, StudentData hv) => [
           (i + 1).toString(),
-          hv.soHoSo,
-          hv.hoTen,
-          hv.ngaySinh?.toDmy(),
-          hv.gioiTinh,
-          hv.nganhDaoTaoThacSi,
-          hv.dinhHuongChuyenSau,
+          hv.admissionId,
+          hv.name,
+          hv.dateOfBirth?.toDmy(),
+          hv.gender.toString(),
+          hv.masterMajor,
+          hv.intendedSpecialization,
           pw.EzTable<String>(
             headerForeground: PdfColorGrey(1, 0),
             headers: subheaders,

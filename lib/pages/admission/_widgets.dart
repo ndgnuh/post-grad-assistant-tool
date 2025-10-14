@@ -1,43 +1,18 @@
-import 'dart:async';
-
+import 'package:fami_tools/business/db_v2_providers/students.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../business/db_v1_providers.dart';
-import '../../business/domain_objects.dart';
+import '../../business/copy_pasta.dart';
+import '../../business/drift_orm.dart';
+import 'common.providers.dart';
 
-// class AdmissionCouncilSelector extends ConsumerWidget {
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final councilsState = ref.watch(admissionCouncilsProvider);
-//
-//     switch (councilsState) {
-//       case AsyncLoading():
-//         return CircularProgressIndicator();
-//       case AsyncError():
-//         return Text("Error loading council");
-//       default:
-//     }
-//
-//     final councils = councilsState.value!;
-//
-//
-//   }
-// }
-
-final selectedCouncilProvider = AsyncNotifierProvider(
-  SelectedCouncilNotifier.new,
-);
-
-class CouncilSelector extends ConsumerWidget {
-  final double? width;
-  const CouncilSelector({super.key, this.width});
+class CohortSelector extends ConsumerWidget {
+  const CohortSelector({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedCouncilState = ref.watch(selectedCouncilProvider);
-    switch (selectedCouncilState) {
+    final modelState = ref.watch(cohortSelectionProvider);
+    switch (modelState) {
       case AsyncLoading():
         return const Center(child: CircularProgressIndicator());
       case AsyncError():
@@ -45,66 +20,169 @@ class CouncilSelector extends ConsumerWidget {
       default:
     }
 
-    // selected council depends on the councils
-    // Since selected council is resolved, councils should be too.
-    final councilsState = ref.watch(admissionCouncilsProvider);
-    final selectedCouncil = selectedCouncilState.value;
-    final councils = councilsState.value!;
+    final model = modelState.value!;
 
-    return DropdownMenu<AdmissionCouncil>(
-      label: const Text("Tiểu ban xét tuyển"),
-      width: width,
-      initialSelection: selectedCouncil,
+    return DropdownMenu<CohortData>(
+      label: const Text("Khóa"),
+      expandedInsets: EdgeInsets.zero,
+      initialSelection: model.selected,
       dropdownMenuEntries: [
-        for (final council in councils)
+        for (final cohort in model.options)
+          DropdownMenuEntry(
+            value: cohort,
+            label: cohort.cohort,
+          ),
+      ],
+      onSelected: (cohort) {
+        // set selected cohort
+        final notifier = ref.read(cohortSelectionProvider.notifier);
+        notifier.select(cohort);
+      },
+    );
+  }
+}
+
+class CouncilSelector extends ConsumerWidget {
+  const CouncilSelector({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final modelState = ref.watch(admissionCouncilSelectionProvider);
+    switch (modelState) {
+      case AsyncLoading():
+        return const Center(child: CircularProgressIndicator());
+      case AsyncError():
+        return const Center(child: Text("Lỗi tải dữ liệu."));
+      default:
+    }
+
+    final model = modelState.value!;
+
+    return DropdownMenu<AdmissionCouncilData>(
+      label: const Text("Hội đồng"),
+      expandedInsets: EdgeInsets.zero,
+      initialSelection: model.selected,
+      dropdownMenuEntries: [
+        for (final council in model.options)
           DropdownMenuEntry(
             value: council,
-            label: council.toString(),
+            label: "Tiểu ban ${council.year}",
           ),
       ],
       onSelected: (council) {
-        final notifier = ref.read(selectedCouncilProvider.notifier);
+        // set selected cohort
+        final notifier = ref.read(admissionCouncilSelectionProvider.notifier);
         notifier.select(council);
       },
     );
   }
 }
 
-class SelectedCouncilNotifier extends AsyncNotifier<AdmissionCouncil?> {
-  String get selectedCouncilPref => "selected-council";
+class AcceptanceEmailSender extends ConsumerWidget {
+  final Widget Function(BuildContext, VoidCallback) builder;
+  const AcceptanceEmailSender({super.key, required this.builder});
 
   @override
-  FutureOr<AdmissionCouncil?> build() async {
-    // watch for list of councils
-    final councils = await ref.watch(admissionCouncilsProvider.future);
-    if (councils.isEmpty) return null;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final messenger = ScaffoldMessenger.of(context);
+    return builder(context, () async {
+      final email = await ref.read(acceptanceEmailProvider.future);
+      if (email == null) {
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text("Chọn khóa học viên để hiển thị email"),
+          ),
+        );
+        return;
+      }
 
-    // get selected if any
-    final prefs = await SharedPreferences.getInstance();
-    final councilKey = prefs.getString(selectedCouncilPref);
-    if (councilKey == null) return null;
-
-    // If parse fail
-    final councilId = int.tryParse(councilKey);
-    if (councilId == null) return null;
-
-    // Search by Id
-    for (final council in councils) {
-      if (council.id == councilId) return council;
-    }
-
-    // Fallback
-    return null;
+      if (context.mounted == false) return;
+      await showDialog(
+        context: context,
+        builder: (context) => EmailCopyDialog(email: email),
+      );
+    });
   }
+}
 
-  void select(AdmissionCouncil? value) async {
-    state = AsyncData(value);
-    final prefs = await SharedPreferences.getInstance();
-    switch (value?.id) {
-      case int id:
-        await prefs.setString(selectedCouncilPref, id.toString());
-      case null:
-        await prefs.remove(selectedCouncilPref);
-    }
+class InterviewEmailSender extends ConsumerWidget {
+  final Widget Function(BuildContext, VoidCallback) builder;
+  const InterviewEmailSender({super.key, required this.builder});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return builder(context, () async {
+      final email = await ref.read(interviewEmailProvider.future);
+      if (context.mounted == false) return;
+      await showDialog(
+        context: context,
+        builder: (context) => EmailCopyDialog(email: email),
+      );
+    });
+  }
+}
+
+class EnrollButtonBuilder extends ConsumerWidget {
+  final int studentUid;
+  final TextEditingController studentIdController;
+  final TextEditingController schoolEmailController;
+  final Widget Function(BuildContext context, VoidCallback callback) builder;
+
+  const EnrollButtonBuilder({
+    super.key,
+    required this.studentUid,
+    required this.builder,
+    required this.studentIdController,
+    required this.schoolEmailController,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final messenger = ScaffoldMessenger.of(context);
+    return builder(context, () async {
+      // Check student ID and school email are not empty
+      final studentId = studentIdController.text.trim();
+      final schoolEmail = schoolEmailController.text.trim();
+      if (studentId.isEmpty || schoolEmail.isEmpty) {
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Mã số học viên và email đại học cấp không được để trống",
+            ),
+          ),
+        );
+        return;
+      }
+
+      final cohortModel = await ref.read(cohortSelectionProvider.future);
+      final councilModel = await ref.read(
+        admissionCouncilSelectionProvider.future,
+      );
+
+      final cohort = cohortModel.selected;
+      final council = councilModel.selected;
+      if (cohort == null || council == null) {
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text("Chọn tiểu ban xét tuyển & khóa học viên"),
+          ),
+        );
+        return;
+      }
+
+      final notifier = ref.read(studentMutationProvider(studentUid).notifier);
+      await notifier.enroll(
+        cohortId: cohort.cohort,
+        studentId: studentId,
+        schoolEmail: schoolEmail,
+        admissionCouncilId: council.id,
+      );
+
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text("Nhập học thành công"),
+        ),
+      );
+    });
   }
 }

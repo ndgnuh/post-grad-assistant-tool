@@ -1,26 +1,43 @@
 // This is experimental code for drift ORM
 import 'package:drift/drift.dart';
 
-enum GraduationRank {
-  excellent('Xuất sắc'),
-  good('Giỏi'),
-  fairlyGood('Khá'),
-  average('Trung bình'),
-  poor('Yếu');
+// Course classes
+export 'enums/day_of_week.dart';
 
-  final String label;
-  const GraduationRank(this.label);
+// Interpersional misc
+export 'enums/gender.dart';
+export 'enums/academic_titles.dart';
+export 'enums/admission_type.dart';
+export 'enums/student.dart';
+
+// DMY Date converter
+class YmdDateConverter extends TypeConverter<DateTime?, String?> {
+  const YmdDateConverter();
 
   @override
-  String toString() => label;
+  DateTime? fromSql(String? fromDb) {
+    if (fromDb == null || fromDb.isEmpty) return null;
 
-  static GraduationRank fromString(String fromDb) {
-    for (final rank in GraduationRank.values) {
-      if (rank.label == fromDb.trim()) {
-        return rank;
-      }
+    final pattern = RegExp(r'^(\d{4})[-\/](\d{2})[-\/](\d{2})$');
+    final matched = pattern.firstMatch(fromDb);
+    switch (matched) {
+      case null:
+        throw Exception('Invalid date format: $fromDb');
+      case final m:
+        final year = int.parse(m.group(1)!);
+        final month = int.parse(m.group(2)!);
+        final day = int.parse(m.group(3)!);
+        return DateTime(year, month, day);
     }
-    throw Exception('Invalid GraduationRank value: $fromDb');
+  }
+
+  @override
+  String? toSql(DateTime? value) {
+    if (value == null) return null;
+    final day = value.day.toString().padLeft(2, '0');
+    final month = value.month.toString().padLeft(2, '0');
+    final year = value.year.toString().padLeft(4, '0');
+    return '$year-$month-$day';
   }
 }
 
@@ -31,40 +48,6 @@ enum CourseClassStatus {
   const CourseClassStatus(this.value, this.label);
   final int value;
   final String label;
-}
-
-enum DayOfWeek {
-  monday(2, 'Thứ 2'),
-  tuesday(3, 'Thứ 3'),
-  wednesday(4, 'Thứ 4'),
-  thursday(5, 'Thứ 5'),
-  friday(6, 'Thứ 6'),
-  saturday(7, 'Thứ 7'),
-  sunday(8, 'Chủ nhật');
-
-  final int value;
-  final String label;
-  const DayOfWeek(this.value, this.label);
-
-  @override
-  String toString() => label;
-}
-
-class DayOfWeekConverter extends TypeConverter<DayOfWeek, int> {
-  const DayOfWeekConverter();
-
-  @override
-  DayOfWeek fromSql(int fromDb) {
-    for (final day in DayOfWeek.values) {
-      if (day.value == fromDb) {
-        return day;
-      }
-    }
-    throw Exception('Invalid DayOfWeek value: $fromDb');
-  }
-
-  @override
-  int toSql(DayOfWeek day) => day.value;
 }
 
 enum CourseCategory {
@@ -102,60 +85,6 @@ class CourseCategoryConverter extends TypeConverter<CourseCategory, String> {
   String toSql(CourseCategory category) => category.value;
 }
 
-enum Gender {
-  male("M", "Nam"),
-  female("F", "Nữ"),
-  unknown("-", "Không xác định");
-
-  final String value;
-  final String label;
-  const Gender(this.value, this.label);
-
-  @override
-  String toString() => label;
-}
-
-enum AcademicDegree {
-  bachelor(value: "bachelor", label: "Cử nhân"),
-  master(value: "master", label: "Thạc sĩ"),
-  doctor(value: "doctor", label: "Tiến sĩ");
-
-  final String value;
-  final String label;
-  const AcademicDegree({required this.value, required this.label});
-
-  @override
-  String toString() => label;
-}
-
-enum AcademicRank {
-  associateProfessor(value: "PGS", label: "Phó giáo sư"),
-  professor(value: "GS", label: "Giáo sư");
-
-  final String value;
-  final String label;
-  const AcademicRank({required this.value, required this.label});
-
-  @override
-  String toString() => label;
-}
-
-class AcademicRankConverter extends TypeConverter<AcademicRank?, String?> {
-  const AcademicRankConverter();
-
-  @override
-  AcademicRank? fromSql(String? fromDb) {
-    if (fromDb == null) return null;
-    for (final rank in AcademicRank.values) {
-      if (rank.value == fromDb.trim()) return rank;
-    }
-    return null;
-  }
-
-  @override
-  String toSql(AcademicRank? rank) => rank?.value ?? "";
-}
-
 class CourseClassStatusConverter extends TypeConverter<CourseClassStatus, int> {
   const CourseClassStatusConverter();
 
@@ -171,35 +100,4 @@ class CourseClassStatusConverter extends TypeConverter<CourseClassStatus, int> {
 
   @override
   int toSql(CourseClassStatus status) => status.value;
-}
-
-class AcademicDegreeConverter extends TypeConverter<AcademicDegree?, String?> {
-  const AcademicDegreeConverter();
-
-  @override
-  AcademicDegree? fromSql(String? fromDb) {
-    if (fromDb == null) return null;
-    for (final degree in AcademicDegree.values) {
-      if (degree.value == fromDb.trim()) {
-        return degree;
-      }
-    }
-    return null;
-  }
-
-  @override
-  String toSql(AcademicDegree? degree) => degree?.value ?? "";
-}
-
-class GenderConverter extends TypeConverter<Gender, String> {
-  const GenderConverter();
-  @override
-  Gender fromSql(String fromDb) => switch (fromDb.trim().toLowerCase()) {
-    "m" => Gender.male,
-    "f" => Gender.female,
-    _ => Gender.unknown,
-  };
-
-  @override
-  String toSql(Gender gender) => gender.value;
 }

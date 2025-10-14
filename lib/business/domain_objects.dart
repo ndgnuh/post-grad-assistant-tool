@@ -1710,6 +1710,7 @@ abstract class TieuBanXetTuyen with _$TieuBanXetTuyen {
 @JsonEnum(valueField: "value")
 enum TrangThaiHocVien {
   xetTuyenTriHoan('xt-pending', 'Xét tuyển (hoãn)'),
+  binhThuong('bt', 'Bình thường'),
   xetTuyen('xt', 'Xét tuyển'),
   dangHoc('hoc', 'Đang học'),
   nghiHoc('nghi', 'Thôi học'),

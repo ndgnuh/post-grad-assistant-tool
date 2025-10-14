@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../business/domain_objects.dart';
 import 'datamodels.dart';
@@ -42,64 +43,26 @@ import 'pages/theses/list.dart';
 import 'pages/thesis_defense/index.dart';
 import 'pages/xet_tuyen.dart' show PageXetTuyen;
 
-final initialRoute = switch (kReleaseMode) {
-  true => HomePage.routeName,
-
-  // false => DraftPage.routeName,
-  // false => PageCourseClassList.routeName,
-  // false => TeacherSearchPage.routeName,
-  // false => MobilePageThesisAssignList.routeName,
-  // false => ThesisListPage.routeName,
-  // false => SettingsPage.routeName,
-  // false => ThesisDefenseRegisterPage.routeName,
-  // false => ThesisDefensePaymentPage.routeName,
-  // false => PageAcademicYearList.routeName,
-  // false => PhdStudentListPage.routeName,
-  // false => PhdStudentCreatePage.routeName,
-  false => CourseClassListPage.routeName,
-
-  // false => AdmissionListPage.routeName,
-  // false => AdmissionEnrollmentPage.routeName,
-  false => CourseLimitingPage.routeName,
-};
-
-// const initialRoute = SettingsPage.routeName;
-// const initialRoute = MobilePageThesisAssignList.routeName;
-// const initialRoute = PageAcademicYearList.routeName;
-// const initialRoute = MobilePageTeacherList.routeName;
-
-// const initialRoute = PageImportHocPhan.routeName;
-
-// const initialRoute = PagePhanCongHoiDongLuanVanThacSi.routeName;
-// const initialRoute = PageQuanLyDeTai.routeName;
-// const initialRoute = QlBieuMau.routeName;
-
-//const initialRoute = QlHocVien.routeName;
-
-// const initialRoute = PageXetTuyen.routeName;
-
-// const initialRoute = DraftPage.routeName;
-// const initialRoute = PageQuanLyGiangVien.routeName;
-// const initialRoute = DangKyBaoVePage.routeName;
-// const initialRoute = PageHanCheHocPhan.routeName;
-// const initialRoute = PageLopTinChi.routeName;
-
 const routes = [
-  (route: HomePage.routeName, label: "Trang chính", icon: Icons.home),
+  (
+    route: HomePage.routeName,
+    label: "Trang chính",
+    icon: Symbols.home,
+  ),
   (
     route: TeacherSearchPage.routeName,
     label: "Giảng viên (M)",
-    icon: Icons.person,
+    icon: Symbols.person,
   ),
   (
     route: PageQuanLyGiangVien.routeName,
     label: "Giảng viên",
-    icon: Icons.person,
+    icon: Symbols.person,
   ),
   (
     route: StudentListPage.routeName,
     label: "Học viên",
-    icon: Icons.person,
+    icon: Symbols.person,
   ),
   (
     route: PhdStudentListPage.routeName,
@@ -109,40 +72,48 @@ const routes = [
   (
     route: MobilePageThesisAssignList.routeName,
     label: "Giao đề tài (v2)",
-    icon: Icons.assignment_turned_in,
+    icon: Symbols.assignment_turned_in,
   ),
   (
     route: ThesisListPage.routeName,
     label: "Quản lý đề tài (v2)",
-    icon: Icons.assignment_turned_in,
+    icon: Symbols.assignment_turned_in,
   ),
   (
     route: PageAcademicYearList.routeName,
     label: "Quản lý đợt học",
-    icon: Icons.lock_clock,
+    icon: Symbols.lock_clock,
   ),
   (
     route: PageCourseClassList.routeName,
     label: "Lớp tín chỉ (v2)",
-    icon: Icons.class_,
+    icon: Symbols.class_,
   ),
   (
     route: AdmissionListPage.routeName,
     label: "Xét tuyển (v2)",
-    icon: Icons.person_add,
+    icon: Symbols.person_add,
   ),
   (
     route: CourseClassListPage.routeName,
     label: "Lớp tín chỉ (v3)",
-    icon: Icons.class_rounded,
+    icon: Symbols.class_,
   ),
   (
     route: CourseLimitingPage.routeName,
     label: "Hạn chế học phần",
-    icon: Icons.class_rounded,
+    icon: Symbols.class_,
   ),
-  (route: PageCourseList.routeName, label: "Học phần", icon: Icons.book),
-  (route: PageQuanLyDeTai.routeName, label: "Quản lý đề tài", icon: Icons.book),
+  (
+    route: PageCourseList.routeName,
+    label: "Học phần",
+    icon: Symbols.book,
+  ),
+  (
+    route: PageQuanLyDeTai.routeName,
+    label: "Quản lý đề tài",
+    icon: Symbols.book,
+  ),
   (
     route: ThesisDefenseRegisterPage.routeName,
     label: "Bảo vệ luận văn",
@@ -151,19 +122,173 @@ const routes = [
   (
     route: PageXetTuyen.routeName,
     label: "Xét tuyển cao học",
-    icon: Icons.person_add,
+    icon: Symbols.person_add,
   ),
   (
     route: PagePhanCongHoiDongLuanVanThacSi.routeName,
     label: "Phân hội đồng bảo vệ",
-    icon: Icons.person_add,
+    icon: Symbols.person_add,
   ),
   (
     route: SettingsPage.routeName,
     label: "Cài đặt",
-    icon: Icons.settings,
+    icon: Symbols.settings,
   ),
 ];
+
+final initialRoute = switch (kReleaseMode) {
+  true => HomePage.routeName,
+
+  // Debug home page
+  // false => HomePage.routeName,
+
+  // Admission
+  false => AdmissionListPage.routeName,
+  false => AdmissionEnrollmentPage.routeName,
+
+  // Thesis defends
+  // false => ThesisDefenseRegisterPage.routeName,
+  false => ThesisDefensePaymentPage.routeName,
+
+  // false => DraftPage.routeName,
+  // false => PageCourseClassList.routeName,
+  // false => TeacherSearchPage.routeName,
+  // false => MobilePageThesisAssignList.routeName,
+  // false => ThesisListPage.routeName,
+  // false => SettingsPage.routeName,
+  // false => PageAcademicYearList.routeName,
+  // false => PhdStudentListPage.routeName,
+  // false => PhdStudentCreatePage.routeName,
+  false => CourseClassListPage.routeName,
+
+  false => CourseLimitingPage.routeName,
+};
+
+final routesBySections = <String, List<RouteItem>>{
+  "Danh mục": [
+    (
+      route: null,
+      label: "Công việc sắp tới",
+      icon: Symbols.event_upcoming,
+      subtitle: null,
+    ),
+    (
+      route: TeacherSearchPage.routeName,
+      label: "Giảng viên",
+      icon: Symbols.person,
+      subtitle: null,
+    ),
+    (
+      route: PageCourseList.routeName,
+      label: "Học phần",
+      icon: Symbols.book,
+      subtitle: null,
+    ),
+    (
+      label: "Cài đặt",
+      route: SettingsPage.routeName,
+      icon: Symbols.settings,
+      subtitle: null,
+    ),
+  ],
+  "Thạc sĩ / công việc": [
+    (
+      route: AdmissionListPage.routeName,
+      label: "Xét tuyển",
+      icon: Symbols.person_add,
+      subtitle: null,
+    ),
+    (
+      route: null,
+      label: "Thanh toán xét tuyển",
+      icon: Symbols.attach_money,
+      subtitle: null,
+    ),
+    (
+      route: CourseLimitingPage.routeName,
+      label: "Hạn chế học phần",
+      icon: Symbols.checklist,
+      subtitle: null,
+    ),
+    (
+      route: CourseClassListPage.routeName,
+      label: "Phân công giảng dạy",
+      icon: Symbols.co_present,
+      subtitle: null,
+    ),
+    (
+      route: MobilePageThesisAssignList.routeName,
+      label: "Giao đề tài",
+      icon: Symbols.assignment_turned_in,
+      subtitle: null,
+    ),
+    (
+      route: ThesisDefenseRegisterPage.routeName,
+      label: "Bảo vệ luận văn",
+      icon: Symbols.school,
+      subtitle: null,
+    ),
+  ],
+
+  // Index, but for MsC students
+  "Thạc sĩ / danh mục": [
+    (
+      route: StudentListPage.routeName,
+      label: "Học viên",
+      icon: Symbols.person_search,
+      subtitle: null,
+    ),
+    (
+      route: null,
+      label: "Niên khóa",
+      icon: Symbols.group,
+      subtitle: null,
+    ),
+    (
+      route: PageAcademicYearList.routeName,
+      label: "Đợt học",
+      icon: Symbols.calendar_month,
+      subtitle: null,
+    ),
+    (
+      route: ThesisListPage.routeName,
+      label: "Đề tài hướng dẫn",
+      icon: Symbols.assignment,
+      subtitle: null,
+    ),
+  ],
+
+  // PhD students
+  "Nghiên cứu sinh": [
+    (
+      route: PhdStudentCreatePage.routeName,
+      label: "Xét tuyển",
+      icon: Symbols.person_add,
+      subtitle: null,
+    ),
+    (
+      route: PhdStudentListPage.routeName,
+      label: "Nghiên cứu sinh",
+      icon: Symbols.school,
+      subtitle: null,
+    ),
+    (
+      route: null,
+      label: "Thanh toán xét tuyển",
+      icon: Symbols.attach_money,
+      subtitle: null,
+    ),
+  ],
+
+  "Debug": [
+    (
+      route: DraftPage.routeName,
+      label: "Trang nháp",
+      icon: Symbols.bug_report,
+      subtitle: null,
+    ),
+  ],
+};
 
 Widget buildRoute(BuildContext context, RouteSettings settings) {
   String? name = settings.name;
@@ -231,7 +356,6 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
 
     /// Course class list
     case PageCourseClassList.routeName:
-      print("Args: $args");
       switch (args) {
         case HocKy initialSemester:
           return PageCourseClassList(initialSemester: initialSemester);
@@ -253,7 +377,7 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     case AdmissionImportPage.routeName:
       return const AdmissionImportPage();
     case AdmissionEnrollmentPage.routeName:
-      return const AdmissionEnrollmentPage();
+      return const AdmissionEnrollmentPage(studentId: 67);
 
     /// Selection pages
     case PageSelectClassOf.routeName:
@@ -350,3 +474,31 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
     },
   );
 }
+
+// const initialRoute = SettingsPage.routeName;
+// const initialRoute = MobilePageThesisAssignList.routeName;
+// const initialRoute = PageAcademicYearList.routeName;
+// const initialRoute = MobilePageTeacherList.routeName;
+
+// const initialRoute = PageImportHocPhan.routeName;
+
+// const initialRoute = PagePhanCongHoiDongLuanVanThacSi.routeName;
+// const initialRoute = PageQuanLyDeTai.routeName;
+// const initialRoute = QlBieuMau.routeName;
+
+//const initialRoute = QlHocVien.routeName;
+
+// const initialRoute = PageXetTuyen.routeName;
+
+// const initialRoute = DraftPage.routeName;
+// const initialRoute = PageQuanLyGiangVien.routeName;
+// const initialRoute = DangKyBaoVePage.routeName;
+// const initialRoute = PageHanCheHocPhan.routeName;
+// const initialRoute = PageLopTinChi.routeName;
+
+typedef RouteItem = ({
+  String? route,
+  String label,
+  IconData? icon,
+  String? subtitle,
+});

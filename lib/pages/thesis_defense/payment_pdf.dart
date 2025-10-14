@@ -5,10 +5,11 @@ import 'package:number_to_vietnamese_words/number_to_vietnamese_words.dart';
 import 'package:pdf/pdf.dart';
 import 'package:riverpod/riverpod.dart';
 
+import '../../business/db_v2_providers.dart';
 import '../../business/domain_objects.dart';
 import '../../preferences.dart';
 import '../../services/pdf_builder/index.dart';
-import './pods.dart';
+import '../../business/db_v1_providers.dart';
 
 final doubleCheckPdfProvider = FutureProvider.autoDispose((ref) async {
   final model = await ref.watch(thesisPaymentPdfModelProvider.future);
@@ -800,6 +801,11 @@ class ThesisPaymentPdfModel {
   }) async {
     // Convert everything to proxies
     thesisProxies ??= [for (final thesis in theses ?? []) await thesis.proxy];
+    thesisProxies.sort((a, b) {
+      final aName = a.thesis.soQdBaoVe ?? "";
+      final bName = b.thesis.soQdBaoVe ?? "";
+      return aName.compareTo(bName);
+    });
     theses ??= [for (final proxy in thesisProxies) proxy.thesis];
 
     // Resolve payout per teachers and list of teachers

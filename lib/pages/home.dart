@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:file_picker/file_picker.dart';
-
 import 'dart:core';
-import '../drawer.dart';
-import '../shortcuts.dart';
-import '../preferences.dart' as preferences;
+import 'dart:math';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_gutter/flutter_gutter.dart';
+
+import '../custom_widgets.dart';
+import './../pages.dart';
 
 class HomePage extends StatelessWidget {
   static const String routeName = "/";
@@ -14,59 +14,86 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var now = DateTime.now();
-    final messenger = ScaffoldMessenger.of(context);
-    final navigator = Navigator.of(context);
+    final gutter = context.responsiveGutter;
+    final width = MediaQuery.sizeOf(context).width;
+    VoidCallback? navigatorCallback(String? route) {
+      if (route == null) return null;
+      return () => Navigator.of(context).pushNamed(route);
+    }
 
     return Scaffold(
-      appBar: AppBar(title: const Text("FamiTools")),
-      drawer: MyDrawer(),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(
-            title: Text("Cơ sở dữ liệu"),
-            subtitle: FutureBuilder<String?>(
-              future: preferences.getDatabasePath(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Text("Loading...");
-                } else if (snapshot.hasError) {
-                  return Text("Lỗi: ${snapshot.error}");
-                } else if (snapshot.hasData && snapshot.data != null) {
-                  return Text("${snapshot.data}");
-                } else {
-                  return const Text("Chưa chọn cơ sở dữ liệu");
-                }
-              },
-            ),
-            onTap: () async {
-              final databasePath = await preferences.selectDatabaseDirectory();
-              switch (databasePath) {
-                case String databasePath:
-                  messenger.showSnackBar(
-                    SnackBar(
-                        content: Text("Đã chọn cơ sở dữ liệu: $databasePath")),
-                  );
-                  navigator.pushReplacementNamed(routeName);
-                default:
-                  messenger.showSnackBar(
-                    const SnackBar(
-                        content: Text("Không tìm thấy cơ sở dữ liệu")),
-                  );
-              }
-            },
-          ),
-          Expanded(
-            child: TableCalendar(
-              focusedDay: now,
-              firstDay: DateTime(1970, 1, 1),
-              lastDay: DateTime(2099, 12, 31),
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: SizedBox(
+          width: min(960, width),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(gutter),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: gutter,
+              children: [
+                for (final entry in routesBySections.entries)
+                  _NavigationSection(
+                    title: entry.key,
+                    children: [
+                      for (final route in entry.value)
+                        ListTile(
+                          title: Text(route.label),
+                          leading: Icon(route.icon),
+                          subtitle: route.subtitle != null
+                              ? Text(route.subtitle!)
+                              : null,
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: navigatorCallback(route.route),
+                          enabled: route.route != null,
+                        ),
+                    ],
+                  ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
+    );
+  }
+}
+
+class _NavigationSection extends StatelessWidget {
+  final String title;
+  final List<Widget> children;
+
+  const _NavigationSection({
+    required this.title,
+    required this.children,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final childrenWithDividers = <Widget>[];
+    for (var i = 0; i < children.length; i++) {
+      childrenWithDividers.add(children[i]);
+      if (i < children.length - 1) {
+        childrenWithDividers.add(Divider());
+      }
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(title: Text(title)),
+        Card(
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              SizedBox(height: context.gutterTiny),
+              ...childrenWithDividers,
+              SizedBox(height: context.gutterTiny),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

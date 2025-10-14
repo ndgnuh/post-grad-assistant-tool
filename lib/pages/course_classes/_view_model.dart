@@ -25,12 +25,14 @@ class CourseClassViewModel {
   final CourseClassData courseClass;
   final Map<TeacherData, double> teachers;
   final CourseData course;
+  final int registrationCount;
 
   const CourseClassViewModel({
     required this.semester,
     required this.courseClass,
     required this.teachers,
     required this.course,
+    this.registrationCount = 0,
   });
 }
 
@@ -60,11 +62,16 @@ class CourseClassViewModelByIdNotifier
       teachingTeachersProvider(courseClass.id).future,
     );
 
+    final registrationCount = await ref.watch(
+      registrationCountProvider(courseClass.id).future,
+    );
+
     return CourseClassViewModel(
       semester: semester,
       courseClass: courseClass,
       teachers: teachingTeachers,
       course: course,
+      registrationCount: registrationCount,
     );
   }
 }
