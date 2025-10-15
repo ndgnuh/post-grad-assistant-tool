@@ -10,6 +10,7 @@ import './index.dart';
 import './providers.dart';
 import './widgets.dart';
 import '../../shortcuts.dart';
+import '../../custom_widgets.dart';
 
 final FocusNode searchFocusNode = FocusNode();
 
@@ -30,66 +31,64 @@ class StudentListPage extends StatelessWidget {
     return CommonShortcuts(
       onSearch: () => searchFocusNode.requestFocus(),
       child: Scaffold(
-        appBar: AppBar(title: Text('Học viên')),
-        body: Align(
-          alignment: Alignment.topCenter,
-          child: SizedBox(
-            width: min(960, totalWidth),
-            child: Padding(
-              padding: EdgeInsets.all(gutter),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                verticalDirection: direction,
-                spacing: gutter,
-                children: [
-                  Expanded(
-                    child: _StudentListView(),
-                  ),
-                  Column(
-                    spacing: gutter,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IntrinsicHeight(
-                        child: Flex(
-                          direction: Axis.horizontal,
-                          spacing: gutter,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Flexible(
-                              fit: FlexFit.tight,
-                              flex: 2,
-                              child: CohortSelector(),
-                            ),
-                            CohortReset(),
-                          ],
-                        ),
+        appBar: ConstrainedScreen(
+          child: AppBar(title: Text("Học viên")),
+        ),
+        body: ConstrainedScreen(
+          child: Padding(
+            padding: EdgeInsets.all(gutter),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              verticalDirection: direction,
+              spacing: gutter,
+              children: [
+                Expanded(
+                  child: _StudentListView(),
+                ),
+                Column(
+                  spacing: gutter,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IntrinsicHeight(
+                      child: Flex(
+                        direction: Axis.horizontal,
+                        spacing: gutter,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Flexible(
+                            fit: FlexFit.tight,
+                            flex: 2,
+                            child: CohortSelector(),
+                          ),
+                          CohortReset(),
+                        ],
                       ),
-                      IntrinsicHeight(
-                        child: Row(
-                          spacing: gutter,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            FilterModeButton(),
-                            Expanded(child: StudentSearchBar()),
-                            StudentReloadButton(),
-                          ],
-                        ),
+                    ),
+                    IntrinsicHeight(
+                      child: Row(
+                        spacing: gutter,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          FilterModeButton(),
+                          Expanded(child: StudentSearchBar()),
+                          StudentReloadButton(),
+                        ],
                       ),
-                    ],
-                  ),
-                  // IntrinsicHeight(
-                  //   child: Row(
-                  //     spacing: gutter,
-                  //     crossAxisAlignment: CrossAxisAlignment.stretch,
-                  //     children: [
-                  //       FilterModeButton(),
-                  //       StudentSearchBar(),
-                  //       StudentReloadButton(),
-                  //     ],
-                  //   ),
-                  // ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+                // IntrinsicHeight(
+                //   child: Row(
+                //     spacing: gutter,
+                //     crossAxisAlignment: CrossAxisAlignment.stretch,
+                //     children: [
+                //       FilterModeButton(),
+                //       StudentSearchBar(),
+                //       StudentReloadButton(),
+                //     ],
+                //   ),
+                // ),
+              ],
             ),
           ),
         ),

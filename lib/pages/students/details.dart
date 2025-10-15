@@ -6,6 +6,7 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../custom_tiles.dart';
 import '../../business/domain_objects.dart';
+import '../../custom_widgets.dart';
 
 class StudentDetailPage extends StatelessWidget {
   static const String routeName = '/students/detail';
@@ -61,20 +62,27 @@ class StudentDetailPage extends StatelessWidget {
         onUpdate: (value) => student.updatePhoneNumber(value!),
       ),
     ];
-
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: SizedBox(
-          width: min(960, width),
-          child: Padding(
-            padding: EdgeInsets.all(context.gutter),
-            child: ListView.separated(
-              itemBuilder: (_, i) => children[i],
-              itemCount: children.length,
-              separatorBuilder: (_, _) => Divider(),
-            ),
+      appBar: ConstrainedScreen(
+        child: AppBar(
+          title: Text(title),
+          primary: true,
+        ),
+      ),
+      body: ConstrainedScreen(
+        child: Padding(
+          padding: EdgeInsets.all(context.gutter),
+          child: Column(
+            spacing: context.gutter,
+            children: [
+              Expanded(
+                child: ListView.separated(
+                  itemBuilder: (_, i) => children[i],
+                  itemCount: children.length,
+                  separatorBuilder: (_, _) => Divider(),
+                ),
+              ),
+            ],
           ),
         ),
       ),

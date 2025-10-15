@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:diacritic/diacritic.dart';
 import 'package:file_picker/file_picker.dart';
@@ -1544,4 +1545,27 @@ extension ExpandedChildren on Expanded {
       for (final child in children) Expanded(child: child),
     ];
   }
+}
+
+const maxScreenWidth = 960.0;
+const maxScreenWidthConstraints = BoxConstraints(maxWidth: maxScreenWidth);
+
+class ConstrainedScreen extends StatelessWidget implements PreferredSizeWidget {
+  final Widget child;
+
+  const ConstrainedScreen({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: maxScreenWidthConstraints,
+        child: child,
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
