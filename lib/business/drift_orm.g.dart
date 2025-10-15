@@ -5277,10 +5277,10 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
   late final GeneratedColumn<String> admissionId = GeneratedColumn<String>(
     'admission_id',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: 'UNIQUE',
+    requiredDuringInsert: true,
+    $customConstraints: 'UNIQUE NOT NULL',
   );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -5574,6 +5574,8 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
           _admissionIdMeta,
         ),
       );
+    } else if (isInserting) {
+      context.missing(_admissionIdMeta);
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -5774,7 +5776,7 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
       admissionId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}admission_id'],
-      ),
+      )!,
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -5890,7 +5892,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
   final int? id;
   final String cohort;
   final String? managementId;
-  final String? admissionId;
+  final String admissionId;
   final String name;
   final Gender gender;
   final DateTime? dateOfBirth;
@@ -5916,7 +5918,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     this.id,
     required this.cohort,
     this.managementId,
-    this.admissionId,
+    required this.admissionId,
     required this.name,
     required this.gender,
     this.dateOfBirth,
@@ -5949,9 +5951,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     if (!nullToAbsent || managementId != null) {
       map['management_id'] = Variable<String>(managementId);
     }
-    if (!nullToAbsent || admissionId != null) {
-      map['admission_id'] = Variable<String>(admissionId);
-    }
+    map['admission_id'] = Variable<String>(admissionId);
     map['name'] = Variable<String>(name);
     {
       map['gender'] = Variable<String>(
@@ -6005,9 +6005,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       managementId: managementId == null && nullToAbsent
           ? const Value.absent()
           : Value(managementId),
-      admissionId: admissionId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(admissionId),
+      admissionId: Value(admissionId),
       name: Value(name),
       gender: Value(gender),
       dateOfBirth: dateOfBirth == null && nullToAbsent
@@ -6059,7 +6057,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       id: serializer.fromJson<int?>(json['id']),
       cohort: serializer.fromJson<String>(json['cohort']),
       managementId: serializer.fromJson<String?>(json['management_id']),
-      admissionId: serializer.fromJson<String?>(json['admission_id']),
+      admissionId: serializer.fromJson<String>(json['admission_id']),
       name: serializer.fromJson<String>(json['name']),
       gender: serializer.fromJson<Gender>(json['gender']),
       dateOfBirth: serializer.fromJson<DateTime?>(json['date_of_birth']),
@@ -6104,7 +6102,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       'id': serializer.toJson<int?>(id),
       'cohort': serializer.toJson<String>(cohort),
       'management_id': serializer.toJson<String?>(managementId),
-      'admission_id': serializer.toJson<String?>(admissionId),
+      'admission_id': serializer.toJson<String>(admissionId),
       'name': serializer.toJson<String>(name),
       'gender': serializer.toJson<Gender>(gender),
       'date_of_birth': serializer.toJson<DateTime?>(dateOfBirth),
@@ -6133,7 +6131,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     Value<int?> id = const Value.absent(),
     String? cohort,
     Value<String?> managementId = const Value.absent(),
-    Value<String?> admissionId = const Value.absent(),
+    String? admissionId,
     String? name,
     Gender? gender,
     Value<DateTime?> dateOfBirth = const Value.absent(),
@@ -6159,7 +6157,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     id: id.present ? id.value : this.id,
     cohort: cohort ?? this.cohort,
     managementId: managementId.present ? managementId.value : this.managementId,
-    admissionId: admissionId.present ? admissionId.value : this.admissionId,
+    admissionId: admissionId ?? this.admissionId,
     name: name ?? this.name,
     gender: gender ?? this.gender,
     dateOfBirth: dateOfBirth.present ? dateOfBirth.value : this.dateOfBirth,
@@ -6353,7 +6351,7 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
   final Value<int?> id;
   final Value<String> cohort;
   final Value<String?> managementId;
-  final Value<String?> admissionId;
+  final Value<String> admissionId;
   final Value<String> name;
   final Value<Gender> gender;
   final Value<DateTime?> dateOfBirth;
@@ -6406,7 +6404,7 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     this.id = const Value.absent(),
     required String cohort,
     this.managementId = const Value.absent(),
-    this.admissionId = const Value.absent(),
+    required String admissionId,
     required String name,
     this.gender = const Value.absent(),
     this.dateOfBirth = const Value.absent(),
@@ -6429,6 +6427,7 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     this.createdTime = const Value.absent(),
     this.updatedTime = const Value.absent(),
   }) : cohort = Value(cohort),
+       admissionId = Value(admissionId),
        name = Value(name),
        phone = Value(phone),
        personalEmail = Value(personalEmail),
@@ -6501,7 +6500,7 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     Value<int?>? id,
     Value<String>? cohort,
     Value<String?>? managementId,
-    Value<String?>? admissionId,
+    Value<String>? admissionId,
     Value<String>? name,
     Value<Gender>? gender,
     Value<DateTime?>? dateOfBirth,
@@ -8323,7 +8322,7 @@ abstract class _$MyDriftDatabase extends GeneratedDatabase {
   late final DangKyHoc dangKyHoc = DangKyHoc(this);
   Future<int> createPhdStudent({
     required String cohort,
-    String? admissionId,
+    required String admissionId,
     required String name,
     required Gender gender,
     DateTime? dateOfBirth,
@@ -10941,7 +10940,7 @@ typedef $PhdStudentCreateCompanionBuilder =
       Value<int?> id,
       required String cohort,
       Value<String?> managementId,
-      Value<String?> admissionId,
+      required String admissionId,
       required String name,
       Value<Gender> gender,
       Value<DateTime?> dateOfBirth,
@@ -10969,7 +10968,7 @@ typedef $PhdStudentUpdateCompanionBuilder =
       Value<int?> id,
       Value<String> cohort,
       Value<String?> managementId,
-      Value<String?> admissionId,
+      Value<String> admissionId,
       Value<String> name,
       Value<Gender> gender,
       Value<DateTime?> dateOfBirth,
@@ -11417,7 +11416,7 @@ class $PhdStudentTableManager
                 Value<int?> id = const Value.absent(),
                 Value<String> cohort = const Value.absent(),
                 Value<String?> managementId = const Value.absent(),
-                Value<String?> admissionId = const Value.absent(),
+                Value<String> admissionId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<Gender> gender = const Value.absent(),
                 Value<DateTime?> dateOfBirth = const Value.absent(),
@@ -11471,7 +11470,7 @@ class $PhdStudentTableManager
                 Value<int?> id = const Value.absent(),
                 required String cohort,
                 Value<String?> managementId = const Value.absent(),
-                Value<String?> admissionId = const Value.absent(),
+                required String admissionId,
                 required String name,
                 Value<Gender> gender = const Value.absent(),
                 Value<DateTime?> dateOfBirth = const Value.absent(),

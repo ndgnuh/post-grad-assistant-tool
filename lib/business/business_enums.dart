@@ -101,3 +101,14 @@ class CourseClassStatusConverter extends TypeConverter<CourseClassStatus, int> {
   @override
   int toSql(CourseClassStatus status) => status.value;
 }
+
+// Application stuff
+
+/// How we combine filters
+enum FilterMode {
+  and("AND"),
+  or("OR");
+
+  final String label;
+  const FilterMode(this.label);
+}

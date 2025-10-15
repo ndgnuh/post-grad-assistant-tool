@@ -1,12 +1,14 @@
-import 'package:fami_tools/business/db_v2_providers/phd_students.dart';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
-import '../../custom_widgets.dart';
-import './drift_model.dart';
+import '../../business/db_v2_providers.dart';
 
-final _viewModelProvider = Provider<_ViewModel>((ref) => _ViewModel());
+import './widgets.dart';
+import './providers.dart';
 
 class PhdStudentListPage extends StatelessWidget {
   static const routeName = '/phd-students';
@@ -14,204 +16,99 @@ class PhdStudentListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gutter = context.gutter;
-    final largeScreen = context.isMediumOrLargerScreen;
-
+    final width = MediaQuery.sizeOf(context).width;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nghiên cứu sinh'),
+        title: const Text('PhD Students'),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(gutter),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: gutter,
-          children: [
-            if (largeScreen)
-              IntrinsicHeight(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  spacing: gutter,
-                  children: [
-                    _CohortSelector(),
-                    Expanded(
-                      child: _SearchBar(),
-                    ),
-                    _ActionButton(),
-                  ],
-                ),
-              ),
-
-            if (!largeScreen) _CohortSelector(),
-            if (!largeScreen) _SearchBar(),
-            Expanded(child: _ListView()),
-            if (!largeScreen) _ActionButton(),
-          ],
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: SizedBox(
+          width: min(960, width),
+          child: Padding(
+            padding: EdgeInsets.all(context.gutter),
+            child: Column(
+              children: [
+                CohortSelector(),
+                Expanded(child: _PhdStudentListView()),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
-class _ActionButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final navigator = Navigator.of(context);
-    return FilledButton.icon(
-      label: Text("Thêm NCS"),
-      icon: Icon(Icons.add),
-      onPressed: () => navigator.pushNamed('/phd-students/create'),
-    );
-  }
-}
-
-class _CohortSelector extends ConsumerWidget {
+class _PhdStudentListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cohortsAsync = ref.watch(phdCohortsProvider);
-    switch (cohortsAsync) {
+    final modelAsync = ref.watch(phdStudentListViewModelProvider);
+    switch (modelAsync) {
       case AsyncLoading():
-        return const CircularProgressIndicator();
-      case AsyncError(:final error):
-        return Text('Error: $error');
+        return const Center(child: CircularProgressIndicator());
+      case AsyncError():
+        return Center(child: Text('Error: ${modelAsync.error}'));
       default:
     }
 
-    final cohorts = cohortsAsync.value!;
-    final selectedCohort = ref.watch(selectedCohortProvider);
+    final model = modelAsync.value!;
+    if (model.cohort == null) {
+      return const Center(child: Text('Chọn khóa NCS trước'));
+    }
 
-    return DropdownMenu<String?>(
-      initialSelection: selectedCohort,
-      onSelected: (value) {
-        final notifier = ref.read(selectedCohortProvider.notifier);
-        notifier.select(value);
+    if (model.students.isEmpty) {
+      return const Center(child: Text('Không có NCS trong khóa này'));
+    }
+
+    return ListView.builder(
+      itemBuilder: (context, index) {
+        return _PhdStudentInfo(model: model, index: index);
       },
-      dropdownMenuEntries: [
-        DropdownMenuEntry<String?>(
-          value: null,
-          label: ('Chọn khóa NCS'),
+      itemCount: model.students.length,
+    );
+  }
+}
+
+class _PhdStudentInfo extends StatelessWidget {
+  final PhdStudentListViewModel model;
+  final int index;
+  const _PhdStudentInfo({required this.model, required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    final student = model.students[index];
+    final supervisor = model.supervisors[student]!;
+    final secondarySupervisor = model.secondarySupervisor[student];
+
+    return ExpansionTile(
+      initiallyExpanded: false,
+      title: Text(student.name),
+      children: [
+        ListTile(
+          leading: Icon(Symbols.numbers),
+          title: Text("Mã hồ sơ"),
+          subtitle: Text(student.admissionId),
         ),
-        ...cohorts.map(
-          (cohort) => DropdownMenuEntry<String?>(
-            value: cohort,
-            label: (cohort),
+        ListTile(
+          leading: Icon(Symbols.assignment),
+          title: Text("Đề tài"),
+          subtitle: Text(student.thesis),
+        ),
+        ListTile(
+          leading: Icon(Symbols.person),
+          title: (secondarySupervisor == null)
+              ? Text("Giảng viên hướng dẫn")
+              : Text("Giảng viên hướng dẫn 1"),
+          subtitle: Text(supervisor.name),
+        ),
+        if (secondarySupervisor != null)
+          ListTile(
+            leading: Icon(Symbols.person_2),
+            title: Text("Giảng viên hướng dẫn 2"),
+            subtitle: Text(secondarySupervisor.name),
           ),
-        ),
       ],
     );
   }
 }
-
-class _ListView extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final selectedCohort = ref.watch(selectedCohortProvider);
-    if (selectedCohort == null) {
-      return Center(
-        child: Text("Chọn niên khóa để hiển thị NCS"),
-      );
-    }
-
-    final phdStudentsAsync = ref.watch(filteredPhdStudentsProvider);
-    switch (phdStudentsAsync) {
-      case AsyncLoading():
-        return Center(child: CircularProgressIndicator());
-      case AsyncError(:final error):
-        return Center(child: Text('Error: $error'));
-      default:
-    }
-
-    final phdStudents = phdStudentsAsync.value!;
-
-    return _buildListView(context, phdStudents, ref);
-  }
-
-  Widget _buildListView(
-    BuildContext context,
-    List<PhdStudentViewModel> data,
-    WidgetRef ref,
-  ) {
-    final rows = <DataRow>[];
-    for (final (i, data) in data.indexed) {
-      final student = data.student;
-      final supervisor = data.supervisor;
-      // final secondarySupervisor = data.secondarySupervisor;
-
-      final infos = <String>[
-        (i + 1).toString(),
-        student.name,
-        student.dateOfBirth.toString(),
-        student.phone,
-        student.personalEmail,
-        supervisor.name,
-        student.thesis,
-      ];
-
-      final cells = [for (final info in infos) DataCell(Text(info))];
-      rows.add(DataRow(cells: cells));
-    }
-    return ExpandedScrollView(
-      child: DataTable(
-        columns: [
-          DataColumn(label: Text("STT")),
-          DataColumn(label: Text("Họ tên")),
-          DataColumn(label: Text("Ngày sinh")),
-          DataColumn(label: Text("Số điện thoại")),
-          DataColumn(label: Text("Email")),
-          DataColumn(label: Text("GVHD")),
-          DataColumn(label: Text("Đề tài")),
-        ],
-        rows: rows,
-      ),
-    );
-  }
-}
-
-class _SearchBar extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.read(_viewModelProvider);
-    return SearchBar(
-      hintText: "Tìm kiếm",
-      controller: viewModel.searchTextController,
-    );
-  }
-}
-
-@immutable
-class _ViewModel {
-  final ValueNotifier<String?> selectedCohortNotifier = ValueNotifier(null);
-  final SearchController searchTextController = SearchController();
-
-  bool get noop => selectedCohort == null;
-  String? get searchText => searchTextController.text;
-  String? get selectedCohort => selectedCohortNotifier.value;
-}
-
-// class _PhdStudentList extends ConsumerWidget {
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final viewModel = ref.read(_viewModelProvider);
-//     final viewModel.selectedCohort.value;
-//     final allStudents = ref.watch(phdStudentsByCohorts());
-//
-//     return allStudents.when(
-//       data: (students) {
-//         return ListView.builder(
-//           itemCount: students.length,
-//           itemBuilder: (context, index) {
-//             final student = students[index];
-//             return ListTile(
-//               title: Text(student.name),
-//               subtitle: Text('Cohort: ${student.cohortYear}'),
-//             );
-//           },
-//         );
-//       },
-//       loading: () => CircularProgressIndicator(),
-//       error: (error, stack) => Text('Error: $error'),
-//     );
-//   }
-// }

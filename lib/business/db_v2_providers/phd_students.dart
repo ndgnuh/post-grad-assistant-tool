@@ -1,7 +1,8 @@
 import 'package:riverpod/riverpod.dart';
+import 'package:drift/drift.dart';
 
+import '../db_v2_providers.dart';
 import '../drift_orm.dart';
-// import './../db_v2_providers.dart';
 
 final phdCohortsProvider = AsyncNotifierProvider(
   PhdCohorts.new,
@@ -9,12 +10,60 @@ final phdCohortsProvider = AsyncNotifierProvider(
 final phdStudentByIdProvider = AsyncNotifierProvider.family(
   PhdStudentById.new,
 );
-final phdStudentsByCohortProvider = AsyncNotifierProvider.family(
-  PhdStudentsByCohort.new,
-);
 final phdStudentIdsByCohortProvider = AsyncNotifierProvider.family(
-  PhdStudentIdsByCohortNotifier.new,
+  (String cohort) => PhdStudentIds(cohort: cohort),
 );
+
+class PhdStudentMutationNotifier extends Notifier<void> {
+  @override
+  build() {}
+
+  Future<void> addPhdStudent({
+    // Admisison information
+    required String admissionId,
+    required String cohort,
+
+    // Basic information
+    required String name,
+    required Gender gender,
+    required String placeOfBirth,
+
+    // Contact information
+    required String phone,
+    required String personalEmail,
+
+    // Academic information
+    required String thesis,
+    required int supervisorId,
+    required int? secondarySupervisorId,
+    required String majorSpecialization,
+  }) async {
+    final db = await ref.watch(driftDatabaseProvider.future);
+    final companion = PhdStudentCompanion.insert(
+      // Admission information
+      admissionId: admissionId,
+      cohort: cohort,
+
+      // Basic information
+      name: name,
+      gender: Value(gender),
+      placeOfBirth: Value(placeOfBirth),
+      phone: phone,
+      personalEmail: personalEmail,
+
+      // Academic information
+      thesis: thesis,
+      supervisorId: supervisorId,
+      secondarySupervisorId: Value(secondarySupervisorId),
+      majorSpecialization: Value(majorSpecialization),
+    );
+
+    final stmt = db.phdStudent.insert();
+    await stmt.insert(companion);
+
+    ref.invalidate(phdStudentIdsByCohortProvider(cohort));
+  }
+}
 
 class PhdCohorts extends AsyncNotifier<List<String>> {
   @override
@@ -23,6 +72,26 @@ class PhdCohorts extends AsyncNotifier<List<String>> {
     final query = db.managers.phdStudent.map((p) => p.cohort);
     final result = await query.get();
     return result.toSet().toList()..sort();
+  }
+}
+
+class PhdStudentIds extends AsyncNotifier<List<int>> {
+  final String? cohort;
+
+  PhdStudentIds({this.cohort});
+
+  @override
+  Future<List<int>> build() async {
+    final db = await ref.watch(driftDatabaseProvider.future);
+    final stmt = db.managers.phdStudent;
+
+    if (cohort != null) {
+      stmt.filter((p) => p.cohort.equals(cohort!));
+    }
+
+    final ids = await stmt.map((p) => p.id).get();
+
+    return ids.whereType<int>().toList();
   }
 }
 

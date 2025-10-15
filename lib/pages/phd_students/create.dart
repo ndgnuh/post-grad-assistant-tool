@@ -109,7 +109,7 @@ class _ViewModel {
     return PhdStudentCompanion.insert(
       // management information
       cohort: cohortController.text,
-      admissionId: Value(admissionIdController.text),
+      admissionId: (admissionIdController.text),
 
       // basic information
       name: nameController.text,
@@ -187,9 +187,9 @@ class _SaveButton extends ConsumerWidget {
         if (formKey.currentState?.validate() ?? false) {
           final db = dbState.value!;
           await model.create(db);
-          Navigator.of(context).pop();
-          ref.invalidate(phdCohortsProvider);
-          ref.invalidate(phdStudentsByCohortProvider);
+          // Navigator.of(context).pop();
+          // ref.invalidate(phdCohortsProvider);
+          // ref.invalidate(phdStudentsByCohortProvider);
         }
       },
       child: const Text('Save'),

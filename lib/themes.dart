@@ -6,40 +6,29 @@ ThemeData getTheme({
   required ThemeData baseTheme,
   required BuildContext context,
 }) {
+  final radius = context.gutterSmall;
   final buttonShape = RoundedRectangleBorder(
     borderRadius: BorderRadius.all(
-      Radius.circular(
-        context.gutterSmall,
-      ),
+      Radius.circular(radius),
     ),
   );
 
   final buttonPadding = EdgeInsets.symmetric(
     horizontal: context.gutter,
-    vertical: (context.gutterSmall + context.gutter) / 2,
+    vertical: context.gutterSmall,
+  );
+
+  final segmentedButtonTheme = SegmentedButtonThemeData(
+    style: SegmentedButton.styleFrom(
+      shape: buttonShape,
+      padding: buttonPadding,
+    ),
   );
 
   final filledButtonTheme = FilledButtonThemeData(
     style: FilledButton.styleFrom(
       shape: buttonShape,
       padding: buttonPadding,
-    ),
-  );
-
-  final inputDecorationTheme = InputDecorationTheme(
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(context.gutterSmall),
-    ),
-    floatingLabelBehavior: FloatingLabelBehavior.always,
-  );
-
-  final searchBarTheme = SearchBarThemeData(
-    constraints: BoxConstraints.tightFor(height: 50),
-    side: WidgetStateProperty.all<BorderSide>(
-      BorderSide(width: 1.0),
-    ),
-    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-      RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
     ),
   );
 
@@ -64,9 +53,40 @@ ThemeData getTheme({
     ),
   );
 
+  final iconButtonTheme = IconButtonThemeData(
+    style: IconButton.styleFrom(
+      shape: buttonShape,
+      padding: EdgeInsets.all(context.gutterTiny),
+    ),
+  );
+
   final colorScheme = ColorScheme.fromSeed(
     seedColor: Colors.deepPurple,
     brightness: baseTheme.brightness,
+  );
+
+  // Text inputs
+  // ===========
+
+  final inputDecorationTheme = InputDecorationTheme(
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(context.gutterSmall),
+    ),
+    contentPadding: EdgeInsets.symmetric(
+      horizontal: context.gutter,
+      vertical: context.gutterTiny,
+    ),
+    // floatingLabelBehavior: FloatingLabelBehavior.always,
+  );
+
+  final searchBarTheme = SearchBarThemeData(
+    constraints: BoxConstraints.tightFor(height: 50),
+    side: WidgetStateProperty.all<BorderSide>(
+      BorderSide(width: 1.0),
+    ),
+    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+      RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+    ),
   );
 
   final dropdownMenuTheme = baseTheme.dropdownMenuTheme.copyWith(
@@ -89,7 +109,6 @@ ThemeData getTheme({
 
   return ThemeData.from(
     colorScheme: colorScheme,
-    // textTheme: textTheme,
     useMaterial3: true,
   ).copyWith(
     dropdownMenuTheme: dropdownMenuTheme,
@@ -99,6 +118,8 @@ ThemeData getTheme({
     filledButtonTheme: filledButtonTheme,
     searchBarTheme: searchBarTheme,
     textButtonTheme: textButtonThemeData,
+    iconButtonTheme: iconButtonTheme,
+    segmentedButtonTheme: segmentedButtonTheme,
   );
 }
 

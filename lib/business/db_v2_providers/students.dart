@@ -9,6 +9,14 @@ final studentByIdProvider = AsyncNotifierProvider.family(
   StudentByIdNotifier.new,
 );
 
+final studentIdsByCohortProvider = AsyncNotifierProvider.family(
+  (CohortData cohort) => StudentIdsProvider(cohort: cohort),
+);
+
+final studentIdsBySearch = AsyncNotifierProvider.family(
+  (CohortData cohort) => StudentIdsProvider(cohort: cohort),
+);
+
 final admissionStudentIdsProvider = AsyncNotifierProvider(
   AdmissionStudentIdsNotifier.new,
 );
@@ -160,5 +168,39 @@ class FilteredAdmissionIdsNotifier extends AsyncNotifier<List<int>> {
       );
     final students = await query.get();
     return students.map((e) => e.id).toList();
+  }
+}
+
+class StudentIdsProvider extends AsyncNotifier<List<int>> {
+  final CohortData? cohort;
+  final String? searchQuery;
+
+  StudentIdsProvider({
+    this.cohort,
+    this.searchQuery,
+  });
+
+  @override
+  FutureOr<List<int>> build() async {
+    final db = await ref.watch(driftDatabaseProvider.future);
+    final stmt = db.student.select();
+
+    switch (cohort) {
+      case CohortData cohort:
+        stmt.where((t) => t.cohort.equals(cohort.cohort));
+    }
+
+    switch (searchQuery) {
+      case String searchQuery:
+        stmt.where(
+          (t) =>
+              t.name.contains(searchQuery) |
+              t.studentId.contains(searchQuery) |
+              t.cohort.contains(searchQuery) |
+              t.personalEmail.contains(searchQuery),
+        );
+    }
+
+    return await stmt.map((t) => t.id).get();
   }
 }

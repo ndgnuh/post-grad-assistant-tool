@@ -26,7 +26,7 @@ import 'pages/mobile/course_classes.dart'
     show PageCourseClassList, PageSelectSemester, CourseClassCreatePage;
 import 'pages/mobile/select_class_of.dart'
     show PageSelectClassOf, PageSelectClassOfArgs;
-import 'pages/mobile/students.dart' show StudentListPage, StudentDetailPage;
+import 'pages/students/index.dart';
 import 'pages/mobile/thesis_assign_list.dart' show MobilePageThesisAssignList;
 import 'pages/multiple_selection_page.dart'
     show MultipleSelectionPage, MultipleSelectionPageArgs;
@@ -65,7 +65,7 @@ const routes = [
     icon: Symbols.person,
   ),
   (
-    route: PhdStudentListPage.routeName,
+    route: PhdStudentListV1Page.routeName,
     label: "Nghiên cứu sinh",
     icon: PageXetTuyenNcs.icon,
   ),
@@ -139,16 +139,22 @@ const routes = [
 final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
 
+  // Student page
+  false => StudentListPage.routeName,
+
   // Debug home page
   // false => HomePage.routeName,
 
   // Admission
-  false => AdmissionListPage.routeName,
-  false => AdmissionEnrollmentPage.routeName,
+  // false => AdmissionListPage.routeName,
+  // false => AdmissionEnrollmentPage.routeName,
 
   // Thesis defends
   // false => ThesisDefenseRegisterPage.routeName,
-  false => ThesisDefensePaymentPage.routeName,
+  // false => ThesisDefensePaymentPage.routeName,
+
+  // PhD students pages
+  false => PhdStudentListPage.routeName,
 
   // false => DraftPage.routeName,
   // false => PageCourseClassList.routeName,
@@ -170,6 +176,12 @@ final routesBySections = <String, List<RouteItem>>{
       route: null,
       label: "Công việc sắp tới",
       icon: Symbols.event_upcoming,
+      subtitle: null,
+    ),
+    (
+      route: StudentListPage.routeName,
+      label: "Học viên",
+      icon: Symbols.person_search,
       subtitle: null,
     ),
     (
@@ -233,12 +245,6 @@ final routesBySections = <String, List<RouteItem>>{
   // Index, but for MsC students
   "Thạc sĩ / danh mục": [
     (
-      route: StudentListPage.routeName,
-      label: "Học viên",
-      icon: Symbols.person_search,
-      subtitle: null,
-    ),
-    (
       route: null,
       label: "Niên khóa",
       icon: Symbols.group,
@@ -267,7 +273,7 @@ final routesBySections = <String, List<RouteItem>>{
       subtitle: null,
     ),
     (
-      route: PhdStudentListPage.routeName,
+      route: PhdStudentListV1Page.routeName,
       label: "Nghiên cứu sinh",
       icon: Symbols.school,
       subtitle: null,
@@ -430,6 +436,8 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       return const ThesisDefensePaymentPage();
 
     // PhD Student pages
+    case PhdStudentListV1Page.routeName:
+      return const PhdStudentListPage();
     case PhdStudentListPage.routeName:
       return const PhdStudentListPage();
     case PhdStudentCreatePage.routeName:

@@ -55,6 +55,7 @@ class PhdStudentViewModel {
 class PhdStudentViewModelNotifier extends AsyncNotifier<PhdStudentViewModel?> {
   final int studentId;
   PhdStudentViewModelNotifier(this.studentId);
+
   @override
   FutureOr<PhdStudentViewModel?> build() async {
     final student = await ref.watch(phdStudentByIdProvider(studentId).future);
