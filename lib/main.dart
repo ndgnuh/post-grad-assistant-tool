@@ -3,16 +3,17 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-// import 'business/drift_orm.dart' as orm;
+import 'business/db_v2_providers.dart';
+import 'pages.dart' as pages;
 import 'pages.dart';
+import 'preferences.dart';
 import 'shortcuts.dart';
 import 'themes.dart';
-import 'preferences.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -207,29 +208,53 @@ Future main() async {
 
 final messengerKey = GlobalKey<ScaffoldMessengerState>();
 
-// class GlobalTextScalingWrapper extends ConsumerWidget {
-//   final Widget child;
-//   const GlobalTextScalingWrapper({super.key, required this.child});
-//
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final textScaleFactorState = ref.watch(textScaleFactorProvider);
-//
-//     final defaultTextScaleFactor = Platform.isLinux ? 1.25 : 1.0;
-//
-//     final textScaleFactor = switch (textScaleFactorState) {
-//       AsyncData(:final value) => value ?? defaultTextScaleFactor,
-//       _ => defaultTextScaleFactor,
-//     };
-//     return child;
-//   }
-// }
+class ErrorPage extends StatelessWidget {
+  final Object error;
+  const ErrorPage({super.key, required this.error});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('Lỗi: $error'),
+      ),
+    );
+  }
+}
+
+class LoadingPage extends StatelessWidget {
+  const LoadingPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+}
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final databaseAsync = ref.watch(nullableDatabaseProvider);
+    switch (databaseAsync) {
+      case AsyncLoading():
+        return LoadingPage();
+      case AsyncError(:final error):
+        return ErrorPage(error: error);
+      default:
+    }
+
+    final database = databaseAsync.value;
+    final initialRoute = switch (database) {
+      null => intialSettingsRoute,
+      _ => pages.initialRoute,
+    };
+
     final isDarkModeState = ref.watch(isDarkModeProvider);
 
     final isDarkMode = switch (isDarkModeState) {
@@ -240,6 +265,7 @@ class MyApp extends ConsumerWidget {
     // Function to get lighter color from a color
     final themes = Themes(context);
     final locale = Locale('vi', 'VN');
+
     return SafeArea(
       child: MaterialApp(
         locale: locale,

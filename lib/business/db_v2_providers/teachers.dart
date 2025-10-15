@@ -1,7 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:riverpod/riverpod.dart';
 
-import '../drift_orm.dart';
 import '../db_v2_providers.dart';
 
 final insiderTeacherIdsProvider = AsyncNotifierProvider(
@@ -16,12 +15,12 @@ final teacherByIdProvider = AsyncNotifierProvider.family(
   TeacherById.new,
 );
 
-final teachingCoursesProvider = AsyncNotifierProvider.family(
-  TeachingCoursesNotifier.new,
-);
-
 final teacherIdsByCourseProvider = AsyncNotifierProvider.family(
   TeacherIdsByCourseProvider.new,
+);
+
+final teachingCoursesProvider = AsyncNotifierProvider.family(
+  TeachingCoursesNotifier.new,
 );
 
 class InsiderTeacherIds extends AsyncNotifier<List<int>> {
@@ -64,28 +63,25 @@ class TeacherById extends AsyncNotifier<TeacherData?> {
   }
 }
 
+/// Ids of teachers that teach a given course
+class TeacherIdsByCourseProvider extends AsyncNotifier<List<int>> {
+  final String courseId;
+  TeacherIdsByCourseProvider(this.courseId);
+
+  @override
+  Future<List<int>> build() async {
+    final db = await ref.watch(driftDatabaseProvider.future);
+    final teacherIds = await db.managers.dangKyGiangDay
+        .filter((d) => d.courseId.equals(courseId))
+        .map((d) => d.teacherId)
+        .get();
+    return teacherIds;
+  }
+}
+
 class TeachingCoursesNotifier extends AsyncNotifier<Set<CourseData>> {
   final int teacherId;
   TeachingCoursesNotifier(this.teacherId);
-
-  @override
-  Future<Set<CourseData>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
-    final query = db.managers.dangKyGiangDay
-        .filter((d) => d.teacherId.equals(teacherId))
-        .map((d) => d.courseId);
-
-    final courseIds = await query.get();
-    final courses = <CourseData>{};
-
-    for (final courseId in courseIds) {
-      final course = await ref.watch(courseByIdProvider(courseId).future);
-      if (course != null) {
-        courses.add(course);
-      }
-    }
-    return courses;
-  }
 
   Future<void> addCourse(String courseId) async {
     final db = await ref.read(driftDatabaseProvider.future);
@@ -107,6 +103,25 @@ class TeachingCoursesNotifier extends AsyncNotifier<Set<CourseData>> {
     }
   }
 
+  @override
+  Future<Set<CourseData>> build() async {
+    final db = await ref.watch(driftDatabaseProvider.future);
+    final query = db.managers.dangKyGiangDay
+        .filter((d) => d.teacherId.equals(teacherId))
+        .map((d) => d.courseId);
+
+    final courseIds = await query.get();
+    final courses = <CourseData>{};
+
+    for (final courseId in courseIds) {
+      final course = await ref.watch(courseByIdProvider(courseId).future);
+      if (course != null) {
+        courses.add(course);
+      }
+    }
+    return courses;
+  }
+
   Future<void> removeCourse(String courseId) async {
     final db = await ref.read(driftDatabaseProvider.future);
     final query = (db.delete(db.dangKyGiangDay)
@@ -115,22 +130,6 @@ class TeachingCoursesNotifier extends AsyncNotifier<Set<CourseData>> {
       ));
     await query.go();
     ref.invalidateSelf();
-  }
-}
-
-/// Ids of teachers that teach a given course
-class TeacherIdsByCourseProvider extends AsyncNotifier<List<int>> {
-  final String courseId;
-  TeacherIdsByCourseProvider(this.courseId);
-
-  @override
-  Future<List<int>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
-    final teacherIds = await db.managers.dangKyGiangDay
-        .filter((d) => d.courseId.equals(courseId))
-        .map((d) => d.teacherId)
-        .get();
-    return teacherIds;
   }
 }
 

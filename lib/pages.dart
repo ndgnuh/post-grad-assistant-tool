@@ -1,3 +1,4 @@
+import 'package:fami_tools/pages/initial_setup/index.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -136,8 +137,12 @@ const routes = [
   ),
 ];
 
+const intialSettingsRoute = InitialSetupPage.routeName;
 final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
+
+  // Intial setup
+  // false => InitialSetupPage.routeName,
 
   // Student page
   false => StudentListPage.routeName,
@@ -301,6 +306,10 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
   Object? args = settings.arguments;
 
   switch (name) {
+    // Initial setup
+    case InitialSetupPage.routeName:
+      return const InitialSetupPage();
+
     case PageQuanLyGiangVien.routeName:
       return PageQuanLyGiangVien();
     case "/edit/giang-vien":

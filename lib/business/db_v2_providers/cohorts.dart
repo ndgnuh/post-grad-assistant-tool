@@ -3,7 +3,6 @@ import 'package:drift/drift.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../db_v2_providers.dart';
-import '../drift_orm.dart' show CohortData;
 
 final cohortIdsProvider = AsyncNotifierProvider(
   CohortIdsNotifer.new,

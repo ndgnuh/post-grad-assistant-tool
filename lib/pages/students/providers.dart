@@ -2,23 +2,19 @@ import 'dart:async';
 
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
-
-import '../../business/db_v2_providers.dart';
-import '../../business/db_v1_providers.dart' as v1_providers;
-import '../../business/drift_orm.dart';
-import '../../business/selection_models.dart';
-import '../../business/domain_objects.dart' as v1;
-
 import 'package:riverpod/riverpod.dart';
 
-typedef CohortSelectionModel = SelectionModel<CohortData?>;
-
-final filterModeSelectionModelProvider = AsyncNotifierProvider(
-  () => FilterModeSelectionModelNotifier("student-list"),
-);
+import '../../business/db_v1_providers.dart' as v1_providers;
+import '../../business/db_v2_providers.dart';
+import '../../business/domain_objects.dart' as v1;
+import '../../business/selection_models.dart';
 
 final cohortSelectionModelProvider = AsyncNotifierProvider(
   () => CohortSelectionModelNotifier("student-list"),
+);
+
+final filterModeSelectionModelProvider = AsyncNotifierProvider(
+  () => FilterModeSelectionModelNotifier("student-list"),
 );
 
 final searchModelProvider = NotifierProvider(
@@ -28,6 +24,8 @@ final searchModelProvider = NotifierProvider(
 final studentListViewModelProvider = AsyncNotifierProvider(
   StudentListViewModelNotifier.new,
 );
+
+typedef CohortSelectionModel = SelectionModel<CohortData?>;
 
 class SearchModelNotifier extends Notifier<String> {
   late FocusNode focusNode;
@@ -43,15 +41,15 @@ class SearchModelNotifier extends Notifier<String> {
   @override
   String build() => "";
 
-  void set(String value) {
-    state = value;
-  }
-
   void debounceSet(String value) {
     if (timer.isActive) timer.cancel();
     timer = Timer(duration, () {
       set(value);
     });
+  }
+
+  void set(String value) {
+    state = value;
   }
 }
 
@@ -68,29 +66,6 @@ class StudentListViewModel {
 }
 
 class StudentListViewModelNotifier extends AsyncNotifier<StudentListViewModel> {
-  Expression<bool> cohortFilter(
-    Student student,
-    CohortData? cohort,
-    bool fallback,
-  ) {
-    return switch (cohort) {
-      CohortData cohort => student.cohort.equals(cohort.cohort),
-      _ => Constant(fallback),
-    };
-  }
-
-  Expression<bool> searchFilter(
-    Student student,
-    String searchQuery,
-    bool fallback,
-  ) {
-    if (searchQuery.isEmpty) return Constant(fallback);
-    return student.name.contains(searchQuery) |
-        student.studentId.contains(searchQuery) |
-        student.cohort.contains(searchQuery) |
-        student.personalEmail.contains(searchQuery);
-  }
-
   @override
   FutureOr<StudentListViewModel> build() async {
     final cohortModel = await ref.watch(cohortSelectionModelProvider.future);
@@ -155,5 +130,28 @@ class StudentListViewModelNotifier extends AsyncNotifier<StudentListViewModel> {
       v1Students: v1Students,
       needToSetFilter: false,
     );
+  }
+
+  Expression<bool> cohortFilter(
+    Student student,
+    CohortData? cohort,
+    bool fallback,
+  ) {
+    return switch (cohort) {
+      CohortData cohort => student.cohort.equals(cohort.cohort),
+      _ => Constant(fallback),
+    };
+  }
+
+  Expression<bool> searchFilter(
+    Student student,
+    String searchQuery,
+    bool fallback,
+  ) {
+    if (searchQuery.isEmpty) return Constant(fallback);
+    return student.name.contains(searchQuery) |
+        student.studentId.contains(searchQuery) |
+        student.cohort.contains(searchQuery) |
+        student.personalEmail.contains(searchQuery);
   }
 }

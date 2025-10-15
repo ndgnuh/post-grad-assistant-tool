@@ -12,7 +12,7 @@ part 'preferences.g.dart';
 const dbPreferenceTable = "preference";
 
 const prefKeys = (
-  databasePath: 'database/path',
+  databasePath: 'database-path',
   databaseDirectory: 'database/directory',
   darkMode: 'theme/dark-mode',
   textScaleFactor: 'ui/text-scale-factor',

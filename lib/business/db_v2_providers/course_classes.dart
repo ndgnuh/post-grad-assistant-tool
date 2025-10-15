@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:drift/drift.dart';
 import 'package:riverpod/riverpod.dart';
 
-import '../drift_orm.dart';
 import '../db_v2_providers.dart';
 
 final courseClassByIdProvider = AsyncNotifierProvider.family(

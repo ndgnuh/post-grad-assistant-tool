@@ -1,7 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../business/db_v1_providers.dart';
-import '../../business/db_v2_providers.dart';
+import '../../business/db_v2_providers.dart' hide Student;
 import '../../business/domain_objects.dart';
 import './payment_pdf.dart';
 

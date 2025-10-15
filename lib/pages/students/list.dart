@@ -21,7 +21,6 @@ class StudentListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final totalWidth = MediaQuery.sizeOf(context).width;
     final gutter = context.gutter;
 
     /// Check if mobile

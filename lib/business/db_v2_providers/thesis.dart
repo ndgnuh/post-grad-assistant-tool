@@ -1,8 +1,6 @@
-import 'package:path/path.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../domain_objects.dart' show CouncilRole;
-import '../drift_orm.dart';
 import './../db_v2_providers.dart';
 
 final thesisMemberProvider = AsyncNotifierProvider.family(

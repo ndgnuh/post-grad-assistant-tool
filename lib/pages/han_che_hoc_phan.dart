@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +10,6 @@ import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 import '../business/copy_pasta.dart';
 import '../business/db_v2_providers.dart';
-import '../business/drift_orm.dart';
 import '../business/han_che_hoc_phan.dart';
 import '../custom_widgets.dart';
 
@@ -30,43 +29,6 @@ final _selectedSemesterProvider = NotifierProvider(
   _SelectedSemesterNotifier.new,
 );
 
-class _SelectedSemesterNotifier extends Notifier<SemesterData?> {
-  @override
-  SemesterData? build() => null;
-
-  void set(SemesterData? semester) {
-    state = semester;
-  }
-}
-
-class _SelectedCourseCategoryNotifier extends Notifier<CourseCategory?> {
-  @override
-  CourseCategory? build() => null;
-
-  void set(CourseCategory? category) {
-    state = category;
-  }
-}
-
-class _SearchQueryNotifier extends Notifier<String> {
-  @override
-  String build() => "";
-
-  Timer debounceTimer = Timer(Duration.zero, () {});
-
-  void set(String value) {
-    debounceTimer.cancel();
-    debounceTimer = Timer(Duration(milliseconds: 300), () {
-      state = value;
-    });
-  }
-
-  void setNow(String value) {
-    debounceTimer.cancel();
-    state = value;
-  }
-}
-
 class CourseLimitingPage extends StatelessWidget {
   static const routeName = "/lop-tc/han-che-hp";
 
@@ -74,7 +36,6 @@ class CourseLimitingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maxWidth = MediaQuery.sizeOf(context).width;
     final flexDirection = switch (context.screenSize) {
       ScreenSize.large => Axis.horizontal,
       ScreenSize.medium => Axis.horizontal,
@@ -159,6 +120,92 @@ class CourseLimitingPage extends StatelessWidget {
   }
 }
 
+@immutable
+class CourseSelection {
+  final Set<CourseData> allCourses;
+  final Set<CourseData> selectedCourses;
+
+  const CourseSelection({
+    required this.allCourses,
+    this.selectedCourses = const {},
+  });
+
+  Set<CourseData> get leftOverCourses =>
+      allCourses.difference(selectedCourses).toSet();
+
+  CourseSelection copyWith({
+    Set<CourseData>? allCourses,
+    Set<CourseData>? selectedCourses,
+  }) {
+    return CourseSelection(
+      allCourses: allCourses ?? this.allCourses,
+      selectedCourses: selectedCourses ?? this.selectedCourses,
+    );
+  }
+
+  CourseSelection deselectCourse(CourseData course) {
+    final newSelected = Set<CourseData>.from(selectedCourses)..remove(course);
+    return copyWith(selectedCourses: newSelected);
+  }
+
+  List<CourseData> filter({
+    String? searchQuery,
+    CourseCategory? selectedCategory,
+  }) {
+    var filtered = leftOverCourses;
+    if (selectedCategory != null) {
+      filtered = filtered
+          .where((course) => course.courseCategory == selectedCategory)
+          .toSet();
+    }
+
+    // Fitler by query
+    if (searchQuery == null || searchQuery.isEmpty) {
+      return filtered.toList();
+    }
+    final lowerQuery = searchQuery.toLowerCase();
+    return filtered.where((CourseData course) {
+      return course.id.toLowerCase().contains(lowerQuery) ||
+          course.vietnameseTitle.toLowerCase().contains(lowerQuery) ||
+          course.englishTitle.toLowerCase().contains(lowerQuery);
+    }).toList();
+  }
+
+  CourseSelection selectCourse(CourseData course) {
+    final newSelected = Set<CourseData>.from(selectedCourses)..add(course);
+    return copyWith(selectedCourses: newSelected);
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton(
+      onPressed: null,
+      child: Text("Hành động"),
+    );
+  }
+}
+
+class _ActionMenuLarge extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return EzRow(
+      spacing: context.responsiveGutter,
+      children: [
+        Expanded(
+          child: _SearchField(),
+        ),
+        _CourseCategorySelector(),
+        _SemesterSelector(),
+        _LinkToSemesterPage(),
+        _ExportPdfButton(),
+        _EmailButton(),
+      ],
+    );
+  }
+}
+
 class _ActionMenuMedium extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -193,114 +240,6 @@ class _ActionMenuMedium extends StatelessWidget {
   }
 }
 
-class _ActionMenuLarge extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return EzRow(
-      spacing: context.responsiveGutter,
-      children: [
-        Expanded(
-          child: _SearchField(),
-        ),
-        _CourseCategorySelector(),
-        _SemesterSelector(),
-        _LinkToSemesterPage(),
-        _ExportPdfButton(),
-        _EmailButton(),
-      ],
-    );
-  }
-}
-
-class _LinkToSemesterPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () {
-        Navigator.of(context).pushNamed("/academic_year/list");
-      },
-      child: Text("Đợt học"),
-    );
-  }
-}
-
-class _EmailButton extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return OutlinedButton.icon(
-      onPressed: () {
-        final selectedSemester = ref.read(_selectedSemesterProvider);
-        final semester = selectedSemester?.semester;
-        final email = Email(
-          subject:
-              "Danh mục hạn chế học phần Khoa Toán - Tin, đợt học $semester",
-          body: """Kính gửi thầy Nguyễn Huy Hùng,
-
-Em gửi danh mục hạn chế học phần của Khoa Toán - Tin, đợt học $semester. Danh mục được đính kèm trong email. Nhờ thầy xử lý tiếp, em cảm ơn thầy ạ.""",
-          recipients: {
-            "hung.nguyenhuy@hust.edu.vn",
-          }, // TODO: config study specialist recipients
-          ccRecipients: {
-            "huong.nguyenthithu3@hust.edu.vn",
-          }, // TODO: config boss recipients
-        );
-
-        showDialog(
-          context: context,
-          builder: (context) => EmailCopyDialog(email: email),
-        );
-      },
-      icon: Icon(Symbols.email),
-      label: Text("Email"),
-    );
-  }
-}
-
-class _ExportPdfButton extends ConsumerWidget {
-  Future<void> saveOutputFiles(
-    List<CourseData> courses,
-    SemesterData semester,
-  ) async {
-    // final output = FilePicker.platform.saveFile();
-    final data = await createPdf(
-      courses: courses,
-      semester: semester.semester,
-    );
-
-    final outputPath = await FilePicker.platform.saveFile(
-      dialogTitle: "Chọn thư mục lưu",
-      fileName: "Danh mục hạn chế học phần ${semester.semester}.pdf",
-    );
-    if (outputPath != null) {
-      final file = File(outputPath);
-      await file.create();
-      await file.writeAsBytes(data);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final asyncValue = ref.watch(_courseSelectionProvider);
-    switch (asyncValue) {
-      case AsyncLoading<CourseSelection>():
-        return CircularProgressIndicator();
-      case AsyncError<CourseSelection>():
-        return Text('Error loading courses');
-      default:
-    }
-
-    final courseSelection = asyncValue.value!;
-    final selectedCourses = courseSelection.selectedCourses;
-    return OutlinedButton(
-      onPressed: () {
-        final selectedSemester = ref.read(_selectedSemesterProvider);
-        saveOutputFiles(selectedCourses.toList(), selectedSemester!);
-      },
-      child: Text("Export"),
-    );
-  }
-}
-
 class _CourseCategorySelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -321,115 +260,6 @@ class _CourseCategorySelector extends ConsumerWidget {
         ],
       ),
     );
-  }
-}
-
-class _SearchField extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return TextField(
-      decoration: InputDecoration(labelText: "Tìm kiếm"),
-      onChanged: (value) {
-        ref.read(_searchQueryProvider.notifier).set(value);
-      },
-      onSubmitted: (value) {
-        ref.read(_searchQueryProvider.notifier).setNow(value);
-      },
-    );
-  }
-}
-
-class _SelectedCourseLabel extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final asyncValue = ref.watch(_courseSelectionProvider);
-    switch (asyncValue) {
-      case AsyncLoading<CourseSelection>():
-        return CircularProgressIndicator();
-      case AsyncError<CourseSelection>():
-        return Text('Error loading courses');
-      default:
-    }
-
-    final sourseSelection = asyncValue.value!;
-    final selectedCourses = sourseSelection.selectedCourses;
-    if (selectedCourses.isEmpty) {
-      return ListTile(
-        title: Text(
-          "Chưa chọn học phần",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      );
-    }
-
-    final totalCredits = selectedCourses.fold<int>(
-      0,
-      (sum, course) => sum + course.credits,
-    );
-    final totalCourse = selectedCourses.length;
-    return ListTile(
-      title: Text(
-        "Đã chọn $totalCourse học phần ($totalCredits TC)",
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-}
-
-@immutable
-class CourseSelection {
-  final Set<CourseData> allCourses;
-  final Set<CourseData> selectedCourses;
-
-  const CourseSelection({
-    required this.allCourses,
-    this.selectedCourses = const {},
-  });
-
-  Set<CourseData> get leftOverCourses =>
-      allCourses.difference(selectedCourses).toSet();
-
-  CourseSelection copyWith({
-    Set<CourseData>? allCourses,
-    Set<CourseData>? selectedCourses,
-  }) {
-    return CourseSelection(
-      allCourses: allCourses ?? this.allCourses,
-      selectedCourses: selectedCourses ?? this.selectedCourses,
-    );
-  }
-
-  CourseSelection deselectCourse(CourseData course) {
-    final newSelected = Set<CourseData>.from(selectedCourses)..remove(course);
-    return copyWith(selectedCourses: newSelected);
-  }
-
-  CourseSelection selectCourse(CourseData course) {
-    final newSelected = Set<CourseData>.from(selectedCourses)..add(course);
-    return copyWith(selectedCourses: newSelected);
-  }
-
-  List<CourseData> filter({
-    String? searchQuery,
-    CourseCategory? selectedCategory,
-  }) {
-    var filtered = leftOverCourses;
-    if (selectedCategory != null) {
-      filtered = filtered
-          .where((course) => course.courseCategory == selectedCategory)
-          .toSet();
-    }
-
-    // Fitler by query
-    if (searchQuery == null || searchQuery.isEmpty) {
-      return filtered.toList();
-    }
-    final lowerQuery = searchQuery.toLowerCase();
-    return filtered.where((CourseData course) {
-      return course.id.toLowerCase().contains(lowerQuery) ||
-          course.vietnameseTitle.toLowerCase().contains(lowerQuery) ||
-          course.englishTitle.toLowerCase().contains(lowerQuery);
-    }).toList();
   }
 }
 
@@ -500,6 +330,83 @@ class _CourseSelectionNotifier extends AsyncNotifier<CourseSelection> {
   }
 }
 
+class _EmailButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return OutlinedButton.icon(
+      onPressed: () {
+        final selectedSemester = ref.read(_selectedSemesterProvider);
+        final semester = selectedSemester?.semester;
+        final email = Email(
+          subject:
+              "Danh mục hạn chế học phần Khoa Toán - Tin, đợt học $semester",
+          body: """Kính gửi thầy Nguyễn Huy Hùng,
+
+Em gửi danh mục hạn chế học phần của Khoa Toán - Tin, đợt học $semester. Danh mục được đính kèm trong email. Nhờ thầy xử lý tiếp, em cảm ơn thầy ạ.""",
+          recipients: {
+            "hung.nguyenhuy@hust.edu.vn",
+          }, // TODO: config study specialist recipients
+          ccRecipients: {
+            "huong.nguyenthithu3@hust.edu.vn",
+          }, // TODO: config boss recipients
+        );
+
+        showDialog(
+          context: context,
+          builder: (context) => EmailCopyDialog(email: email),
+        );
+      },
+      icon: Icon(Symbols.email),
+      label: Text("Email"),
+    );
+  }
+}
+
+class _ExportPdfButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncValue = ref.watch(_courseSelectionProvider);
+    switch (asyncValue) {
+      case AsyncLoading<CourseSelection>():
+        return CircularProgressIndicator();
+      case AsyncError<CourseSelection>():
+        return Text('Error loading courses');
+      default:
+    }
+
+    final courseSelection = asyncValue.value!;
+    final selectedCourses = courseSelection.selectedCourses;
+    return OutlinedButton(
+      onPressed: () {
+        final selectedSemester = ref.read(_selectedSemesterProvider);
+        saveOutputFiles(selectedCourses.toList(), selectedSemester!);
+      },
+      child: Text("Export"),
+    );
+  }
+
+  Future<void> saveOutputFiles(
+    List<CourseData> courses,
+    SemesterData semester,
+  ) async {
+    // final output = FilePicker.platform.saveFile();
+    final data = await createPdf(
+      courses: courses,
+      semester: semester.semester,
+    );
+
+    final outputPath = await FilePicker.platform.saveFile(
+      dialogTitle: "Chọn thư mục lưu",
+      fileName: "Danh mục hạn chế học phần ${semester.semester}.pdf",
+    );
+    if (outputPath != null) {
+      final file = File(outputPath);
+      await file.create();
+      await file.writeAsBytes(data);
+    }
+  }
+}
+
 class _LeftOverCourseListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -530,6 +437,98 @@ class _LeftOverCourseListView extends ConsumerWidget {
   }
 }
 
+class _LinkToSemesterPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        Navigator.of(context).pushNamed("/academic_year/list");
+      },
+      child: Text("Đợt học"),
+    );
+  }
+}
+
+class _SearchField extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return TextField(
+      decoration: InputDecoration(labelText: "Tìm kiếm"),
+      onChanged: (value) {
+        ref.read(_searchQueryProvider.notifier).set(value);
+      },
+      onSubmitted: (value) {
+        ref.read(_searchQueryProvider.notifier).setNow(value);
+      },
+    );
+  }
+}
+
+class _SearchQueryNotifier extends Notifier<String> {
+  Timer debounceTimer = Timer(Duration.zero, () {});
+
+  @override
+  String build() => "";
+
+  void set(String value) {
+    debounceTimer.cancel();
+    debounceTimer = Timer(Duration(milliseconds: 300), () {
+      state = value;
+    });
+  }
+
+  void setNow(String value) {
+    debounceTimer.cancel();
+    state = value;
+  }
+}
+
+class _SelectedCourseCategoryNotifier extends Notifier<CourseCategory?> {
+  @override
+  CourseCategory? build() => null;
+
+  void set(CourseCategory? category) {
+    state = category;
+  }
+}
+
+class _SelectedCourseLabel extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncValue = ref.watch(_courseSelectionProvider);
+    switch (asyncValue) {
+      case AsyncLoading<CourseSelection>():
+        return CircularProgressIndicator();
+      case AsyncError<CourseSelection>():
+        return Text('Error loading courses');
+      default:
+    }
+
+    final sourseSelection = asyncValue.value!;
+    final selectedCourses = sourseSelection.selectedCourses;
+    if (selectedCourses.isEmpty) {
+      return ListTile(
+        title: Text(
+          "Chưa chọn học phần",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      );
+    }
+
+    final totalCredits = selectedCourses.fold<int>(
+      0,
+      (sum, course) => sum + course.credits,
+    );
+    final totalCourse = selectedCourses.length;
+    return ListTile(
+      title: Text(
+        "Đã chọn $totalCourse học phần ($totalCredits TC)",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+}
+
 class _SelectedCourseListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -552,6 +551,15 @@ class _SelectedCourseListView extends ConsumerWidget {
         ref.read(_courseSelectionProvider.notifier).deSelectCourse(course);
       },
     );
+  }
+}
+
+class _SelectedSemesterNotifier extends Notifier<SemesterData?> {
+  @override
+  SemesterData? build() => null;
+
+  void set(SemesterData? semester) {
+    state = semester;
   }
 }
 
@@ -585,16 +593,6 @@ class _SemesterSelector extends ConsumerWidget {
           notifier.set(value);
         },
       ),
-    );
-  }
-}
-
-class _ActionButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return FilledButton(
-      onPressed: null,
-      child: Text("Hành động"),
     );
   }
 }

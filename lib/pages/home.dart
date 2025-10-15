@@ -22,35 +22,31 @@ class HomePage extends StatelessWidget {
     }
 
     return Scaffold(
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: SizedBox(
-          width: min(960, width),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(gutter),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              spacing: gutter,
-              children: [
-                for (final entry in routesBySections.entries)
-                  _NavigationSection(
-                    title: entry.key,
-                    children: [
-                      for (final route in entry.value)
-                        ListTile(
-                          title: Text(route.label),
-                          leading: Icon(route.icon),
-                          subtitle: route.subtitle != null
-                              ? Text(route.subtitle!)
-                              : null,
-                          trailing: const Icon(Icons.chevron_right),
-                          onTap: navigatorCallback(route.route),
-                          enabled: route.route != null,
-                        ),
-                    ],
-                  ),
-              ],
-            ),
+      body: ConstrainedScreen(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(gutter),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: gutter,
+            children: [
+              for (final entry in routesBySections.entries)
+                _NavigationSection(
+                  title: entry.key,
+                  children: [
+                    for (final route in entry.value)
+                      ListTile(
+                        title: Text(route.label),
+                        leading: Icon(route.icon),
+                        subtitle: route.subtitle != null
+                            ? Text(route.subtitle!)
+                            : null,
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: navigatorCallback(route.route),
+                        enabled: route.route != null,
+                      ),
+                  ],
+                ),
+            ],
           ),
         ),
       ),

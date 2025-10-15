@@ -1,12 +1,10 @@
 import 'dart:async';
 
 import 'package:drift/drift.dart';
+import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../drift_orm.dart';
-import 'package:riverpod/riverpod.dart';
-
-typedef _A = AdmissionCouncilData;
+import '../db_v2_providers.dart';
 
 final admissionCouncilByIdProvider = AsyncNotifierProvider.family(
   AdmissionCouncilByIdNotifier.new,
@@ -15,6 +13,8 @@ final admissionCouncilByIdProvider = AsyncNotifierProvider.family(
 final admissionCouncilIdsProvider = AsyncNotifierProvider(
   AdmissionCouncilIdsNotifier.new,
 );
+
+typedef _A = AdmissionCouncilData;
 
 class AdmissionCouncilByIdNotifier extends AsyncNotifier<_A?> {
   final int councilId;

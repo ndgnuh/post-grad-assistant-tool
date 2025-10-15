@@ -1,5 +1,5 @@
-export './drift_orm.dart' show driftDatabaseProvider;
-
+export './drift_orm.dart';
+export './db_v2_providers/database.dart';
 export './db_v2_providers/phd_students.dart';
 export './db_v2_providers/thesis.dart';
 export './db_v2_providers/teachers.dart';

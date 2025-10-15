@@ -1,6 +1,7 @@
+import 'package:drift/drift.dart';
 import 'package:flutter/services.dart';
 
-import '../../business/drift_orm.dart';
+import '../../business/db_v2_providers.dart';
 
 Future<List<CourseClassCompanion>> parseClassesFromClipboard({
   required String semester,

@@ -1,14 +1,26 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../business/db_v2_providers.dart';
 import '../../business/db_v1_providers.dart' as v1_providers;
-import '../../business/drift_orm.dart';
+import '../../business/db_v2_providers.dart';
 import './providers.dart';
+
+class CohortReset extends ConsumerWidget {
+  const CohortReset({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return OutlinedButton.icon(
+      onPressed: () {
+        final notifier = ref.read(cohortSelectionModelProvider.notifier);
+        notifier.deselect();
+      },
+      icon: Icon(Symbols.clear),
+      label: Text('Bỏ chọn'),
+    );
+  }
+}
 
 class CohortSelector extends ConsumerWidget {
   const CohortSelector({super.key});
@@ -53,47 +65,6 @@ class CohortSelector extends ConsumerWidget {
             label: cohort.cohort,
           ),
       ],
-    );
-  }
-}
-
-class CohortReset extends ConsumerWidget {
-  const CohortReset({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return OutlinedButton.icon(
-      onPressed: () {
-        final notifier = ref.read(cohortSelectionModelProvider.notifier);
-        notifier.deselect();
-      },
-      icon: Icon(Symbols.clear),
-      label: Text('Bỏ chọn'),
-    );
-  }
-}
-
-class StudentSearchBar extends ConsumerWidget {
-  const StudentSearchBar({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final notifier = ref.watch(searchModelProvider.notifier);
-
-    return IntrinsicWidth(
-      child: TextField(
-        focusNode: notifier.focusNode,
-        onChanged: (text) => notifier.debounceSet(text),
-        onSubmitted: (text) => notifier.set(text),
-        // onFieldSubmitted: (text) => notifier.set(text),
-        decoration: InputDecoration(
-          labelText: 'Tìm học viên',
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          suffixIcon: Icon(Symbols.search),
-        ),
-      ),
     );
   }
 }
@@ -160,6 +131,31 @@ class StudentReloadButton extends ConsumerWidget {
           ref.invalidate(v1_providers.studentByIdProvider);
         },
         icon: Icon(Symbols.refresh),
+      ),
+    );
+  }
+}
+
+class StudentSearchBar extends ConsumerWidget {
+  const StudentSearchBar({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notifier = ref.watch(searchModelProvider.notifier);
+
+    return IntrinsicWidth(
+      child: TextField(
+        focusNode: notifier.focusNode,
+        onChanged: (text) => notifier.debounceSet(text),
+        onSubmitted: (text) => notifier.set(text),
+        // onFieldSubmitted: (text) => notifier.set(text),
+        decoration: InputDecoration(
+          labelText: 'Tìm học viên',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          suffixIcon: Icon(Symbols.search),
+        ),
       ),
     );
   }

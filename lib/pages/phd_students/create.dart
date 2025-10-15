@@ -1,15 +1,30 @@
-import 'package:fami_tools/business/db_v2_providers/phd_students.dart';
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
-import '../../business/drift_orm.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
 
-const _pagePreferenceKey = 'phd_student/create';
 const _lastCohortKey = '$_pagePreferenceKey/cohort';
+const _pagePreferenceKey = 'phd_student/create';
+
+final _viewModelNotifier = Provider<_ViewModel>((ref) {
+  return _ViewModel();
+});
+
+Future<String> _getLastCohort() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString(_lastCohortKey) ?? '';
+}
+
+Future<void> _setLastCohort(String cohort) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString(_lastCohortKey, cohort);
+}
 
 class GenderPicker extends StatefulWidget {
   final Gender initialSelection;
@@ -26,116 +41,6 @@ class GenderPicker extends StatefulWidget {
   @override
   State<GenderPicker> createState() => _GenderPickerState();
 }
-
-class _GenderPickerState extends State<GenderPicker> {
-  late ValueNotifier<Gender> notifier;
-
-  @override
-  initState() {
-    final widgetNotifier = widget.valueNotifier;
-    if (widgetNotifier != null) {
-      notifier = widgetNotifier;
-    } else {
-      notifier = ValueNotifier<Gender>(widget.initialSelection);
-    }
-    super.initState();
-  }
-
-  @override
-  dispose() {
-    super.dispose();
-    if (widget.valueNotifier == null) {
-      notifier.dispose();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButtonFormField(
-      validator: (gender) {
-        if (gender == null) return "Không được để trống";
-        return null;
-      },
-      decoration: InputDecoration(
-        labelText: "Giới tính",
-      ),
-      onChanged: (gender) {
-        notifier.value = gender ?? notifier.value;
-        widget.onChanged?.call(gender);
-      },
-      items: [
-        DropdownMenuItem(value: Gender.male, child: Text("Nam")),
-        DropdownMenuItem(value: Gender.female, child: Text("Nữ")),
-        DropdownMenuItem(value: Gender.unknown, child: Text("Không rõ")),
-      ],
-    );
-  }
-}
-
-Future<String> _getLastCohort() async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getString(_lastCohortKey) ?? '';
-}
-
-Future<void> _setLastCohort(String cohort) async {
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setString(_lastCohortKey, cohort);
-}
-
-class _ViewModel {
-  final formKey = GlobalKey<FormState>();
-  final supervisorNotifier = ValueNotifier<TeacherData?>(null);
-  final secondarySupervisorNotifier = ValueNotifier<TeacherData?>(null);
-  final specializationController = TextEditingController();
-  final thesisController = TextEditingController();
-
-  final cohortController = TextEditingController();
-
-  final admissionIdController = TextEditingController();
-  final nameController = TextEditingController();
-  final genderController = ValueNotifier<Gender>(Gender.unknown);
-
-  final dateOfBirthController = ValueNotifier<DateTime?>(null);
-  final placeOfBirthController = TextEditingController();
-
-  final emailController = TextEditingController();
-  final phoneController = TextEditingController();
-
-  Future<void> create(MyDriftDatabase db) async {
-    await db.into(db.phdStudent).insert(phdStudentCompanion);
-  }
-
-  PhdStudentCompanion get phdStudentCompanion {
-    return PhdStudentCompanion.insert(
-      // management information
-      cohort: cohortController.text,
-      admissionId: (admissionIdController.text),
-
-      // basic information
-      name: nameController.text,
-      gender: Value(genderController.value),
-      dateOfBirth: Value(dateOfBirthController.value),
-      placeOfBirth: Value(placeOfBirthController.text),
-
-      // contact information
-      personalEmail: emailController.text,
-      phone: phoneController.text,
-
-      supervisorId: supervisorNotifier.value!.id,
-      secondarySupervisorId: Value(secondarySupervisorNotifier.value?.id),
-      thesis: thesisController.text,
-      majorSpecialization: Value(specializationController.text),
-    );
-  }
-
-  _ViewModel() {
-    _getLastCohort().then((value) => cohortController.text = value);
-  }
-}
-
-final _viewModelNotifier = Provider<_ViewModel>((ref) {
-  return _ViewModel();
-});
 
 class PhdStudentCreatePage extends StatelessWidget {
   static const routeName = '/phd-students/create';
@@ -168,57 +73,52 @@ class PhdStudentCreatePage extends StatelessWidget {
   }
 }
 
-class _SaveButton extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final dbState = ref.watch(driftDatabaseProvider);
-    switch (dbState) {
-      case AsyncLoading():
-        return const CircularProgressIndicator();
-      case AsyncError(:final error, :final stackTrace):
-        return Text('Error: $error\n$stackTrace');
-      default:
-    }
+class _GenderPickerState extends State<GenderPicker> {
+  late ValueNotifier<Gender> notifier;
 
-    final model = ref.watch(_viewModelNotifier);
-    final formKey = model.formKey;
-    return FilledButton(
-      onPressed: () async {
-        if (formKey.currentState?.validate() ?? false) {
-          final db = dbState.value!;
-          await model.create(db);
-          // Navigator.of(context).pop();
-          // ref.invalidate(phdCohortsProvider);
-          // ref.invalidate(phdStudentsByCohortProvider);
-        }
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField(
+      validator: (gender) {
+        if (gender == null) return "Không được để trống";
+        return null;
       },
-      child: const Text('Save'),
+      decoration: InputDecoration(
+        labelText: "Giới tính",
+      ),
+      onChanged: (gender) {
+        notifier.value = gender ?? notifier.value;
+        widget.onChanged?.call(gender);
+      },
+      items: [
+        DropdownMenuItem(value: Gender.male, child: Text("Nam")),
+        DropdownMenuItem(value: Gender.female, child: Text("Nữ")),
+        DropdownMenuItem(value: Gender.unknown, child: Text("Không rõ")),
+      ],
     );
+  }
+
+  @override
+  dispose() {
+    super.dispose();
+    if (widget.valueNotifier == null) {
+      notifier.dispose();
+    }
+  }
+
+  @override
+  initState() {
+    final widgetNotifier = widget.valueNotifier;
+    if (widgetNotifier != null) {
+      notifier = widgetNotifier;
+    } else {
+      notifier = ValueNotifier<Gender>(widget.initialSelection);
+    }
+    super.initState();
   }
 }
 
 class _InformationForm extends ConsumerWidget {
-  String? Function(String?) notEmptyValidator(String message) {
-    return (value) => (value == null || value.isEmpty) ? message : null;
-  }
-
-  String? Function(String?) emailValidator(String message) {
-    return (value) {
-      if (value == null || value.isEmpty) {
-        return message;
-      }
-      final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-      if (!emailRegex.hasMatch(value)) {
-        return 'Vui lòng nhập địa chỉ email hợp lệ';
-      }
-      return null;
-    };
-  }
-
-  InputDecoration labelText(String text) {
-    return InputDecoration(labelText: text);
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final model = ref.watch(_viewModelNotifier);
@@ -319,6 +219,56 @@ class _InformationForm extends ConsumerWidget {
       ),
     );
   }
+
+  String? Function(String?) emailValidator(String message) {
+    return (value) {
+      if (value == null || value.isEmpty) {
+        return message;
+      }
+      final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+      if (!emailRegex.hasMatch(value)) {
+        return 'Vui lòng nhập địa chỉ email hợp lệ';
+      }
+      return null;
+    };
+  }
+
+  InputDecoration labelText(String text) {
+    return InputDecoration(labelText: text);
+  }
+
+  String? Function(String?) notEmptyValidator(String message) {
+    return (value) => (value == null || value.isEmpty) ? message : null;
+  }
+}
+
+class _SaveButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dbState = ref.watch(driftDatabaseProvider);
+    switch (dbState) {
+      case AsyncLoading():
+        return const CircularProgressIndicator();
+      case AsyncError(:final error, :final stackTrace):
+        return Text('Error: $error\n$stackTrace');
+      default:
+    }
+
+    final model = ref.watch(_viewModelNotifier);
+    final formKey = model.formKey;
+    return FilledButton(
+      onPressed: () async {
+        if (formKey.currentState?.validate() ?? false) {
+          final db = dbState.value!;
+          await model.create(db);
+          // Navigator.of(context).pop();
+          // ref.invalidate(phdCohortsProvider);
+          // ref.invalidate(phdStudentsByCohortProvider);
+        }
+      },
+      child: const Text('Save'),
+    );
+  }
 }
 
 class _TeacherSelector extends ConsumerWidget {
@@ -395,5 +345,56 @@ class _TeacherSelector extends ConsumerWidget {
         },
       ),
     );
+  }
+}
+
+class _ViewModel {
+  final formKey = GlobalKey<FormState>();
+  final supervisorNotifier = ValueNotifier<TeacherData?>(null);
+  final secondarySupervisorNotifier = ValueNotifier<TeacherData?>(null);
+  final specializationController = TextEditingController();
+  final thesisController = TextEditingController();
+
+  final cohortController = TextEditingController();
+
+  final admissionIdController = TextEditingController();
+  final nameController = TextEditingController();
+  final genderController = ValueNotifier<Gender>(Gender.unknown);
+
+  final dateOfBirthController = ValueNotifier<DateTime?>(null);
+  final placeOfBirthController = TextEditingController();
+
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+
+  _ViewModel() {
+    _getLastCohort().then((value) => cohortController.text = value);
+  }
+
+  PhdStudentCompanion get phdStudentCompanion {
+    return PhdStudentCompanion.insert(
+      // management information
+      cohort: cohortController.text,
+      admissionId: (admissionIdController.text),
+
+      // basic information
+      name: nameController.text,
+      gender: Value(genderController.value),
+      dateOfBirth: Value(dateOfBirthController.value),
+      placeOfBirth: Value(placeOfBirthController.text),
+
+      // contact information
+      personalEmail: emailController.text,
+      phone: phoneController.text,
+
+      supervisorId: supervisorNotifier.value!.id,
+      secondarySupervisorId: Value(secondarySupervisorNotifier.value?.id),
+      thesis: thesisController.text,
+      majorSpecialization: Value(specializationController.text),
+    );
+  }
+
+  Future<void> create(MyDriftDatabase db) async {
+    await db.into(db.phdStudent).insert(phdStudentCompanion);
   }
 }

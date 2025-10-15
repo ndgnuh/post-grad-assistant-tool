@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 import '../business/copy_pasta.dart';
 // import '../business/domain_objects.dart';
-import '../business/drift_orm.dart';
+import '../business/db_v2_providers.dart';
 
 MaterialPageRoute ezRoute(Widget page) {
   return MaterialPageRoute(

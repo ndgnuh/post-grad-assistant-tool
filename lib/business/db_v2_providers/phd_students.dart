@@ -1,8 +1,7 @@
-import 'package:riverpod/riverpod.dart';
 import 'package:drift/drift.dart';
+import 'package:riverpod/riverpod.dart';
 
 import '../db_v2_providers.dart';
-import '../drift_orm.dart';
 
 final phdCohortsProvider = AsyncNotifierProvider(
   PhdCohorts.new,
@@ -14,10 +13,65 @@ final phdStudentIdsByCohortProvider = AsyncNotifierProvider.family(
   (String cohort) => PhdStudentIds(cohort: cohort),
 );
 
-class PhdStudentMutationNotifier extends Notifier<void> {
+class PhdCohorts extends AsyncNotifier<List<String>> {
   @override
-  build() {}
+  Future<List<String>> build() async {
+    final db = await ref.watch(driftDatabaseProvider.future);
+    final query = db.managers.phdStudent.map((p) => p.cohort);
+    final result = await query.get();
+    return result.toSet().toList()..sort();
+  }
+}
 
+class PhdStudentById extends AsyncNotifier<PhdStudentData?> {
+  final int studentId;
+  PhdStudentById(this.studentId);
+
+  @override
+  Future<PhdStudentData?> build() async {
+    final db = await ref.watch(driftDatabaseProvider.future);
+    return await db.managers.phdStudent
+        .filter((student) => student.id.equals(studentId))
+        .getSingleOrNull();
+  }
+}
+
+class PhdStudentIds extends AsyncNotifier<List<int>> {
+  final String? cohort;
+
+  PhdStudentIds({this.cohort});
+
+  @override
+  Future<List<int>> build() async {
+    final db = await ref.watch(driftDatabaseProvider.future);
+    final stmt = db.managers.phdStudent;
+
+    if (cohort != null) {
+      stmt.filter((p) => p.cohort.equals(cohort!));
+    }
+
+    final ids = await stmt.map((p) => p.id).get();
+
+    return ids.whereType<int>().toList();
+  }
+}
+
+class PhdStudentIdsByCohortNotifier extends AsyncNotifier<List<int>> {
+  final String cohort;
+  PhdStudentIdsByCohortNotifier(this.cohort);
+
+  @override
+  Future<List<int>> build() async {
+    final db = await ref.watch(driftDatabaseProvider.future);
+    final query = db.managers.phdStudent
+        .filter((p) => p.cohort.equals(cohort))
+        .map((p) => p.id);
+    final result = await query.get();
+    return result.whereType<int>().toList()..sort();
+  }
+}
+
+class PhdStudentMutationNotifier extends Notifier<void> {
   Future<void> addPhdStudent({
     // Admisison information
     required String admissionId,
@@ -63,64 +117,9 @@ class PhdStudentMutationNotifier extends Notifier<void> {
 
     ref.invalidate(phdStudentIdsByCohortProvider(cohort));
   }
-}
-
-class PhdCohorts extends AsyncNotifier<List<String>> {
-  @override
-  Future<List<String>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
-    final query = db.managers.phdStudent.map((p) => p.cohort);
-    final result = await query.get();
-    return result.toSet().toList()..sort();
-  }
-}
-
-class PhdStudentIds extends AsyncNotifier<List<int>> {
-  final String? cohort;
-
-  PhdStudentIds({this.cohort});
 
   @override
-  Future<List<int>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
-    final stmt = db.managers.phdStudent;
-
-    if (cohort != null) {
-      stmt.filter((p) => p.cohort.equals(cohort!));
-    }
-
-    final ids = await stmt.map((p) => p.id).get();
-
-    return ids.whereType<int>().toList();
-  }
-}
-
-class PhdStudentById extends AsyncNotifier<PhdStudentData?> {
-  final int studentId;
-  PhdStudentById(this.studentId);
-
-  @override
-  Future<PhdStudentData?> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
-    return await db.managers.phdStudent
-        .filter((student) => student.id.equals(studentId))
-        .getSingleOrNull();
-  }
-}
-
-class PhdStudentIdsByCohortNotifier extends AsyncNotifier<List<int>> {
-  final String cohort;
-  PhdStudentIdsByCohortNotifier(this.cohort);
-
-  @override
-  Future<List<int>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
-    final query = db.managers.phdStudent
-        .filter((p) => p.cohort.equals(cohort))
-        .map((p) => p.id);
-    final result = await query.get();
-    return result.whereType<int>().toList()..sort();
-  }
+  build() {}
 }
 
 class PhdStudentsByCohort extends AsyncNotifier<List<PhdStudentData>> {
