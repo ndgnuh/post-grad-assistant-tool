@@ -50,12 +50,14 @@ class PhdStudentCreatePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gutter = context.gutter;
-    return ConstrainedScreen(
-      child: Scaffold(
-        appBar: AppBar(
+    return Scaffold(
+      appBar: ConstrainedAppBar(
+        child: AppBar(
           title: const Text('Tuyển sinh NCS'),
         ),
-        body: Column(
+      ),
+      body: ConstrainedBody(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: gutter,

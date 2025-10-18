@@ -1,16 +1,15 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 import '../business/copy_pasta.dart';
 import '../business/db_v2_providers.dart';
 import '../business/han_che_hoc_phan.dart';
+import '../business/selection_models.dart';
 import '../custom_widgets.dart';
 
 final _courseSelectionProvider = AsyncNotifierProvider(
@@ -25,8 +24,8 @@ final _selectedCourseCategoryProvider = NotifierProvider(
   _SelectedCourseCategoryNotifier.new,
 );
 
-final _selectedSemesterProvider = NotifierProvider(
-  _SelectedSemesterNotifier.new,
+final _semesterSelectionModelProvider = AsyncNotifierProvider(
+  () => SemesterSelectionModelNotifier("course-limiting"),
 );
 
 class CourseLimitingPage extends StatelessWidget {
@@ -334,9 +333,11 @@ class _EmailButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return OutlinedButton.icon(
-      onPressed: () {
-        final selectedSemester = ref.read(_selectedSemesterProvider);
-        final semester = selectedSemester?.semester;
+      onPressed: () async {
+        final selectedSemester = await ref.read(
+          _semesterSelectionModelProvider.future,
+        );
+        final semester = selectedSemester.selected?.semester.toString();
         final email = Email(
           subject:
               "Danh mục hạn chế học phần Khoa Toán - Tin, đợt học $semester",
@@ -377,9 +378,20 @@ class _ExportPdfButton extends ConsumerWidget {
     final courseSelection = asyncValue.value!;
     final selectedCourses = courseSelection.selectedCourses;
     return OutlinedButton(
-      onPressed: () {
-        final selectedSemester = ref.read(_selectedSemesterProvider);
-        saveOutputFiles(selectedCourses.toList(), selectedSemester!);
+      onPressed: () async {
+        final semesterModel = await ref.read(
+          _semesterSelectionModelProvider.future,
+        );
+        final selectedSemester = semesterModel.selected;
+
+        if (selectedSemester == null) {
+          // ignore: use_build_context_synchronously
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Vui lòng chọn đợt học")),
+          );
+          return;
+        }
+        saveOutputFiles(selectedCourses.toList(), selectedSemester);
       },
       child: Text("Export"),
     );
@@ -554,20 +566,11 @@ class _SelectedCourseListView extends ConsumerWidget {
   }
 }
 
-class _SelectedSemesterNotifier extends Notifier<SemesterData?> {
-  @override
-  SemesterData? build() => null;
-
-  void set(SemesterData? semester) {
-    state = semester;
-  }
-}
-
 class _SemesterSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final semestersAsync = ref.watch(semestersProvider);
-    switch (semestersAsync) {
+    final modelAsync = ref.watch(_semesterSelectionModelProvider);
+    switch (modelAsync) {
       case AsyncLoading<List<SemesterData>>():
         return CircularProgressIndicator();
       case AsyncError<List<SemesterData>>():
@@ -575,12 +578,15 @@ class _SemesterSelector extends ConsumerWidget {
       default:
     }
 
-    final semesters = semestersAsync.value!;
+    final model = modelAsync.value!;
+    final semesters = model.options;
+    final selected = model.selected;
 
     return Expanded(
       child: DropdownMenu<SemesterData>(
         label: Text("Đợt học"),
         expandedInsets: EdgeInsets.zero,
+        initialSelection: selected,
         dropdownMenuEntries: [
           for (final semester in semesters)
             DropdownMenuEntry(
@@ -589,8 +595,8 @@ class _SemesterSelector extends ConsumerWidget {
             ),
         ],
         onSelected: (value) {
-          final notifier = ref.read(_selectedSemesterProvider.notifier);
-          notifier.set(value);
+          final notifier = ref.read(_semesterSelectionModelProvider.notifier);
+          notifier.select(value);
         },
       ),
     );

@@ -14,6 +14,7 @@ export './selection_models/filter_modes.dart';
 
 // From database
 // =============
+export './selection_models/semesters.dart';
 export './selection_models/cohort.dart';
 export './selection_models/admission_council.dart';
 

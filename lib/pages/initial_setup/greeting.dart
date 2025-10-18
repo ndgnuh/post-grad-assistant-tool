@@ -18,7 +18,7 @@ class InitialSetupPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      body: ConstrainedScreen(
+      body: ConstrainedBody(
         child: Padding(
           padding: EdgeInsets.all(context.gutter),
           child: Column(
@@ -98,8 +98,6 @@ class _ImportDatabaseButton extends ConsumerWidget {
         );
         final dbPath = databasePath?.files.single.path;
         if (dbPath == null) return;
-
-        print(dbPath);
 
         final notifer = ref.read(databasePathProvider.notifier);
         notifer.setDatabasePath(dbPath);

@@ -4,7 +4,6 @@ import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../db_v2_providers.dart';
-import './../../business/drift_orm.dart';
 import './common.dart';
 
 typedef CohortSelectionModel = SelectionModel<CohortData>;

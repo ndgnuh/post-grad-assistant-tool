@@ -1,5 +1,4 @@
 import 'dart:core';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
@@ -15,15 +14,14 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gutter = context.responsiveGutter;
-    final width = MediaQuery.sizeOf(context).width;
     VoidCallback? navigatorCallback(String? route) {
       if (route == null) return null;
       return () => Navigator.of(context).pushNamed(route);
     }
 
-    return ConstrainedScreen(
-      child: Scaffold(
-        body: SingleChildScrollView(
+    return Scaffold(
+      body: ConstrainedBody(
+        child: SingleChildScrollView(
           padding: EdgeInsets.all(gutter),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

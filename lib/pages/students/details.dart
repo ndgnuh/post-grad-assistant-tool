@@ -1,11 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../custom_tiles.dart';
 import '../../business/domain_objects.dart';
+import '../../custom_tiles.dart';
 import '../../custom_widgets.dart';
 
 class StudentDetailPage extends StatelessWidget {
@@ -19,8 +17,6 @@ class StudentDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-
     final children = [
       StringTile(
         leading: Icon(Symbols.numbers),
@@ -62,13 +58,15 @@ class StudentDetailPage extends StatelessWidget {
         onUpdate: (value) => student.updatePhoneNumber(value!),
       ),
     ];
-    return ConstrainedScreen(
-      child: Scaffold(
-        appBar: AppBar(
+    return Scaffold(
+      appBar: ConstrainedAppBar(
+        child: AppBar(
           title: Text(title),
           primary: true,
         ),
-        body: Padding(
+      ),
+      body: ConstrainedBody(
+        child: Padding(
           padding: EdgeInsets.all(context.gutter),
           child: Column(
             spacing: context.gutter,

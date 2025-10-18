@@ -15,12 +15,14 @@ class PhdStudentListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gutter = context.gutter;
-    return ConstrainedScreen(
-      child: Scaffold(
-        appBar: AppBar(
+    return Scaffold(
+      appBar: ConstrainedAppBar(
+        child: AppBar(
           title: const Text('PhD Students'),
         ),
-        body: Padding(
+      ),
+      body: ConstrainedBody(
+        child: Padding(
           padding: EdgeInsets.all(context.gutter),
           child: Column(
             spacing: gutter,

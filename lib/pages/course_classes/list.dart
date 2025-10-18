@@ -5,9 +5,9 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
 import './_import_from_clipboard.dart';
-import './_view_model.dart';
 import './index.dart';
 import './providers.dart';
+import './widgets.dart';
 
 part '_teaching_assignment_dialog.dart';
 
@@ -19,77 +19,92 @@ class CourseClassListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gutter = context.responsiveGutter;
-    return Scaffold(
-      appBar: ConstrainedScreen(
-        child: AppBar(title: const Text("Danh sách lớp tín chỉ")),
-      ),
-      body: ConstrainedScreen(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(gutter),
-              child: IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  spacing: gutter,
-                  children: [
-                    Spacer(),
-                    SemesterPicker(),
-                    FilledButton.icon(
-                      onPressed: null,
-                      label: Text("Thêm"),
-                      icon: Icon(Symbols.add),
+    return DefaultTabController(
+      length: 1,
+      child: Scaffold(
+        appBar: ConstrainedAppBar(
+          withTabBar: true,
+          child: AppBar(
+            title: const Text("Danh sách lớp tín chỉ"),
+            bottom: TabBar(
+              isScrollable: true,
+              tabs: [Tab(text: "Lớp tín chỉ")],
+            ),
+          ),
+        ),
+        body: ConstrainedBody(
+          child: TabBarView(
+            children: [
+              Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(gutter),
+                    child: IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        spacing: gutter,
+                        children: [
+                          Expanded(
+                            child: SemesterPicker(),
+                          ),
+                          FilledButton.icon(
+                            onPressed: null,
+                            label: Text("Thêm"),
+                            icon: Icon(Symbols.add),
+                          ),
+                          _ImportButton(),
+                        ],
+                      ),
                     ),
-                    _ImportButton(),
-                  ],
-                ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: gutter),
+                    child: Divider(),
+                  ),
+                  Expanded(child: _CourseClassesView()),
+                ],
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: gutter),
-              child: Divider(),
-            ),
-            Expanded(child: _CourseClassesView()),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class SemesterPicker extends ConsumerWidget {
-  const SemesterPicker({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Load selected semester
-    final selectedSemesterAsync = ref.watch(selectedSemesterProvider);
-    final semestersAsync = ref.watch(semestersProvider);
-    switch (selectedSemesterAsync) {
-      case AsyncLoading():
-        return const CircularProgressIndicator();
-      case AsyncError(:final error):
-        return Text("Error: $error");
-      default:
-    }
-
-    final semesters = semestersAsync.value!;
-    final selectedSemester = selectedSemesterAsync.value;
-
-    return DropdownMenu<SemesterData>(
-      label: Text("Đợt học"),
-      initialSelection: selectedSemester,
-      dropdownMenuEntries: [
-        for (final semester in semesters)
-          DropdownMenuEntry(value: semester, label: semester.semester),
-      ],
-      onSelected: (value) async {
-        final notifier = ref.read(selectedSemesterProvider.notifier);
-        notifier.set(value);
-      },
-    );
-  }
-}
+// class SemesterPicker extends ConsumerWidget {
+//   const SemesterPicker({super.key});
+//
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     // Load selected semester
+//     final selectedSemesterAsync = ref.watch(semesterSelectionModelProvider);
+//     final semestersAsync = ref.watch(semestersProvider);
+//     switch (selectedSemesterAsync) {
+//       case AsyncLoading():
+//         return const CircularProgressIndicator();
+//       case AsyncError(:final error):
+//         return Text("Error: $error");
+//       default:
+//     }
+//
+//     final semesters = semestersAsync.value!;
+//     final selectedSemester = selectedSemesterAsync.value;
+//
+//     return DropdownMenu<SemesterData>(
+//       label: Text("Đợt học"),
+//       initialSelection: selectedSemester,
+//       dropdownMenuEntries: [
+//         for (final semester in semesters)
+//           DropdownMenuEntry(value: semester, label: semester.semester),
+//       ],
+//       onSelected: (value) async {
+//         final notifier = ref.read(semesterSelectionModelProvider.notifier);
+//         notifier.set(value);
+//       },
+//     );
+//   }
+// }
 
 class _AssignedTeachersButton extends ConsumerWidget {
   final int classId;
@@ -247,7 +262,7 @@ class _CourseClassesTableView extends StatelessWidget {
 class _CourseClassesView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedSemesterAsync = ref.watch(selectedSemesterProvider);
+    final selectedSemesterAsync = ref.watch(semesterSelectionModelProvider);
     switch (selectedSemesterAsync) {
       case AsyncLoading():
         return const CircularProgressIndicator();
@@ -280,7 +295,7 @@ class _CourseClassesView extends ConsumerWidget {
 
     return _CourseClassesTableView(
       courseClasses: courseClasses,
-      semester: selectedSemester,
+      semester: selectedSemester.selected!,
     );
   }
 }
@@ -292,7 +307,8 @@ class _ImportButton extends ConsumerWidget {
 
     return FilledButton.icon(
       onPressed: () async {
-        final semester = await ref.read(selectedSemesterProvider.future);
+        final model = await ref.read(semesterSelectionModelProvider.future);
+        final semester = model.selected;
         if (semester == null) {
           messenger.showSnackBar(
             SnackBar(content: Text("Vui lòng chọn đợt học trước")),

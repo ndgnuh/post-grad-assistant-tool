@@ -15,6 +15,14 @@ typedef CourseClassCompanion = LopTinChiCompanion;
 typedef Student = HocVien;
 typedef StudentCompanion = HocVienCompanion;
 
+@DriftDatabase(include: {"file_db.drift"})
+class FilesDatabase extends _$FilesDatabase {
+  FilesDatabase(super.excecutor);
+
+  @override
+  int get schemaVersion => 1;
+}
+
 @DriftDatabase(include: {"database_v1.drift"})
 class MyDriftDatabase extends _$MyDriftDatabase {
   MyDriftDatabase(super.excecutor);

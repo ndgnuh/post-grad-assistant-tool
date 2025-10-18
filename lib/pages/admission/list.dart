@@ -48,11 +48,12 @@ class AdmissionListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedScreen(
-      child: DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: ConstrainedAppBar(
+          withTabBar: true,
+          child: AppBar(
             bottom: const TabBar(
               tabs: [
                 Tab(text: "Danh sách"),
@@ -62,7 +63,9 @@ class AdmissionListPage extends StatelessWidget {
             ),
             title: const Text("Xét tuyển"),
           ),
-          body: TabBarView(
+        ),
+        body: ConstrainedBody(
+          child: TabBarView(
             children: [
               AdmissionListTabView(),
               _AdmissionActionTabView(),

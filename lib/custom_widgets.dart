@@ -1552,8 +1552,13 @@ const maxScreenWidthConstraints = BoxConstraints(maxWidth: maxScreenWidth);
 
 class ConstrainedAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget child;
+  final bool withTabBar;
 
-  const ConstrainedAppBar({super.key, required this.child});
+  const ConstrainedAppBar({
+    super.key,
+    required this.child,
+    this.withTabBar = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1566,29 +1571,25 @@ class ConstrainedAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => switch (withTabBar) {
+    true => const Size.fromHeight(kToolbarHeight + kTextTabBarHeight),
+    _ => const Size.fromHeight(kToolbarHeight),
+  };
 }
 
-class ConstrainedScreen extends StatelessWidget implements PreferredSizeWidget {
+class ConstrainedBody extends StatelessWidget {
   final Widget child;
 
-  const ConstrainedScreen({super.key, required this.child});
+  const ConstrainedBody({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
-    return Container(
-      color: colorScheme.surfaceDim,
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          constraints: maxScreenWidthConstraints,
-          child: child,
-        ),
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: maxScreenWidthConstraints,
+        child: child,
       ),
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

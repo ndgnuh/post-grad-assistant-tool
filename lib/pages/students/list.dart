@@ -29,10 +29,10 @@ class StudentListPage extends StatelessWidget {
 
     return CommonShortcuts(
       onSearch: () => searchFocusNode.requestFocus(),
-      child: ConstrainedScreen(
-        child: Scaffold(
-          appBar: AppBar(title: Text("Học viên")),
-          body: Padding(
+      child: Scaffold(
+        appBar: ConstrainedAppBar(child: AppBar(title: Text("Học viên"))),
+        body: ConstrainedBody(
+          child: Padding(
             padding: EdgeInsets.all(gutter),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
