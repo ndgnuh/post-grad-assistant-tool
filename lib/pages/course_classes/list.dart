@@ -7,6 +7,7 @@ import '../../custom_widgets.dart';
 import './_import_from_clipboard.dart';
 import './_view_model.dart';
 import './index.dart';
+import './providers.dart';
 
 part '_teaching_assignment_dialog.dart';
 
@@ -19,34 +20,38 @@ class CourseClassListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final gutter = context.responsiveGutter;
     return Scaffold(
-      appBar: AppBar(title: const Text("Danh sách lớp tín chỉ")),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(gutter),
-            child: IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                spacing: gutter,
-                children: [
-                  Spacer(),
-                  SemesterPicker(),
-                  FilledButton.icon(
-                    onPressed: null,
-                    label: Text("Thêm"),
-                    icon: Icon(Symbols.add),
-                  ),
-                  _ImportButton(),
-                ],
+      appBar: ConstrainedScreen(
+        child: AppBar(title: const Text("Danh sách lớp tín chỉ")),
+      ),
+      body: ConstrainedScreen(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(gutter),
+              child: IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  spacing: gutter,
+                  children: [
+                    Spacer(),
+                    SemesterPicker(),
+                    FilledButton.icon(
+                      onPressed: null,
+                      label: Text("Thêm"),
+                      icon: Icon(Symbols.add),
+                    ),
+                    _ImportButton(),
+                  ],
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: gutter),
-            child: Divider(),
-          ),
-          Expanded(child: _CourseClassesView()),
-        ],
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: gutter),
+              child: Divider(),
+            ),
+            Expanded(child: _CourseClassesView()),
+          ],
+        ),
       ),
     );
   }

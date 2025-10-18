@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
+import './providers.dart';
 
 const _lastCohortKey = '$_pagePreferenceKey/cohort';
 const _pagePreferenceKey = 'phd_student/create';
@@ -49,25 +50,27 @@ class PhdStudentCreatePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gutter = context.gutter;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tuyển sinh NCS'),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        spacing: gutter,
-        children: [
-          Expanded(
-            child: _InformationForm(),
-          ),
-          IntrinsicHeight(
-            child: Padding(
-              padding: EdgeInsets.all(gutter),
-              child: _SaveButton(),
+    return ConstrainedScreen(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Tuyển sinh NCS'),
+        ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: gutter,
+          children: [
+            Expanded(
+              child: _InformationForm(),
             ),
-          ),
-        ],
+            IntrinsicHeight(
+              child: Padding(
+                padding: EdgeInsets.all(gutter),
+                child: _SaveButton(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

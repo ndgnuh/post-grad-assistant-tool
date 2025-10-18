@@ -21,9 +21,9 @@ class HomePage extends StatelessWidget {
       return () => Navigator.of(context).pushNamed(route);
     }
 
-    return Scaffold(
-      body: ConstrainedScreen(
-        child: SingleChildScrollView(
+    return ConstrainedScreen(
+      child: Scaffold(
+        body: SingleChildScrollView(
           padding: EdgeInsets.all(gutter),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

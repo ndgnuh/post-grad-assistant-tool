@@ -1550,6 +1550,25 @@ extension ExpandedChildren on Expanded {
 const maxScreenWidth = 960.0;
 const maxScreenWidthConstraints = BoxConstraints(maxWidth: maxScreenWidth);
 
+class ConstrainedAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final Widget child;
+
+  const ConstrainedAppBar({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: maxScreenWidthConstraints,
+        child: child,
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+
 class ConstrainedScreen extends StatelessWidget implements PreferredSizeWidget {
   final Widget child;
 
@@ -1557,11 +1576,15 @@ class ConstrainedScreen extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        constraints: maxScreenWidthConstraints,
-        child: child,
+    final colorScheme = ColorScheme.of(context);
+    return Container(
+      color: colorScheme.surfaceDim,
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: maxScreenWidthConstraints,
+          child: child,
+        ),
       ),
     );
   }

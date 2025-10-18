@@ -62,15 +62,13 @@ class StudentDetailPage extends StatelessWidget {
         onUpdate: (value) => student.updatePhoneNumber(value!),
       ),
     ];
-    return Scaffold(
-      appBar: ConstrainedScreen(
-        child: AppBar(
+    return ConstrainedScreen(
+      child: Scaffold(
+        appBar: AppBar(
           title: Text(title),
           primary: true,
         ),
-      ),
-      body: ConstrainedScreen(
-        child: Padding(
+        body: Padding(
           padding: EdgeInsets.all(context.gutter),
           child: Column(
             spacing: context.gutter,

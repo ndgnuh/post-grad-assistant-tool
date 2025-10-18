@@ -122,6 +122,12 @@ create table "giangvien" (
 	"ncm"	integer as academicGroupId
 ) as TeacherData;
 
+create table "phd_cohort" (
+    "cohort" text not null primary key,
+    "created_time" datetime not null default current_timestamp,
+    "updated_time" datetime not null default current_timestamp
+);
+
 create table "phd_student" (
     "id" integer primary key autoincrement,
     "cohort" text not null,

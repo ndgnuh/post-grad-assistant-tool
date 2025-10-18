@@ -1,9 +1,7 @@
 import 'dart:math';
 
-import 'package:fami_tools/business/db_v1_providers/thesis.dart';
 import 'package:fami_tools/business/db_v2_providers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -11,7 +9,6 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/copy_pasta.dart' as copy_pasta;
 import '../../business/copy_pasta.dart';
-import '../../business/drift_orm.dart';
 import '../../custom_widgets.dart';
 import '../multiple_selection_page.dart';
 import './_download.dart';
@@ -51,33 +48,26 @@ class AdmissionListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: "Danh sách"),
-              Tab(text: "Hành động"),
-              Tab(text: "Quy trình"),
-            ],
-          ),
-          title: const Text("Xét tuyển"),
-        ),
-        body: Align(
-          alignment: Alignment.topCenter,
-          child: Center(
-            child: SizedBox(
-              width: min(width, 960),
-              child: TabBarView(
-                children: [
-                  AdmissionListTabView(),
-                  _AdmissionActionTabView(),
-                  _AdmissionProcedureTabView(),
-                ],
-              ),
+    return ConstrainedScreen(
+      child: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: const TabBar(
+              tabs: [
+                Tab(text: "Danh sách"),
+                Tab(text: "Hành động"),
+                Tab(text: "Quy trình"),
+              ],
             ),
+            title: const Text("Xét tuyển"),
+          ),
+          body: TabBarView(
+            children: [
+              AdmissionListTabView(),
+              _AdmissionActionTabView(),
+              _AdmissionProcedureTabView(),
+            ],
           ),
         ),
       ),

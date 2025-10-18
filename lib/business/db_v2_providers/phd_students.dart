@@ -17,9 +17,9 @@ class PhdCohorts extends AsyncNotifier<List<String>> {
   @override
   Future<List<String>> build() async {
     final db = await ref.watch(driftDatabaseProvider.future);
-    final query = db.managers.phdStudent.map((p) => p.cohort);
-    final result = await query.get();
-    return result.toSet().toList()..sort();
+    final stmt = db.phdCohort.select();
+    final result = await stmt.map((c) => c.cohort).get();
+    return result;
   }
 }
 

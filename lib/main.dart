@@ -1,5 +1,7 @@
 import 'dart:io' show Platform;
+import 'dart:math';
 
+import 'package:fami_tools/custom_widgets.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -265,17 +267,29 @@ class MyApp extends ConsumerWidget {
     // Function to get lighter color from a color
     final themes = Themes(context);
     final locale = Locale('vi', 'VN');
+    final width = MediaQuery.sizeOf(context).width;
 
     return SafeArea(
-      child: MaterialApp(
-        locale: locale,
-        darkTheme: themes.dark,
-        theme: themes.light,
-        themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-        initialRoute: initialRoute,
-        debugShowMaterialGrid: false,
-        debugShowCheckedModeBanner: false,
-        onGenerateRoute: onGenerateRoute,
+      child: Container(
+        color: isDarkMode
+            ? themes.dark.scaffoldBackgroundColor
+            : themes.light.scaffoldBackgroundColor,
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: SizedBox(
+            width: min(960, width),
+            child: MaterialApp(
+              locale: locale,
+              darkTheme: themes.dark,
+              theme: themes.light,
+              themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+              initialRoute: initialRoute,
+              debugShowMaterialGrid: false,
+              debugShowCheckedModeBanner: false,
+              onGenerateRoute: onGenerateRoute,
+            ),
+          ),
+        ),
       ),
     );
   }

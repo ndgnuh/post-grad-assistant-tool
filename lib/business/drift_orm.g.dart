@@ -5236,6 +5236,281 @@ class DetaithacsiCompanion extends UpdateCompanion<ThesisData> {
   }
 }
 
+class PhdCohort extends Table with TableInfo<PhdCohort, PhdCohortData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  PhdCohort(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _cohortMeta = const VerificationMeta('cohort');
+  late final GeneratedColumn<String> cohort = GeneratedColumn<String>(
+    'cohort',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL PRIMARY KEY',
+  );
+  static const VerificationMeta _createdTimeMeta = const VerificationMeta(
+    'createdTime',
+  );
+  late final GeneratedColumn<DateTime> createdTime = GeneratedColumn<DateTime>(
+    'created_time',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT CURRENT_TIMESTAMP',
+    defaultValue: const CustomExpression('CURRENT_TIMESTAMP'),
+  );
+  static const VerificationMeta _updatedTimeMeta = const VerificationMeta(
+    'updatedTime',
+  );
+  late final GeneratedColumn<DateTime> updatedTime = GeneratedColumn<DateTime>(
+    'updated_time',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT CURRENT_TIMESTAMP',
+    defaultValue: const CustomExpression('CURRENT_TIMESTAMP'),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [cohort, createdTime, updatedTime];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'phd_cohort';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PhdCohortData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('cohort')) {
+      context.handle(
+        _cohortMeta,
+        cohort.isAcceptableOrUnknown(data['cohort']!, _cohortMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cohortMeta);
+    }
+    if (data.containsKey('created_time')) {
+      context.handle(
+        _createdTimeMeta,
+        createdTime.isAcceptableOrUnknown(
+          data['created_time']!,
+          _createdTimeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('updated_time')) {
+      context.handle(
+        _updatedTimeMeta,
+        updatedTime.isAcceptableOrUnknown(
+          data['updated_time']!,
+          _updatedTimeMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {cohort};
+  @override
+  PhdCohortData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PhdCohortData(
+      cohort: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}cohort'],
+      )!,
+      createdTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_time'],
+      )!,
+      updatedTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_time'],
+      )!,
+    );
+  }
+
+  @override
+  PhdCohort createAlias(String alias) {
+    return PhdCohort(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class PhdCohortData extends DataClass implements Insertable<PhdCohortData> {
+  final String cohort;
+  final DateTime createdTime;
+  final DateTime updatedTime;
+  const PhdCohortData({
+    required this.cohort,
+    required this.createdTime,
+    required this.updatedTime,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['cohort'] = Variable<String>(cohort);
+    map['created_time'] = Variable<DateTime>(createdTime);
+    map['updated_time'] = Variable<DateTime>(updatedTime);
+    return map;
+  }
+
+  PhdCohortCompanion toCompanion(bool nullToAbsent) {
+    return PhdCohortCompanion(
+      cohort: Value(cohort),
+      createdTime: Value(createdTime),
+      updatedTime: Value(updatedTime),
+    );
+  }
+
+  factory PhdCohortData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PhdCohortData(
+      cohort: serializer.fromJson<String>(json['cohort']),
+      createdTime: serializer.fromJson<DateTime>(json['created_time']),
+      updatedTime: serializer.fromJson<DateTime>(json['updated_time']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'cohort': serializer.toJson<String>(cohort),
+      'created_time': serializer.toJson<DateTime>(createdTime),
+      'updated_time': serializer.toJson<DateTime>(updatedTime),
+    };
+  }
+
+  PhdCohortData copyWith({
+    String? cohort,
+    DateTime? createdTime,
+    DateTime? updatedTime,
+  }) => PhdCohortData(
+    cohort: cohort ?? this.cohort,
+    createdTime: createdTime ?? this.createdTime,
+    updatedTime: updatedTime ?? this.updatedTime,
+  );
+  PhdCohortData copyWithCompanion(PhdCohortCompanion data) {
+    return PhdCohortData(
+      cohort: data.cohort.present ? data.cohort.value : this.cohort,
+      createdTime: data.createdTime.present
+          ? data.createdTime.value
+          : this.createdTime,
+      updatedTime: data.updatedTime.present
+          ? data.updatedTime.value
+          : this.updatedTime,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PhdCohortData(')
+          ..write('cohort: $cohort, ')
+          ..write('createdTime: $createdTime, ')
+          ..write('updatedTime: $updatedTime')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(cohort, createdTime, updatedTime);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PhdCohortData &&
+          other.cohort == this.cohort &&
+          other.createdTime == this.createdTime &&
+          other.updatedTime == this.updatedTime);
+}
+
+class PhdCohortCompanion extends UpdateCompanion<PhdCohortData> {
+  final Value<String> cohort;
+  final Value<DateTime> createdTime;
+  final Value<DateTime> updatedTime;
+  final Value<int> rowid;
+  const PhdCohortCompanion({
+    this.cohort = const Value.absent(),
+    this.createdTime = const Value.absent(),
+    this.updatedTime = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PhdCohortCompanion.insert({
+    required String cohort,
+    this.createdTime = const Value.absent(),
+    this.updatedTime = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : cohort = Value(cohort);
+  static Insertable<PhdCohortData> custom({
+    Expression<String>? cohort,
+    Expression<DateTime>? createdTime,
+    Expression<DateTime>? updatedTime,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (cohort != null) 'cohort': cohort,
+      if (createdTime != null) 'created_time': createdTime,
+      if (updatedTime != null) 'updated_time': updatedTime,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PhdCohortCompanion copyWith({
+    Value<String>? cohort,
+    Value<DateTime>? createdTime,
+    Value<DateTime>? updatedTime,
+    Value<int>? rowid,
+  }) {
+    return PhdCohortCompanion(
+      cohort: cohort ?? this.cohort,
+      createdTime: createdTime ?? this.createdTime,
+      updatedTime: updatedTime ?? this.updatedTime,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (cohort.present) {
+      map['cohort'] = Variable<String>(cohort.value);
+    }
+    if (createdTime.present) {
+      map['created_time'] = Variable<DateTime>(createdTime.value);
+    }
+    if (updatedTime.present) {
+      map['updated_time'] = Variable<DateTime>(updatedTime.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PhdCohortCompanion(')
+          ..write('cohort: $cohort, ')
+          ..write('createdTime: $createdTime, ')
+          ..write('updatedTime: $updatedTime, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -8315,6 +8590,7 @@ abstract class _$MyDriftDatabase extends GeneratedDatabase {
   late final Hocky hocky = Hocky(this);
   late final Hocphan hocphan = Hocphan(this);
   late final Detaithacsi detaithacsi = Detaithacsi(this);
+  late final PhdCohort phdCohort = PhdCohort(this);
   late final PhdStudent phdStudent = PhdStudent(this);
   late final DangKyGiangDay dangKyGiangDay = DangKyGiangDay(this);
   late final LopTinChi lopTinChi = LopTinChi(this);
@@ -8497,6 +8773,7 @@ abstract class _$MyDriftDatabase extends GeneratedDatabase {
     hocky,
     hocphan,
     detaithacsi,
+    phdCohort,
     phdStudent,
     dangKyGiangDay,
     lopTinChi,
@@ -10935,6 +11212,171 @@ typedef $DetaithacsiProcessedTableManager =
       ThesisData,
       PrefetchHooks Function()
     >;
+typedef $PhdCohortCreateCompanionBuilder =
+    PhdCohortCompanion Function({
+      required String cohort,
+      Value<DateTime> createdTime,
+      Value<DateTime> updatedTime,
+      Value<int> rowid,
+    });
+typedef $PhdCohortUpdateCompanionBuilder =
+    PhdCohortCompanion Function({
+      Value<String> cohort,
+      Value<DateTime> createdTime,
+      Value<DateTime> updatedTime,
+      Value<int> rowid,
+    });
+
+class $PhdCohortFilterComposer extends Composer<_$MyDriftDatabase, PhdCohort> {
+  $PhdCohortFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get cohort => $composableBuilder(
+    column: $table.cohort,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdTime => $composableBuilder(
+    column: $table.createdTime,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedTime => $composableBuilder(
+    column: $table.updatedTime,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $PhdCohortOrderingComposer
+    extends Composer<_$MyDriftDatabase, PhdCohort> {
+  $PhdCohortOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get cohort => $composableBuilder(
+    column: $table.cohort,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdTime => $composableBuilder(
+    column: $table.createdTime,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedTime => $composableBuilder(
+    column: $table.updatedTime,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $PhdCohortAnnotationComposer
+    extends Composer<_$MyDriftDatabase, PhdCohort> {
+  $PhdCohortAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get cohort =>
+      $composableBuilder(column: $table.cohort, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdTime => $composableBuilder(
+    column: $table.createdTime,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedTime => $composableBuilder(
+    column: $table.updatedTime,
+    builder: (column) => column,
+  );
+}
+
+class $PhdCohortTableManager
+    extends
+        RootTableManager<
+          _$MyDriftDatabase,
+          PhdCohort,
+          PhdCohortData,
+          $PhdCohortFilterComposer,
+          $PhdCohortOrderingComposer,
+          $PhdCohortAnnotationComposer,
+          $PhdCohortCreateCompanionBuilder,
+          $PhdCohortUpdateCompanionBuilder,
+          (
+            PhdCohortData,
+            BaseReferences<_$MyDriftDatabase, PhdCohort, PhdCohortData>,
+          ),
+          PhdCohortData,
+          PrefetchHooks Function()
+        > {
+  $PhdCohortTableManager(_$MyDriftDatabase db, PhdCohort table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $PhdCohortFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $PhdCohortOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $PhdCohortAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> cohort = const Value.absent(),
+                Value<DateTime> createdTime = const Value.absent(),
+                Value<DateTime> updatedTime = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => PhdCohortCompanion(
+                cohort: cohort,
+                createdTime: createdTime,
+                updatedTime: updatedTime,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String cohort,
+                Value<DateTime> createdTime = const Value.absent(),
+                Value<DateTime> updatedTime = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => PhdCohortCompanion.insert(
+                cohort: cohort,
+                createdTime: createdTime,
+                updatedTime: updatedTime,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $PhdCohortProcessedTableManager =
+    ProcessedTableManager<
+      _$MyDriftDatabase,
+      PhdCohort,
+      PhdCohortData,
+      $PhdCohortFilterComposer,
+      $PhdCohortOrderingComposer,
+      $PhdCohortAnnotationComposer,
+      $PhdCohortCreateCompanionBuilder,
+      $PhdCohortUpdateCompanionBuilder,
+      (
+        PhdCohortData,
+        BaseReferences<_$MyDriftDatabase, PhdCohort, PhdCohortData>,
+      ),
+      PhdCohortData,
+      PrefetchHooks Function()
+    >;
 typedef $PhdStudentCreateCompanionBuilder =
     PhdStudentCompanion Function({
       Value<int?> id,
@@ -12428,6 +12870,8 @@ class $MyDriftDatabaseManager {
   $HocphanTableManager get hocphan => $HocphanTableManager(_db, _db.hocphan);
   $DetaithacsiTableManager get detaithacsi =>
       $DetaithacsiTableManager(_db, _db.detaithacsi);
+  $PhdCohortTableManager get phdCohort =>
+      $PhdCohortTableManager(_db, _db.phdCohort);
   $PhdStudentTableManager get phdStudent =>
       $PhdStudentTableManager(_db, _db.phdStudent);
   $DangKyGiangDayTableManager get dangKyGiangDay =>

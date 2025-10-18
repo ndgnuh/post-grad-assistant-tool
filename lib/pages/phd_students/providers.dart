@@ -8,6 +8,10 @@ final cohortSelectionModelProvider = AsyncNotifierProvider(
   () => PhdCohortSelectionModelNotifier("phd-students"),
 );
 
+final genderSelectionModelProvider = AsyncNotifierProvider(
+  () => GenderSelectionModelNotifier("phd-students"),
+);
+
 final phdStudentListViewModelProvider = AsyncNotifierProvider(
   PhdStudentListViewModelNotifier.new,
 );

@@ -1,14 +1,12 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../business/db_v2_providers.dart';
-
-import './widgets.dart';
+import '../../custom_widgets.dart';
 import './providers.dart';
+import './widgets.dart';
+import 'create.dart';
 
 class PhdStudentListPage extends StatelessWidget {
   static const routeName = '/phd-students';
@@ -16,23 +14,29 @@ class PhdStudentListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('PhD Students'),
-      ),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: SizedBox(
-          width: min(960, width),
-          child: Padding(
-            padding: EdgeInsets.all(context.gutter),
-            child: Column(
-              children: [
-                CohortSelector(),
-                Expanded(child: _PhdStudentListView()),
-              ],
-            ),
+    final gutter = context.gutter;
+    return ConstrainedScreen(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('PhD Students'),
+        ),
+        body: Padding(
+          padding: EdgeInsets.all(context.gutter),
+          child: Column(
+            spacing: gutter,
+            children: [
+              IntrinsicHeight(
+                child: Row(
+                  spacing: gutter,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(child: CohortSelector()),
+                    _GotoCreateButton(),
+                  ],
+                ),
+              ),
+              Expanded(child: _PhdStudentListView()),
+            ],
           ),
         ),
       ),
@@ -66,6 +70,19 @@ class _PhdStudentListView extends ConsumerWidget {
         return _PhdStudentInfo(model: model, index: index);
       },
       itemCount: model.students.length,
+    );
+  }
+}
+
+class _GotoCreateButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton.icon(
+      onPressed: () {
+        Navigator.of(context).pushNamed(PhdStudentCreatePage.routeName);
+      },
+      label: const Text('Thêm'),
+      icon: const Icon(Symbols.add),
     );
   }
 }
