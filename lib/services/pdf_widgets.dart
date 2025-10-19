@@ -16,6 +16,22 @@ Future<Font> loadFont(String assetPath) async {
   return Font.ttf(fontData);
 }
 
+PdfPageFormat a4Portrait({
+  double vMargin = 1 * PdfPageFormat.inch,
+  double hMargin = 1 * PdfPageFormat.inch,
+  double marginAll = 1 * PdfPageFormat.inch,
+}) {
+  return PdfPageFormat(
+    210 * PdfPageFormat.mm,
+    297 * PdfPageFormat.mm,
+    marginAll: marginAll,
+    marginTop: vMargin,
+    marginBottom: vMargin,
+    marginLeft: hMargin,
+    marginRight: hMargin,
+  );
+}
+
 PdfPageFormat a4Landscape({
   double vMargin = 1 * PdfPageFormat.inch,
   double hMargin = 1 * PdfPageFormat.inch,

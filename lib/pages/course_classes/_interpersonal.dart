@@ -24,8 +24,8 @@ String teachingInvitationMessage({
   required int numberOfRegisteredStudents,
 }) {
   // TODO: store iso date in DB so that in is mapped automatically by drift
-  final startTime = _parseYmd(semester.studyStartDate);
-  final endTime = _parseYmd(semester.studyEndDate);
+  final startTime = semester.studyStartDate;
+  final endTime = semester.studyEndDate;
   final startTimeStr = DateFormat('dd/MM/yyyy').format(startTime);
   final endTimeStr = DateFormat('dd/MM/yyyy').format(endTime);
   final teachingTime = "$startTimeStr - $endTimeStr";

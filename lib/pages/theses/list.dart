@@ -9,7 +9,8 @@ import '../../custom_widgets.dart';
 import '../../custom_tiles.dart';
 
 import './index.dart';
-import './ft_export.dart';
+import './widgets.dart';
+import './providers.dart';
 
 Future<bool?> goToDetail(Thesis thesis) async {
   // TODO: repimplement
@@ -126,39 +127,72 @@ class ThesisListPage extends StatelessWidget {
     final largeScreen = MediaQuery.sizeOf(context).width > 800;
     final smallScreen = !largeScreen;
 
+    final exportPdfButton = ExportPdfButton(
+      builder: (context, callback) => OutlinedButton(
+        onPressed: callback,
+        child: Text("Xuất PDF"),
+      ),
+    );
+
     return ChangeNotifierProvider(
       create: (context) => _State(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Đề tài hướng dẫn"),
-          actions: [_ThreeDotMenu()],
-        ),
-        body: FocusScope(
-          child: Padding(
-            padding: EdgeInsets.all(context.gutter),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              spacing: context.gutter,
-              children: [
-                if (largeScreen)
-                  IntrinsicHeight(
-                    child: Row(
-                      spacing: context.gutter,
+      child: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: ConstrainedAppBar(
+            withTabBar: true,
+            child: AppBar(
+              title: Text("Đề tài hướng dẫn"),
+              bottom: TabBar(
+                isScrollable: true,
+                tabs: [
+                  Tab(text: "Danh sách đề tài"),
+                  Tab(text: "Giao đề tài"),
+                  Tab(text: "Quản trị"),
+                ],
+              ),
+              actions: [
+                _ThreeDotMenu(),
+              ],
+            ),
+          ),
+          body: FocusScope(
+            child: ConstrainedBody(
+              child: TabBarView(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(context.gutter),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
+                      spacing: context.gutter,
                       children: [
-                        Expanded(child: _SearchBar()),
-                        _ExportPdfButton(),
-                        _CreateButton(),
+                        if (largeScreen)
+                          IntrinsicHeight(
+                            child: Row(
+                              spacing: context.gutter,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(child: _SearchBar()),
+                                exportPdfButton,
+                                _CreateButton(),
+                              ],
+                            ),
+                          ),
+                        if (smallScreen) _SearchBar(),
+                        Expanded(
+                          child: _TopicListView(),
+                        ),
+                        if (smallScreen) exportPdfButton,
+                        if (smallScreen) _CreateButton(),
                       ],
                     ),
                   ),
-                if (smallScreen) _SearchBar(),
-                Expanded(
-                  child: _TopicListView(),
-                ),
-                if (smallScreen) _ExportPdfButton(),
-                if (smallScreen) _CreateButton(),
-              ],
+
+                  // TODO: actual views
+                  Center(child: Text("TODO")),
+                  Center(child: Text("TODO")),
+                ],
+              ),
             ),
           ),
         ),
@@ -215,7 +249,6 @@ class _TopicListView extends StatelessWidget {
   @override
   build(BuildContext context) {
     final topics = context.select((_State state) => state.searchedTheses);
-    final state = context.read<_State>();
 
     return ListView.separated(
       separatorBuilder: (context, i) => Divider(),
@@ -301,18 +334,6 @@ class _ThesisItem extends StatelessWidget {
         subtitle: Text(subtitleText),
         isThreeLine: true,
       ),
-    );
-  }
-}
-
-class _ExportPdfButton extends StatelessWidget {
-  @override
-  build(BuildContext context) {
-    final state = context.read<_State>();
-    return OutlinedButton.icon(
-      icon: Icon(Icons.download),
-      label: Text("Xuất PDF"),
-      onPressed: state.exportExampleThesesPdf,
     );
   }
 }

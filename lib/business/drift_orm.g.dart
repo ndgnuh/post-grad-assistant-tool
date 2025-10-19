@@ -771,17 +771,15 @@ class Giangvien extends Table with TableInfo<Giangvien, TeacherData> {
     requiredDuringInsert: false,
     $customConstraints: '',
   );
-  static const VerificationMeta _dateOfBirthMeta = const VerificationMeta(
-    'dateOfBirth',
-  );
-  late final GeneratedColumn<String> dateOfBirth = GeneratedColumn<String>(
-    'ngaySinh',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
+  late final GeneratedColumnWithTypeConverter<DateTime?, String> dateOfBirth =
+      GeneratedColumn<String>(
+        'ngaySinh',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      ).withConverter<DateTime?>(Giangvien.$converterdateOfBirth);
   static const VerificationMeta _bankAccountMeta = const VerificationMeta(
     'bankAccount',
   );
@@ -914,12 +912,6 @@ class Giangvien extends Table with TableInfo<Giangvien, TeacherData> {
         citizenId.isAcceptableOrUnknown(data['cccd']!, _citizenIdMeta),
       );
     }
-    if (data.containsKey('ngaySinh')) {
-      context.handle(
-        _dateOfBirthMeta,
-        dateOfBirth.isAcceptableOrUnknown(data['ngaySinh']!, _dateOfBirthMeta),
-      );
-    }
     if (data.containsKey('stk')) {
       context.handle(
         _bankAccountMeta,
@@ -1012,9 +1004,11 @@ class Giangvien extends Table with TableInfo<Giangvien, TeacherData> {
         DriftSqlType.string,
         data['${effectivePrefix}cccd'],
       ),
-      dateOfBirth: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}ngaySinh'],
+      dateOfBirth: Giangvien.$converterdateOfBirth.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}ngaySinh'],
+        ),
       ),
       bankAccount: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -1052,6 +1046,8 @@ class Giangvien extends Table with TableInfo<Giangvien, TeacherData> {
       const AcademicRankConverter();
   static TypeConverter<AcademicDegree?, String?> $converteracademicDegree =
       const AcademicDegreeConverter();
+  static TypeConverter<DateTime?, String?> $converterdateOfBirth =
+      const YmdDateConverter();
   @override
   bool get dontWriteConstraints => true;
 }
@@ -1068,7 +1064,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
   final String? phone;
   final String? personalEmail;
   final String? citizenId;
-  final String? dateOfBirth;
+  final DateTime? dateOfBirth;
   final String? bankAccount;
   final String? bankName;
   final String? taxCode;
@@ -1130,7 +1126,9 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
       map['cccd'] = Variable<String>(citizenId);
     }
     if (!nullToAbsent || dateOfBirth != null) {
-      map['ngaySinh'] = Variable<String>(dateOfBirth);
+      map['ngaySinh'] = Variable<String>(
+        Giangvien.$converterdateOfBirth.toSql(dateOfBirth),
+      );
     }
     if (!nullToAbsent || bankAccount != null) {
       map['stk'] = Variable<String>(bankAccount);
@@ -1215,7 +1213,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
       phone: serializer.fromJson<String?>(json['sdt']),
       personalEmail: serializer.fromJson<String?>(json['email']),
       citizenId: serializer.fromJson<String?>(json['cccd']),
-      dateOfBirth: serializer.fromJson<String?>(json['ngaySinh']),
+      dateOfBirth: serializer.fromJson<DateTime?>(json['ngaySinh']),
       bankAccount: serializer.fromJson<String?>(json['stk']),
       bankName: serializer.fromJson<String?>(json['nganHang']),
       taxCode: serializer.fromJson<String?>(json['mst']),
@@ -1238,7 +1236,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
       'sdt': serializer.toJson<String?>(phone),
       'email': serializer.toJson<String?>(personalEmail),
       'cccd': serializer.toJson<String?>(citizenId),
-      'ngaySinh': serializer.toJson<String?>(dateOfBirth),
+      'ngaySinh': serializer.toJson<DateTime?>(dateOfBirth),
       'stk': serializer.toJson<String?>(bankAccount),
       'nganHang': serializer.toJson<String?>(bankName),
       'mst': serializer.toJson<String?>(taxCode),
@@ -1259,7 +1257,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
     Value<String?> phone = const Value.absent(),
     Value<String?> personalEmail = const Value.absent(),
     Value<String?> citizenId = const Value.absent(),
-    Value<String?> dateOfBirth = const Value.absent(),
+    Value<DateTime?> dateOfBirth = const Value.absent(),
     Value<String?> bankAccount = const Value.absent(),
     Value<String?> bankName = const Value.absent(),
     Value<String?> taxCode = const Value.absent(),
@@ -1409,7 +1407,7 @@ class GiangvienCompanion extends UpdateCompanion<TeacherData> {
   final Value<String?> phone;
   final Value<String?> personalEmail;
   final Value<String?> citizenId;
-  final Value<String?> dateOfBirth;
+  final Value<DateTime?> dateOfBirth;
   final Value<String?> bankAccount;
   final Value<String?> bankName;
   final Value<String?> taxCode;
@@ -1505,7 +1503,7 @@ class GiangvienCompanion extends UpdateCompanion<TeacherData> {
     Value<String?>? phone,
     Value<String?>? personalEmail,
     Value<String?>? citizenId,
-    Value<String?>? dateOfBirth,
+    Value<DateTime?>? dateOfBirth,
     Value<String?>? bankAccount,
     Value<String?>? bankName,
     Value<String?>? taxCode,
@@ -1576,7 +1574,9 @@ class GiangvienCompanion extends UpdateCompanion<TeacherData> {
       map['cccd'] = Variable<String>(citizenId.value);
     }
     if (dateOfBirth.present) {
-      map['ngaySinh'] = Variable<String>(dateOfBirth.value);
+      map['ngaySinh'] = Variable<String>(
+        Giangvien.$converterdateOfBirth.toSql(dateOfBirth.value),
+      );
     }
     if (bankAccount.present) {
       map['stk'] = Variable<String>(bankAccount.value);
@@ -3554,61 +3554,51 @@ class Hocky extends Table with TableInfo<Hocky, SemesterData> {
     requiredDuringInsert: true,
     $customConstraints: 'NOT NULL PRIMARY KEY',
   );
-  static const VerificationMeta _registrationOpenDateMeta =
-      const VerificationMeta('registrationOpenDate');
-  late final GeneratedColumn<String> registrationOpenDate =
-      GeneratedColumn<String>(
-        'moDangKy',
-        aliasedName,
-        false,
-        type: DriftSqlType.string,
-        requiredDuringInsert: true,
-        $customConstraints: 'NOT NULL',
-      );
-  static const VerificationMeta _registrationCloseDateMeta =
-      const VerificationMeta('registrationCloseDate');
-  late final GeneratedColumn<String> registrationCloseDate =
-      GeneratedColumn<String>(
-        'dongDangKy',
-        aliasedName,
-        false,
-        type: DriftSqlType.string,
-        requiredDuringInsert: true,
-        $customConstraints: 'NOT NULL',
-      );
-  static const VerificationMeta _studyStartDateMeta = const VerificationMeta(
-    'studyStartDate',
-  );
-  late final GeneratedColumn<String> studyStartDate = GeneratedColumn<String>(
-    'batDauHoc',
+  late final GeneratedColumnWithTypeConverter<DateTime, String>
+  registrationOpenDate = GeneratedColumn<String>(
+    'moDangKy',
     aliasedName,
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
     $customConstraints: 'NOT NULL',
-  );
-  static const VerificationMeta _studyEndDateMeta = const VerificationMeta(
-    'studyEndDate',
-  );
-  late final GeneratedColumn<String> studyEndDate = GeneratedColumn<String>(
-    'ketThucHoc',
+  ).withConverter<DateTime>(Hocky.$converterregistrationOpenDate);
+  late final GeneratedColumnWithTypeConverter<DateTime, String>
+  registrationCloseDate = GeneratedColumn<String>(
+    'dongDangKy',
     aliasedName,
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
     $customConstraints: 'NOT NULL',
-  );
-  static const VerificationMeta _gradeSubmissionDeadlineMeta =
-      const VerificationMeta('gradeSubmissionDeadline');
-  late final GeneratedColumn<String> gradeSubmissionDeadline =
+  ).withConverter<DateTime>(Hocky.$converterregistrationCloseDate);
+  late final GeneratedColumnWithTypeConverter<DateTime, String> studyStartDate =
       GeneratedColumn<String>(
-        'hanNhapDiem',
+        'batDauHoc',
         aliasedName,
         false,
         type: DriftSqlType.string,
         requiredDuringInsert: true,
         $customConstraints: 'NOT NULL',
-      );
+      ).withConverter<DateTime>(Hocky.$converterstudyStartDate);
+  late final GeneratedColumnWithTypeConverter<DateTime, String> studyEndDate =
+      GeneratedColumn<String>(
+        'ketThucHoc',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
+      ).withConverter<DateTime>(Hocky.$converterstudyEndDate);
+  late final GeneratedColumnWithTypeConverter<DateTime, String>
+  gradeSubmissionDeadline = GeneratedColumn<String>(
+    'hanNhapDiem',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  ).withConverter<DateTime>(Hocky.$convertergradeSubmissionDeadline);
   @override
   List<GeneratedColumn> get $columns => [
     semester,
@@ -3638,61 +3628,6 @@ class Hocky extends Table with TableInfo<Hocky, SemesterData> {
     } else if (isInserting) {
       context.missing(_semesterMeta);
     }
-    if (data.containsKey('moDangKy')) {
-      context.handle(
-        _registrationOpenDateMeta,
-        registrationOpenDate.isAcceptableOrUnknown(
-          data['moDangKy']!,
-          _registrationOpenDateMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_registrationOpenDateMeta);
-    }
-    if (data.containsKey('dongDangKy')) {
-      context.handle(
-        _registrationCloseDateMeta,
-        registrationCloseDate.isAcceptableOrUnknown(
-          data['dongDangKy']!,
-          _registrationCloseDateMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_registrationCloseDateMeta);
-    }
-    if (data.containsKey('batDauHoc')) {
-      context.handle(
-        _studyStartDateMeta,
-        studyStartDate.isAcceptableOrUnknown(
-          data['batDauHoc']!,
-          _studyStartDateMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_studyStartDateMeta);
-    }
-    if (data.containsKey('ketThucHoc')) {
-      context.handle(
-        _studyEndDateMeta,
-        studyEndDate.isAcceptableOrUnknown(
-          data['ketThucHoc']!,
-          _studyEndDateMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_studyEndDateMeta);
-    }
-    if (data.containsKey('hanNhapDiem')) {
-      context.handle(
-        _gradeSubmissionDeadlineMeta,
-        gradeSubmissionDeadline.isAcceptableOrUnknown(
-          data['hanNhapDiem']!,
-          _gradeSubmissionDeadlineMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_gradeSubmissionDeadlineMeta);
-    }
     return context;
   }
 
@@ -3706,26 +3641,36 @@ class Hocky extends Table with TableInfo<Hocky, SemesterData> {
         DriftSqlType.string,
         data['${effectivePrefix}hocKy'],
       )!,
-      registrationOpenDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}moDangKy'],
-      )!,
-      registrationCloseDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}dongDangKy'],
-      )!,
-      studyStartDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}batDauHoc'],
-      )!,
-      studyEndDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}ketThucHoc'],
-      )!,
-      gradeSubmissionDeadline: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}hanNhapDiem'],
-      )!,
+      registrationOpenDate: Hocky.$converterregistrationOpenDate.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}moDangKy'],
+        )!,
+      ),
+      registrationCloseDate: Hocky.$converterregistrationCloseDate.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}dongDangKy'],
+        )!,
+      ),
+      studyStartDate: Hocky.$converterstudyStartDate.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}batDauHoc'],
+        )!,
+      ),
+      studyEndDate: Hocky.$converterstudyEndDate.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}ketThucHoc'],
+        )!,
+      ),
+      gradeSubmissionDeadline: Hocky.$convertergradeSubmissionDeadline.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}hanNhapDiem'],
+        )!,
+      ),
     );
   }
 
@@ -3734,17 +3679,27 @@ class Hocky extends Table with TableInfo<Hocky, SemesterData> {
     return Hocky(attachedDatabase, alias);
   }
 
+  static TypeConverter<DateTime, String> $converterregistrationOpenDate =
+      const SureYmdDateConverter();
+  static TypeConverter<DateTime, String> $converterregistrationCloseDate =
+      const SureYmdDateConverter();
+  static TypeConverter<DateTime, String> $converterstudyStartDate =
+      const SureYmdDateConverter();
+  static TypeConverter<DateTime, String> $converterstudyEndDate =
+      const SureYmdDateConverter();
+  static TypeConverter<DateTime, String> $convertergradeSubmissionDeadline =
+      const SureYmdDateConverter();
   @override
   bool get dontWriteConstraints => true;
 }
 
 class SemesterData extends DataClass implements Insertable<SemesterData> {
   final String semester;
-  final String registrationOpenDate;
-  final String registrationCloseDate;
-  final String studyStartDate;
-  final String studyEndDate;
-  final String gradeSubmissionDeadline;
+  final DateTime registrationOpenDate;
+  final DateTime registrationCloseDate;
+  final DateTime studyStartDate;
+  final DateTime studyEndDate;
+  final DateTime gradeSubmissionDeadline;
   const SemesterData({
     required this.semester,
     required this.registrationOpenDate,
@@ -3757,11 +3712,31 @@ class SemesterData extends DataClass implements Insertable<SemesterData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['hocKy'] = Variable<String>(semester);
-    map['moDangKy'] = Variable<String>(registrationOpenDate);
-    map['dongDangKy'] = Variable<String>(registrationCloseDate);
-    map['batDauHoc'] = Variable<String>(studyStartDate);
-    map['ketThucHoc'] = Variable<String>(studyEndDate);
-    map['hanNhapDiem'] = Variable<String>(gradeSubmissionDeadline);
+    {
+      map['moDangKy'] = Variable<String>(
+        Hocky.$converterregistrationOpenDate.toSql(registrationOpenDate),
+      );
+    }
+    {
+      map['dongDangKy'] = Variable<String>(
+        Hocky.$converterregistrationCloseDate.toSql(registrationCloseDate),
+      );
+    }
+    {
+      map['batDauHoc'] = Variable<String>(
+        Hocky.$converterstudyStartDate.toSql(studyStartDate),
+      );
+    }
+    {
+      map['ketThucHoc'] = Variable<String>(
+        Hocky.$converterstudyEndDate.toSql(studyEndDate),
+      );
+    }
+    {
+      map['hanNhapDiem'] = Variable<String>(
+        Hocky.$convertergradeSubmissionDeadline.toSql(gradeSubmissionDeadline),
+      );
+    }
     return map;
   }
 
@@ -3783,11 +3758,13 @@ class SemesterData extends DataClass implements Insertable<SemesterData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return SemesterData(
       semester: serializer.fromJson<String>(json['hocKy']),
-      registrationOpenDate: serializer.fromJson<String>(json['moDangKy']),
-      registrationCloseDate: serializer.fromJson<String>(json['dongDangKy']),
-      studyStartDate: serializer.fromJson<String>(json['batDauHoc']),
-      studyEndDate: serializer.fromJson<String>(json['ketThucHoc']),
-      gradeSubmissionDeadline: serializer.fromJson<String>(json['hanNhapDiem']),
+      registrationOpenDate: serializer.fromJson<DateTime>(json['moDangKy']),
+      registrationCloseDate: serializer.fromJson<DateTime>(json['dongDangKy']),
+      studyStartDate: serializer.fromJson<DateTime>(json['batDauHoc']),
+      studyEndDate: serializer.fromJson<DateTime>(json['ketThucHoc']),
+      gradeSubmissionDeadline: serializer.fromJson<DateTime>(
+        json['hanNhapDiem'],
+      ),
     );
   }
   @override
@@ -3795,21 +3772,21 @@ class SemesterData extends DataClass implements Insertable<SemesterData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'hocKy': serializer.toJson<String>(semester),
-      'moDangKy': serializer.toJson<String>(registrationOpenDate),
-      'dongDangKy': serializer.toJson<String>(registrationCloseDate),
-      'batDauHoc': serializer.toJson<String>(studyStartDate),
-      'ketThucHoc': serializer.toJson<String>(studyEndDate),
-      'hanNhapDiem': serializer.toJson<String>(gradeSubmissionDeadline),
+      'moDangKy': serializer.toJson<DateTime>(registrationOpenDate),
+      'dongDangKy': serializer.toJson<DateTime>(registrationCloseDate),
+      'batDauHoc': serializer.toJson<DateTime>(studyStartDate),
+      'ketThucHoc': serializer.toJson<DateTime>(studyEndDate),
+      'hanNhapDiem': serializer.toJson<DateTime>(gradeSubmissionDeadline),
     };
   }
 
   SemesterData copyWith({
     String? semester,
-    String? registrationOpenDate,
-    String? registrationCloseDate,
-    String? studyStartDate,
-    String? studyEndDate,
-    String? gradeSubmissionDeadline,
+    DateTime? registrationOpenDate,
+    DateTime? registrationCloseDate,
+    DateTime? studyStartDate,
+    DateTime? studyEndDate,
+    DateTime? gradeSubmissionDeadline,
   }) => SemesterData(
     semester: semester ?? this.semester,
     registrationOpenDate: registrationOpenDate ?? this.registrationOpenDate,
@@ -3876,11 +3853,11 @@ class SemesterData extends DataClass implements Insertable<SemesterData> {
 
 class HockyCompanion extends UpdateCompanion<SemesterData> {
   final Value<String> semester;
-  final Value<String> registrationOpenDate;
-  final Value<String> registrationCloseDate;
-  final Value<String> studyStartDate;
-  final Value<String> studyEndDate;
-  final Value<String> gradeSubmissionDeadline;
+  final Value<DateTime> registrationOpenDate;
+  final Value<DateTime> registrationCloseDate;
+  final Value<DateTime> studyStartDate;
+  final Value<DateTime> studyEndDate;
+  final Value<DateTime> gradeSubmissionDeadline;
   final Value<int> rowid;
   const HockyCompanion({
     this.semester = const Value.absent(),
@@ -3893,11 +3870,11 @@ class HockyCompanion extends UpdateCompanion<SemesterData> {
   });
   HockyCompanion.insert({
     required String semester,
-    required String registrationOpenDate,
-    required String registrationCloseDate,
-    required String studyStartDate,
-    required String studyEndDate,
-    required String gradeSubmissionDeadline,
+    required DateTime registrationOpenDate,
+    required DateTime registrationCloseDate,
+    required DateTime studyStartDate,
+    required DateTime studyEndDate,
+    required DateTime gradeSubmissionDeadline,
     this.rowid = const Value.absent(),
   }) : semester = Value(semester),
        registrationOpenDate = Value(registrationOpenDate),
@@ -3928,11 +3905,11 @@ class HockyCompanion extends UpdateCompanion<SemesterData> {
 
   HockyCompanion copyWith({
     Value<String>? semester,
-    Value<String>? registrationOpenDate,
-    Value<String>? registrationCloseDate,
-    Value<String>? studyStartDate,
-    Value<String>? studyEndDate,
-    Value<String>? gradeSubmissionDeadline,
+    Value<DateTime>? registrationOpenDate,
+    Value<DateTime>? registrationCloseDate,
+    Value<DateTime>? studyStartDate,
+    Value<DateTime>? studyEndDate,
+    Value<DateTime>? gradeSubmissionDeadline,
     Value<int>? rowid,
   }) {
     return HockyCompanion(
@@ -3955,19 +3932,33 @@ class HockyCompanion extends UpdateCompanion<SemesterData> {
       map['hocKy'] = Variable<String>(semester.value);
     }
     if (registrationOpenDate.present) {
-      map['moDangKy'] = Variable<String>(registrationOpenDate.value);
+      map['moDangKy'] = Variable<String>(
+        Hocky.$converterregistrationOpenDate.toSql(registrationOpenDate.value),
+      );
     }
     if (registrationCloseDate.present) {
-      map['dongDangKy'] = Variable<String>(registrationCloseDate.value);
+      map['dongDangKy'] = Variable<String>(
+        Hocky.$converterregistrationCloseDate.toSql(
+          registrationCloseDate.value,
+        ),
+      );
     }
     if (studyStartDate.present) {
-      map['batDauHoc'] = Variable<String>(studyStartDate.value);
+      map['batDauHoc'] = Variable<String>(
+        Hocky.$converterstudyStartDate.toSql(studyStartDate.value),
+      );
     }
     if (studyEndDate.present) {
-      map['ketThucHoc'] = Variable<String>(studyEndDate.value);
+      map['ketThucHoc'] = Variable<String>(
+        Hocky.$converterstudyEndDate.toSql(studyEndDate.value),
+      );
     }
     if (gradeSubmissionDeadline.present) {
-      map['hanNhapDiem'] = Variable<String>(gradeSubmissionDeadline.value);
+      map['hanNhapDiem'] = Variable<String>(
+        Hocky.$convertergradeSubmissionDeadline.toSql(
+          gradeSubmissionDeadline.value,
+        ),
+      );
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -4492,17 +4483,15 @@ class Detaithacsi extends Table with TableInfo<Detaithacsi, ThesisData> {
     requiredDuringInsert: false,
     $customConstraints: '',
   );
-  static const VerificationMeta _assignedDateMeta = const VerificationMeta(
-    'assignedDate',
-  );
-  late final GeneratedColumn<String> assignedDate = GeneratedColumn<String>(
-    'ngayGiao',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
+  late final GeneratedColumnWithTypeConverter<DateTime?, String> assignedDate =
+      GeneratedColumn<String>(
+        'ngayGiao',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      ).withConverter<DateTime?>(Detaithacsi.$converterassignedDate);
   static const VerificationMeta _assignedDecisionNumberMeta =
       const VerificationMeta('assignedDecisionNumber');
   late final GeneratedColumn<String> assignedDecisionNumber =
@@ -4514,17 +4503,15 @@ class Detaithacsi extends Table with TableInfo<Detaithacsi, ThesisData> {
         requiredDuringInsert: false,
         $customConstraints: '',
       );
-  static const VerificationMeta _defenseDeadlineMeta = const VerificationMeta(
-    'defenseDeadline',
-  );
-  late final GeneratedColumn<String> defenseDeadline = GeneratedColumn<String>(
+  late final GeneratedColumnWithTypeConverter<DateTime?, String>
+  defenseDeadline = GeneratedColumn<String>(
     'hanBaoVe',
     aliasedName,
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
     $customConstraints: '',
-  );
+  ).withConverter<DateTime?>(Detaithacsi.$converterdefenseDeadline);
   static const VerificationMeta _defenseDecisionNumberMeta =
       const VerificationMeta('defenseDecisionNumber');
   late final GeneratedColumn<String> defenseDecisionNumber =
@@ -4536,17 +4523,15 @@ class Detaithacsi extends Table with TableInfo<Detaithacsi, ThesisData> {
         requiredDuringInsert: false,
         $customConstraints: '',
       );
-  static const VerificationMeta _defenseDateMeta = const VerificationMeta(
-    'defenseDate',
-  );
-  late final GeneratedColumn<String> defenseDate = GeneratedColumn<String>(
-    'ngayBaoVe',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
+  late final GeneratedColumnWithTypeConverter<DateTime?, String> defenseDate =
+      GeneratedColumn<String>(
+        'ngayBaoVe',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      ).withConverter<DateTime?>(Detaithacsi.$converterdefenseDate);
   static const VerificationMeta _presidentIdMeta = const VerificationMeta(
     'presidentId',
   );
@@ -4602,27 +4587,41 @@ class Detaithacsi extends Table with TableInfo<Detaithacsi, ThesisData> {
     requiredDuringInsert: false,
     $customConstraints: '',
   );
-  static const VerificationMeta _isTrackingMeta = const VerificationMeta(
-    'isTracking',
+  static const VerificationMeta _flagTrackingMeta = const VerificationMeta(
+    'flagTracking',
   );
-  late final GeneratedColumn<int> isTracking = GeneratedColumn<int>(
+  late final GeneratedColumn<bool> flagTracking = GeneratedColumn<bool>(
     'flag_tracking',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.bool,
     requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT 0 CHECK (flag_tracking IN (0, 1))',
-    defaultValue: const CustomExpression('0'),
+    $customConstraints: 'NOT NULL DEFAULT FALSE',
+    defaultValue: const CustomExpression('FALSE'),
   );
-  static const VerificationMeta _isPaidMeta = const VerificationMeta('isPaid');
-  late final GeneratedColumn<int> isPaid = GeneratedColumn<int>(
+  static const VerificationMeta _flagPaidMeta = const VerificationMeta(
+    'flagPaid',
+  );
+  late final GeneratedColumn<bool> flagPaid = GeneratedColumn<bool>(
     'flag_paid',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.bool,
     requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT 0 CHECK (flag_tracking IN (0, 1))',
-    defaultValue: const CustomExpression('0'),
+    $customConstraints: 'NOT NULL DEFAULT FALSE',
+    defaultValue: const CustomExpression('FALSE'),
+  );
+  static const VerificationMeta _flagIgnoreMeta = const VerificationMeta(
+    'flagIgnore',
+  );
+  late final GeneratedColumn<bool> flagIgnore = GeneratedColumn<bool>(
+    'flag_ignore',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT FALSE',
+    defaultValue: const CustomExpression('FALSE'),
   );
   static const VerificationMeta _groupMeta = const VerificationMeta('group');
   late final GeneratedColumn<String> group = GeneratedColumn<String>(
@@ -4682,8 +4681,9 @@ class Detaithacsi extends Table with TableInfo<Detaithacsi, ThesisData> {
     secondReviewerId,
     secretaryId,
     memberId,
-    isTracking,
-    isPaid,
+    flagTracking,
+    flagPaid,
+    flagIgnore,
     group,
     year,
     isRegisteredForDefense,
@@ -4749,30 +4749,12 @@ class Detaithacsi extends Table with TableInfo<Detaithacsi, ThesisData> {
         studentId.isAcceptableOrUnknown(data['idHocVien']!, _studentIdMeta),
       );
     }
-    if (data.containsKey('ngayGiao')) {
-      context.handle(
-        _assignedDateMeta,
-        assignedDate.isAcceptableOrUnknown(
-          data['ngayGiao']!,
-          _assignedDateMeta,
-        ),
-      );
-    }
     if (data.containsKey('soQdGiao')) {
       context.handle(
         _assignedDecisionNumberMeta,
         assignedDecisionNumber.isAcceptableOrUnknown(
           data['soQdGiao']!,
           _assignedDecisionNumberMeta,
-        ),
-      );
-    }
-    if (data.containsKey('hanBaoVe')) {
-      context.handle(
-        _defenseDeadlineMeta,
-        defenseDeadline.isAcceptableOrUnknown(
-          data['hanBaoVe']!,
-          _defenseDeadlineMeta,
         ),
       );
     }
@@ -4783,12 +4765,6 @@ class Detaithacsi extends Table with TableInfo<Detaithacsi, ThesisData> {
           data['soQdBaoVe']!,
           _defenseDecisionNumberMeta,
         ),
-      );
-    }
-    if (data.containsKey('ngayBaoVe')) {
-      context.handle(
-        _defenseDateMeta,
-        defenseDate.isAcceptableOrUnknown(data['ngayBaoVe']!, _defenseDateMeta),
       );
     }
     if (data.containsKey('idChuTich')) {
@@ -4829,17 +4805,23 @@ class Detaithacsi extends Table with TableInfo<Detaithacsi, ThesisData> {
     }
     if (data.containsKey('flag_tracking')) {
       context.handle(
-        _isTrackingMeta,
-        isTracking.isAcceptableOrUnknown(
+        _flagTrackingMeta,
+        flagTracking.isAcceptableOrUnknown(
           data['flag_tracking']!,
-          _isTrackingMeta,
+          _flagTrackingMeta,
         ),
       );
     }
     if (data.containsKey('flag_paid')) {
       context.handle(
-        _isPaidMeta,
-        isPaid.isAcceptableOrUnknown(data['flag_paid']!, _isPaidMeta),
+        _flagPaidMeta,
+        flagPaid.isAcceptableOrUnknown(data['flag_paid']!, _flagPaidMeta),
+      );
+    }
+    if (data.containsKey('flag_ignore')) {
+      context.handle(
+        _flagIgnoreMeta,
+        flagIgnore.isAcceptableOrUnknown(data['flag_ignore']!, _flagIgnoreMeta),
       );
     }
     if (data.containsKey('group')) {
@@ -4905,25 +4887,31 @@ class Detaithacsi extends Table with TableInfo<Detaithacsi, ThesisData> {
         DriftSqlType.int,
         data['${effectivePrefix}idHocVien'],
       ),
-      assignedDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}ngayGiao'],
+      assignedDate: Detaithacsi.$converterassignedDate.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}ngayGiao'],
+        ),
       ),
       assignedDecisionNumber: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}soQdGiao'],
       ),
-      defenseDeadline: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}hanBaoVe'],
+      defenseDeadline: Detaithacsi.$converterdefenseDeadline.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}hanBaoVe'],
+        ),
       ),
       defenseDecisionNumber: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}soQdBaoVe'],
       ),
-      defenseDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}ngayBaoVe'],
+      defenseDate: Detaithacsi.$converterdefenseDate.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}ngayBaoVe'],
+        ),
       ),
       presidentId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -4945,13 +4933,17 @@ class Detaithacsi extends Table with TableInfo<Detaithacsi, ThesisData> {
         DriftSqlType.int,
         data['${effectivePrefix}idUyVien'],
       ),
-      isTracking: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+      flagTracking: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
         data['${effectivePrefix}flag_tracking'],
       )!,
-      isPaid: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+      flagPaid: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
         data['${effectivePrefix}flag_paid'],
+      )!,
+      flagIgnore: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}flag_ignore'],
       )!,
       group: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -4977,6 +4969,12 @@ class Detaithacsi extends Table with TableInfo<Detaithacsi, ThesisData> {
     return Detaithacsi(attachedDatabase, alias);
   }
 
+  static TypeConverter<DateTime?, String?> $converterassignedDate =
+      const YmdDateConverter();
+  static TypeConverter<DateTime?, String?> $converterdefenseDeadline =
+      const YmdDateConverter();
+  static TypeConverter<DateTime?, String?> $converterdefenseDate =
+      const YmdDateConverter();
   @override
   List<String> get customConstraints => const [
     'FOREIGN KEY(idChuTich)REFERENCES GiangVien(id)',
@@ -4997,18 +4995,19 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
   final String englishTitle;
   final String note;
   final int? studentId;
-  final String? assignedDate;
+  final DateTime? assignedDate;
   final String? assignedDecisionNumber;
-  final String? defenseDeadline;
+  final DateTime? defenseDeadline;
   final String? defenseDecisionNumber;
-  final String? defenseDate;
+  final DateTime? defenseDate;
   final int? presidentId;
   final int? firstReviewerId;
   final int? secondReviewerId;
   final int? secretaryId;
   final int? memberId;
-  final int isTracking;
-  final int isPaid;
+  final bool flagTracking;
+  final bool flagPaid;
+  final bool flagIgnore;
   final String? group;
   final String? year;
   final int isRegisteredForDefense;
@@ -5030,8 +5029,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     this.secondReviewerId,
     this.secretaryId,
     this.memberId,
-    required this.isTracking,
-    required this.isPaid,
+    required this.flagTracking,
+    required this.flagPaid,
+    required this.flagIgnore,
     this.group,
     this.year,
     required this.isRegisteredForDefense,
@@ -5049,19 +5049,25 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
       map['idHocVien'] = Variable<int>(studentId);
     }
     if (!nullToAbsent || assignedDate != null) {
-      map['ngayGiao'] = Variable<String>(assignedDate);
+      map['ngayGiao'] = Variable<String>(
+        Detaithacsi.$converterassignedDate.toSql(assignedDate),
+      );
     }
     if (!nullToAbsent || assignedDecisionNumber != null) {
       map['soQdGiao'] = Variable<String>(assignedDecisionNumber);
     }
     if (!nullToAbsent || defenseDeadline != null) {
-      map['hanBaoVe'] = Variable<String>(defenseDeadline);
+      map['hanBaoVe'] = Variable<String>(
+        Detaithacsi.$converterdefenseDeadline.toSql(defenseDeadline),
+      );
     }
     if (!nullToAbsent || defenseDecisionNumber != null) {
       map['soQdBaoVe'] = Variable<String>(defenseDecisionNumber);
     }
     if (!nullToAbsent || defenseDate != null) {
-      map['ngayBaoVe'] = Variable<String>(defenseDate);
+      map['ngayBaoVe'] = Variable<String>(
+        Detaithacsi.$converterdefenseDate.toSql(defenseDate),
+      );
     }
     if (!nullToAbsent || presidentId != null) {
       map['idChuTich'] = Variable<int>(presidentId);
@@ -5078,8 +5084,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     if (!nullToAbsent || memberId != null) {
       map['idUyVien'] = Variable<int>(memberId);
     }
-    map['flag_tracking'] = Variable<int>(isTracking);
-    map['flag_paid'] = Variable<int>(isPaid);
+    map['flag_tracking'] = Variable<bool>(flagTracking);
+    map['flag_paid'] = Variable<bool>(flagPaid);
+    map['flag_ignore'] = Variable<bool>(flagIgnore);
     if (!nullToAbsent || group != null) {
       map['group'] = Variable<String>(group);
     }
@@ -5131,8 +5138,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
       memberId: memberId == null && nullToAbsent
           ? const Value.absent()
           : Value(memberId),
-      isTracking: Value(isTracking),
-      isPaid: Value(isPaid),
+      flagTracking: Value(flagTracking),
+      flagPaid: Value(flagPaid),
+      flagIgnore: Value(flagIgnore),
       group: group == null && nullToAbsent
           ? const Value.absent()
           : Value(group),
@@ -5154,18 +5162,19 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
       englishTitle: serializer.fromJson<String>(json['tenTiengAnh']),
       note: serializer.fromJson<String>(json['ghiChu']),
       studentId: serializer.fromJson<int?>(json['idHocVien']),
-      assignedDate: serializer.fromJson<String?>(json['ngayGiao']),
+      assignedDate: serializer.fromJson<DateTime?>(json['ngayGiao']),
       assignedDecisionNumber: serializer.fromJson<String?>(json['soQdGiao']),
-      defenseDeadline: serializer.fromJson<String?>(json['hanBaoVe']),
+      defenseDeadline: serializer.fromJson<DateTime?>(json['hanBaoVe']),
       defenseDecisionNumber: serializer.fromJson<String?>(json['soQdBaoVe']),
-      defenseDate: serializer.fromJson<String?>(json['ngayBaoVe']),
+      defenseDate: serializer.fromJson<DateTime?>(json['ngayBaoVe']),
       presidentId: serializer.fromJson<int?>(json['idChuTich']),
       firstReviewerId: serializer.fromJson<int?>(json['idPhanBien1']),
       secondReviewerId: serializer.fromJson<int?>(json['idPhanBien2']),
       secretaryId: serializer.fromJson<int?>(json['idThuKy']),
       memberId: serializer.fromJson<int?>(json['idUyVien']),
-      isTracking: serializer.fromJson<int>(json['flag_tracking']),
-      isPaid: serializer.fromJson<int>(json['flag_paid']),
+      flagTracking: serializer.fromJson<bool>(json['flag_tracking']),
+      flagPaid: serializer.fromJson<bool>(json['flag_paid']),
+      flagIgnore: serializer.fromJson<bool>(json['flag_ignore']),
       group: serializer.fromJson<String?>(json['group']),
       year: serializer.fromJson<String?>(json['nam']),
       isRegisteredForDefense: serializer.fromJson<int>(json['dangKyBaoVe']),
@@ -5182,18 +5191,19 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
       'tenTiengAnh': serializer.toJson<String>(englishTitle),
       'ghiChu': serializer.toJson<String>(note),
       'idHocVien': serializer.toJson<int?>(studentId),
-      'ngayGiao': serializer.toJson<String?>(assignedDate),
+      'ngayGiao': serializer.toJson<DateTime?>(assignedDate),
       'soQdGiao': serializer.toJson<String?>(assignedDecisionNumber),
-      'hanBaoVe': serializer.toJson<String?>(defenseDeadline),
+      'hanBaoVe': serializer.toJson<DateTime?>(defenseDeadline),
       'soQdBaoVe': serializer.toJson<String?>(defenseDecisionNumber),
-      'ngayBaoVe': serializer.toJson<String?>(defenseDate),
+      'ngayBaoVe': serializer.toJson<DateTime?>(defenseDate),
       'idChuTich': serializer.toJson<int?>(presidentId),
       'idPhanBien1': serializer.toJson<int?>(firstReviewerId),
       'idPhanBien2': serializer.toJson<int?>(secondReviewerId),
       'idThuKy': serializer.toJson<int?>(secretaryId),
       'idUyVien': serializer.toJson<int?>(memberId),
-      'flag_tracking': serializer.toJson<int>(isTracking),
-      'flag_paid': serializer.toJson<int>(isPaid),
+      'flag_tracking': serializer.toJson<bool>(flagTracking),
+      'flag_paid': serializer.toJson<bool>(flagPaid),
+      'flag_ignore': serializer.toJson<bool>(flagIgnore),
       'group': serializer.toJson<String?>(group),
       'nam': serializer.toJson<String?>(year),
       'dangKyBaoVe': serializer.toJson<int>(isRegisteredForDefense),
@@ -5208,18 +5218,19 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     String? englishTitle,
     String? note,
     Value<int?> studentId = const Value.absent(),
-    Value<String?> assignedDate = const Value.absent(),
+    Value<DateTime?> assignedDate = const Value.absent(),
     Value<String?> assignedDecisionNumber = const Value.absent(),
-    Value<String?> defenseDeadline = const Value.absent(),
+    Value<DateTime?> defenseDeadline = const Value.absent(),
     Value<String?> defenseDecisionNumber = const Value.absent(),
-    Value<String?> defenseDate = const Value.absent(),
+    Value<DateTime?> defenseDate = const Value.absent(),
     Value<int?> presidentId = const Value.absent(),
     Value<int?> firstReviewerId = const Value.absent(),
     Value<int?> secondReviewerId = const Value.absent(),
     Value<int?> secretaryId = const Value.absent(),
     Value<int?> memberId = const Value.absent(),
-    int? isTracking,
-    int? isPaid,
+    bool? flagTracking,
+    bool? flagPaid,
+    bool? flagIgnore,
     Value<String?> group = const Value.absent(),
     Value<String?> year = const Value.absent(),
     int? isRegisteredForDefense,
@@ -5251,8 +5262,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
         : this.secondReviewerId,
     secretaryId: secretaryId.present ? secretaryId.value : this.secretaryId,
     memberId: memberId.present ? memberId.value : this.memberId,
-    isTracking: isTracking ?? this.isTracking,
-    isPaid: isPaid ?? this.isPaid,
+    flagTracking: flagTracking ?? this.flagTracking,
+    flagPaid: flagPaid ?? this.flagPaid,
+    flagIgnore: flagIgnore ?? this.flagIgnore,
     group: group.present ? group.value : this.group,
     year: year.present ? year.value : this.year,
     isRegisteredForDefense:
@@ -5301,10 +5313,13 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
           ? data.secretaryId.value
           : this.secretaryId,
       memberId: data.memberId.present ? data.memberId.value : this.memberId,
-      isTracking: data.isTracking.present
-          ? data.isTracking.value
-          : this.isTracking,
-      isPaid: data.isPaid.present ? data.isPaid.value : this.isPaid,
+      flagTracking: data.flagTracking.present
+          ? data.flagTracking.value
+          : this.flagTracking,
+      flagPaid: data.flagPaid.present ? data.flagPaid.value : this.flagPaid,
+      flagIgnore: data.flagIgnore.present
+          ? data.flagIgnore.value
+          : this.flagIgnore,
       group: data.group.present ? data.group.value : this.group,
       year: data.year.present ? data.year.value : this.year,
       isRegisteredForDefense: data.isRegisteredForDefense.present
@@ -5335,8 +5350,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
           ..write('secondReviewerId: $secondReviewerId, ')
           ..write('secretaryId: $secretaryId, ')
           ..write('memberId: $memberId, ')
-          ..write('isTracking: $isTracking, ')
-          ..write('isPaid: $isPaid, ')
+          ..write('flagTracking: $flagTracking, ')
+          ..write('flagPaid: $flagPaid, ')
+          ..write('flagIgnore: $flagIgnore, ')
           ..write('group: $group, ')
           ..write('year: $year, ')
           ..write('isRegisteredForDefense: $isRegisteredForDefense, ')
@@ -5363,8 +5379,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     secondReviewerId,
     secretaryId,
     memberId,
-    isTracking,
-    isPaid,
+    flagTracking,
+    flagPaid,
+    flagIgnore,
     group,
     year,
     isRegisteredForDefense,
@@ -5390,8 +5407,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
           other.secondReviewerId == this.secondReviewerId &&
           other.secretaryId == this.secretaryId &&
           other.memberId == this.memberId &&
-          other.isTracking == this.isTracking &&
-          other.isPaid == this.isPaid &&
+          other.flagTracking == this.flagTracking &&
+          other.flagPaid == this.flagPaid &&
+          other.flagIgnore == this.flagIgnore &&
           other.group == this.group &&
           other.year == this.year &&
           other.isRegisteredForDefense == this.isRegisteredForDefense &&
@@ -5405,18 +5423,19 @@ class DetaithacsiCompanion extends UpdateCompanion<ThesisData> {
   final Value<String> englishTitle;
   final Value<String> note;
   final Value<int?> studentId;
-  final Value<String?> assignedDate;
+  final Value<DateTime?> assignedDate;
   final Value<String?> assignedDecisionNumber;
-  final Value<String?> defenseDeadline;
+  final Value<DateTime?> defenseDeadline;
   final Value<String?> defenseDecisionNumber;
-  final Value<String?> defenseDate;
+  final Value<DateTime?> defenseDate;
   final Value<int?> presidentId;
   final Value<int?> firstReviewerId;
   final Value<int?> secondReviewerId;
   final Value<int?> secretaryId;
   final Value<int?> memberId;
-  final Value<int> isTracking;
-  final Value<int> isPaid;
+  final Value<bool> flagTracking;
+  final Value<bool> flagPaid;
+  final Value<bool> flagIgnore;
   final Value<String?> group;
   final Value<String?> year;
   final Value<int> isRegisteredForDefense;
@@ -5438,8 +5457,9 @@ class DetaithacsiCompanion extends UpdateCompanion<ThesisData> {
     this.secondReviewerId = const Value.absent(),
     this.secretaryId = const Value.absent(),
     this.memberId = const Value.absent(),
-    this.isTracking = const Value.absent(),
-    this.isPaid = const Value.absent(),
+    this.flagTracking = const Value.absent(),
+    this.flagPaid = const Value.absent(),
+    this.flagIgnore = const Value.absent(),
     this.group = const Value.absent(),
     this.year = const Value.absent(),
     this.isRegisteredForDefense = const Value.absent(),
@@ -5462,8 +5482,9 @@ class DetaithacsiCompanion extends UpdateCompanion<ThesisData> {
     this.secondReviewerId = const Value.absent(),
     this.secretaryId = const Value.absent(),
     this.memberId = const Value.absent(),
-    this.isTracking = const Value.absent(),
-    this.isPaid = const Value.absent(),
+    this.flagTracking = const Value.absent(),
+    this.flagPaid = const Value.absent(),
+    this.flagIgnore = const Value.absent(),
     this.group = const Value.absent(),
     this.year = const Value.absent(),
     this.isRegisteredForDefense = const Value.absent(),
@@ -5488,8 +5509,9 @@ class DetaithacsiCompanion extends UpdateCompanion<ThesisData> {
     Expression<int>? secondReviewerId,
     Expression<int>? secretaryId,
     Expression<int>? memberId,
-    Expression<int>? isTracking,
-    Expression<int>? isPaid,
+    Expression<bool>? flagTracking,
+    Expression<bool>? flagPaid,
+    Expression<bool>? flagIgnore,
     Expression<String>? group,
     Expression<String>? year,
     Expression<int>? isRegisteredForDefense,
@@ -5512,8 +5534,9 @@ class DetaithacsiCompanion extends UpdateCompanion<ThesisData> {
       if (secondReviewerId != null) 'idPhanBien2': secondReviewerId,
       if (secretaryId != null) 'idThuKy': secretaryId,
       if (memberId != null) 'idUyVien': memberId,
-      if (isTracking != null) 'flag_tracking': isTracking,
-      if (isPaid != null) 'flag_paid': isPaid,
+      if (flagTracking != null) 'flag_tracking': flagTracking,
+      if (flagPaid != null) 'flag_paid': flagPaid,
+      if (flagIgnore != null) 'flag_ignore': flagIgnore,
       if (group != null) 'group': group,
       if (year != null) 'nam': year,
       if (isRegisteredForDefense != null) 'dangKyBaoVe': isRegisteredForDefense,
@@ -5528,18 +5551,19 @@ class DetaithacsiCompanion extends UpdateCompanion<ThesisData> {
     Value<String>? englishTitle,
     Value<String>? note,
     Value<int?>? studentId,
-    Value<String?>? assignedDate,
+    Value<DateTime?>? assignedDate,
     Value<String?>? assignedDecisionNumber,
-    Value<String?>? defenseDeadline,
+    Value<DateTime?>? defenseDeadline,
     Value<String?>? defenseDecisionNumber,
-    Value<String?>? defenseDate,
+    Value<DateTime?>? defenseDate,
     Value<int?>? presidentId,
     Value<int?>? firstReviewerId,
     Value<int?>? secondReviewerId,
     Value<int?>? secretaryId,
     Value<int?>? memberId,
-    Value<int>? isTracking,
-    Value<int>? isPaid,
+    Value<bool>? flagTracking,
+    Value<bool>? flagPaid,
+    Value<bool>? flagIgnore,
     Value<String?>? group,
     Value<String?>? year,
     Value<int>? isRegisteredForDefense,
@@ -5564,8 +5588,9 @@ class DetaithacsiCompanion extends UpdateCompanion<ThesisData> {
       secondReviewerId: secondReviewerId ?? this.secondReviewerId,
       secretaryId: secretaryId ?? this.secretaryId,
       memberId: memberId ?? this.memberId,
-      isTracking: isTracking ?? this.isTracking,
-      isPaid: isPaid ?? this.isPaid,
+      flagTracking: flagTracking ?? this.flagTracking,
+      flagPaid: flagPaid ?? this.flagPaid,
+      flagIgnore: flagIgnore ?? this.flagIgnore,
       group: group ?? this.group,
       year: year ?? this.year,
       isRegisteredForDefense:
@@ -5596,19 +5621,25 @@ class DetaithacsiCompanion extends UpdateCompanion<ThesisData> {
       map['idHocVien'] = Variable<int>(studentId.value);
     }
     if (assignedDate.present) {
-      map['ngayGiao'] = Variable<String>(assignedDate.value);
+      map['ngayGiao'] = Variable<String>(
+        Detaithacsi.$converterassignedDate.toSql(assignedDate.value),
+      );
     }
     if (assignedDecisionNumber.present) {
       map['soQdGiao'] = Variable<String>(assignedDecisionNumber.value);
     }
     if (defenseDeadline.present) {
-      map['hanBaoVe'] = Variable<String>(defenseDeadline.value);
+      map['hanBaoVe'] = Variable<String>(
+        Detaithacsi.$converterdefenseDeadline.toSql(defenseDeadline.value),
+      );
     }
     if (defenseDecisionNumber.present) {
       map['soQdBaoVe'] = Variable<String>(defenseDecisionNumber.value);
     }
     if (defenseDate.present) {
-      map['ngayBaoVe'] = Variable<String>(defenseDate.value);
+      map['ngayBaoVe'] = Variable<String>(
+        Detaithacsi.$converterdefenseDate.toSql(defenseDate.value),
+      );
     }
     if (presidentId.present) {
       map['idChuTich'] = Variable<int>(presidentId.value);
@@ -5625,11 +5656,14 @@ class DetaithacsiCompanion extends UpdateCompanion<ThesisData> {
     if (memberId.present) {
       map['idUyVien'] = Variable<int>(memberId.value);
     }
-    if (isTracking.present) {
-      map['flag_tracking'] = Variable<int>(isTracking.value);
+    if (flagTracking.present) {
+      map['flag_tracking'] = Variable<bool>(flagTracking.value);
     }
-    if (isPaid.present) {
-      map['flag_paid'] = Variable<int>(isPaid.value);
+    if (flagPaid.present) {
+      map['flag_paid'] = Variable<bool>(flagPaid.value);
+    }
+    if (flagIgnore.present) {
+      map['flag_ignore'] = Variable<bool>(flagIgnore.value);
     }
     if (group.present) {
       map['group'] = Variable<String>(group.value);
@@ -5665,8 +5699,9 @@ class DetaithacsiCompanion extends UpdateCompanion<ThesisData> {
           ..write('secondReviewerId: $secondReviewerId, ')
           ..write('secretaryId: $secretaryId, ')
           ..write('memberId: $memberId, ')
-          ..write('isTracking: $isTracking, ')
-          ..write('isPaid: $isPaid, ')
+          ..write('flagTracking: $flagTracking, ')
+          ..write('flagPaid: $flagPaid, ')
+          ..write('flagIgnore: $flagIgnore, ')
           ..write('group: $group, ')
           ..write('year: $year, ')
           ..write('isRegisteredForDefense: $isRegisteredForDefense, ')
@@ -9383,7 +9418,7 @@ typedef $GiangvienCreateCompanionBuilder =
       Value<String?> phone,
       Value<String?> personalEmail,
       Value<String?> citizenId,
-      Value<String?> dateOfBirth,
+      Value<DateTime?> dateOfBirth,
       Value<String?> bankAccount,
       Value<String?> bankName,
       Value<String?> taxCode,
@@ -9403,7 +9438,7 @@ typedef $GiangvienUpdateCompanionBuilder =
       Value<String?> phone,
       Value<String?> personalEmail,
       Value<String?> citizenId,
-      Value<String?> dateOfBirth,
+      Value<DateTime?> dateOfBirth,
       Value<String?> bankAccount,
       Value<String?> bankName,
       Value<String?> taxCode,
@@ -9477,10 +9512,11 @@ class $GiangvienFilterComposer extends Composer<_$MyDriftDatabase, Giangvien> {
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get dateOfBirth => $composableBuilder(
-    column: $table.dateOfBirth,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnWithTypeConverterFilters<DateTime?, DateTime, String> get dateOfBirth =>
+      $composableBuilder(
+        column: $table.dateOfBirth,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 
   ColumnFilters<String> get bankAccount => $composableBuilder(
     column: $table.bankAccount,
@@ -9659,10 +9695,11 @@ class $GiangvienAnnotationComposer
   GeneratedColumn<String> get citizenId =>
       $composableBuilder(column: $table.citizenId, builder: (column) => column);
 
-  GeneratedColumn<String> get dateOfBirth => $composableBuilder(
-    column: $table.dateOfBirth,
-    builder: (column) => column,
-  );
+  GeneratedColumnWithTypeConverter<DateTime?, String> get dateOfBirth =>
+      $composableBuilder(
+        column: $table.dateOfBirth,
+        builder: (column) => column,
+      );
 
   GeneratedColumn<String> get bankAccount => $composableBuilder(
     column: $table.bankAccount,
@@ -9726,7 +9763,7 @@ class $GiangvienTableManager
                 Value<String?> phone = const Value.absent(),
                 Value<String?> personalEmail = const Value.absent(),
                 Value<String?> citizenId = const Value.absent(),
-                Value<String?> dateOfBirth = const Value.absent(),
+                Value<DateTime?> dateOfBirth = const Value.absent(),
                 Value<String?> bankAccount = const Value.absent(),
                 Value<String?> bankName = const Value.absent(),
                 Value<String?> taxCode = const Value.absent(),
@@ -9764,7 +9801,7 @@ class $GiangvienTableManager
                 Value<String?> phone = const Value.absent(),
                 Value<String?> personalEmail = const Value.absent(),
                 Value<String?> citizenId = const Value.absent(),
-                Value<String?> dateOfBirth = const Value.absent(),
+                Value<DateTime?> dateOfBirth = const Value.absent(),
                 Value<String?> bankAccount = const Value.absent(),
                 Value<String?> bankName = const Value.absent(),
                 Value<String?> taxCode = const Value.absent(),
@@ -10670,21 +10707,21 @@ typedef $HocVienProcessedTableManager =
 typedef $HockyCreateCompanionBuilder =
     HockyCompanion Function({
       required String semester,
-      required String registrationOpenDate,
-      required String registrationCloseDate,
-      required String studyStartDate,
-      required String studyEndDate,
-      required String gradeSubmissionDeadline,
+      required DateTime registrationOpenDate,
+      required DateTime registrationCloseDate,
+      required DateTime studyStartDate,
+      required DateTime studyEndDate,
+      required DateTime gradeSubmissionDeadline,
       Value<int> rowid,
     });
 typedef $HockyUpdateCompanionBuilder =
     HockyCompanion Function({
       Value<String> semester,
-      Value<String> registrationOpenDate,
-      Value<String> registrationCloseDate,
-      Value<String> studyStartDate,
-      Value<String> studyEndDate,
-      Value<String> gradeSubmissionDeadline,
+      Value<DateTime> registrationOpenDate,
+      Value<DateTime> registrationCloseDate,
+      Value<DateTime> studyStartDate,
+      Value<DateTime> studyEndDate,
+      Value<DateTime> gradeSubmissionDeadline,
       Value<int> rowid,
     });
 
@@ -10701,29 +10738,34 @@ class $HockyFilterComposer extends Composer<_$MyDriftDatabase, Hocky> {
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get registrationOpenDate => $composableBuilder(
+  ColumnWithTypeConverterFilters<DateTime, DateTime, String>
+  get registrationOpenDate => $composableBuilder(
     column: $table.registrationOpenDate,
-    builder: (column) => ColumnFilters(column),
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
-  ColumnFilters<String> get registrationCloseDate => $composableBuilder(
+  ColumnWithTypeConverterFilters<DateTime, DateTime, String>
+  get registrationCloseDate => $composableBuilder(
     column: $table.registrationCloseDate,
-    builder: (column) => ColumnFilters(column),
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
-  ColumnFilters<String> get studyStartDate => $composableBuilder(
+  ColumnWithTypeConverterFilters<DateTime, DateTime, String>
+  get studyStartDate => $composableBuilder(
     column: $table.studyStartDate,
-    builder: (column) => ColumnFilters(column),
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
-  ColumnFilters<String> get studyEndDate => $composableBuilder(
-    column: $table.studyEndDate,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnWithTypeConverterFilters<DateTime, DateTime, String> get studyEndDate =>
+      $composableBuilder(
+        column: $table.studyEndDate,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 
-  ColumnFilters<String> get gradeSubmissionDeadline => $composableBuilder(
+  ColumnWithTypeConverterFilters<DateTime, DateTime, String>
+  get gradeSubmissionDeadline => $composableBuilder(
     column: $table.gradeSubmissionDeadline,
-    builder: (column) => ColumnFilters(column),
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 }
 
@@ -10777,27 +10819,32 @@ class $HockyAnnotationComposer extends Composer<_$MyDriftDatabase, Hocky> {
   GeneratedColumn<String> get semester =>
       $composableBuilder(column: $table.semester, builder: (column) => column);
 
-  GeneratedColumn<String> get registrationOpenDate => $composableBuilder(
-    column: $table.registrationOpenDate,
-    builder: (column) => column,
-  );
+  GeneratedColumnWithTypeConverter<DateTime, String> get registrationOpenDate =>
+      $composableBuilder(
+        column: $table.registrationOpenDate,
+        builder: (column) => column,
+      );
 
-  GeneratedColumn<String> get registrationCloseDate => $composableBuilder(
+  GeneratedColumnWithTypeConverter<DateTime, String>
+  get registrationCloseDate => $composableBuilder(
     column: $table.registrationCloseDate,
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get studyStartDate => $composableBuilder(
-    column: $table.studyStartDate,
-    builder: (column) => column,
-  );
+  GeneratedColumnWithTypeConverter<DateTime, String> get studyStartDate =>
+      $composableBuilder(
+        column: $table.studyStartDate,
+        builder: (column) => column,
+      );
 
-  GeneratedColumn<String> get studyEndDate => $composableBuilder(
-    column: $table.studyEndDate,
-    builder: (column) => column,
-  );
+  GeneratedColumnWithTypeConverter<DateTime, String> get studyEndDate =>
+      $composableBuilder(
+        column: $table.studyEndDate,
+        builder: (column) => column,
+      );
 
-  GeneratedColumn<String> get gradeSubmissionDeadline => $composableBuilder(
+  GeneratedColumnWithTypeConverter<DateTime, String>
+  get gradeSubmissionDeadline => $composableBuilder(
     column: $table.gradeSubmissionDeadline,
     builder: (column) => column,
   );
@@ -10835,11 +10882,11 @@ class $HockyTableManager
           updateCompanionCallback:
               ({
                 Value<String> semester = const Value.absent(),
-                Value<String> registrationOpenDate = const Value.absent(),
-                Value<String> registrationCloseDate = const Value.absent(),
-                Value<String> studyStartDate = const Value.absent(),
-                Value<String> studyEndDate = const Value.absent(),
-                Value<String> gradeSubmissionDeadline = const Value.absent(),
+                Value<DateTime> registrationOpenDate = const Value.absent(),
+                Value<DateTime> registrationCloseDate = const Value.absent(),
+                Value<DateTime> studyStartDate = const Value.absent(),
+                Value<DateTime> studyEndDate = const Value.absent(),
+                Value<DateTime> gradeSubmissionDeadline = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => HockyCompanion(
                 semester: semester,
@@ -10853,11 +10900,11 @@ class $HockyTableManager
           createCompanionCallback:
               ({
                 required String semester,
-                required String registrationOpenDate,
-                required String registrationCloseDate,
-                required String studyStartDate,
-                required String studyEndDate,
-                required String gradeSubmissionDeadline,
+                required DateTime registrationOpenDate,
+                required DateTime registrationCloseDate,
+                required DateTime studyStartDate,
+                required DateTime studyEndDate,
+                required DateTime gradeSubmissionDeadline,
                 Value<int> rowid = const Value.absent(),
               }) => HockyCompanion.insert(
                 semester: semester,
@@ -11116,18 +11163,19 @@ typedef $DetaithacsiCreateCompanionBuilder =
       required String englishTitle,
       Value<String> note,
       Value<int?> studentId,
-      Value<String?> assignedDate,
+      Value<DateTime?> assignedDate,
       Value<String?> assignedDecisionNumber,
-      Value<String?> defenseDeadline,
+      Value<DateTime?> defenseDeadline,
       Value<String?> defenseDecisionNumber,
-      Value<String?> defenseDate,
+      Value<DateTime?> defenseDate,
       Value<int?> presidentId,
       Value<int?> firstReviewerId,
       Value<int?> secondReviewerId,
       Value<int?> secretaryId,
       Value<int?> memberId,
-      Value<int> isTracking,
-      Value<int> isPaid,
+      Value<bool> flagTracking,
+      Value<bool> flagPaid,
+      Value<bool> flagIgnore,
       Value<String?> group,
       Value<String?> year,
       Value<int> isRegisteredForDefense,
@@ -11141,18 +11189,19 @@ typedef $DetaithacsiUpdateCompanionBuilder =
       Value<String> englishTitle,
       Value<String> note,
       Value<int?> studentId,
-      Value<String?> assignedDate,
+      Value<DateTime?> assignedDate,
       Value<String?> assignedDecisionNumber,
-      Value<String?> defenseDeadline,
+      Value<DateTime?> defenseDeadline,
       Value<String?> defenseDecisionNumber,
-      Value<String?> defenseDate,
+      Value<DateTime?> defenseDate,
       Value<int?> presidentId,
       Value<int?> firstReviewerId,
       Value<int?> secondReviewerId,
       Value<int?> secretaryId,
       Value<int?> memberId,
-      Value<int> isTracking,
-      Value<int> isPaid,
+      Value<bool> flagTracking,
+      Value<bool> flagPaid,
+      Value<bool> flagIgnore,
       Value<String?> group,
       Value<String?> year,
       Value<int> isRegisteredForDefense,
@@ -11198,9 +11247,10 @@ class $DetaithacsiFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get assignedDate => $composableBuilder(
+  ColumnWithTypeConverterFilters<DateTime?, DateTime, String>
+  get assignedDate => $composableBuilder(
     column: $table.assignedDate,
-    builder: (column) => ColumnFilters(column),
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnFilters<String> get assignedDecisionNumber => $composableBuilder(
@@ -11208,9 +11258,10 @@ class $DetaithacsiFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get defenseDeadline => $composableBuilder(
+  ColumnWithTypeConverterFilters<DateTime?, DateTime, String>
+  get defenseDeadline => $composableBuilder(
     column: $table.defenseDeadline,
-    builder: (column) => ColumnFilters(column),
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnFilters<String> get defenseDecisionNumber => $composableBuilder(
@@ -11218,10 +11269,11 @@ class $DetaithacsiFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get defenseDate => $composableBuilder(
-    column: $table.defenseDate,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnWithTypeConverterFilters<DateTime?, DateTime, String> get defenseDate =>
+      $composableBuilder(
+        column: $table.defenseDate,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 
   ColumnFilters<int> get presidentId => $composableBuilder(
     column: $table.presidentId,
@@ -11248,13 +11300,18 @@ class $DetaithacsiFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get isTracking => $composableBuilder(
-    column: $table.isTracking,
+  ColumnFilters<bool> get flagTracking => $composableBuilder(
+    column: $table.flagTracking,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get isPaid => $composableBuilder(
-    column: $table.isPaid,
+  ColumnFilters<bool> get flagPaid => $composableBuilder(
+    column: $table.flagPaid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get flagIgnore => $composableBuilder(
+    column: $table.flagIgnore,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -11368,13 +11425,18 @@ class $DetaithacsiOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get isTracking => $composableBuilder(
-    column: $table.isTracking,
+  ColumnOrderings<bool> get flagTracking => $composableBuilder(
+    column: $table.flagTracking,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get isPaid => $composableBuilder(
-    column: $table.isPaid,
+  ColumnOrderings<bool> get flagPaid => $composableBuilder(
+    column: $table.flagPaid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get flagIgnore => $composableBuilder(
+    column: $table.flagIgnore,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -11432,30 +11494,33 @@ class $DetaithacsiAnnotationComposer
   GeneratedColumn<int> get studentId =>
       $composableBuilder(column: $table.studentId, builder: (column) => column);
 
-  GeneratedColumn<String> get assignedDate => $composableBuilder(
-    column: $table.assignedDate,
-    builder: (column) => column,
-  );
+  GeneratedColumnWithTypeConverter<DateTime?, String> get assignedDate =>
+      $composableBuilder(
+        column: $table.assignedDate,
+        builder: (column) => column,
+      );
 
   GeneratedColumn<String> get assignedDecisionNumber => $composableBuilder(
     column: $table.assignedDecisionNumber,
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get defenseDeadline => $composableBuilder(
-    column: $table.defenseDeadline,
-    builder: (column) => column,
-  );
+  GeneratedColumnWithTypeConverter<DateTime?, String> get defenseDeadline =>
+      $composableBuilder(
+        column: $table.defenseDeadline,
+        builder: (column) => column,
+      );
 
   GeneratedColumn<String> get defenseDecisionNumber => $composableBuilder(
     column: $table.defenseDecisionNumber,
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get defenseDate => $composableBuilder(
-    column: $table.defenseDate,
-    builder: (column) => column,
-  );
+  GeneratedColumnWithTypeConverter<DateTime?, String> get defenseDate =>
+      $composableBuilder(
+        column: $table.defenseDate,
+        builder: (column) => column,
+      );
 
   GeneratedColumn<int> get presidentId => $composableBuilder(
     column: $table.presidentId,
@@ -11480,13 +11545,18 @@ class $DetaithacsiAnnotationComposer
   GeneratedColumn<int> get memberId =>
       $composableBuilder(column: $table.memberId, builder: (column) => column);
 
-  GeneratedColumn<int> get isTracking => $composableBuilder(
-    column: $table.isTracking,
+  GeneratedColumn<bool> get flagTracking => $composableBuilder(
+    column: $table.flagTracking,
     builder: (column) => column,
   );
 
-  GeneratedColumn<int> get isPaid =>
-      $composableBuilder(column: $table.isPaid, builder: (column) => column);
+  GeneratedColumn<bool> get flagPaid =>
+      $composableBuilder(column: $table.flagPaid, builder: (column) => column);
+
+  GeneratedColumn<bool> get flagIgnore => $composableBuilder(
+    column: $table.flagIgnore,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get group =>
       $composableBuilder(column: $table.group, builder: (column) => column);
@@ -11542,18 +11612,19 @@ class $DetaithacsiTableManager
                 Value<String> englishTitle = const Value.absent(),
                 Value<String> note = const Value.absent(),
                 Value<int?> studentId = const Value.absent(),
-                Value<String?> assignedDate = const Value.absent(),
+                Value<DateTime?> assignedDate = const Value.absent(),
                 Value<String?> assignedDecisionNumber = const Value.absent(),
-                Value<String?> defenseDeadline = const Value.absent(),
+                Value<DateTime?> defenseDeadline = const Value.absent(),
                 Value<String?> defenseDecisionNumber = const Value.absent(),
-                Value<String?> defenseDate = const Value.absent(),
+                Value<DateTime?> defenseDate = const Value.absent(),
                 Value<int?> presidentId = const Value.absent(),
                 Value<int?> firstReviewerId = const Value.absent(),
                 Value<int?> secondReviewerId = const Value.absent(),
                 Value<int?> secretaryId = const Value.absent(),
                 Value<int?> memberId = const Value.absent(),
-                Value<int> isTracking = const Value.absent(),
-                Value<int> isPaid = const Value.absent(),
+                Value<bool> flagTracking = const Value.absent(),
+                Value<bool> flagPaid = const Value.absent(),
+                Value<bool> flagIgnore = const Value.absent(),
                 Value<String?> group = const Value.absent(),
                 Value<String?> year = const Value.absent(),
                 Value<int> isRegisteredForDefense = const Value.absent(),
@@ -11575,8 +11646,9 @@ class $DetaithacsiTableManager
                 secondReviewerId: secondReviewerId,
                 secretaryId: secretaryId,
                 memberId: memberId,
-                isTracking: isTracking,
-                isPaid: isPaid,
+                flagTracking: flagTracking,
+                flagPaid: flagPaid,
+                flagIgnore: flagIgnore,
                 group: group,
                 year: year,
                 isRegisteredForDefense: isRegisteredForDefense,
@@ -11590,18 +11662,19 @@ class $DetaithacsiTableManager
                 required String englishTitle,
                 Value<String> note = const Value.absent(),
                 Value<int?> studentId = const Value.absent(),
-                Value<String?> assignedDate = const Value.absent(),
+                Value<DateTime?> assignedDate = const Value.absent(),
                 Value<String?> assignedDecisionNumber = const Value.absent(),
-                Value<String?> defenseDeadline = const Value.absent(),
+                Value<DateTime?> defenseDeadline = const Value.absent(),
                 Value<String?> defenseDecisionNumber = const Value.absent(),
-                Value<String?> defenseDate = const Value.absent(),
+                Value<DateTime?> defenseDate = const Value.absent(),
                 Value<int?> presidentId = const Value.absent(),
                 Value<int?> firstReviewerId = const Value.absent(),
                 Value<int?> secondReviewerId = const Value.absent(),
                 Value<int?> secretaryId = const Value.absent(),
                 Value<int?> memberId = const Value.absent(),
-                Value<int> isTracking = const Value.absent(),
-                Value<int> isPaid = const Value.absent(),
+                Value<bool> flagTracking = const Value.absent(),
+                Value<bool> flagPaid = const Value.absent(),
+                Value<bool> flagIgnore = const Value.absent(),
                 Value<String?> group = const Value.absent(),
                 Value<String?> year = const Value.absent(),
                 Value<int> isRegisteredForDefense = const Value.absent(),
@@ -11623,8 +11696,9 @@ class $DetaithacsiTableManager
                 secondReviewerId: secondReviewerId,
                 secretaryId: secretaryId,
                 memberId: memberId,
-                isTracking: isTracking,
-                isPaid: isPaid,
+                flagTracking: flagTracking,
+                flagPaid: flagPaid,
+                flagIgnore: flagIgnore,
                 group: group,
                 year: year,
                 isRegisteredForDefense: isRegisteredForDefense,

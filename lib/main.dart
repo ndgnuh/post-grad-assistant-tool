@@ -267,29 +267,17 @@ class MyApp extends ConsumerWidget {
     // Function to get lighter color from a color
     final themes = Themes(context);
     final locale = Locale('vi', 'VN');
-    final width = MediaQuery.sizeOf(context).width;
 
     return SafeArea(
-      child: Container(
-        color: isDarkMode
-            ? themes.dark.scaffoldBackgroundColor
-            : themes.light.scaffoldBackgroundColor,
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: SizedBox(
-            width: min(960, width),
-            child: MaterialApp(
-              locale: locale,
-              darkTheme: themes.dark,
-              theme: themes.light,
-              themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-              initialRoute: initialRoute,
-              debugShowMaterialGrid: false,
-              debugShowCheckedModeBanner: false,
-              onGenerateRoute: onGenerateRoute,
-            ),
-          ),
-        ),
+      child: MaterialApp(
+        locale: locale,
+        darkTheme: themes.dark,
+        theme: themes.light,
+        themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        initialRoute: initialRoute,
+        debugShowMaterialGrid: false,
+        debugShowCheckedModeBanner: false,
+        onGenerateRoute: onGenerateRoute,
       ),
     );
   }

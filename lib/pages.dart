@@ -145,7 +145,7 @@ final initialRoute = switch (kReleaseMode) {
   // false => InitialSetupPage.routeName,
 
   // Student page
-  false => StudentListPage.routeName,
+  // false => StudentListPage.routeName,
 
   // Debug home page
   // false => HomePage.routeName,
@@ -157,6 +157,7 @@ final initialRoute = switch (kReleaseMode) {
   // Thesis defends
   // false => ThesisDefenseRegisterPage.routeName,
   // false => ThesisDefensePaymentPage.routeName,
+  false => ThesisListPage.routeName,
 
   // PhD students pages
   false => PhdStudentListPage.routeName,

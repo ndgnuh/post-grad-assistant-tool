@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -9,6 +10,8 @@ import './index.dart';
 import './providers.dart';
 import './widgets.dart';
 
+import 'action_tab.dart';
+
 part '_teaching_assignment_dialog.dart';
 
 class CourseClassListPage extends StatelessWidget {
@@ -18,9 +21,9 @@ class CourseClassListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gutter = context.responsiveGutter;
+    final gutter = context.gutter;
     return DefaultTabController(
-      length: 1,
+      length: 2,
       child: Scaffold(
         appBar: ConstrainedAppBar(
           withTabBar: true,
@@ -28,7 +31,10 @@ class CourseClassListPage extends StatelessWidget {
             title: const Text("Danh sách lớp tín chỉ"),
             bottom: TabBar(
               isScrollable: true,
-              tabs: [Tab(text: "Lớp tín chỉ")],
+              tabs: [
+                Tab(text: "Lớp tín chỉ"),
+                Tab(text: "Thao tác"),
+              ],
             ),
           ),
         ),
@@ -64,6 +70,7 @@ class CourseClassListPage extends StatelessWidget {
                   Expanded(child: _CourseClassesView()),
                 ],
               ),
+              CourseClassActionTab(),
             ],
           ),
         ),

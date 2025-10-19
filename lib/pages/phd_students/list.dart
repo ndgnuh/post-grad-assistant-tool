@@ -32,7 +32,9 @@ class PhdStudentListPage extends StatelessWidget {
                   spacing: gutter,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(child: CohortSelector()),
+                    Expanded(
+                      child: CohortSelector(),
+                    ),
                     _GotoCreateButton(),
                   ],
                 ),

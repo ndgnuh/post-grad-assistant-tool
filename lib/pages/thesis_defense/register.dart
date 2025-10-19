@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../business/copy_pasta.dart' show Email, EmailCopyDialog;
 import '../../business/db_v1_providers.dart';
-import '../../business/db_v2_providers.dart';
+import '../../business/db_v2_providers.dart' hide thesisByIdProvider;
 import '../../business/domain_objects.dart';
 import '../../custom_widgets.dart';
 import '../../pages/theses/index.dart' show ThesisDetailPage;

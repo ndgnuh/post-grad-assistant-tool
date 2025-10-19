@@ -1,25 +1,38 @@
+import 'dart:async';
+
+import 'package:drift/drift.dart';
+import 'package:fami_tools/pages/theses/widgets.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../domain_objects.dart' show CouncilRole;
 import './../db_v2_providers.dart';
 
+final thesisByIdProvider = AsyncNotifierProvider.family(
+  ThesisByIdNotifier.new,
+);
+
 final thesisMemberProvider = AsyncNotifierProvider.family(
   ThesisMemberProvider.new,
 );
+
 final thesisPresidentProvider = AsyncNotifierProvider.family(
   ThesisPresidentProvider.new,
 );
+
 final thesisReviewer1Provider = AsyncNotifierProvider.family(
   ThesisReviewer1Provider.new,
 );
+
 final thesisReviewer2Provider = AsyncNotifierProvider.family(
   ThesisReviewer2Provider.new,
 );
+
 final thesisSecretaryProvider = AsyncNotifierProvider.family(
   ThesisSecretaryProvider.new,
 );
+
 final trackedThesisIdsProvider = AsyncNotifierProvider(
-  TrackedThesisIds.new,
+  () => ThesisIdsNotifier(tracking: true),
 );
 
 Future<void> assignTeacherInRole({
@@ -82,6 +95,19 @@ Future<TeacherData?> getTeacherInRole({
   return await ref.watch(teacherByIdProvider(id).future);
 }
 
+class ThesisByIdNotifier extends AsyncNotifier<ThesisData?> {
+  final int id;
+  ThesisByIdNotifier(this.id);
+
+  @override
+  FutureOr<ThesisData?> build() async {
+    final db = await ref.watch(driftDatabaseProvider.future);
+    final stmt = db.detaithacsi.select();
+    stmt.where((r) => r.id.equals(id));
+    return await stmt.getSingleOrNull();
+  }
+}
+
 sealed class ThesisCouncilMemberProvider extends AsyncNotifier<TeacherData?> {
   final int thesisId;
   final CouncilRole role;
@@ -134,11 +160,47 @@ class ThesisSecretaryProvider extends ThesisCouncilMemberProvider {
     : super(thesisId, CouncilRole.secretary);
 }
 
-class TrackedThesisIds extends AsyncNotifier<List<int>> {
+class ThesisIdsNotifier extends AsyncNotifier<List<int>> {
+  // null means dont apply the filter
+  final bool? tracking;
+  final bool? assigned;
+  final int? studentId;
+  final bool? ignore;
+
+  ThesisIdsNotifier({
+    this.tracking,
+    this.assigned,
+    this.studentId,
+    this.ignore = false,
+  });
+
   @override
   Future<List<int>> build() async {
     final db = await ref.watch(driftDatabaseProvider.future);
-    return await db.getTrackingThesisIds().get();
+    final stmt = db.detaithacsi.select();
+
+    if (ignore != null) {
+      stmt.where((r) => r.flagIgnore.equals(ignore!));
+    }
+
+    if (tracking != null) {
+      stmt.where((r) => r.flagTracking.equalsNullable(tracking!));
+    }
+
+    if (assigned != null) {
+      stmt.where((r) => r.studentId.isNotNull());
+    }
+
+    if (studentId != null) {
+      stmt.where((r) => r.studentId.equalsNullable(studentId!));
+    }
+
+    stmt.orderBy([
+      (r) => OrderingTerm(expression: r.supervisorId),
+      (r) => OrderingTerm(expression: r.studentId),
+    ]);
+
+    return await stmt.map((r) => r.id).get();
   }
 
   Future<void> track(int thesisId) async {
@@ -153,78 +215,3 @@ class TrackedThesisIds extends AsyncNotifier<List<int>> {
     ref.invalidateSelf();
   }
 }
-
-// class ThesisById extends AsyncNotifier<ThesisData?> {
-//   final int thesisId;
-//
-//   ThesisById({required this.thesisId});
-//
-//   @override
-//   Future<ThesisData?> build() async {
-//     final db = await ref.watch(driftDatabaseProvider.future);
-//   }
-// }
-
-// class ThesisCouncilMember extends AsyncNotifier<TeacherData?> {
-//   final int thesisId;
-//
-//   ThesisCouncilMember(({final CouncilRole role, final int thesisId}) {
-//       this.role = role;
-//         this.thesisId = thesisId;
-//         }
-//
-//   @override
-//   Future<TeacherData?> build() async {
-//     final db = await ref.watch(driftDatabaseProvider.future);
-//
-//     final id = await switch (role) {
-//       CouncilRole.president =>
-//         db.getThesisPresidentId(thesisId: thesisId).getSingleOrNull(),
-//       CouncilRole.reviewer1 =>
-//         db.getThesis1stReviewerId(thesisId: thesisId).getSingleOrNull(),
-//       CouncilRole.reviewer2 =>
-//         db.getThesis2ndReviewerId(thesisId: thesisId).getSingleOrNull(),
-//       CouncilRole.secretary =>
-//         db.getThesisSecretaryId(thesisId: thesisId).getSingleOrNull(),
-//       CouncilRole.member =>
-//         db.getThesisMemberId(thesisId: thesisId).getSingleOrNull(),
-//     };
-//     if (id == null) return null;
-//
-//     return await ref.watch(teacherByIdProvider(id).future);
-//   }
-//
-//   Future<void> unassign() => assign(null);
-//
-//   Future<void> assign(int? teacherId) async {
-//     final db = await ref.read(driftDatabaseProvider.future);
-//     switch (role) {
-//       case CouncilRole.president:
-//         await db.setThesisPresidentId(
-//           thesisId: thesisId,
-//           teacherId: teacherId,
-//         );
-//       case CouncilRole.reviewer1:
-//         await db.setThesis1stReviewerId(
-//           thesisId: thesisId,
-//           teacherId: teacherId,
-//         );
-//       case CouncilRole.reviewer2:
-//         await db.setThesis2ndReviewerId(
-//           thesisId: thesisId,
-//           teacherId: teacherId,
-//         );
-//       case CouncilRole.secretary:
-//         await db.setThesisSecretaryId(
-//           thesisId: thesisId,
-//           teacherId: teacherId,
-//         );
-//       case CouncilRole.member:
-//         await db.setThesisMemberId(
-//           thesisId: thesisId,
-//           teacherId: teacherId,
-//         );
-//     }
-//     ref.invalidateSelf();
-//   }
-// }

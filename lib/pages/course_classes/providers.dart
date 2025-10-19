@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../business/db_v2_providers.dart';
@@ -18,6 +20,10 @@ final courseClassViewModelByIdProvider = AsyncNotifierProvider.family(
 
 final semesterSelectionModelProvider = AsyncNotifierProvider(
   () => SemesterSelectionModelNotifier("course-class"),
+);
+
+final courseRegistrationNotificationProvider = AsyncNotifierProvider(
+  CourseRegistrationNotificationProvider.new,
 );
 
 @immutable
@@ -103,5 +109,26 @@ class CourseClassViewModelsNotifier
     }
 
     return courseClassViewModels;
+  }
+}
+
+class CourseRegistrationNotificationProvider extends AsyncNotifier<String?> {
+  @override
+  Future<String?> build() async {
+    // Selected semester
+    final semesterSelection = await ref.watch(
+      semesterSelectionModelProvider.future,
+    );
+    final selectedSemester = semesterSelection.selected;
+    if (selectedSemester == null) return null;
+
+    // If any semester is selected, returns the notification
+    final dateFmt = DateFormat("dd/MM/yyyy");
+    final semester = selectedSemester;
+    final semesterName = semester.semester;
+    final registerFromString = dateFmt.format(semester.registrationOpenDate);
+    final registerToString = dateFmt.format(semester.registrationCloseDate);
+
+    return "Đợt học $semesterName mở đăng ký từ $registerFromString đến $registerToString. Các bạn nhớ đăng ký học đúng thời gian nhé!";
   }
 }

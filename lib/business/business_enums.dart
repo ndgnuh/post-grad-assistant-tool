@@ -102,6 +102,33 @@ class CourseClassStatusConverter extends TypeConverter<CourseClassStatus, int> {
   int toSql(CourseClassStatus status) => status.value;
 }
 
+class SureYmdDateConverter extends TypeConverter<DateTime, String> {
+  const SureYmdDateConverter();
+
+  @override
+  DateTime fromSql(String fromDb) {
+    final pattern = RegExp(r'^(\d{4})[-\/](\d{2})[-\/](\d{2})$');
+    final matched = pattern.firstMatch(fromDb);
+    switch (matched) {
+      case null:
+        throw Exception('Invalid date format: $fromDb');
+      case final m:
+        final year = int.parse(m.group(1)!);
+        final month = int.parse(m.group(2)!);
+        final day = int.parse(m.group(3)!);
+        return DateTime(year, month, day);
+    }
+  }
+
+  @override
+  String toSql(DateTime value) {
+    final day = value.day.toString().padLeft(2, '0');
+    final month = value.month.toString().padLeft(2, '0');
+    final year = value.year.toString().padLeft(4, '0');
+    return '$year-$month-$day';
+  }
+}
+
 // Application stuff
 
 /// How we combine filters

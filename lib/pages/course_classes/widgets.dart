@@ -37,3 +37,25 @@ class SemesterPicker extends ConsumerWidget {
     );
   }
 }
+
+class RegistrationNotificationButton extends ConsumerWidget {
+  final Widget Function(BuildContext context, String? message) builder;
+
+  const RegistrationNotificationButton({
+    super.key,
+    required this.builder,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final messageAsync = ref.watch(courseRegistrationNotificationProvider);
+    switch (messageAsync) {
+      case AsyncLoading _:
+        return builder(context, null);
+      case AsyncError(:final error):
+        return Text("Error: $error");
+      case AsyncData(:final value):
+        return builder(context, value);
+    }
+  }
+}

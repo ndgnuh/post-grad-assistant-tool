@@ -52,11 +52,11 @@ CREATE TABLE "HocVien" (
 
 create table "hocky" (
     "hocKy" TEXT NOT NULL PRIMARY KEY as semester,
-    "moDangKy" TEXT NOT NULL as registrationOpenDate,
-    "dongDangKy" TEXT NOT NULL as registrationCloseDate,
-    "batDauHoc" TEXT NOT NULL as studyStartDate,
-    "ketThucHoc" TEXT NOT NULL as studyEndDate,
-    "hanNhapDiem" TEXT NOT NULL as gradeSubmissionDeadline
+    "moDangKy" TEXT NOT NULL mapped by `const SureYmdDateConverter()` as registrationOpenDate,
+    "dongDangKy" TEXT NOT NULL mapped by `const SureYmdDateConverter()` as registrationCloseDate,
+    "batDauHoc" TEXT NOT NULL mapped by `const SureYmdDateConverter()` as studyStartDate,
+    "ketThucHoc" TEXT NOT NULL mapped by `const SureYmdDateConverter()` as studyEndDate,
+    "hanNhapDiem" TEXT NOT NULL mapped by `const SureYmdDateConverter()` as gradeSubmissionDeadline
 ) as SemesterData;
 
 create table "hocphan" (
@@ -75,18 +75,19 @@ create table "detaithacsi" (
 	"tenTiengAnh"	TEXT NOT NULL as englishTitle,
 	"ghiChu"	TEXT NOT NULL DEFAULT ("") as note,
 	"idHocVien"	INTEGER as studentId,
-	"ngayGiao"	TEXT as assignedDate,
+	"ngayGiao"	TEXT mapped by `const YmdDateConverter()` as assignedDate,
 	"soQdGiao"	TEXT as assignedDecisionNumber,
-	"hanBaoVe"	TEXT as defenseDeadline,
+	"hanBaoVe"	TEXT mapped by `const YmdDateConverter()` as defenseDeadline,
 	"soQdBaoVe"	TEXT as defenseDecisionNumber,
-	"ngayBaoVe"	TEXT as defenseDate,
+	"ngayBaoVe"	TEXT mapped by `const YmdDateConverter()` as defenseDate,
 	"idChuTich"	INTEGER as presidentId,
 	"idPhanBien1"	INTEGER as firstReviewerId,
 	"idPhanBien2"	INTEGER as secondReviewerId,
 	"idThuKy"	INTEGER as secretaryId,
 	"idUyVien"	INTEGER as memberId,
-    "flag_tracking" INTEGER NOT NULL DEFAULT 0 CHECK(flag_tracking IN (0, 1)) as isTracking,
-    "flag_paid" INTEGER NOT NULL DEFAULT 0 CHECK(flag_tracking IN (0, 1)) as isPaid,
+    "flag_tracking" BOOLEAN NOT NULL DEFAULT FALSE,
+    "flag_paid" BOOLEAN NOT NULL DEFAULT FALSE,
+    "flag_ignore" BOOLEAN NOT NULL DEFAULT FALSE,
 	"group"	TEXT ,
 	"nam"	TEXT as year,
 	"dangKyBaoVe"	INTEGER NOT NULL DEFAULT 0 as isRegisteredForDefense,
@@ -114,7 +115,7 @@ create table "giangvien" (
 	"sdt"	text as phone,
 	"email"	text as personalEmail,
 	"cccd"	text as citizenId,
-	"ngaySinh"	text as dateOfBirth,
+	"ngaySinh"	text mapped by `const YmdDateConverter()` as dateOfBirth,
 	"stk"	text as bankAccount,
 	"nganHang"	text as bankName,
 	"mst"	text as taxCode,

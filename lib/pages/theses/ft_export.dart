@@ -1,27 +1,32 @@
-import 'dart:io';
-import 'package:excel/excel.dart';
-import 'package:pdf/pdf.dart';
-import 'package:intl/intl.dart';
 import 'dart:async';
+import 'dart:typed_data';
 
+import 'package:intl/intl.dart';
+import 'package:pdf/pdf.dart';
+import 'package:riverpod/riverpod.dart';
+
+import '../../business/db_v2_providers.dart';
 import '../../services/pdf_widgets.dart' as pw;
-import '../../services/sqlbuilder/sqlbuilder.dart';
-import '../../services/database.dart';
-import '../../business/domain_objects.dart';
 
-Future<void> exportThesisListPdf({
-  required String outputPath,
-  required List<Thesis> theses,
+final unassignedThesisProvider = AsyncNotifierProvider(
+  () => ThesisIdsNotifier(assigned: false),
+);
+
+final sampleThesesPdfProvider = AsyncNotifierProvider(
+  SampleThesesPdfNotifier.new,
+);
+
+Future<Uint8List> buildThesisListPdf({
+  required List<ThesisData> theses,
+  required Map<ThesisData, TeacherData> supervisors,
 }) async {
   final theme = await pw.defaultTheme(baseSize: 9);
   final pdf = pw.Document(theme: theme);
-
-  final gv = [for (final dt in theses) (dt.giangVien)];
   final dateFormat = DateFormat("dd/MM/yyyy HH:mm:ss");
   final formattedDate = dateFormat.format(DateTime.now());
 
   final page = pw.MultiPage(
-    pageFormat: pw.a4Landscape(),
+    pageFormat: pw.a4Portrait(),
     margin: pw.EdgeInsets.all(0.5 * PdfPageFormat.inch),
     build: (context) {
       final header = pw.Row(
@@ -43,7 +48,7 @@ Future<void> exportThesisListPdf({
         ),
       );
 
-      final data = pw.EzTable<DeTaiThacSi>(
+      final data = pw.EzTable<ThesisData>(
         padding: pw.EdgeInsets.symmetric(
           vertical: 3 * pw.pt,
           horizontal: 6 * pw.pt,
@@ -55,10 +60,10 @@ Future<void> exportThesisListPdf({
           3: pw.IntrinsicColumnWidth(),
         },
         alignments: {
-          0: pw.Alignment.centerLeft,
-          1: pw.Alignment.centerLeft,
-          2: pw.Alignment.centerLeft,
-          3: pw.Alignment.centerLeft,
+          0: pw.Alignment.topLeft,
+          1: pw.Alignment.topLeft,
+          2: pw.Alignment.topLeft,
+          3: pw.Alignment.topLeft,
         },
         textAligns: {
           0: pw.TextAlign.start,
@@ -75,11 +80,14 @@ Future<void> exportThesisListPdf({
         ],
         data: theses,
         rowBuilder: (int r, dt) {
+          final thesis = theses[r];
+          final teacher = supervisors[theses[r]]!;
+          final contact = teacher.personalEmail ?? teacher.phone;
           return [
-            gv[r].hoTenChucDanh,
-            dt.tenTiengViet,
-            dt.tenTiengAnh,
-            "Email; ${gv[r].email}\nSĐT: ${gv[r].sdt}",
+            teacher.name,
+            thesis.vietnameseTitle,
+            thesis.englishTitle,
+            contact,
           ];
         },
       );
@@ -97,7 +105,27 @@ Future<void> exportThesisListPdf({
   );
   pdf.addPage(page);
 
-  final outFile = File(outputPath);
-  await outFile.create(recursive: true);
-  await outFile.writeAsBytes(await pdf.save());
+  return pdf.save();
+}
+
+class SampleThesesPdfNotifier extends AsyncNotifier<Uint8List> {
+  @override
+  FutureOr<Uint8List> build() async {
+    final ids = await ref.watch(unassignedThesisProvider.future);
+
+    final theses = <ThesisData>[];
+    for (final id in ids) {
+      final thesis = await ref.watch(thesisByIdProvider(id).future);
+      theses.add(thesis!);
+    }
+
+    final supervisors = <ThesisData, TeacherData>{};
+    for (final thesis in theses) {
+      final teacher = await ref.watch(
+        teacherByIdProvider(thesis.supervisorId).future,
+      );
+      supervisors[thesis] = teacher!;
+    }
+    return buildThesisListPdf(theses: theses, supervisors: supervisors);
+  }
 }
