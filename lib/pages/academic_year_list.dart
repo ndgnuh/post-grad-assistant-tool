@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 
 import './mobile/course_classes.dart' show PageCourseClassList;
 import './../../business/pods.dart';
+import '../custom_widgets.dart';
 
 String toDmy(DateTime date) {
   final formatter = DateFormat('dd/MM/yyyy');
@@ -640,30 +641,32 @@ class _PageAcademicYearListState extends State<PageAcademicYearList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Đợt học"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => setState(() {
-              _academicYearsFuture = HocKy.all();
-            }),
-          ),
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () async {
-              await Navigator.pushNamed(
-                context,
-                PageAcademicYearCreate.routeName,
-              );
-              setState(() {
+      appBar: ConstrainedAppBar(
+        child: AppBar(
+          title: const Text("Đợt học"),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () => setState(() {
                 _academicYearsFuture = HocKy.all();
-              });
-            },
-          ),
-        ],
+              }),
+            ),
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () async {
+                await Navigator.pushNamed(
+                  context,
+                  PageAcademicYearCreate.routeName,
+                );
+                setState(() {
+                  _academicYearsFuture = HocKy.all();
+                });
+              },
+            ),
+          ],
+        ),
       ),
-      body: _AcademicYearList(),
+      body: ConstrainedBody(child: _AcademicYearList()),
     );
   }
 }
