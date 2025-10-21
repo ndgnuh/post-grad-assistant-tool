@@ -36,7 +36,6 @@ import 'pages/phan_cong_hoi_dong_lvths.dart'
     show PagePhanCongHoiDongLuanVanThacSi;
 import 'pages/phd_students/index.dart';
 import 'pages/ql_bieu_mau.dart' show QlBieuMau, DienPhieuDiemThs;
-import 'pages/ql_de_tai.dart' show PageQuanLyDeTai;
 import 'pages/ql_hoc_vien.dart' show QlHocVien;
 import 'pages/settings.dart' show SettingsPage;
 import 'pages/teachers/index.dart' show TeacherSearchPage;
@@ -108,11 +107,6 @@ const routes = [
   (
     route: PageCourseList.routeName,
     label: "Học phần",
-    icon: Symbols.book,
-  ),
-  (
-    route: PageQuanLyDeTai.routeName,
-    label: "Quản lý đề tài",
     icon: Symbols.book,
   ),
   (
@@ -326,8 +320,6 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       return PageXetTuyen();
     case PageXetTuyenNcs.routeName:
       return PageXetTuyenNcs();
-    case PageQuanLyDeTai.routeName:
-      return PageQuanLyDeTai();
     case CourseLimitingPage.routeName:
       return CourseLimitingPage();
     case PagePhanCongHoiDongLuanVanThacSi.routeName:
@@ -501,7 +493,6 @@ MaterialPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
 // const initialRoute = PageImportHocPhan.routeName;
 
 // const initialRoute = PagePhanCongHoiDongLuanVanThacSi.routeName;
-// const initialRoute = PageQuanLyDeTai.routeName;
 // const initialRoute = QlBieuMau.routeName;
 
 //const initialRoute = QlHocVien.routeName;
