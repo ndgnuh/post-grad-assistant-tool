@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 
 import '../services/database.dart';
 import '../services/sqlbuilder/sqlbuilder.dart';
-
+export 'business_enums.dart' show CouncilRow;
 part 'domain_objects.freezed.dart';
 part 'domain_objects.g.dart';
 
@@ -24,14 +24,6 @@ String datetimeToYyyymmdd(DateTime d) {
 
 List<T?> prependNull<T>(List<T> values) {
   return [null, for (final value in values) value];
-}
-
-enum CouncilRole {
-  president,
-  reviewer1,
-  reviewer2,
-  secretary,
-  member,
 }
 
 /// Quote string in a double quote

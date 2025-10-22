@@ -10,6 +10,44 @@ export 'enums/academic_titles.dart';
 export 'enums/admission_type.dart';
 export 'enums/student.dart';
 
+/// Roles in a council
+/// TODO: refactor later if needed
+enum CouncilRole {
+  president,
+  reviewer1,
+  reviewer2,
+  secretary,
+  member,
+}
+
+enum DocumentClass {
+  phdAdmissionCouncilDecision(
+    group: 'phd',
+    value: 'admission-council',
+    label: 'QĐ lập hội đồng tuyển sinh NCS',
+  ),
+  phdAdmissionAcceptanceDecision(
+    group: 'phd',
+    value: 'admission-acceptance',
+    label: 'QĐ công nhận trúng tuyển NCS',
+  ),
+  phdThesisAcceptanceDecision(
+    group: 'phd',
+    value: 'thesis-acceptance',
+    label: 'QĐ cộng nhận NCS, Đề tài và Tập thể hướng dẫn',
+  );
+
+  final String group;
+  final String value;
+  final String label;
+
+  const DocumentClass({
+    required this.group,
+    required this.value,
+    required this.label,
+  });
+}
+
 // DMY Date converter
 class YmdDateConverter extends TypeConverter<DateTime?, String?> {
   const YmdDateConverter();

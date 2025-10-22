@@ -35,6 +35,7 @@ import 'pages/page_xet_tuyen_ncs.dart' show PageXetTuyenNcs;
 import 'pages/phan_cong_hoi_dong_lvths.dart'
     show PagePhanCongHoiDongLuanVanThacSi;
 import 'pages/phd_students/index.dart';
+import 'pages/phd_admission_payment/index.dart';
 import 'pages/ql_bieu_mau.dart' show QlBieuMau, DienPhieuDiemThs;
 import 'pages/ql_hoc_vien.dart' show QlHocVien;
 import 'pages/settings.dart' show SettingsPage;
