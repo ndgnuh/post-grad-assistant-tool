@@ -21,7 +21,81 @@ export 'custom_widgets/expanded_scrollview.dart';
 export 'custom_widgets/menu_dialog.dart';
 export 'custom_widgets/responsive_breakpoints.dart';
 
-const debouncedCallback = debounced_callback;
+extension CustomFormatter on TextEditingController {
+  static TextInputFormatter get trimmedText => TextInputFormatter.withFunction(
+    (oldValue, newValue) {
+      final text = newValue.text.trim();
+      return TextEditingValue(
+        text: text,
+        selection: TextSelection.collapsed(offset: text.length),
+      );
+    },
+  );
+}
+
+final formattedDateInputFormatter = TextInputFormatter.withFunction(
+  // this function is AI generated slop
+  // A function that auto format text as dd/MM/yyyy
+  // This function does not use date library
+  (oldValue, newValue) {
+    final newLength = newValue.text.length;
+    final oldLength = oldValue.text.length;
+    if (newLength < oldLength) {
+      return newValue;
+    }
+
+    int consectuiveInt = 0;
+    int numberOfSeparator = 0;
+    for (int i = 0; i < newValue.text.length; i++) {
+      final c = newValue.text[i];
+      final isNumeric = c.codeUnitAt(0) >= 48 && c.codeUnitAt(0) <= 57;
+      final isSpace = c == ' ' || c == '\t';
+      final isSeparator = c == '/' || c == '-';
+      if (isNumeric) {
+        consectuiveInt = consectuiveInt + 1;
+        // is day or month
+        if (consectuiveInt > 2 && numberOfSeparator < 2) {
+          return oldValue;
+        } else if (consectuiveInt > 4) {
+          return oldValue;
+        }
+      } else if (isSpace) {
+        return oldValue;
+      } else if (i > 0 && isSeparator && numberOfSeparator < 2) {
+        consectuiveInt = 0;
+        numberOfSeparator = numberOfSeparator + 1;
+      } else {
+        return oldValue;
+      }
+    }
+
+    // Validate date values
+    if (numberOfSeparator < 2) {
+      return newValue;
+    }
+    final newText = newValue.text;
+    final parts = newText.split(RegExp(r'[/\-]'));
+    final day = int.tryParse(parts[0]) as int;
+    final month = int.tryParse(parts[1]) as int;
+    final year = int.tryParse(parts[2]) as int;
+    final correctedMonth = (month > 12) ? 12 : month;
+    final correctedDate = switch (correctedMonth) {
+      2 => switch (year % 4) {
+        0 => day > 29 ? 29 : day, // Leap year
+        _ => day > 28 ? 28 : day, // Non-leap year
+      },
+      4 || 6 || 9 || 11 => day > 30 ? 30 : day, // Months with 30 days
+      _ => day > 31 ? 31 : day,
+    };
+
+    // Reconstruct the date string
+    final newDateString = "$correctedDate/$correctedMonth/$year";
+    return TextEditingValue(
+      text: newDateString,
+      selection: newValue.selection,
+    );
+  },
+);
 
 ValueChanged<T> debouncedValueChanged<T>({
   required ValueChanged<T> callback,
@@ -36,7 +110,7 @@ ValueChanged<T> debouncedValueChanged<T>({
   return debounced;
 }
 
-Function debounced_callback<F extends Function>({
+Function debouncedCallback<F extends Function>({
   required F function,
   required Duration duration,
 }) {
@@ -89,23 +163,6 @@ void ezSetValue<T>(ChangeNotifier controller, Object? value) {
   }
 }
 
-ScaffoldMessengerState getMessenger(context) {
-  return ScaffoldMessenger.of(context);
-}
-
-/// Quicky create a [Flex] with horizontal direction and wrap the [children] in [Flexible]
-Flex HBox({List<int>? flex, required List<Widget> children}) {
-  flex ??= [for (final _ in children) 1];
-  return Flex(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    direction: Axis.horizontal,
-    children: [
-      for (final (i, child) in children.indexed)
-        Flexible(fit: FlexFit.tight, flex: flex[i], child: child),
-    ],
-  );
-}
-
 /// Set controller value, supports
 /// [TextEditingController], [EzController], [EzSEzSelectionController],
 void setControllerValue(ChangeNotifier controller, Object? value) {
@@ -119,19 +176,6 @@ void setControllerValue(ChangeNotifier controller, Object? value) {
     default:
       throw "Unsupported controller";
   }
-}
-
-/// Quicky create a [Flex] with vertical direction and wrap the [children] in [Flexible]
-Flex VBox({List<int>? flex, required List<Widget> children}) {
-  flex ??= [for (final _ in children) 1];
-  return Flex(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    direction: Axis.vertical,
-    children: [
-      for (final (i, child) in children.indexed)
-        Flexible(fit: FlexFit.tight, flex: flex[i], child: child),
-    ],
-  );
 }
 
 class DateEditingDialog extends StatelessWidget {
@@ -358,67 +402,6 @@ class EzDateInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formattedDateInputFormatter = TextInputFormatter.withFunction(
-      // this function is AI generated slop
-      // A function that auto format text as dd/MM/yyyy
-      // This function does not use date library
-      (oldValue, newValue) {
-        final newLength = newValue.text.length;
-        final oldLength = oldValue.text.length;
-        if (newLength < oldLength) {
-          return newValue;
-        }
-
-        int consectuiveInt = 0;
-        int numberOfSeparator = 0;
-        for (int i = 0; i < newValue.text.length; i++) {
-          final c = newValue.text[i];
-          final isNumeric = c.codeUnitAt(0) >= 48 && c.codeUnitAt(0) <= 57;
-          final isSeparator = c == '/' || c == '-';
-          if (isNumeric) {
-            consectuiveInt = consectuiveInt + 1;
-            // is day or month
-            if (consectuiveInt > 2 && numberOfSeparator < 2) {
-              return oldValue;
-            } else if (consectuiveInt > 4) {
-              return oldValue;
-            }
-          } else if (i > 0 && isSeparator && numberOfSeparator < 2) {
-            consectuiveInt = 0;
-            numberOfSeparator = numberOfSeparator + 1;
-          } else {
-            return oldValue;
-          }
-        }
-
-        // Validate date values
-        if (numberOfSeparator < 2) {
-          return newValue;
-        }
-        final newText = newValue.text;
-        final parts = newText.split(RegExp(r'[/\-]'));
-        final day = int.tryParse(parts[0]) as int;
-        final month = int.tryParse(parts[1]) as int;
-        final year = int.tryParse(parts[2]) as int;
-        final correctedMonth = (month > 12) ? 12 : month;
-        final correctedDate = switch (correctedMonth) {
-          2 => switch (year % 4) {
-            0 => day > 29 ? 29 : day, // Leap year
-            _ => day > 28 ? 28 : day, // Non-leap year
-          },
-          4 || 6 || 9 || 11 => day > 30 ? 30 : day, // Months with 30 days
-          _ => day > 31 ? 31 : day,
-        };
-
-        // Reconstruct the date string
-        final newDateString = "$correctedDate/$correctedMonth/$year";
-        return TextEditingValue(
-          text: newDateString,
-          selection: newValue.selection,
-        );
-      },
-    );
-
     return TextFormField(
       inputFormatters: [formattedDateInputFormatter],
       controller: controller.formatController,

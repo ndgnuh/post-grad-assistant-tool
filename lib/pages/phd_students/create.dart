@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../business/db_v2_providers.dart';
@@ -13,9 +13,7 @@ import './providers.dart';
 const _lastCohortKey = '$_pagePreferenceKey/cohort';
 const _pagePreferenceKey = 'phd_student/create';
 
-final _viewModelNotifier = Provider<_ViewModel>((ref) {
-  return _ViewModel();
-});
+final _viewModelProvider = NotifierProvider(_ViewModelNotifier.new);
 
 Future<String> _getLastCohort() async {
   final prefs = await SharedPreferences.getInstance();
@@ -126,15 +124,15 @@ class _GenderPickerState extends State<GenderPicker> {
 class _InformationForm extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final model = ref.watch(_viewModelNotifier);
+    final model = ref.watch(_viewModelProvider);
     final formKey = model.formKey;
     final gutter = context.gutter;
 
-    return FocusScope(
-      child: Form(
-        key: formKey,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(gutter),
+    return Form(
+      key: formKey,
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(gutter),
+        child: FocusScope(
           child: Column(
             spacing: gutter,
             children: [
@@ -143,6 +141,9 @@ class _InformationForm extends ConsumerWidget {
                 controller: model.cohortController,
                 decoration: labelText('Khóa tuyển sinh'),
                 validator: notEmptyValidator('Vui lòng nhập khóa học'),
+                onFieldSubmitted: (value) => {
+                  model.cohortController.text = value.trim(),
+                },
                 onChanged: (value) => _setLastCohort(value),
               ),
 
@@ -250,25 +251,33 @@ class _InformationForm extends ConsumerWidget {
 class _SaveButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dbState = ref.watch(driftDatabaseProvider);
-    switch (dbState) {
-      case AsyncLoading():
-        return const CircularProgressIndicator();
-      case AsyncError(:final error, :final stackTrace):
-        return Text('Error: $error\n$stackTrace');
-      default:
-    }
-
-    final model = ref.watch(_viewModelNotifier);
+    final model = ref.watch(_viewModelProvider);
     final formKey = model.formKey;
     return FilledButton(
       onPressed: () async {
         if (formKey.currentState?.validate() ?? false) {
-          final db = dbState.value!;
-          await model.create(db);
-          // Navigator.of(context).pop();
-          // ref.invalidate(phdCohortsProvider);
-          // ref.invalidate(phdStudentsByCohortProvider);
+          final mutation = ref.read(phdStudentsMutationProvider.notifier);
+          mutation.addPhdStudent(
+            cohort: model.cohortController.text.trim(),
+            admissionId: (model.admissionIdController.text.trim()),
+
+            // basic information
+            name: model.nameController.text.trim(),
+            gender: model.genderController.value,
+            dateOfBirth: model.dateOfBirthController.value!,
+            placeOfBirth: model.placeOfBirthController.text.trim(),
+
+            // contact information
+            personalEmail: model.emailController.text.trim(),
+            phone: model.phoneController.text.trim(),
+
+            supervisorId: model.supervisorNotifier.value!.id,
+            secondarySupervisorId: model.secondarySupervisorNotifier.value?.id,
+            thesis: model.thesisController.text.trim(),
+            majorSpecialization: model.specializationController.text.trim(),
+          );
+          ref.invalidate(_viewModelProvider);
+          Navigator.of(context).pop();
         }
       },
       child: const Text('Save'),
@@ -353,6 +362,13 @@ class _TeacherSelector extends ConsumerWidget {
   }
 }
 
+class _ViewModelNotifier extends Notifier<_ViewModel> {
+  @override
+  _ViewModel build() {
+    return _ViewModel();
+  }
+}
+
 class _ViewModel {
   final formKey = GlobalKey<FormState>();
   final supervisorNotifier = ValueNotifier<TeacherData?>(null);
@@ -374,32 +390,5 @@ class _ViewModel {
 
   _ViewModel() {
     _getLastCohort().then((value) => cohortController.text = value);
-  }
-
-  PhdStudentCompanion get phdStudentCompanion {
-    return PhdStudentCompanion.insert(
-      // management information
-      cohort: cohortController.text,
-      admissionId: (admissionIdController.text),
-
-      // basic information
-      name: nameController.text,
-      gender: Value(genderController.value),
-      dateOfBirth: Value(dateOfBirthController.value),
-      placeOfBirth: Value(placeOfBirthController.text),
-
-      // contact information
-      personalEmail: emailController.text,
-      phone: phoneController.text,
-
-      supervisorId: supervisorNotifier.value!.id,
-      secondarySupervisorId: Value(secondarySupervisorNotifier.value?.id),
-      thesis: thesisController.text,
-      majorSpecialization: Value(specializationController.text),
-    );
-  }
-
-  Future<void> create(MyDriftDatabase db) async {
-    await db.into(db.phdStudent).insert(phdStudentCompanion);
   }
 }

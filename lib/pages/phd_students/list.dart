@@ -61,10 +61,6 @@ class _PhdStudentListView extends ConsumerWidget {
     }
 
     final model = modelAsync.value!;
-    if (model.cohort == null) {
-      return const Center(child: Text('Chọn khóa NCS trước'));
-    }
-
     if (model.students.isEmpty) {
       return const Center(child: Text('Không có NCS trong khóa này'));
     }

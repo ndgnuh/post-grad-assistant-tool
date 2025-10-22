@@ -1,13 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:intl/intl.dart';
-import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 
-final _dateFormat = DateFormat('dd-MM-yyyy');
+import '../custom_widgets.dart';
 
 const _magicPreferenceKey = '<widget-selected-datetime>';
+
+final dateInputFormatter = TextInputFormatter.withFunction(
+  (oldValue, newValue) {
+    final newText = newValue.text;
+    final format1 = DateFormat('dd/MM/yyyy');
+    final format2 = DateFormat('dd-MM-yyyy');
+
+    // If new date is parsed
+    final parsed1 = format1.tryParseLoose(newText);
+    if (parsed1 != null) {
+      final formatted = format1.format(parsed1);
+      return TextEditingValue(
+        text: formatted,
+        selection: TextSelection.collapsed(offset: formatted.length),
+      );
+    }
+
+    // If new date is parsed with alternative format
+    final parsed2 = format2.tryParseLoose(newText);
+    if (parsed2 != null) {
+      final formatted = format1.format(parsed2);
+      return TextEditingValue(
+        text: formatted,
+        selection: TextSelection.collapsed(offset: formatted.length),
+      );
+    }
+
+    final invalid = RegExp(r'[^0-9/-]');
+    return TextEditingValue(
+      text: newText.replaceAll(invalid, ''),
+      selection: newValue.selection,
+    );
+  },
+);
+
+final _dateFormat = DateFormat('dd-MM-yyyy');
 String _getDateTimePreferenceKey(String name) {
   return '$_magicPreferenceKey/$name';
 }
@@ -61,73 +96,38 @@ class DateTimePicker extends StatefulWidget {
 class _DateTimePickerState extends State<DateTimePicker> {
   final formKey = GlobalKey<FormState>();
   final formatController = TextEditingController();
+  String? error;
   late ValueNotifier<DateTime?> valueNotifier;
 
-  @override
-  initState() {
-    super.initState();
-    // Initialize the value notifier if it is provided
-    if (widget.controller != null) {
-      valueNotifier = widget.controller!;
-    } else {
-      valueNotifier = ValueNotifier(widget.initialDateTime);
+  void tryParseDateAndUpdate(String text) {
+    final altDateFormat = DateFormat('dd/MM/yyyy');
+    final parsedDate =
+        _dateFormat.tryParseLoose(text) ?? altDateFormat.tryParseLoose(text);
+    if (parsedDate == null) {
+      setState(() {
+        error = "Ngày đã nhập không hợp lệ";
+      });
+      return;
     }
-
-    // Load initial datetime from preferences if name is provided
-    switch (widget.name) {
-      case String name:
-        _loadDateTime(
-          name: name,
-          fallback: widget.initialDateTime,
-        ).then((datetime) => valueNotifier.value = datetime);
-    }
-  }
-
-  @override
-  void dispose() {
-    // Only dispose the notifier if it was created in this widget
-    if (widget.controller == null) valueNotifier.dispose();
-    super.dispose();
-  }
-
-  Future<void> _showDatePicker(BuildContext context) async {
-    var defaultDate = valueNotifier.value;
-    defaultDate ??= widget.initialDateTime;
-    defaultDate ??= DateTime.now();
-
-    final pickedDate = await showDatePicker(
-      context: context,
-      lastDate: DateTime(2100),
-      firstDate: DateTime(1900),
-      initialDate: defaultDate,
-    );
-
-    // User cancelled
-    if (pickedDate == null) return;
-    formatController.text = _dateFormat.format(pickedDate);
-    valueNotifier.value = pickedDate;
-
-    switch (widget.name) {
-      case String name:
-        _saveDateTime(
-          name: name,
-          dateTime: pickedDate,
-        );
-    }
+    valueNotifier.value = parsedDate;
+    widget.onDateTimeSelected?.call(parsedDate);
+    setState(() {
+      error = null;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final iconData = widget.iconData ?? Icons.calendar_today;
 
-    // show date picker when focus is gained
-    final focusNode = FocusNode();
-    focusNode.addListener(() {
-      if (focusNode.hasFocus) {
-        focusNode.unfocus();
-        _showDatePicker(context);
-      }
-    });
+    // // show date picker when focus is gained
+    // final focusNode = FocusNode();
+    // focusNode.addListener(() {
+    //   if (focusNode.hasFocus) {
+    //     focusNode.unfocus();
+    //     _showDatePicker(context);
+    //   }
+    // });
 
     return ValueListenableBuilder(
       valueListenable: valueNotifier,
@@ -138,10 +138,14 @@ class _DateTimePickerState extends State<DateTimePicker> {
           children: [
             Expanded(
               child: TextFormField(
-                readOnly: true,
-                focusNode: focusNode,
+                inputFormatters: [dateInputFormatter],
                 controller: formatController,
-                validator: (text) => widget.validator?.call(value),
+                validator: (text) {
+                  if (error != null) return error;
+                  return widget.validator?.call(value);
+                },
+                onChanged: tryParseDateAndUpdate,
+                onFieldSubmitted: tryParseDateAndUpdate,
                 decoration: InputDecoration(
                   labelText: widget.labelText,
                   hintText: widget.hintText,
@@ -168,5 +172,58 @@ class _DateTimePickerState extends State<DateTimePicker> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // Only dispose the notifier if it was created in this widget
+    if (widget.controller == null) valueNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
+  initState() {
+    super.initState();
+    // Initialize the value notifier if it is provided
+    if (widget.controller != null) {
+      valueNotifier = widget.controller!;
+    } else {
+      valueNotifier = ValueNotifier(widget.initialDateTime);
+    }
+
+    // Load initial datetime from preferences if name is provided
+    switch (widget.name) {
+      case String name:
+        _loadDateTime(
+          name: name,
+          fallback: widget.initialDateTime,
+        ).then((datetime) => valueNotifier.value = datetime);
+    }
+  }
+
+  Future<void> _showDatePicker(BuildContext context) async {
+    var defaultDate = valueNotifier.value;
+    defaultDate ??= widget.initialDateTime;
+    defaultDate ??= DateTime.now();
+
+    final pickedDate = await showDatePicker(
+      context: context,
+      lastDate: DateTime(2100),
+      firstDate: DateTime(1900),
+      initialDate: defaultDate,
+    );
+
+    // User cancelled
+    if (pickedDate == null) return;
+    formatController.text = _dateFormat.format(pickedDate);
+    valueNotifier.value = pickedDate;
+
+    switch (widget.name) {
+      case String name:
+        _saveDateTime(
+          name: name,
+          dateTime: pickedDate,
+        );
+    }
   }
 }

@@ -8,9 +8,9 @@ import '../db_v2_providers.dart';
 import './../../business/drift_orm.dart';
 import './common.dart';
 
-typedef PhdCohortSelectionModel = SelectionModel<String>;
+typedef PhdCohortSelectionModel = SelectionModel<String?>;
 
-typedef _Mixin = SelectionModelMixin<String>;
+typedef _Mixin = SelectionModelMixin<String?>;
 typedef _Notifier = AsyncNotifier<PhdCohortSelectionModel>;
 
 class PhdCohortSelectionModelNotifier extends _Notifier with _Mixin {
@@ -28,7 +28,7 @@ class PhdCohortSelectionModelNotifier extends _Notifier with _Mixin {
 
     return PhdCohortSelectionModel(
       selected: selectedCohort,
-      options: cohorts,
+      options: [null, ...cohorts],
     );
   }
 

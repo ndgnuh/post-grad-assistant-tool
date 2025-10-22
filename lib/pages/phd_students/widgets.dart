@@ -20,7 +20,7 @@ class CohortSelector extends ConsumerWidget {
 
     final model = modelAsync.value!;
 
-    return DropdownMenu(
+    return DropdownMenu<String?>(
       expandedInsets: EdgeInsets.zero,
       initialSelection: model.selected,
       label: const Text('Niên khóa NCS'),
@@ -28,7 +28,7 @@ class CohortSelector extends ConsumerWidget {
         for (final option in model.options)
           DropdownMenuEntry(
             value: option,
-            label: option,
+            label: option ?? 'Tất cả',
           ),
       ],
       onSelected: (String? value) {

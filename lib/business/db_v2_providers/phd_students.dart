@@ -7,27 +7,38 @@ final phdCohortsProvider = AsyncNotifierProvider(
   PhdCohorts.new,
 );
 
+final phdStudentsMutationProvider = NotifierProvider(
+  PhdStudentsMutationNotifier.new,
+);
+
 final phdStudentByIdProvider = AsyncNotifierProvider.family(
-  PhdStudentById.new,
+  PhdStudentByIdNotifier.new,
+);
+
+final phdStudentIdsProvider = AsyncNotifierProvider(
+  PhdStudentIdsNotifier.new,
 );
 
 final phdStudentIdsByCohortProvider = AsyncNotifierProvider.family(
-  (String cohort) => PhdStudentIds(cohort: cohort),
+  (String cohort) => PhdStudentIdsNotifier(cohort: cohort),
 );
 
 class PhdCohorts extends AsyncNotifier<List<String>> {
   @override
   Future<List<String>> build() async {
     final db = await ref.watch(driftDatabaseProvider.future);
-    final stmt = db.phdCohort.select();
+    final stmt = db.phdCohort.select()
+      ..orderBy([
+        (x) => OrderingTerm(expression: x.cohort, mode: OrderingMode.desc),
+      ]);
     final result = await stmt.map((c) => c.cohort).get();
     return result;
   }
 }
 
-class PhdStudentById extends AsyncNotifier<PhdStudentData?> {
+class PhdStudentByIdNotifier extends AsyncNotifier<PhdStudentData?> {
   final int studentId;
-  PhdStudentById(this.studentId);
+  PhdStudentByIdNotifier(this.studentId);
 
   @override
   Future<PhdStudentData?> build() async {
@@ -38,19 +49,25 @@ class PhdStudentById extends AsyncNotifier<PhdStudentData?> {
   }
 }
 
-class PhdStudentIds extends AsyncNotifier<List<int>> {
+class PhdStudentIdsNotifier extends AsyncNotifier<List<int>> {
   final String? cohort;
 
-  PhdStudentIds({this.cohort});
+  PhdStudentIdsNotifier({this.cohort});
 
   @override
   Future<List<int>> build() async {
     final db = await ref.watch(driftDatabaseProvider.future);
-    final stmt = db.managers.phdStudent;
+    final stmt = db.phdStudent.select();
 
-    if (cohort != null) {
-      stmt.filter((p) => p.cohort.equals(cohort!));
+    switch (cohort) {
+      case String cohort:
+        stmt.where((p) => p.cohort.equals(cohort));
     }
+
+    stmt.orderBy([
+      (s) => OrderingTerm(expression: s.cohort, mode: OrderingMode.desc),
+      (s) => OrderingTerm(expression: s.admissionId, mode: OrderingMode.asc),
+    ]);
 
     final ids = await stmt.map((p) => p.id).get();
 
@@ -73,7 +90,7 @@ class PhdStudentIdsByCohortNotifier extends AsyncNotifier<List<int>> {
   }
 }
 
-class PhdStudentMutationNotifier extends Notifier<void> {
+class PhdStudentsMutationNotifier extends Notifier<void> {
   Future<void> addPhdStudent({
     // Admisison information
     required String admissionId,
@@ -82,6 +99,7 @@ class PhdStudentMutationNotifier extends Notifier<void> {
     // Basic information
     required String name,
     required Gender gender,
+    required DateTime dateOfBirth,
     required String placeOfBirth,
 
     // Contact information
@@ -103,6 +121,7 @@ class PhdStudentMutationNotifier extends Notifier<void> {
       // Basic information
       name: name,
       gender: Value(gender),
+      dateOfBirth: Value(dateOfBirth),
       placeOfBirth: Value(placeOfBirth),
       phone: phone,
       personalEmail: personalEmail,
@@ -117,27 +136,9 @@ class PhdStudentMutationNotifier extends Notifier<void> {
     final stmt = db.phdStudent.insert();
     await stmt.insert(companion);
 
-    ref.invalidate(phdStudentIdsByCohortProvider(cohort));
+    ref.invalidate(phdStudentIdsByCohortProvider);
   }
 
   @override
   build() {}
-}
-
-class PhdStudentsByCohort extends AsyncNotifier<List<PhdStudentData>> {
-  final String cohort;
-  PhdStudentsByCohort(this.cohort);
-
-  @override
-  Future<List<PhdStudentData>> build() async {
-    final ids = await ref.watch(phdStudentIdsByCohortProvider(cohort).future);
-    final students = <PhdStudentData>[];
-    for (final id in ids) {
-      final student = await ref.watch(phdStudentByIdProvider(id).future);
-      if (student != null) {
-        students.add(student);
-      }
-    }
-    return students;
-  }
 }

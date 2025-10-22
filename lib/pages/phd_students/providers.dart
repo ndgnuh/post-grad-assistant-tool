@@ -126,17 +126,14 @@ class PhdStudentListViewModelNotifier
     // Get selected cohort
     final cohortModel = await ref.watch(cohortSelectionModelProvider.future);
     final cohort = cohortModel.selected;
-    if (cohort == null) {
-      return PhdStudentListViewModel(
-        cohort: null,
-        students: [],
-        supervisors: {},
-        secondarySupervisor: {},
-      );
-    }
 
     // Get student of cohorts along with their supervisors
-    final ids = await ref.watch(phdStudentIdsByCohortProvider(cohort).future);
+    final ids = switch (cohort) {
+      null => await ref.watch(phdStudentIdsProvider.future),
+      String cohort => await ref.watch(
+        phdStudentIdsByCohortProvider(cohort).future,
+      ),
+    };
     final students = <PhdStudentData>[];
     final supervisors = <PhdStudentData, TeacherData>{};
     final secondarySupervisors = <PhdStudentData, TeacherData?>{};
