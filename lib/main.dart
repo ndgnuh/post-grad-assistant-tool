@@ -268,8 +268,39 @@ class MyApp extends ConsumerWidget {
     final themes = Themes(context);
     final locale = Locale('vi', 'VN');
 
+    final globalKey = GlobalKey();
+    final messengerKey = GlobalKey<ScaffoldMessengerState>();
+
     return SafeArea(
       child: MaterialApp(
+        key: globalKey,
+        scaffoldMessengerKey: messengerKey,
+        navigatorKey: navigationKey,
+        shortcuts: {
+          LogicalKeySet(LogicalKeyboardKey.alt, LogicalKeyboardKey.arrowLeft):
+              const GoBackIntent(),
+        },
+        actions: {
+          GoBackIntent: CallbackAction<GoBackIntent>(
+            onInvoke: (intent) {
+              final navigator = navigationKey.currentState!;
+              final messenger = messengerKey.currentState!;
+
+              if (navigator.canPop() == false) {
+                messenger.showSnackBar(
+                  const SnackBar(
+                    content: Text('Không có trang để quay lại'),
+                    duration: Duration(seconds: 1),
+                  ),
+                );
+              } else {
+                navigator.pop();
+              }
+
+              return null;
+            },
+          ),
+        },
         locale: locale,
         darkTheme: themes.dark,
         theme: themes.light,

@@ -1,8 +1,15 @@
+import 'dart:async';
+
+import 'package:number_to_vietnamese_words/number_to_vietnamese_words.dart';
 import 'package:riverpod/riverpod.dart';
 
+import '../../business/copy_pasta.dart';
 import '../../business/db_v2_providers.dart';
-import '../../business/drift_orm.dart';
 import '../../business/selection_models.dart';
+
+final admissionCouncilArrangementEmailNotifier = AsyncNotifierProvider.family(
+  AdmissionCouncilArrangementEmailNotifier.new,
+);
 
 final cohortSelectionModelProvider = AsyncNotifierProvider(
   () => PhdCohortSelectionModelNotifier("phd-students"),
@@ -15,6 +22,88 @@ final genderSelectionModelProvider = AsyncNotifierProvider(
 final phdStudentListViewModelProvider = AsyncNotifierProvider(
   PhdStudentListViewModelNotifier.new,
 );
+
+class AdmissionCouncilArrangementEmailNotifier extends AsyncNotifier<Email> {
+  final int phdStudentId;
+  AdmissionCouncilArrangementEmailNotifier(this.phdStudentId);
+
+  @override
+  FutureOr<Email> build() async {
+    final student = await ref.watch(
+      phdStudentByIdProvider(phdStudentId).future,
+    );
+    if (student == null) {
+      throw Exception("PhD student with id $phdStudentId not found");
+    }
+
+    // Supervisor, cosupervisor
+    final supervisorId = student.supervisorId;
+    final supervisor = await ref.watch(
+      teacherByIdProvider(supervisorId).future,
+    );
+    assert(supervisor != null, "Supervisor with id $supervisorId not found");
+
+    final coSupervisorId = student.secondarySupervisorId;
+    final coSupervisor = switch (coSupervisorId) {
+      null => null,
+      int id => await ref.watch(teacherByIdProvider(id).future),
+    };
+
+    // Recipients
+    final recipients = <String>{};
+    switch (supervisor?.personalEmail) {
+      case String email:
+        recipients.add(email);
+      default:
+        throw Exception("Supervisor email not found");
+    }
+
+    switch ((coSupervisor, coSupervisor?.personalEmail)) {
+      case (TeacherData _, String email):
+        recipients.add(email);
+        break;
+      case (TeacherData _, null):
+        throw Exception("Co-supervisor email not found");
+      default:
+      // Do nothing if no co-supervisor
+    }
+
+    // Teacher's pronouns
+    final pronoun = Pronoun.fromGender(gender: supervisor!.gender);
+    final coPronoun = switch (coSupervisor) {
+      null => null,
+      TeacherData t => Pronoun.fromGender(gender: t.gender),
+    };
+    final foldedPronouns = switch ((pronoun, coPronoun)) {
+      (Pronoun p1, Pronoun p2) when p1 == p2 => "hai ${pronoun.capitalized}",
+      (Pronoun p1, Pronoun p2) => "${p1.capitalized} và ${p2.capitalized}",
+      (Pronoun p1, null) => p1.capitalized,
+    };
+    final foldedPronounsCapitalized = switch ((pronoun, coPronoun)) {
+      (Pronoun p1, Pronoun p2) when p1 == p2 => "Hai ${pronoun.capitalized}",
+      (Pronoun p1, Pronoun p2) => "${p1.capitalized} và ${p2.capitalized}",
+      (Pronoun p1, null) => p1.capitalized,
+    };
+
+    // Compose email
+    final subject = "Hội đồng xét tuyển NCS ${student.name}";
+    final body = [
+      "Kính gửi ${pronoun.capitalized} ${supervisor.name},",
+      if (coSupervisor != null)
+        "Kính gửi ${coPronoun!.capitalized} ${coSupervisor.name},",
+      """
+\nEm đã nhận được hồ sơ của NCS ${student.name} với đề tài "${student.thesis}", thực hiện dưới sự hướng dẫn của $foldedPronouns. $foldedPronounsCapitalized đề xuất một hội đồng để tổ chức chấm đề cương cho NCS giúp em ạ.
+
+Hội đồng sẽ gồm 5 thành viên, bao gồm:
+- 1 Chủ tịch hội đồng,
+- 1 Thư ký hội đồng,
+- 3 Ủy viên hội đồng.
+Trong hội đồng phải có 1 thành viên không thuộc Đại học Bách khoa Hà Nội, 1 thành viên là giảng viên hướng dẫn của NCS. Em cảm ơn $foldedPronouns ạ.""",
+    ].join("\n");
+
+    return Email(subject: subject, body: body, recipients: recipients);
+  }
+}
 
 class PhdStudentListViewModel {
   final String? cohort;

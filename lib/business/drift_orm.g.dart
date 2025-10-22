@@ -5995,11 +5995,11 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
     'id',
     aliasedName,
-    true,
+    false,
     hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    $customConstraints: 'PRIMARY KEY AUTOINCREMENT',
+    $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT',
   );
   static const VerificationMeta _cohortMeta = const VerificationMeta('cohort');
   late final GeneratedColumn<String> cohort = GeneratedColumn<String>(
@@ -6514,7 +6514,7 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
-      ),
+      )!,
       cohort: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}cohort'],
@@ -6639,7 +6639,7 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
 }
 
 class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
-  final int? id;
+  final int id;
   final String cohort;
   final String? managementId;
   final String admissionId;
@@ -6665,7 +6665,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
   final String createdTime;
   final String updatedTime;
   const PhdStudentData({
-    this.id,
+    required this.id,
     required this.cohort,
     this.managementId,
     required this.admissionId,
@@ -6694,9 +6694,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || id != null) {
-      map['id'] = Variable<int>(id);
-    }
+    map['id'] = Variable<int>(id);
     map['cohort'] = Variable<String>(cohort);
     if (!nullToAbsent || managementId != null) {
       map['management_id'] = Variable<String>(managementId);
@@ -6750,7 +6748,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
 
   PhdStudentCompanion toCompanion(bool nullToAbsent) {
     return PhdStudentCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      id: Value(id),
       cohort: Value(cohort),
       managementId: managementId == null && nullToAbsent
           ? const Value.absent()
@@ -6804,7 +6802,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return PhdStudentData(
-      id: serializer.fromJson<int?>(json['id']),
+      id: serializer.fromJson<int>(json['id']),
       cohort: serializer.fromJson<String>(json['cohort']),
       managementId: serializer.fromJson<String?>(json['management_id']),
       admissionId: serializer.fromJson<String>(json['admission_id']),
@@ -6849,7 +6847,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int?>(id),
+      'id': serializer.toJson<int>(id),
       'cohort': serializer.toJson<String>(cohort),
       'management_id': serializer.toJson<String?>(managementId),
       'admission_id': serializer.toJson<String>(admissionId),
@@ -6878,7 +6876,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
   }
 
   PhdStudentData copyWith({
-    Value<int?> id = const Value.absent(),
+    int? id,
     String? cohort,
     Value<String?> managementId = const Value.absent(),
     String? admissionId,
@@ -6904,7 +6902,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     String? createdTime,
     String? updatedTime,
   }) => PhdStudentData(
-    id: id.present ? id.value : this.id,
+    id: id ?? this.id,
     cohort: cohort ?? this.cohort,
     managementId: managementId.present ? managementId.value : this.managementId,
     admissionId: admissionId ?? this.admissionId,
@@ -7098,7 +7096,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
 }
 
 class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
-  final Value<int?> id;
+  final Value<int> id;
   final Value<String> cohort;
   final Value<String?> managementId;
   final Value<String> admissionId;
@@ -7247,7 +7245,7 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
   }
 
   PhdStudentCompanion copyWith({
-    Value<int?>? id,
+    Value<int>? id,
     Value<String>? cohort,
     Value<String?>? managementId,
     Value<String>? admissionId,
@@ -9055,6 +9053,494 @@ class DangKyHocCompanion extends UpdateCompanion<ClassCourseRegistrationData> {
   }
 }
 
+class FtsDeTaiThacSi extends Table
+    with
+        TableInfo<FtsDeTaiThacSi, FtsDeTaiThacSiData>,
+        VirtualTableInfo<FtsDeTaiThacSi, FtsDeTaiThacSiData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  FtsDeTaiThacSi(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _idGiangVienMeta = const VerificationMeta(
+    'idGiangVien',
+  );
+  late final GeneratedColumn<String> idGiangVien = GeneratedColumn<String>(
+    'idGiangVien',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _idHocVienMeta = const VerificationMeta(
+    'idHocVien',
+  );
+  late final GeneratedColumn<String> idHocVien = GeneratedColumn<String>(
+    'idHocVien',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _tenTiengAnhMeta = const VerificationMeta(
+    'tenTiengAnh',
+  );
+  late final GeneratedColumn<String> tenTiengAnh = GeneratedColumn<String>(
+    'tenTiengAnh',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _tenTiengVietMeta = const VerificationMeta(
+    'tenTiengViet',
+  );
+  late final GeneratedColumn<String> tenTiengViet = GeneratedColumn<String>(
+    'tenTiengViet',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _giangVienMeta = const VerificationMeta(
+    'giangVien',
+  );
+  late final GeneratedColumn<String> giangVien = GeneratedColumn<String>(
+    'giangVien',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _hocVienMeta = const VerificationMeta(
+    'hocVien',
+  );
+  late final GeneratedColumn<String> hocVien = GeneratedColumn<String>(
+    'hocVien',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    idGiangVien,
+    idHocVien,
+    tenTiengAnh,
+    tenTiengViet,
+    giangVien,
+    hocVien,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'fts_DeTaiThacSi';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FtsDeTaiThacSiData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('idGiangVien')) {
+      context.handle(
+        _idGiangVienMeta,
+        idGiangVien.isAcceptableOrUnknown(
+          data['idGiangVien']!,
+          _idGiangVienMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_idGiangVienMeta);
+    }
+    if (data.containsKey('idHocVien')) {
+      context.handle(
+        _idHocVienMeta,
+        idHocVien.isAcceptableOrUnknown(data['idHocVien']!, _idHocVienMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_idHocVienMeta);
+    }
+    if (data.containsKey('tenTiengAnh')) {
+      context.handle(
+        _tenTiengAnhMeta,
+        tenTiengAnh.isAcceptableOrUnknown(
+          data['tenTiengAnh']!,
+          _tenTiengAnhMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_tenTiengAnhMeta);
+    }
+    if (data.containsKey('tenTiengViet')) {
+      context.handle(
+        _tenTiengVietMeta,
+        tenTiengViet.isAcceptableOrUnknown(
+          data['tenTiengViet']!,
+          _tenTiengVietMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_tenTiengVietMeta);
+    }
+    if (data.containsKey('giangVien')) {
+      context.handle(
+        _giangVienMeta,
+        giangVien.isAcceptableOrUnknown(data['giangVien']!, _giangVienMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_giangVienMeta);
+    }
+    if (data.containsKey('hocVien')) {
+      context.handle(
+        _hocVienMeta,
+        hocVien.isAcceptableOrUnknown(data['hocVien']!, _hocVienMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_hocVienMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  FtsDeTaiThacSiData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FtsDeTaiThacSiData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      idGiangVien: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}idGiangVien'],
+      )!,
+      idHocVien: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}idHocVien'],
+      )!,
+      tenTiengAnh: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tenTiengAnh'],
+      )!,
+      tenTiengViet: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tenTiengViet'],
+      )!,
+      giangVien: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}giangVien'],
+      )!,
+      hocVien: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}hocVien'],
+      )!,
+    );
+  }
+
+  @override
+  FtsDeTaiThacSi createAlias(String alias) {
+    return FtsDeTaiThacSi(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+  @override
+  String get moduleAndArgs =>
+      'fts5(id, idGiangVien, idHocVien, tenTiengAnh, tenTiengViet, giangVien, hocVien, tokenize="trigram remove_diacritics 1 case_sensitive 0", prefix="2 3 5 7")';
+}
+
+class FtsDeTaiThacSiData extends DataClass
+    implements Insertable<FtsDeTaiThacSiData> {
+  final String id;
+  final String idGiangVien;
+  final String idHocVien;
+  final String tenTiengAnh;
+  final String tenTiengViet;
+  final String giangVien;
+  final String hocVien;
+  const FtsDeTaiThacSiData({
+    required this.id,
+    required this.idGiangVien,
+    required this.idHocVien,
+    required this.tenTiengAnh,
+    required this.tenTiengViet,
+    required this.giangVien,
+    required this.hocVien,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['idGiangVien'] = Variable<String>(idGiangVien);
+    map['idHocVien'] = Variable<String>(idHocVien);
+    map['tenTiengAnh'] = Variable<String>(tenTiengAnh);
+    map['tenTiengViet'] = Variable<String>(tenTiengViet);
+    map['giangVien'] = Variable<String>(giangVien);
+    map['hocVien'] = Variable<String>(hocVien);
+    return map;
+  }
+
+  FtsDeTaiThacSiCompanion toCompanion(bool nullToAbsent) {
+    return FtsDeTaiThacSiCompanion(
+      id: Value(id),
+      idGiangVien: Value(idGiangVien),
+      idHocVien: Value(idHocVien),
+      tenTiengAnh: Value(tenTiengAnh),
+      tenTiengViet: Value(tenTiengViet),
+      giangVien: Value(giangVien),
+      hocVien: Value(hocVien),
+    );
+  }
+
+  factory FtsDeTaiThacSiData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FtsDeTaiThacSiData(
+      id: serializer.fromJson<String>(json['id']),
+      idGiangVien: serializer.fromJson<String>(json['idGiangVien']),
+      idHocVien: serializer.fromJson<String>(json['idHocVien']),
+      tenTiengAnh: serializer.fromJson<String>(json['tenTiengAnh']),
+      tenTiengViet: serializer.fromJson<String>(json['tenTiengViet']),
+      giangVien: serializer.fromJson<String>(json['giangVien']),
+      hocVien: serializer.fromJson<String>(json['hocVien']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'idGiangVien': serializer.toJson<String>(idGiangVien),
+      'idHocVien': serializer.toJson<String>(idHocVien),
+      'tenTiengAnh': serializer.toJson<String>(tenTiengAnh),
+      'tenTiengViet': serializer.toJson<String>(tenTiengViet),
+      'giangVien': serializer.toJson<String>(giangVien),
+      'hocVien': serializer.toJson<String>(hocVien),
+    };
+  }
+
+  FtsDeTaiThacSiData copyWith({
+    String? id,
+    String? idGiangVien,
+    String? idHocVien,
+    String? tenTiengAnh,
+    String? tenTiengViet,
+    String? giangVien,
+    String? hocVien,
+  }) => FtsDeTaiThacSiData(
+    id: id ?? this.id,
+    idGiangVien: idGiangVien ?? this.idGiangVien,
+    idHocVien: idHocVien ?? this.idHocVien,
+    tenTiengAnh: tenTiengAnh ?? this.tenTiengAnh,
+    tenTiengViet: tenTiengViet ?? this.tenTiengViet,
+    giangVien: giangVien ?? this.giangVien,
+    hocVien: hocVien ?? this.hocVien,
+  );
+  FtsDeTaiThacSiData copyWithCompanion(FtsDeTaiThacSiCompanion data) {
+    return FtsDeTaiThacSiData(
+      id: data.id.present ? data.id.value : this.id,
+      idGiangVien: data.idGiangVien.present
+          ? data.idGiangVien.value
+          : this.idGiangVien,
+      idHocVien: data.idHocVien.present ? data.idHocVien.value : this.idHocVien,
+      tenTiengAnh: data.tenTiengAnh.present
+          ? data.tenTiengAnh.value
+          : this.tenTiengAnh,
+      tenTiengViet: data.tenTiengViet.present
+          ? data.tenTiengViet.value
+          : this.tenTiengViet,
+      giangVien: data.giangVien.present ? data.giangVien.value : this.giangVien,
+      hocVien: data.hocVien.present ? data.hocVien.value : this.hocVien,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FtsDeTaiThacSiData(')
+          ..write('id: $id, ')
+          ..write('idGiangVien: $idGiangVien, ')
+          ..write('idHocVien: $idHocVien, ')
+          ..write('tenTiengAnh: $tenTiengAnh, ')
+          ..write('tenTiengViet: $tenTiengViet, ')
+          ..write('giangVien: $giangVien, ')
+          ..write('hocVien: $hocVien')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    idGiangVien,
+    idHocVien,
+    tenTiengAnh,
+    tenTiengViet,
+    giangVien,
+    hocVien,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FtsDeTaiThacSiData &&
+          other.id == this.id &&
+          other.idGiangVien == this.idGiangVien &&
+          other.idHocVien == this.idHocVien &&
+          other.tenTiengAnh == this.tenTiengAnh &&
+          other.tenTiengViet == this.tenTiengViet &&
+          other.giangVien == this.giangVien &&
+          other.hocVien == this.hocVien);
+}
+
+class FtsDeTaiThacSiCompanion extends UpdateCompanion<FtsDeTaiThacSiData> {
+  final Value<String> id;
+  final Value<String> idGiangVien;
+  final Value<String> idHocVien;
+  final Value<String> tenTiengAnh;
+  final Value<String> tenTiengViet;
+  final Value<String> giangVien;
+  final Value<String> hocVien;
+  final Value<int> rowid;
+  const FtsDeTaiThacSiCompanion({
+    this.id = const Value.absent(),
+    this.idGiangVien = const Value.absent(),
+    this.idHocVien = const Value.absent(),
+    this.tenTiengAnh = const Value.absent(),
+    this.tenTiengViet = const Value.absent(),
+    this.giangVien = const Value.absent(),
+    this.hocVien = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FtsDeTaiThacSiCompanion.insert({
+    required String id,
+    required String idGiangVien,
+    required String idHocVien,
+    required String tenTiengAnh,
+    required String tenTiengViet,
+    required String giangVien,
+    required String hocVien,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       idGiangVien = Value(idGiangVien),
+       idHocVien = Value(idHocVien),
+       tenTiengAnh = Value(tenTiengAnh),
+       tenTiengViet = Value(tenTiengViet),
+       giangVien = Value(giangVien),
+       hocVien = Value(hocVien);
+  static Insertable<FtsDeTaiThacSiData> custom({
+    Expression<String>? id,
+    Expression<String>? idGiangVien,
+    Expression<String>? idHocVien,
+    Expression<String>? tenTiengAnh,
+    Expression<String>? tenTiengViet,
+    Expression<String>? giangVien,
+    Expression<String>? hocVien,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (idGiangVien != null) 'idGiangVien': idGiangVien,
+      if (idHocVien != null) 'idHocVien': idHocVien,
+      if (tenTiengAnh != null) 'tenTiengAnh': tenTiengAnh,
+      if (tenTiengViet != null) 'tenTiengViet': tenTiengViet,
+      if (giangVien != null) 'giangVien': giangVien,
+      if (hocVien != null) 'hocVien': hocVien,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FtsDeTaiThacSiCompanion copyWith({
+    Value<String>? id,
+    Value<String>? idGiangVien,
+    Value<String>? idHocVien,
+    Value<String>? tenTiengAnh,
+    Value<String>? tenTiengViet,
+    Value<String>? giangVien,
+    Value<String>? hocVien,
+    Value<int>? rowid,
+  }) {
+    return FtsDeTaiThacSiCompanion(
+      id: id ?? this.id,
+      idGiangVien: idGiangVien ?? this.idGiangVien,
+      idHocVien: idHocVien ?? this.idHocVien,
+      tenTiengAnh: tenTiengAnh ?? this.tenTiengAnh,
+      tenTiengViet: tenTiengViet ?? this.tenTiengViet,
+      giangVien: giangVien ?? this.giangVien,
+      hocVien: hocVien ?? this.hocVien,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (idGiangVien.present) {
+      map['idGiangVien'] = Variable<String>(idGiangVien.value);
+    }
+    if (idHocVien.present) {
+      map['idHocVien'] = Variable<String>(idHocVien.value);
+    }
+    if (tenTiengAnh.present) {
+      map['tenTiengAnh'] = Variable<String>(tenTiengAnh.value);
+    }
+    if (tenTiengViet.present) {
+      map['tenTiengViet'] = Variable<String>(tenTiengViet.value);
+    }
+    if (giangVien.present) {
+      map['giangVien'] = Variable<String>(giangVien.value);
+    }
+    if (hocVien.present) {
+      map['hocVien'] = Variable<String>(hocVien.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FtsDeTaiThacSiCompanion(')
+          ..write('id: $id, ')
+          ..write('idGiangVien: $idGiangVien, ')
+          ..write('idHocVien: $idHocVien, ')
+          ..write('tenTiengAnh: $tenTiengAnh, ')
+          ..write('tenTiengViet: $tenTiengViet, ')
+          ..write('giangVien: $giangVien, ')
+          ..write('hocVien: $hocVien, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$MyDriftDatabase extends GeneratedDatabase {
   _$MyDriftDatabase(QueryExecutor e) : super(e);
   $MyDriftDatabaseManager get managers => $MyDriftDatabaseManager(this);
@@ -9071,6 +9557,7 @@ abstract class _$MyDriftDatabase extends GeneratedDatabase {
   late final LopTinChi lopTinChi = LopTinChi(this);
   late final TeachingAssignment teachingAssignment = TeachingAssignment(this);
   late final DangKyHoc dangKyHoc = DangKyHoc(this);
+  late final FtsDeTaiThacSi ftsDeTaiThacSi = FtsDeTaiThacSi(this);
   Future<int> createPhdStudent({
     required String cohort,
     required String admissionId,
@@ -9236,6 +9723,14 @@ abstract class _$MyDriftDatabase extends GeneratedDatabase {
     ).map((QueryRow row) => row.read<String>('hocKy'));
   }
 
+  Selectable<int> searchTheses({required String searchText}) {
+    return customSelect(
+      'SELECT id FROM detaithacsi WHERE id IN (SELECT id FROM fts_DeTaiThacSi WHERE fts_DeTaiThacSi MATCH ?1)',
+      variables: [Variable<String>(searchText)],
+      readsFrom: {detaithacsi, ftsDeTaiThacSi},
+    ).map((QueryRow row) => row.read<int>('id'));
+  }
+
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -9254,6 +9749,7 @@ abstract class _$MyDriftDatabase extends GeneratedDatabase {
     lopTinChi,
     teachingAssignment,
     dangKyHoc,
+    ftsDeTaiThacSi,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -11893,7 +12389,7 @@ typedef $PhdCohortProcessedTableManager =
     >;
 typedef $PhdStudentCreateCompanionBuilder =
     PhdStudentCompanion Function({
-      Value<int?> id,
+      Value<int> id,
       required String cohort,
       Value<String?> managementId,
       required String admissionId,
@@ -11921,7 +12417,7 @@ typedef $PhdStudentCreateCompanionBuilder =
     });
 typedef $PhdStudentUpdateCompanionBuilder =
     PhdStudentCompanion Function({
-      Value<int?> id,
+      Value<int> id,
       Value<String> cohort,
       Value<String?> managementId,
       Value<String> admissionId,
@@ -12369,7 +12865,7 @@ class $PhdStudentTableManager
               $PhdStudentAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int?> id = const Value.absent(),
+                Value<int> id = const Value.absent(),
                 Value<String> cohort = const Value.absent(),
                 Value<String?> managementId = const Value.absent(),
                 Value<String> admissionId = const Value.absent(),
@@ -12423,7 +12919,7 @@ class $PhdStudentTableManager
               ),
           createCompanionCallback:
               ({
-                Value<int?> id = const Value.absent(),
+                Value<int> id = const Value.absent(),
                 required String cohort,
                 Value<String?> managementId = const Value.absent(),
                 required String admissionId,
@@ -13369,6 +13865,254 @@ typedef $DangKyHocProcessedTableManager =
       ClassCourseRegistrationData,
       PrefetchHooks Function()
     >;
+typedef $FtsDeTaiThacSiCreateCompanionBuilder =
+    FtsDeTaiThacSiCompanion Function({
+      required String id,
+      required String idGiangVien,
+      required String idHocVien,
+      required String tenTiengAnh,
+      required String tenTiengViet,
+      required String giangVien,
+      required String hocVien,
+      Value<int> rowid,
+    });
+typedef $FtsDeTaiThacSiUpdateCompanionBuilder =
+    FtsDeTaiThacSiCompanion Function({
+      Value<String> id,
+      Value<String> idGiangVien,
+      Value<String> idHocVien,
+      Value<String> tenTiengAnh,
+      Value<String> tenTiengViet,
+      Value<String> giangVien,
+      Value<String> hocVien,
+      Value<int> rowid,
+    });
+
+class $FtsDeTaiThacSiFilterComposer
+    extends Composer<_$MyDriftDatabase, FtsDeTaiThacSi> {
+  $FtsDeTaiThacSiFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get idGiangVien => $composableBuilder(
+    column: $table.idGiangVien,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get idHocVien => $composableBuilder(
+    column: $table.idHocVien,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tenTiengAnh => $composableBuilder(
+    column: $table.tenTiengAnh,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tenTiengViet => $composableBuilder(
+    column: $table.tenTiengViet,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get giangVien => $composableBuilder(
+    column: $table.giangVien,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get hocVien => $composableBuilder(
+    column: $table.hocVien,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $FtsDeTaiThacSiOrderingComposer
+    extends Composer<_$MyDriftDatabase, FtsDeTaiThacSi> {
+  $FtsDeTaiThacSiOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get idGiangVien => $composableBuilder(
+    column: $table.idGiangVien,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get idHocVien => $composableBuilder(
+    column: $table.idHocVien,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tenTiengAnh => $composableBuilder(
+    column: $table.tenTiengAnh,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tenTiengViet => $composableBuilder(
+    column: $table.tenTiengViet,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get giangVien => $composableBuilder(
+    column: $table.giangVien,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get hocVien => $composableBuilder(
+    column: $table.hocVien,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $FtsDeTaiThacSiAnnotationComposer
+    extends Composer<_$MyDriftDatabase, FtsDeTaiThacSi> {
+  $FtsDeTaiThacSiAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get idGiangVien => $composableBuilder(
+    column: $table.idGiangVien,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get idHocVien =>
+      $composableBuilder(column: $table.idHocVien, builder: (column) => column);
+
+  GeneratedColumn<String> get tenTiengAnh => $composableBuilder(
+    column: $table.tenTiengAnh,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get tenTiengViet => $composableBuilder(
+    column: $table.tenTiengViet,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get giangVien =>
+      $composableBuilder(column: $table.giangVien, builder: (column) => column);
+
+  GeneratedColumn<String> get hocVien =>
+      $composableBuilder(column: $table.hocVien, builder: (column) => column);
+}
+
+class $FtsDeTaiThacSiTableManager
+    extends
+        RootTableManager<
+          _$MyDriftDatabase,
+          FtsDeTaiThacSi,
+          FtsDeTaiThacSiData,
+          $FtsDeTaiThacSiFilterComposer,
+          $FtsDeTaiThacSiOrderingComposer,
+          $FtsDeTaiThacSiAnnotationComposer,
+          $FtsDeTaiThacSiCreateCompanionBuilder,
+          $FtsDeTaiThacSiUpdateCompanionBuilder,
+          (
+            FtsDeTaiThacSiData,
+            BaseReferences<
+              _$MyDriftDatabase,
+              FtsDeTaiThacSi,
+              FtsDeTaiThacSiData
+            >,
+          ),
+          FtsDeTaiThacSiData,
+          PrefetchHooks Function()
+        > {
+  $FtsDeTaiThacSiTableManager(_$MyDriftDatabase db, FtsDeTaiThacSi table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $FtsDeTaiThacSiFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $FtsDeTaiThacSiOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $FtsDeTaiThacSiAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> idGiangVien = const Value.absent(),
+                Value<String> idHocVien = const Value.absent(),
+                Value<String> tenTiengAnh = const Value.absent(),
+                Value<String> tenTiengViet = const Value.absent(),
+                Value<String> giangVien = const Value.absent(),
+                Value<String> hocVien = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FtsDeTaiThacSiCompanion(
+                id: id,
+                idGiangVien: idGiangVien,
+                idHocVien: idHocVien,
+                tenTiengAnh: tenTiengAnh,
+                tenTiengViet: tenTiengViet,
+                giangVien: giangVien,
+                hocVien: hocVien,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String idGiangVien,
+                required String idHocVien,
+                required String tenTiengAnh,
+                required String tenTiengViet,
+                required String giangVien,
+                required String hocVien,
+                Value<int> rowid = const Value.absent(),
+              }) => FtsDeTaiThacSiCompanion.insert(
+                id: id,
+                idGiangVien: idGiangVien,
+                idHocVien: idHocVien,
+                tenTiengAnh: tenTiengAnh,
+                tenTiengViet: tenTiengViet,
+                giangVien: giangVien,
+                hocVien: hocVien,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $FtsDeTaiThacSiProcessedTableManager =
+    ProcessedTableManager<
+      _$MyDriftDatabase,
+      FtsDeTaiThacSi,
+      FtsDeTaiThacSiData,
+      $FtsDeTaiThacSiFilterComposer,
+      $FtsDeTaiThacSiOrderingComposer,
+      $FtsDeTaiThacSiAnnotationComposer,
+      $FtsDeTaiThacSiCreateCompanionBuilder,
+      $FtsDeTaiThacSiUpdateCompanionBuilder,
+      (
+        FtsDeTaiThacSiData,
+        BaseReferences<_$MyDriftDatabase, FtsDeTaiThacSi, FtsDeTaiThacSiData>,
+      ),
+      FtsDeTaiThacSiData,
+      PrefetchHooks Function()
+    >;
 
 class $MyDriftDatabaseManager {
   final _$MyDriftDatabase _db;
@@ -13396,4 +14140,6 @@ class $MyDriftDatabaseManager {
       $TeachingAssignmentTableManager(_db, _db.teachingAssignment);
   $DangKyHocTableManager get dangKyHoc =>
       $DangKyHocTableManager(_db, _db.dangKyHoc);
+  $FtsDeTaiThacSiTableManager get ftsDeTaiThacSi =>
+      $FtsDeTaiThacSiTableManager(_db, _db.ftsDeTaiThacSi);
 }

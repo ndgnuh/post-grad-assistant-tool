@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'
     show rootBundle, Clipboard, ClipboardData;
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:yaml/yaml.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 import './../custom_widgets.dart';
 import './domain_objects.dart';
@@ -17,10 +19,17 @@ Uri createMailtoLink(Email email) {
     if (email.body.isNotEmpty) "body": (email.body),
   };
 
+  final queryString = queries.entries
+      .map(
+        (entry) =>
+            "${Uri.encodeComponent(entry.key)}=${Uri.encodeComponent(entry.value)}",
+      )
+      .join('&');
+
   return Uri(
     scheme: "mailto",
     path: recipients,
-    query: Uri(queryParameters: queries).query,
+    query: queryString,
   );
 }
 
@@ -78,6 +87,8 @@ class EmailCopyDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mailToLink = email.mailtoLink;
+
     final copyDelim = '\n';
     return SimpleDialog(
       title: Row(
@@ -138,6 +149,12 @@ class EmailCopyDialog extends StatelessWidget {
             context: context,
             notification: "Đã sao chép nội dung email.",
           ),
+        ),
+        ListTile(
+          title: Text("Gửi (mailto)"),
+          trailing: Icon(Symbols.send),
+          subtitle: Text("Mở trong ứng dụng email"),
+          onTap: () => url_launcher.launchUrl(mailToLink),
         ),
       ],
     );

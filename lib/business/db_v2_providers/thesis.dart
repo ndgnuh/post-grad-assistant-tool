@@ -179,16 +179,24 @@ class ThesisIdsNotifier extends AsyncNotifier<List<int>> {
     final db = await ref.watch(driftDatabaseProvider.future);
     final stmt = db.detaithacsi.select();
 
-    if (ignore != null) {
-      stmt.where((r) => r.flagIgnore.equals(ignore!));
+    switch (ignore) {
+      case true:
+        stmt.where((r) => r.flagIgnore.equals(true));
+      case false:
+        stmt.where((r) => r.flagIgnore.equalsNullable(false));
+      default:
     }
 
     if (tracking != null) {
       stmt.where((r) => r.flagTracking.equalsNullable(tracking!));
     }
 
-    if (assigned != null) {
-      stmt.where((r) => r.studentId.isNotNull());
+    switch (assigned) {
+      case true:
+        stmt.where((r) => r.studentId.isNotNull());
+      case false:
+        stmt.where((r) => r.studentId.isNull());
+      default:
     }
 
     if (studentId != null) {

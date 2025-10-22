@@ -5,7 +5,7 @@ import 'package:number_to_vietnamese_words/number_to_vietnamese_words.dart';
 import 'package:pdf/pdf.dart';
 import 'package:riverpod/riverpod.dart';
 
-import '../../business/db_v2_providers.dart';
+import '../../business/db_v2_providers.dart' hide Thesis;
 import '../../business/domain_objects.dart';
 import '../../preferences.dart';
 import '../../services/pdf_builder/index.dart';

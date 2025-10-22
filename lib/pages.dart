@@ -151,7 +151,7 @@ final initialRoute = switch (kReleaseMode) {
   // Thesis defends
   // false => ThesisDefenseRegisterPage.routeName,
   // false => ThesisDefensePaymentPage.routeName,
-  false => ThesisListPage.routeName,
+  // false => ThesisListPage.routeName,
 
   // PhD students pages
   false => PhdStudentListPage.routeName,
@@ -276,6 +276,12 @@ final routesBySections = <String, List<RouteItem>>{
       route: PhdStudentListV1Page.routeName,
       label: "Nghiên cứu sinh",
       icon: Symbols.school,
+      subtitle: null,
+    ),
+    (
+      route: null,
+      label: "Học bổ sung",
+      icon: Symbols.menu_book,
       subtitle: null,
     ),
     (
@@ -425,8 +431,8 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       return const StudentListPage();
     case StudentDetailPage.routeName:
       switch (args) {
-        case HocVien student:
-          return StudentDetailPage(student: student);
+        case int id:
+          return StudentDetailPage(id: id);
         default:
           return const StudentListPage();
       }
@@ -438,8 +444,6 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       return const ThesisDefensePaymentPage();
 
     // PhD Student pages
-    case PhdStudentListV1Page.routeName:
-      return const PhdStudentListPage();
     case PhdStudentListPage.routeName:
       return const PhdStudentListPage();
     case PhdStudentCreatePage.routeName:

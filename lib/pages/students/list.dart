@@ -145,8 +145,7 @@ class _StudentTile extends StatelessWidget {
       ),
       onTap: () {
         final route = MaterialPageRoute(
-          builder: (context) =>
-              StudentDetailPage(student: model.v1Students[index]),
+          builder: (context) => StudentDetailPage(id: model.students[index].id),
         );
         Navigator.push(context, route);
       },

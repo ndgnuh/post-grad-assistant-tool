@@ -1,3 +1,4 @@
+// TODO: migrate to drift
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:provider/provider.dart' hide FutureProvider;
@@ -8,7 +9,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../business/db_v1_providers.dart';
-import '../../business/db_v2_providers.dart';
+import '../../business/db_v2_providers.dart' hide Thesis;
 import '../teachers/index.dart';
 import '../../business/domain_objects.dart';
 import '../../custom_widgets.dart' show DirectoryPicker;

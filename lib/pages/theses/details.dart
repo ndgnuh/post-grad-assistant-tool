@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../business/domain_objects.dart';
-import '../../business/domain_editors.dart';
 import '../../custom_tiles.dart';
 
 class ThesisDetailPage extends StatelessWidget {

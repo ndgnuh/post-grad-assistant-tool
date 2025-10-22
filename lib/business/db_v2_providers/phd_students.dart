@@ -6,9 +6,11 @@ import '../db_v2_providers.dart';
 final phdCohortsProvider = AsyncNotifierProvider(
   PhdCohorts.new,
 );
+
 final phdStudentByIdProvider = AsyncNotifierProvider.family(
   PhdStudentById.new,
 );
+
 final phdStudentIdsByCohortProvider = AsyncNotifierProvider.family(
   (String cohort) => PhdStudentIds(cohort: cohort),
 );

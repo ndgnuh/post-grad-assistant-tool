@@ -57,10 +57,8 @@ class StudentListViewModel {
   final bool needToSetFilter;
 
   final List<StudentData> students;
-  final List<v1.HocVien> v1Students; // Until we update all the student page
   const StudentListViewModel({
     required this.students,
-    required this.v1Students,
     required this.needToSetFilter,
   });
 }
@@ -79,7 +77,6 @@ class StudentListViewModelNotifier extends AsyncNotifier<StudentListViewModel> {
     if (cohort == null && searchQuery.isEmpty) {
       return StudentListViewModel(
         students: [],
-        v1Students: [],
         needToSetFilter: true,
       );
     }
@@ -98,6 +95,10 @@ class StudentListViewModelNotifier extends AsyncNotifier<StudentListViewModel> {
           mode: OrderingMode.desc,
         ),
         (Student student) => OrderingTerm(
+          expression: student.status,
+          mode: OrderingMode.asc,
+        ),
+        (Student student) => OrderingTerm(
           expression: student.studentId,
           mode: OrderingMode.asc,
         ),
@@ -113,21 +114,15 @@ class StudentListViewModelNotifier extends AsyncNotifier<StudentListViewModel> {
     final ids = await stmt.map((student) => student.id).get();
 
     final students = <StudentData>[];
-    final v1Students = <v1.HocVien>[];
     for (final id in ids) {
       final student = await ref.watch(studentByIdProvider(id).future);
       if (student != null) {
-        final v1Student = await ref.watch(
-          v1_providers.studentByIdProvider(id).future,
-        );
         students.add(student);
-        v1Students.add(v1Student);
       }
     }
 
     return StudentListViewModel(
       students: students,
-      v1Students: v1Students,
       needToSetFilter: false,
     );
   }

@@ -129,6 +129,15 @@ class _PhdStudentInfo extends StatelessWidget {
             title: Text("Giảng viên hướng dẫn 2"),
             subtitle: Text(secondarySupervisor.name),
           ),
+        AdmissionCouncilArrangementEmailButton(
+          phdStudentId: student.id,
+          builder: (context, callback) => ListTile(
+            leading: Icon(Symbols.email),
+            title: Text("Gửi email sắp xếp hội đồng tuyển sinh"),
+            subtitle: Text("Nhấn để soạn email"),
+            onTap: callback,
+          ),
+        ),
       ],
     );
   }

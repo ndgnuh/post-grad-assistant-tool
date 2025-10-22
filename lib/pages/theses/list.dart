@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:flutter_gutter/flutter_gutter.dart';
@@ -11,25 +13,13 @@ import '../../custom_tiles.dart';
 import './index.dart';
 import './widgets.dart';
 import './providers.dart';
-
-Future<bool?> goToDetail(Thesis thesis) async {
-  // TODO: repimplement
-  // return await Get.to<bool>(ThesisDetailPage(thesis: thesis));
-}
+import './list.action_tab.dart' show ThesisListActionTab;
 
 class _State extends ChangeNotifier {
   late List<Thesis> searchedTheses;
   final TextEditingController searchController = TextEditingController();
   bool? _assigned;
   ConnectionState searching = ConnectionState.none;
-
-  void goToCreatePage([Intent? intent]) async {
-    // TODO: re-implement
-    // await Get.to(ThesisCreatePage());
-    await search();
-  }
-
-  Action get goToCreatePageAction => CallbackAction(onInvoke: goToCreatePage);
 
   // filter get/setter
   bool? get assigned => _assigned;
@@ -134,129 +124,148 @@ class ThesisListPage extends StatelessWidget {
       ),
     );
 
-    return ChangeNotifierProvider(
-      create: (context) => _State(),
-      child: DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          appBar: ConstrainedAppBar(
-            withTabBar: true,
-            child: AppBar(
-              title: Text("Đề tài hướng dẫn"),
-              bottom: TabBar(
-                isScrollable: true,
-                tabs: [
-                  Tab(text: "Danh sách đề tài"),
-                  Tab(text: "Giao đề tài"),
-                  Tab(text: "Quản trị"),
-                ],
-              ),
-              actions: [
-                _ThreeDotMenu(),
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: ConstrainedAppBar(
+          withTabBar: true,
+          child: AppBar(
+            title: Text("Đề tài hướng dẫn"),
+            bottom: TabBar(
+              isScrollable: true,
+              tabs: [
+                Tab(text: "Danh sách đề tài"),
+                Tab(text: "Giao đề tài"),
+                Tab(text: "Quản trị"),
+              ],
+            ),
+            actions: [
+              // _ThreeDotMenu(),
+            ],
+          ),
+        ),
+        body: FocusScope(
+          child: ConstrainedBody(
+            child: TabBarView(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(context.gutter),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    spacing: context.gutter,
+                    children: [
+                      if (largeScreen)
+                        IntrinsicHeight(
+                          child: Row(
+                            spacing: context.gutter,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(child: _SearchBar()),
+                              exportPdfButton,
+                              _CreateButton(),
+                            ],
+                          ),
+                        ),
+                      if (smallScreen) _SearchBar(),
+                      Expanded(
+                        child: _TopicListView(),
+                      ),
+                      if (smallScreen) exportPdfButton,
+                      if (smallScreen) _CreateButton(),
+                    ],
+                  ),
+                ),
+
+                // TODO: actual views
+                Center(child: Text("TODO")),
+                ThesisListActionTab(),
               ],
             ),
           ),
-          body: FocusScope(
-            child: ConstrainedBody(
-              child: TabBarView(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(context.gutter),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      spacing: context.gutter,
-                      children: [
-                        if (largeScreen)
-                          IntrinsicHeight(
-                            child: Row(
-                              spacing: context.gutter,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Expanded(child: _SearchBar()),
-                                exportPdfButton,
-                                _CreateButton(),
-                              ],
-                            ),
-                          ),
-                        if (smallScreen) _SearchBar(),
-                        Expanded(
-                          child: _TopicListView(),
-                        ),
-                        if (smallScreen) exportPdfButton,
-                        if (smallScreen) _CreateButton(),
-                      ],
-                    ),
-                  ),
-
-                  // TODO: actual views
-                  Center(child: Text("TODO")),
-                  Center(child: Text("TODO")),
-                ],
-              ),
-            ),
-          ),
         ),
       ),
     );
   }
 }
 
-class _ThreeDotMenu extends StatelessWidget {
-  @override
-  build(BuildContext context) {
-    final assigned = context.select((_State state) => state.assigned);
-    final state = context.read<_State>();
+// class _ThreeDotMenu extends StatelessWidget {
+//   @override
+//   build(BuildContext context) {
+//     final assigned = context.select((_State state) => state.assigned);
+//     final state = context.read<_State>();
+//
+//     return MenuAnchor(
+//       menuChildren: [
+//         CheckboxListTile(
+//           secondary: Icon(Icons.filter_alt),
+//           tristate: true,
+//           title: Text("Đã giao", softWrap: false),
+//           subtitle: switch (assigned) {
+//             true => Text("Hiện đề tài đã giao"),
+//             false => Text("Hiện đề tài chưa giao"),
+//             null => Text("Tất cả đề tài"),
+//           },
+//           value: assigned,
+//           onChanged: (value) => state.assigned = value,
+//         ),
+//         ListTile(
+//           leading: Icon(Icons.add),
+//           title: Text("Thêm đề tài"),
+//           onTap: () => state.goToCreatePage(),
+//         ),
+//         ListTile(
+//           leading: Icon(Icons.download),
+//           title: Text("Xuất danh sách"),
+//           onTap: () {},
+//         ),
+//       ],
+//       builder: (context, controller, _) => IconButton(
+//         onPressed: () => switch (controller.isOpen) {
+//           true => controller.close(),
+//           false => controller.open(),
+//         },
+//         icon: Icon(Icons.more_vert),
+//       ),
+//     );
+//   }
+// }
 
-    return MenuAnchor(
-      menuChildren: [
-        CheckboxListTile(
-          secondary: Icon(Icons.filter_alt),
-          tristate: true,
-          title: Text("Đã giao", softWrap: false),
-          subtitle: switch (assigned) {
-            true => Text("Hiện đề tài đã giao"),
-            false => Text("Hiện đề tài chưa giao"),
-            null => Text("Tất cả đề tài"),
-          },
-          value: assigned,
-          onChanged: (value) => state.assigned = value,
-        ),
-        ListTile(
-          leading: Icon(Icons.add),
-          title: Text("Thêm đề tài"),
-          onTap: () => state.goToCreatePage(),
-        ),
-        ListTile(
-          leading: Icon(Icons.download),
-          title: Text("Xuất danh sách"),
-          onTap: () {},
-        ),
-      ],
-      builder: (context, controller, _) => IconButton(
-        onPressed: () => switch (controller.isOpen) {
-          true => controller.close(),
-          false => controller.open(),
-        },
-        icon: Icon(Icons.more_vert),
-      ),
-    );
-  }
-}
-
-class _TopicListView extends StatelessWidget {
+class _TopicListView extends ConsumerWidget {
   const _TopicListView();
 
   @override
-  build(BuildContext context) {
-    final topics = context.select((_State state) => state.searchedTheses);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncViewModel = ref.watch(thesisListViewModelProvider);
+    switch (asyncViewModel) {
+      case AsyncLoading():
+        return Center(child: CircularProgressIndicator());
+      case AsyncError(error: var error):
+        return Center(child: Text("Lỗi khi tải đề tài: $error"));
+      default:
+    }
+
+    final viewModel = asyncViewModel.value!;
+    if (viewModel.promptUserInput) {
+      return Center(
+        child: Text("Nhập từ khóa tìm kiếm"),
+      );
+    }
+
+    if (viewModel.theses.isEmpty) {
+      return Center(
+        child: Text("Không tìm thấy đề tài nào"),
+      );
+    }
+
+    final theses = viewModel.theses;
+    final students = viewModel.students;
+    final teachers = viewModel.supervisors;
 
     return ListView.separated(
       separatorBuilder: (context, i) => Divider(),
-      itemCount: topics.length,
+      itemCount: theses.length,
       itemBuilder: (context, i) {
-        final topic = topics[i];
-        final autofocus = i == 0;
-        return _ThesisItem(thesis: topic, autofocus: autofocus);
+        return _ThesisItem(viewModel: viewModel, index: i);
       },
     );
   }
@@ -264,76 +273,123 @@ class _TopicListView extends StatelessWidget {
 
 class _ThesisItem extends StatelessWidget {
   const _ThesisItem({
-    required this.thesis,
-    this.autofocus = false,
+    required this.viewModel,
+    required this.index,
   });
 
-  final Thesis thesis;
-  final bool autofocus;
+  final ThesisListViewModel viewModel;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
-    final teacher = thesis.giangVien;
-    final student = thesis.hocVien;
-    final titleText = thesis.tenTiengViet;
+    final thesis = viewModel.theses[index];
+    final supervisor = viewModel.supervisors[thesis]!;
+    final student = viewModel.students[thesis];
+
+    final titleText = thesis.vietnameseTitle;
     final subtitleText = [
-      "Hướng dẫn: ${teacher.hoTenChucDanh}",
-      "Thực hiện: ${student?.hoTen}",
+      "Hướng dẫn: ${supervisor.name}",
+      if (student != null) "Thực hiện: ${student.name}" else "Chưa giao",
     ].join("\n");
-
-    final messenger = ScaffoldMessenger.of(context);
-
-    final state = context.read<_State>();
-    final navigator = Navigator.of(context);
 
     return InkWell(
       key: ValueKey(thesis.id),
-      onTap: () async {
-        // Navigate to the topic details page
-        await showDialog(
-          context: context,
-          builder: (context) => MenuDialog(
-            items: [
-              MenuDialogItem(
-                icon: Icons.visibility,
-                title: "Xem chi tiết",
-                subtitle: "Xem chi tiết đề tài",
-                onTap: () async {
-                  final dirty = await goToDetail(thesis);
-                  if (dirty == true) state.search();
-                },
-              ),
-              MenuDialogItem(
-                icon: Icons.edit,
-                title: "Chỉnh sửa đề tài",
-                subtitle: "Sửa tên và ghi chú đề tài",
-                onTap: () => messenger.showMessage("TODO"),
-              ),
-              MenuDialogItem(
-                icon: Icons.assignment,
-                title: "Giao đề tài",
-                subtitle: "Giao đề tài cho học viên",
-                onTap: () => messenger.showMessage("TODO"),
-              ),
-              MenuDialogItem(
-                icon: Icons.delete,
-                title: "Xóa đề tài",
-                subtitle: "Xóa đề tài khỏi CSDL",
-                onTap: () async {
-                  await state.deleteThesis(thesis);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-
+      onTap: () => showDialog(
+        context: context,
+        builder: (context) => _ThesisItemActionDialog(
+          viewModel: viewModel,
+          index: index,
+        ),
+      ),
+      // onTap: () async {
+      //   // Navigate to the topic details page
+      //   await showDialog(
+      //     context: context,
+      //     builder: (context) => MenuDialog(
+      //       items: [
+      //         MenuDialogItem(
+      //           icon: Icons.visibility,
+      //           title: "Xem chi tiết",
+      //           subtitle: "Xem chi tiết đề tài",
+      //           onTap: () async {
+      //             final dirty = await goToDetail(thesis);
+      //             if (dirty == true) state.search();
+      //           },
+      //         ),
+      //         MenuDialogItem(
+      //           icon: Icons.edit,
+      //           title: "Chỉnh sửa đề tài",
+      //           subtitle: "Sửa tên và ghi chú đề tài",
+      //           onTap: () => messenger.showMessage("TODO"),
+      //         ),
+      //         MenuDialogItem(
+      //           icon: Icons.assignment,
+      //           title: "Giao đề tài",
+      //           subtitle: "Giao đề tài cho học viên",
+      //           onTap: () => messenger.showMessage("TODO"),
+      //         ),
+      //         MenuDialogItem(
+      //           icon: Icons.delete,
+      //           title: "Xóa đề tài",
+      //           subtitle: "Xóa đề tài khỏi CSDL",
+      //           onTap: () async {
+      //             await state.deleteThesis(thesis);
+      //           },
+      //         ),
+      //       ],
+      //     ),
+      //   );
+      // },
       child: ListTile(
-        leading: Icon(Icons.topic),
+        leading: Icon(Symbols.topic),
         title: Text(titleText),
         subtitle: Text(subtitleText),
-        isThreeLine: true,
       ),
+    );
+  }
+}
+
+class _ThesisItemActionDialog extends StatelessWidget {
+  final ThesisListViewModel viewModel;
+  final int index;
+  const _ThesisItemActionDialog({
+    required this.viewModel,
+    required this.index,
+  });
+
+  void goToDetail(BuildContext context) async {
+    // final navigator = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final thesis = viewModel.theses[index];
+    messenger.showMessage("TODO: navigate to detail page with thesis $thesis");
+
+    // navigator.push(
+    //   MaterialPageRoute(
+    //     builder: (context) => ThesisDetailPage(thesis: thesis),
+    //   ),
+    // );
+  }
+
+  @override
+  build(BuildContext context) {
+    return MenuDialog(
+      items: [
+        MenuDialogItem(
+          icon: Symbols.details,
+          title: "Chi tiết",
+          onTap: () => goToDetail(context),
+        ),
+
+        MenuDialogItem(
+          title: "Chỉnh sửa",
+          icon: Symbols.edit,
+        ),
+
+        MenuDialogItem(
+          title: "Xóa đề tài",
+          icon: Symbols.delete,
+        ),
+      ],
     );
   }
 }
@@ -341,26 +397,30 @@ class _ThesisItem extends StatelessWidget {
 class _CreateButton extends StatelessWidget {
   @override
   build(BuildContext context) {
-    final state = context.read<_State>();
+    final navigator = Navigator.of(context);
     return OutlinedButton.icon(
       icon: Icon(Icons.add),
       label: Text("Thêm đề tài"),
-      onPressed: () => state.goToCreatePage(),
+      onPressed: () => navigator.push(
+        MaterialPageRoute(
+          builder: (context) => ThesisCreatePage(),
+        ),
+      ),
     );
   }
 }
 
-class _SearchBar extends StatelessWidget {
+class _SearchBar extends ConsumerWidget {
   @override
-  build(BuildContext context) {
-    final state = context.read<_State>();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notifier = ref.read(searchTextProvider.notifier);
     return TextField(
-      controller: state.searchController,
       decoration: InputDecoration(
         hintText: "Tìm theo tên đề tài, giảng viên, học viên...",
         labelText: "Tìm kiếm",
       ),
-      onSubmitted: (_) => state.search(),
+      onSubmitted: (text) => notifier.set(text),
+      onChanged: (text) => notifier.debounceSet(text),
     );
   }
 }

@@ -95,6 +95,61 @@ class StudentByIdNotifier extends AsyncNotifier<StudentData?> {
     final query = db.hocVien.select()..where((tbl) => tbl.id.equals(studentId));
     return await query.getSingleOrNull();
   }
+
+  Future<void> updateStudent({
+    String? personalEmail,
+    String? schoolEmail,
+    String? managementId,
+    String? phoneNumber,
+    StudentStatus? status,
+  }) async {
+    final db = await ref.watch(driftDatabaseProvider.future);
+    final stmt = db.hocVien.update()..where((tbl) => tbl.id.equals(studentId));
+    await stmt.write(
+      StudentCompanion(
+        personalEmail: personalEmail != null
+            ? Value(personalEmail)
+            : Value.absent(),
+        schoolEmail: schoolEmail != null ? Value(schoolEmail) : Value.absent(),
+        studentId: managementId != null ? Value(managementId) : Value.absent(),
+        status: status != null ? Value(status) : Value.absent(),
+        phone: phoneNumber != null ? Value(phoneNumber) : Value.absent(),
+      ),
+    );
+    ref.invalidateSelf();
+  }
+
+  Future<void> updateSchoolEmail(String? email) => updateStudent(
+    schoolEmail: email,
+  );
+
+  Future<void> updatePersonalEmail(String? email) => updateStudent(
+    personalEmail: email,
+  );
+
+  Future<void> updateManagementId(String? id) => updateStudent(
+    managementId: id,
+  );
+
+  Future<void> updatePhoneNumber(String? phone) => updateStudent(
+    phoneNumber: phone,
+  );
+
+  Future<void> updateStatus(StudentStatus? status) => updateStudent(
+    status: status,
+  );
+
+  Future<void> markAsGraduated() => updateStudent(
+    status: StudentStatus.graduated,
+  );
+
+  Future<void> markAsDroppedOut() => updateStudent(
+    status: StudentStatus.quit,
+  );
+
+  Future<void> markAsNormal() => updateStudent(
+    status: StudentStatus.studying,
+  );
 }
 
 class StudentIdsProvider extends AsyncNotifier<List<int>> {
@@ -126,6 +181,15 @@ class StudentIdsProvider extends AsyncNotifier<List<int>> {
               t.personalEmail.contains(searchQuery),
         );
     }
+
+    stmt.orderBy(
+      [
+        (Student s) => OrderingTerm(
+          expression: s.status,
+          mode: OrderingMode.asc,
+        ),
+      ],
+    );
 
     return await stmt.map((t) => t.id).get();
   }

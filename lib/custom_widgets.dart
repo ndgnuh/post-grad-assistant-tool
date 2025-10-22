@@ -1602,3 +1602,26 @@ class ConsumerWidgetBuilder extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) => builder(context, ref);
 }
+
+class StringNotifier extends Notifier<String> {
+  final Duration debounceDuration;
+  Timer? debounceTimer;
+
+  StringNotifier({
+    this.debounceDuration = const Duration(milliseconds: 300),
+  });
+
+  @override
+  String build() => '';
+
+  void debounceSet(String value) {
+    if (debounceTimer?.isActive ?? false) {
+      debounceTimer?.cancel();
+    }
+    debounceTimer = Timer(debounceDuration, () => set(value));
+  }
+
+  void set(String value) {
+    state = value;
+  }
+}

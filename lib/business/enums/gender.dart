@@ -71,4 +71,14 @@ enum Pronoun {
     required this.greeting,
     required this.gender,
   });
+
+  static Pronoun fromGender({required Gender? gender, bool formal = true}) {
+    return switch ((gender, formal)) {
+      (Gender.male, true) => Pronoun.thay,
+      (Gender.female, true) => Pronoun.co,
+      (Gender.male, false) => Pronoun.anh,
+      (Gender.female, false) => Pronoun.chi,
+      _ => Pronoun.sir,
+    };
+  }
 }

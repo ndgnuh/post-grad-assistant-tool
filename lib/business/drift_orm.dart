@@ -14,6 +14,7 @@ typedef CourseClassCompanion = LopTinChiCompanion;
 // Alias because the original name is not english
 typedef Student = HocVien;
 typedef StudentCompanion = HocVienCompanion;
+typedef Thesis = Detaithacsi;
 
 @DriftDatabase(include: {"file_db.drift"})
 class FilesDatabase extends _$FilesDatabase {
@@ -34,4 +35,5 @@ class MyDriftDatabase extends _$MyDriftDatabase {
 extension Translation on MyDriftDatabase {
   Cohort get cohort => nienKhoa;
   Student get student => hocVien;
+  Thesis get thesis => detaithacsi;
 }

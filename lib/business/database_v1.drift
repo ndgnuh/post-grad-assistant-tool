@@ -1,4 +1,5 @@
 import 'business_enums.dart';
+import 'database_v1/thesis_fts.drift';
 
 create table "NienKhoa" (
     "nienKhoa" TEXT NOT NULL PRIMARY KEY as "cohort",
@@ -130,7 +131,7 @@ create table "phd_cohort" (
 );
 
 create table "phd_student" (
-    "id" integer primary key autoincrement,
+    "id" integer not null primary key autoincrement,
     "cohort" text not null,
 	"management_id" text unique,
     "admission_id"  text unique not null,
@@ -272,6 +273,15 @@ setThesisMemberId: UPDATE detaithacsi SET idUyVien = :teacherId WHERE id = :thes
 
 -- course class
 getAllSemesters: SELECT DISTINCT hocKy FROM LopTinChi ORDER BY hocKy DESC;
+
+-- Search functions
+-------------------
+-- Search for theses
+searchTheses(
+    :searchText as TEXT
+): SELECT id FROM detaithacsi
+    WHERE id in (select id from fts_DeTaiThacSi
+                 where fts_DeTaiThacSi match :searchText);
 
 -- vim: ft=sql
 
