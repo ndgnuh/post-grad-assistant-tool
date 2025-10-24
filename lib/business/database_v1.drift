@@ -1,5 +1,13 @@
 import 'business_enums.dart';
-import 'database_v1/thesis_fts.drift';
+import 'database_v1/fts.drift';
+-- import 'database_v1/methods.drift';
+
+-- create table "document_roles" (
+--     id TEXT NOT NULL PRIMARY KEY,
+--     name TEXT NOT NULL,
+--     description TEXT NOT NULL DEFAULT (""),
+--     can_expire BOOLEAN NOT NULL DEFAULT FALSE
+-- );
 
 create table "NienKhoa" (
     "nienKhoa" TEXT NOT NULL PRIMARY KEY as "cohort",
@@ -209,37 +217,7 @@ create table "DangKyHoc" (
     FOREIGN KEY(idHocVien) REFERENCES phd_student(id)
 ) as ClassCourseRegistrationData;
 
-createPhdStudent: INSERT INTO phd_student (
-    cohort,
-    admission_id,
-    name,
-    gender,
-    date_of_birth,
-    place_of_birth,
-    phone,
-    personal_email,
-    major_name,
-    major_id,
-    major_specialization,
-    thesis,
-    supervisor_id,
-    secondary_supervisor_id
-) VALUES (
-    :cohort,
-    :admission_id,
-    :name,
-    :gender,
-    :date_of_birth,
-    :place_of_birth,
-    :phone,
-    :personal_email,
-    :major_name,
-    :major_id,
-    :major_specialization,
-    :thesis,
-    :supervisor_id,
-    :secondary_supervisor_id
-);
+
 
 searchTeacher(
     :searchText as TEXT OR NULL,
@@ -284,5 +262,3 @@ searchTheses(
                  where fts_DeTaiThacSi match :searchText);
 
 -- vim: ft=sql
-
-

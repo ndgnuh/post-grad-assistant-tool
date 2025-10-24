@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 
-import '../business/copy_pasta.dart';
-import '../business/db_v2_providers.dart';
-import '../business/han_che_hoc_phan.dart';
-import '../business/selection_models.dart';
-import '../custom_widgets.dart';
+import '../../business/copy_pasta.dart';
+import '../../business/db_v2_providers.dart';
+import '../../business/han_che_hoc_phan.dart';
+import '../../business/selection_models.dart';
+import '../../custom_widgets.dart';
 
 final _courseSelectionProvider = AsyncNotifierProvider(
   _CourseSelectionNotifier.new,
@@ -44,75 +44,79 @@ class CourseLimitingPage extends StatelessWidget {
     final gutter = context.responsiveGutter;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Tạo danh mục hạn chế học phần"),
-        leading: BackButton(),
+      appBar: ConstrainedAppBar(
+        child: AppBar(
+          title: Text("Tạo danh mục hạn chế học phần"),
+          leading: BackButton(),
+        ),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(gutter),
-        child: Column(
-          spacing: gutter,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Tool bar in medium and large screen only
-            if (context.isLargeScreen) ...[_ActionMenuLarge(), Divider()],
-            if (context.isMediumScreen) ...[_ActionMenuMedium(), Divider()],
+      body: ConstrainedBody(
+        child: Padding(
+          padding: EdgeInsets.all(gutter),
+          child: Column(
+            spacing: gutter,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Tool bar in medium and large screen only
+              if (context.isLargeScreen) ...[_ActionMenuLarge(), Divider()],
+              if (context.isMediumScreen) ...[_ActionMenuMedium(), Divider()],
 
-            // The courses
-            Expanded(
-              child: Flex(
-                direction: flexDirection,
-                spacing: gutter,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ListTile(
-                          title: Text(
-                            "Danh sách học phần",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+              // The courses
+              Expanded(
+                child: Flex(
+                  direction: flexDirection,
+                  spacing: gutter,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListTile(
+                            title: Text(
+                              "Danh sách học phần",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                           ),
-                        ),
-                        Expanded(child: _LeftOverCourseListView()),
-                      ],
+                          Expanded(child: _LeftOverCourseListView()),
+                        ],
+                      ),
                     ),
-                  ),
-                  if (context.isMediumOrLargerScreen)
-                    VerticalDivider()
-                  else
-                    Divider(),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _SelectedCourseLabel(),
-                        Expanded(
-                          child: _SelectedCourseListView(),
-                        ),
-                      ],
+                    if (context.isMediumOrLargerScreen)
+                      VerticalDivider()
+                    else
+                      Divider(),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _SelectedCourseLabel(),
+                          Expanded(
+                            child: _SelectedCourseListView(),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            // Expanded(
-            //   child: Flex(
-            //     direction: flexDirection,
-            //     children: [
-            //       // _HeaderRow.daTimKiem(),
-            //       Flexible(
-            //         child: _DanhSachHocPhan.daTimKiem(),
-            //       ),
-            //       // _HeaderRow.daChon(),
-            //       Flexible(
-            //         child: _DanhSachHocPhan.daLuaChon(),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            if (context.isSmallScreen) ...[Divider(), _ActionButton()],
-          ],
+              // Expanded(
+              //   child: Flex(
+              //     direction: flexDirection,
+              //     children: [
+              //       // _HeaderRow.daTimKiem(),
+              //       Flexible(
+              //         child: _DanhSachHocPhan.daTimKiem(),
+              //       ),
+              //       // _HeaderRow.daChon(),
+              //       Flexible(
+              //         child: _DanhSachHocPhan.daLuaChon(),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              if (context.isSmallScreen) ...[Divider(), _ActionButton()],
+            ],
+          ),
         ),
       ),
     );

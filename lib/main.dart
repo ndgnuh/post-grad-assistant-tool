@@ -1,7 +1,5 @@
 import 'dart:io' show Platform;
-import 'dart:math';
 
-import 'package:fami_tools/custom_widgets.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,9 +8,9 @@ import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
+import 'pages/pages.dart' as pages;
+import 'pages/pages.dart';
 import 'business/db_v2_providers.dart';
-import 'pages.dart' as pages;
-import 'pages.dart';
 import 'preferences.dart';
 import 'shortcuts.dart';
 import 'themes.dart';

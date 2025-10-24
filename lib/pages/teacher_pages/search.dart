@@ -7,7 +7,7 @@ import 'package:flutter_gutter/flutter_gutter.dart';
 
 import '../../business/domain_objects.dart';
 import '../../shortcuts.dart';
-import './index.dart';
+import 'teacher_pages.dart';
 
 /// Add button to navigate to add page
 class AddButton extends StatelessWidget {

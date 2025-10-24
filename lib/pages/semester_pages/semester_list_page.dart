@@ -6,29 +6,29 @@ import 'package:fami_tools/custom_widgets.dart';
 import 'package:fami_tools/business/domain_objects.dart';
 import 'package:intl/intl.dart';
 
-import './mobile/course_classes.dart' show PageCourseClassList;
+import '../course_class_pages/course_class_pages.dart';
 import './../../business/pods.dart';
-import '../custom_widgets.dart';
+import 'semester_pages.dart';
 
-String toDmy(DateTime date) {
+String _toDmy(DateTime date) {
   final formatter = DateFormat('dd/MM/yyyy');
   final formattedDate = formatter.format(date);
   return formattedDate;
 }
 
-class CopyPasta {
+class _CopyPasta {
   HocKy hocKy;
   BuildContext context;
-  CopyPasta({required this.context, required this.hocKy});
+  _CopyPasta({required this.context, required this.hocKy});
 
   DateTime get hanNopDiem => hocKy.hanNhapDiem.add(const Duration(days: -7));
 
-  String get ngayMoDangKy => toDmy(hocKy.moDangKy);
-  String get ngayDongDangKy => toDmy(hocKy.dongDangKy);
-  String get ngayBatDauHoc => toDmy(hocKy.batDauHoc);
-  String get ngayKetThucHoc => toDmy(hocKy.ketThucHoc);
-  String get hanNhapDiem => toDmy(hocKy.hanNhapDiem);
-  String get ngayNopDiem => toDmy(hanNopDiem);
+  String get ngayMoDangKy => _toDmy(hocKy.moDangKy);
+  String get ngayDongDangKy => _toDmy(hocKy.dongDangKy);
+  String get ngayBatDauHoc => _toDmy(hocKy.batDauHoc);
+  String get ngayKetThucHoc => _toDmy(hocKy.ketThucHoc);
+  String get hanNhapDiem => _toDmy(hocKy.hanNhapDiem);
+  String get ngayNopDiem => _toDmy(hanNopDiem);
   String get tenDotHoc => hocKy.hocKy;
 
   void copyToClipboard({
@@ -96,7 +96,7 @@ Em cảm ơn Thầy, Cô ạ.""";
 class _GotoMenu extends StatelessWidget {
   final HocKy hocKy;
 
-  const _GotoMenu({super.key, required this.hocKy});
+  const _GotoMenu({required this.hocKy});
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +107,7 @@ class _GotoMenu extends StatelessWidget {
         MenuItemButton(
           onPressed: () {
             navigator.pushNamed(
-              PageCourseClassList.routeName,
+              CourseClassListPage.routeName,
               arguments: hocKy,
             );
           },
@@ -134,11 +134,11 @@ class AcademicYearTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final moDangKy = toDmy(hocKy.moDangKy);
-    final dongDangKy = toDmy(hocKy.dongDangKy);
-    final batDauHoc = toDmy(hocKy.batDauHoc);
-    final ketThucHoc = toDmy(hocKy.ketThucHoc);
-    final hanNhapDiem = toDmy(hocKy.hanNhapDiem);
+    final moDangKy = _toDmy(hocKy.moDangKy);
+    final dongDangKy = _toDmy(hocKy.dongDangKy);
+    final batDauHoc = _toDmy(hocKy.batDauHoc);
+    final ketThucHoc = _toDmy(hocKy.ketThucHoc);
+    final hanNhapDiem = _toDmy(hocKy.hanNhapDiem);
 
     final subtiles = [
       "Đăng ký học: $moDangKy - $dongDangKy",
@@ -157,190 +157,6 @@ class AcademicYearTile extends StatelessWidget {
         );
         await navigator.push(route);
       },
-    );
-  }
-}
-
-class PageAcademicYearCreate extends StatefulWidget {
-  static const routeName = '/academic_year/create';
-
-  const PageAcademicYearCreate({super.key});
-
-  @override
-  State<PageAcademicYearCreate> createState() => _PageAcademicYearCreateState();
-}
-
-class _PageAcademicYearCreateState extends State<PageAcademicYearCreate> {
-  final TextEditingController _nameController = TextEditingController();
-  final ValueNotifier<DateTime> _moDangKy = ValueNotifier(DateTime.now());
-  final ValueNotifier<DateTime> _dongDangKy = ValueNotifier(DateTime.now());
-  final ValueNotifier<DateTime> _batDauHoc = ValueNotifier(DateTime.now());
-  final ValueNotifier<DateTime> _ketThucHoc = ValueNotifier(DateTime.now());
-  final ValueNotifier<DateTime> _hanNhapDiem = ValueNotifier(DateTime.now());
-
-  @override
-  initState() {
-    super.initState();
-
-    // Set up listeners to automatically update dates based on the previous ones
-    _moDangKy.addListener(() {
-      _dongDangKy.value = _moDangKy.value.add(const Duration(days: 14));
-    });
-
-    _dongDangKy.addListener(() {
-      _batDauHoc.value = _dongDangKy.value.add(const Duration(days: 14));
-    });
-
-    _batDauHoc.addListener(() {
-      _ketThucHoc.value = _batDauHoc.value.add(const Duration(days: 53));
-    });
-
-    _ketThucHoc.addListener(() {
-      _hanNhapDiem.value = _ketThucHoc.value.add(const Duration(days: 15));
-    });
-
-    // Set initial values
-    _moDangKy.value = DateTime.now();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final dateFormat = DateFormat('dd/MM/yyyy');
-    final navigator = Navigator.of(context);
-
-    return Scaffold(
-      appBar: AppBar(title: const Text("Tạo đợt học mới")),
-      body: ListView(
-        children: [
-          ListTile(
-            title: EzTextInput(
-              label: "Tên đợt học",
-              controller: _nameController,
-            ),
-          ),
-
-          // Ngày bắt đầu mở đăng ký
-          ListTile(
-            title: const Text("Mở đăng ký học"),
-            subtitle: Text(dateFormat.format(_moDangKy.value)),
-            onTap: () async {
-              final newDate = await showDatePicker(
-                context: context,
-                initialDate: _moDangKy.value,
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-                helpText: "Chọn ngày mở đăng ký học",
-              );
-              if (newDate != null) {
-                _moDangKy.value = newDate;
-                setState(() {});
-              }
-            },
-          ),
-
-          // Ngày đóng đăng ký
-          ListTile(
-            title: const Text("Đóng đăng ký học"),
-            subtitle: Text(dateFormat.format(_dongDangKy.value)),
-            onTap: () async {
-              final newDate = await showDatePicker(
-                context: context,
-                initialDate: _dongDangKy.value,
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-                helpText: "Chọn ngày đóng đăng ký học",
-              );
-              if (newDate != null) {
-                _dongDangKy.value = newDate;
-                setState(() {});
-              }
-            },
-          ),
-
-          // Ngày bắt đầu học
-          ListTile(
-            title: const Text("Bắt đầu học"),
-            subtitle: Text(dateFormat.format(_batDauHoc.value)),
-            onTap: () async {
-              final newDate = await showDatePicker(
-                context: context,
-                initialDate: _batDauHoc.value,
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-                helpText: "Chọn ngày bắt đầu học",
-              );
-              if (newDate != null) {
-                _batDauHoc.value = newDate;
-                setState(() {});
-              }
-            },
-          ),
-
-          // Ngày kết thúc học
-          ListTile(
-            title: const Text("Kết thúc học"),
-            subtitle: Text(dateFormat.format(_ketThucHoc.value)),
-            onTap: () async {
-              final newDate = await showDatePicker(
-                context: context,
-                initialDate: _ketThucHoc.value,
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-                helpText: "Chọn ngày kết thúc học",
-              );
-              if (newDate != null) {
-                _ketThucHoc.value = newDate;
-                setState(() {});
-              }
-            },
-          ),
-
-          // Ngày hạn nhập điểm
-          ListTile(
-            title: const Text("Hạn nhập điểm"),
-            subtitle: Text(dateFormat.format(_hanNhapDiem.value)),
-            onTap: () async {
-              final newDate = await showDatePicker(
-                context: context,
-                initialDate: _hanNhapDiem.value,
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-                helpText: "Chọn hạn nhập điểm",
-              );
-              if (newDate != null) {
-                _hanNhapDiem.value = newDate;
-                setState(() {});
-              }
-            },
-          ),
-
-          // Button to create the academic year
-          ListTile(
-            title: ElevatedButton(
-              onPressed: () async {
-                if (_nameController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Vui lòng nhập tên đợt học")),
-                  );
-                  return;
-                }
-
-                final created = await HocKy.create(
-                  hocKy: _nameController.text,
-                  moDangKy: _moDangKy.value,
-                  dongDangKy: _dongDangKy.value,
-                  batDauHoc: _batDauHoc.value,
-                  ketThucHoc: _ketThucHoc.value,
-                  hanNhapDiem: _hanNhapDiem.value,
-                );
-
-                navigator.pop(created);
-              },
-              child: const Text("Tạo đợt học"),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -393,7 +209,7 @@ class _PageAcademicYearEditState extends ConsumerState<PageAcademicYearEdit> {
   Widget build(BuildContext context) {
     final hocKyName = "Đợt học ${academicYear.hocKy}";
 
-    final copyPasta = CopyPasta(
+    final copyPasta = _CopyPasta(
       context: context,
       hocKy: academicYear,
     );
@@ -407,11 +223,11 @@ class _PageAcademicYearEditState extends ConsumerState<PageAcademicYearEdit> {
     }
 
     // Information, formatted and stored as variables
-    final moDangKy = toDmy(academicYear.moDangKy);
-    final dongDangKy = toDmy(academicYear.dongDangKy);
-    final batDauHoc = toDmy(academicYear.batDauHoc);
-    final ketThucHoc = toDmy(academicYear.ketThucHoc);
-    final hanNhapDiem = toDmy(academicYear.hanNhapDiem);
+    final moDangKy = _toDmy(academicYear.moDangKy);
+    final dongDangKy = _toDmy(academicYear.dongDangKy);
+    final batDauHoc = _toDmy(academicYear.batDauHoc);
+    final ketThucHoc = _toDmy(academicYear.ketThucHoc);
+    final hanNhapDiem = _toDmy(academicYear.hanNhapDiem);
     final navigator = Navigator.of(context);
 
     return Scaffold(

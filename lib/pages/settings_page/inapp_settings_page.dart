@@ -8,9 +8,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../custom_widgets.dart';
-import '../custom_tiles.dart';
-import '../preferences.dart';
+import '../../custom_tiles.dart';
+import '../../preferences.dart';
 
 class SettingsPage extends StatefulWidget {
   static const routeName = '/settings';

@@ -1,0 +1,4 @@
+export './course_class_list_page.dart';
+export './course_class_edit_page.dart';
+export './course_class_details_page.dart';
+export './teaching_assignment.dart';

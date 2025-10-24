@@ -6,7 +6,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
 import './_import_from_clipboard.dart';
-import './index.dart';
+import './course_class_pages.dart';
 import './providers.dart';
 import './widgets.dart';
 

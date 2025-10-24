@@ -6,7 +6,7 @@ import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import './index.dart';
+import './student_pages.dart';
 import './providers.dart';
 import './widgets.dart';
 import '../../shortcuts.dart';

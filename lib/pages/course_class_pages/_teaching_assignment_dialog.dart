@@ -1,4 +1,4 @@
-part of 'list.dart';
+part of 'course_class_list_page.dart';
 
 class _TeachingAssignmentDialog extends ConsumerStatefulWidget {
   final int classId;
