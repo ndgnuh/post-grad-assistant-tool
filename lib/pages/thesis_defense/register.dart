@@ -8,8 +8,7 @@ import '../../business/db_v1_providers.dart';
 import '../../business/db_v2_providers.dart' hide thesisByIdProvider;
 import '../../business/domain_objects.dart';
 import '../../custom_widgets.dart';
-import '../../pages/theses/index.dart' show ThesisDetailPage;
-import '../single_selection_page.dart';
+import '../thesis_pages/thesis_pages.dart';
 import './council.dart' as council;
 import './index.dart';
 import './pods.dart';
@@ -114,35 +113,37 @@ class _AddThesisToTrackingButton extends ConsumerWidget {
     );
   }
 
-  Future<void> selectThesisToTrack(BuildContext context, WidgetRef ref) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PageSelectThings<Thesis>(
-          title: "Chọn đề tài",
-          includeNull: false,
-          itemBuilder: <T>(BuildContext context, Thesis? item) {
-            if (item == null) return SizedBox.shrink();
-
-            final student = item.hocVien!;
-
-            return ListTile(
-              title: Text(item.tenTiengViet),
-              subtitle: Text("${student.maHocVien} ${student.hoTen}"),
-              onTap: () async {
-                final provider = ref.read(trackedThesisIdsProvider.notifier);
-                provider.track(item.id!);
-                ref.invalidate(trackedThesisIdsProvider);
-                Navigator.pop(context);
-              },
-            );
-          },
-          searchFunction: <T>(query) =>
-              Thesis.search(searchQuery: query, assigned: true, tracked: false),
-        ),
-      ),
-    );
-  }
+  // TODO: implement another search
+  Future<void> selectThesisToTrack(BuildContext context, WidgetRef ref) async {}
+  // Future<void> selectThesisToTrack(BuildContext context, WidgetRef ref) async {
+  //   await Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => PageSelectThings<Thesis>(
+  //         title: "Chọn đề tài",
+  //         includeNull: false,
+  //         itemBuilder: <T>(BuildContext context, Thesis? item) {
+  //           if (item == null) return SizedBox.shrink();
+  //
+  //           final student = item.hocVien!;
+  //
+  //           return ListTile(
+  //             title: Text(item.tenTiengViet),
+  //             subtitle: Text("${student.maHocVien} ${student.hoTen}"),
+  //             onTap: () async {
+  //               final provider = ref.read(trackedThesisIdsProvider.notifier);
+  //               provider.track(item.id!);
+  //               ref.invalidate(trackedThesisIdsProvider);
+  //               Navigator.pop(context);
+  //             },
+  //           );
+  //         },
+  //         searchFunction: <T>(query) =>
+  //             Thesis.search(searchQuery: query, assigned: true, tracked: false),
+  //       ),
+  //     ),
+  //   );
+  // }
 }
 
 class _CouncilMemberItem extends ConsumerWidget {

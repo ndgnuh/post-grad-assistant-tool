@@ -1,23 +1,24 @@
 // TODO: migrate to drift
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
-import 'package:provider/provider.dart' hide FutureProvider;
-import 'package:path/path.dart' as path;
-import 'package:intl/intl.dart';
-import 'dart:io';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:path/path.dart' as path;
+import 'package:provider/provider.dart' hide FutureProvider;
 
 import '../../business/db_v1_providers.dart';
 import '../../business/db_v2_providers.dart' hide Thesis;
-import '../teachers/index.dart';
 import '../../business/domain_objects.dart';
 import '../../custom_widgets.dart' show DirectoryPicker;
 import '../../services/pdf_builder/index.dart' as _;
-import '../../pages/theses/index.dart' show ThesisDetailPage;
-import './payment_pdf.dart';
-import './pods.dart';
-import './index.dart';
+import '../teacher_pages/teacher_pages.dart';
+import '../thesis_pages/thesis_pages.dart';
+import 'index.dart';
+import 'payment_pdf.dart';
+import 'pods.dart';
 
 Future<Map<Teacher, Payout>> resolvePayouts(List<Thesis> theses) async {
   final teachers = <Teacher>{};
@@ -169,6 +170,40 @@ class ThesisDefensePaymentPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+@immutable
+class _Actions {
+  final BuildContext context;
+  final WidgetRef ref;
+  const _Actions(this.context, this.ref);
+
+  Future<void> exportAllPaperwork() async {
+    final state = context.read<_State>();
+    final messenger = ScaffoldMessenger.of(context);
+    final saveDir = state.saveDirectoryController.text;
+
+    final summaryName = "TongHop_ThanhToan_x2.pdf";
+    final requestName = "YeuCau_ThanhToan.pdf";
+    final listingName = "BangKe_ThanhToan.pdf";
+    final incomeListingName = "BangKe_ThuNhap.pdf";
+    final doubleCheckName = "KiemTra_ThanhToan.pdf";
+
+    final summaryPdf = await ref.watch(paymentSummaryPdfProvider.future);
+    File(path.join(saveDir, summaryName)).writeAsBytes(summaryPdf);
+    final requestPdf = await ref.watch(paymentRequestPdfProvider.future);
+    File(path.join(saveDir, requestName)).writeAsBytes(requestPdf);
+    final listingPdf = await ref.watch(paymentListingPdfProvider.future);
+    File(path.join(saveDir, listingName)).writeAsBytes(listingPdf);
+    final incomeListingPdf = await ref.watch(incomeListingPdfProvider.future);
+    File(path.join(saveDir, incomeListingName)).writeAsBytes(incomeListingPdf);
+    final doubleCheckPdf = await ref.watch(doubleCheckPdfProvider.future);
+    File(path.join(saveDir, doubleCheckName)).writeAsBytes(doubleCheckPdf);
+
+    messenger.showSnackBar(
+      SnackBar(content: Text("Đang xuất giấy tờ...")),
     );
   }
 }
@@ -527,10 +562,30 @@ class _PaymentTable extends ConsumerWidget {
   }
 }
 
-class _TeacherLink extends ConsumerWidget {
-  const _TeacherLink({required this.teacher});
+class _State extends ChangeNotifier {
+  final ValueNotifier<int> stepNotifier = ValueNotifier(0);
+  final paymentReasonController = TextEditingController(
+    text: "Hội đồng chấm luận văn thạc sĩ",
+  );
+  final saveDirectoryController = TextEditingController();
+  ThesisPaymentPdfModel? paymentViewModel;
+  Map<Teacher, Payout> payouts = {};
 
+  int get totalMoney {
+    return payouts.values.fold(0, (sum, payout) => sum + payout.moneyTotal);
+  }
+
+  String get totalVnd => totalMoney.formatMoney();
+
+  Future<void> refresh() async {
+    notifyListeners();
+  }
+}
+
+class _TeacherLink extends ConsumerWidget {
   final Teacher teacher;
+
+  const _TeacherLink({required this.teacher});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -556,60 +611,6 @@ class _TeacherLink extends ConsumerWidget {
           return Text(teacher.hoTen, style: style);
         },
       ),
-    );
-  }
-}
-
-class _State extends ChangeNotifier {
-  final ValueNotifier<int> stepNotifier = ValueNotifier(0);
-  final paymentReasonController = TextEditingController(
-    text: "Hội đồng chấm luận văn thạc sĩ",
-  );
-  final saveDirectoryController = TextEditingController();
-  ThesisPaymentPdfModel? paymentViewModel;
-  Map<Teacher, Payout> payouts = {};
-
-  int get totalMoney {
-    return payouts.values.fold(0, (sum, payout) => sum + payout.moneyTotal);
-  }
-
-  String get totalVnd => totalMoney.formatMoney();
-
-  Future<void> refresh() async {
-    notifyListeners();
-  }
-}
-
-@immutable
-class _Actions {
-  final BuildContext context;
-  final WidgetRef ref;
-  const _Actions(this.context, this.ref);
-
-  Future<void> exportAllPaperwork() async {
-    final state = context.read<_State>();
-    final messenger = ScaffoldMessenger.of(context);
-    final saveDir = state.saveDirectoryController.text;
-
-    final summaryName = "TongHop_ThanhToan_x2.pdf";
-    final requestName = "YeuCau_ThanhToan.pdf";
-    final listingName = "BangKe_ThanhToan.pdf";
-    final incomeListingName = "BangKe_ThuNhap.pdf";
-    final doubleCheckName = "KiemTra_ThanhToan.pdf";
-
-    final summaryPdf = await ref.watch(paymentSummaryPdfProvider.future);
-    File(path.join(saveDir, summaryName)).writeAsBytes(summaryPdf);
-    final requestPdf = await ref.watch(paymentRequestPdfProvider.future);
-    File(path.join(saveDir, requestName)).writeAsBytes(requestPdf);
-    final listingPdf = await ref.watch(paymentListingPdfProvider.future);
-    File(path.join(saveDir, listingName)).writeAsBytes(listingPdf);
-    final incomeListingPdf = await ref.watch(incomeListingPdfProvider.future);
-    File(path.join(saveDir, incomeListingName)).writeAsBytes(incomeListingPdf);
-    final doubleCheckPdf = await ref.watch(doubleCheckPdfProvider.future);
-    File(path.join(saveDir, doubleCheckName)).writeAsBytes(doubleCheckPdf);
-
-    messenger.showSnackBar(
-      SnackBar(content: Text("Đang xuất giấy tờ...")),
     );
   }
 }

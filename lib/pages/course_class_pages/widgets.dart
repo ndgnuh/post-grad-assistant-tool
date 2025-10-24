@@ -10,7 +10,7 @@ class SemesterPicker extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final modelAsync = ref.read(semesterSelectionModelProvider);
     switch (modelAsync) {
-      case AsyncLoading():
+      case AsyncLoading _:
         return const CircularProgressIndicator();
       case AsyncError(:final error):
         return Text("Error: $error");

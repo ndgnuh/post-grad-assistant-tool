@@ -1,10 +1,8 @@
 import 'dart:async';
 
 import 'package:drift/drift.dart';
-import 'package:fami_tools/pages/theses/widgets.dart';
 import 'package:riverpod/riverpod.dart';
 
-import '../domain_objects.dart' show CouncilRole;
 import './../db_v2_providers.dart';
 
 final thesisByIdProvider = AsyncNotifierProvider.family(

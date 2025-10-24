@@ -1,12 +1,9 @@
-import 'package:fami_tools/custom_widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
-import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import 'widgets.dart';
-import 'providers.dart';
 
 class CourseClassActionTab extends StatelessWidget {
   const CourseClassActionTab({super.key});

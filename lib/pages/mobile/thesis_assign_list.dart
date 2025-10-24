@@ -9,10 +9,7 @@ import '../../business/copy_pasta.dart' as copy_pasta;
 import '../../business/domain_objects.dart';
 import '../../custom_widgets.dart';
 import '../../shortcuts.dart';
-import '../single_selection_page.dart';
-import '../theses/list.dart';
-import '../theses/create.dart';
-import '../theses/details.dart';
+import '../thesis_pages/thesis_pages.dart';
 import '../../business/db_v1_providers.dart';
 
 class MobilePageThesisAssignList extends StatelessWidget {
@@ -387,38 +384,39 @@ class _ThesisItem extends StatelessWidget {
             } else if (isSelectionMode) {
               selectionNotifier.value = !selected;
             } else {
-              final page = PageSelectThings<Thesis>(
-                title: "Chọn đề tài",
-                includeNull: true,
-                searchFunction: (query) => Thesis.search(
-                  searchQuery: query,
-                  assigned: false,
-                ),
-                itemBuilder: (context, Thesis? thesis) => switch (thesis) {
-                  Thesis thesis => ListTile(
-                    title: Text(thesis.tenTiengViet),
-                    subtitle: Text(thesis.giangVien.hoTenChucDanh),
-                    onTap: () => Navigator.pop(context, thesis),
-                  ),
-                  null => ListTile(
-                    title: Text("Hủy"),
-                    subtitle: Text("Không chọn đề tài"),
-                    onTap: () => Navigator.pop(context, null),
-                  ),
-                },
-              );
+              // TODO: search thesis
+              // final page = PageSelectThings<Thesis>(
+              //   title: "Chọn đề tài",
+              //   includeNull: true,
+              //   searchFunction: (query) => Thesis.search(
+              //     searchQuery: query,
+              //     assigned: false,
+              //   ),
+              //   itemBuilder: (context, Thesis? thesis) => switch (thesis) {
+              //     Thesis thesis => ListTile(
+              //       title: Text(thesis.tenTiengViet),
+              //       subtitle: Text(thesis.giangVien.hoTenChucDanh),
+              //       onTap: () => Navigator.pop(context, thesis),
+              //     ),
+              //     null => ListTile(
+              //       title: Text("Hủy"),
+              //       subtitle: Text("Không chọn đề tài"),
+              //       onTap: () => Navigator.pop(context, null),
+              //     ),
+              //   },
+              // );
 
-              final selectedThesis = await Navigator.push<Thesis?>(
-                context,
-                MaterialPageRoute(builder: (context) => page),
-              );
-              switch (selectedThesis) {
-                case Thesis thesis:
-                  await thesis.assignStudent(student);
-                  state.mapThesis[student] = selectedThesis;
-                  state.mapSupervisor[student] = selectedThesis.giangVien;
-                  state.search();
-              }
+              // final selectedThesis = await Navigator.push<Thesis?>(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => page),
+              // );
+              // switch (selectedThesis) {
+              //   case Thesis thesis:
+              //     await thesis.assignStudent(student);
+              //     state.mapThesis[student] = selectedThesis;
+              //     state.mapSupervisor[student] = selectedThesis.giangVien;
+              //     state.search();
+              // }
             }
           },
         );

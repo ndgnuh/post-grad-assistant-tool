@@ -11,13 +11,14 @@ import 'mobile/thesis_assign_list.dart' show MobilePageThesisAssignList;
 
 import 'phd_students/index.dart';
 import 'semester_pages/semester_pages.dart';
-import 'settings_page/settings_page.dart';
+import 'setting_pages/setting_pages.dart';
 import 'student_pages/student_pages.dart';
 import 'teacher_pages/teacher_pages.dart';
 import 'thesis_pages/thesis_pages.dart';
 import 'thesis_defense/index.dart';
 
 const intialSettingsRoute = InitialSetupPage.routeName;
+const initialLoadingRotue = InitialLoadingPage.routeName;
 
 final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
@@ -196,10 +197,6 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
   Object? args = settings.arguments;
 
   switch (name) {
-    // Initial setup
-    case InitialSetupPage.routeName:
-      return const InitialSetupPage();
-
     case HomePage.routeName:
       return HomePage();
     case DraftPage.routeName:
@@ -277,9 +274,23 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     case PhdStudentCreatePage.routeName:
       return const PhdStudentCreatePage();
 
-    /// Biểu mẫu
+    /// Functional pages
     case SettingsPage.routeName:
       return const SettingsPage();
+    case InitialSetupPage.routeName:
+      return const InitialSetupPage();
+    case InitialLoadingPage.routeName:
+      return const InitialLoadingPage();
+    case TodoPage.routeName:
+      return const TodoPage();
+    case ErrorPage.routeName:
+      switch (args) {
+        case Object error:
+          return ErrorPage(error: error);
+        default:
+          return ErrorPage(error: "Unknown error");
+      }
+
     default:
       return HomePage();
   }

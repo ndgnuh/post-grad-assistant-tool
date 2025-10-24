@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
-import 'dart:io';
 
 ThemeData getTheme({
   required ThemeData baseTheme,

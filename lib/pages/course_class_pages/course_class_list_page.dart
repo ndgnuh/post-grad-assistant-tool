@@ -5,12 +5,11 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
-import './_import_from_clipboard.dart';
-import './course_class_pages.dart';
-import './providers.dart';
-import './widgets.dart';
-
-import 'action_tab.dart';
+import '_import_from_clipboard.dart';
+import 'course_class_list_action_tab.dart';
+import 'course_class_pages.dart';
+import 'providers.dart';
+import 'widgets.dart';
 
 part '_teaching_assignment_dialog.dart';
 
@@ -23,6 +22,7 @@ class CourseClassListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final gutter = context.gutter;
     return DefaultTabController(
+      initialIndex: 0,
       length: 2,
       child: Scaffold(
         appBar: ConstrainedAppBar(
