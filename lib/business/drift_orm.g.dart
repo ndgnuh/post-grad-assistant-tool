@@ -1245,10 +1245,10 @@ class TieuBanXetTuyen extends Table
   late final GeneratedColumn<int> member2Id = GeneratedColumn<int>(
     'idUyVien2',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    $customConstraints: '',
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   static const VerificationMeta _member3IdMeta = const VerificationMeta(
     'member3Id',
@@ -1256,10 +1256,10 @@ class TieuBanXetTuyen extends Table
   late final GeneratedColumn<int> member3Id = GeneratedColumn<int>(
     'idUyVien3',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    $customConstraints: '',
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   @override
   List<GeneratedColumn> get $columns => [
@@ -1323,12 +1323,16 @@ class TieuBanXetTuyen extends Table
         _member2IdMeta,
         member2Id.isAcceptableOrUnknown(data['idUyVien2']!, _member2IdMeta),
       );
+    } else if (isInserting) {
+      context.missing(_member2IdMeta);
     }
     if (data.containsKey('idUyVien3')) {
       context.handle(
         _member3IdMeta,
         member3Id.isAcceptableOrUnknown(data['idUyVien3']!, _member3IdMeta),
       );
+    } else if (isInserting) {
+      context.missing(_member3IdMeta);
     }
     return context;
   }
@@ -1362,11 +1366,11 @@ class TieuBanXetTuyen extends Table
       member2Id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}idUyVien2'],
-      ),
+      )!,
       member3Id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}idUyVien3'],
-      ),
+      )!,
     );
   }
 
@@ -1394,16 +1398,16 @@ class AdmissionCouncilData extends DataClass
   final int presidentId;
   final int secretaryId;
   final int member1Id;
-  final int? member2Id;
-  final int? member3Id;
+  final int member2Id;
+  final int member3Id;
   const AdmissionCouncilData({
     required this.id,
     required this.year,
     required this.presidentId,
     required this.secretaryId,
     required this.member1Id,
-    this.member2Id,
-    this.member3Id,
+    required this.member2Id,
+    required this.member3Id,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1413,12 +1417,8 @@ class AdmissionCouncilData extends DataClass
     map['idChuTich'] = Variable<int>(presidentId);
     map['idThuKy'] = Variable<int>(secretaryId);
     map['idUyVien1'] = Variable<int>(member1Id);
-    if (!nullToAbsent || member2Id != null) {
-      map['idUyVien2'] = Variable<int>(member2Id);
-    }
-    if (!nullToAbsent || member3Id != null) {
-      map['idUyVien3'] = Variable<int>(member3Id);
-    }
+    map['idUyVien2'] = Variable<int>(member2Id);
+    map['idUyVien3'] = Variable<int>(member3Id);
     return map;
   }
 
@@ -1429,12 +1429,8 @@ class AdmissionCouncilData extends DataClass
       presidentId: Value(presidentId),
       secretaryId: Value(secretaryId),
       member1Id: Value(member1Id),
-      member2Id: member2Id == null && nullToAbsent
-          ? const Value.absent()
-          : Value(member2Id),
-      member3Id: member3Id == null && nullToAbsent
-          ? const Value.absent()
-          : Value(member3Id),
+      member2Id: Value(member2Id),
+      member3Id: Value(member3Id),
     );
   }
 
@@ -1449,8 +1445,8 @@ class AdmissionCouncilData extends DataClass
       presidentId: serializer.fromJson<int>(json['idChuTich']),
       secretaryId: serializer.fromJson<int>(json['idThuKy']),
       member1Id: serializer.fromJson<int>(json['idUyVien1']),
-      member2Id: serializer.fromJson<int?>(json['idUyVien2']),
-      member3Id: serializer.fromJson<int?>(json['idUyVien3']),
+      member2Id: serializer.fromJson<int>(json['idUyVien2']),
+      member3Id: serializer.fromJson<int>(json['idUyVien3']),
     );
   }
   @override
@@ -1462,8 +1458,8 @@ class AdmissionCouncilData extends DataClass
       'idChuTich': serializer.toJson<int>(presidentId),
       'idThuKy': serializer.toJson<int>(secretaryId),
       'idUyVien1': serializer.toJson<int>(member1Id),
-      'idUyVien2': serializer.toJson<int?>(member2Id),
-      'idUyVien3': serializer.toJson<int?>(member3Id),
+      'idUyVien2': serializer.toJson<int>(member2Id),
+      'idUyVien3': serializer.toJson<int>(member3Id),
     };
   }
 
@@ -1473,16 +1469,16 @@ class AdmissionCouncilData extends DataClass
     int? presidentId,
     int? secretaryId,
     int? member1Id,
-    Value<int?> member2Id = const Value.absent(),
-    Value<int?> member3Id = const Value.absent(),
+    int? member2Id,
+    int? member3Id,
   }) => AdmissionCouncilData(
     id: id ?? this.id,
     year: year ?? this.year,
     presidentId: presidentId ?? this.presidentId,
     secretaryId: secretaryId ?? this.secretaryId,
     member1Id: member1Id ?? this.member1Id,
-    member2Id: member2Id.present ? member2Id.value : this.member2Id,
-    member3Id: member3Id.present ? member3Id.value : this.member3Id,
+    member2Id: member2Id ?? this.member2Id,
+    member3Id: member3Id ?? this.member3Id,
   );
   AdmissionCouncilData copyWithCompanion(TieuBanXetTuyenCompanion data) {
     return AdmissionCouncilData(
@@ -1543,8 +1539,8 @@ class TieuBanXetTuyenCompanion extends UpdateCompanion<AdmissionCouncilData> {
   final Value<int> presidentId;
   final Value<int> secretaryId;
   final Value<int> member1Id;
-  final Value<int?> member2Id;
-  final Value<int?> member3Id;
+  final Value<int> member2Id;
+  final Value<int> member3Id;
   const TieuBanXetTuyenCompanion({
     this.id = const Value.absent(),
     this.year = const Value.absent(),
@@ -1560,12 +1556,14 @@ class TieuBanXetTuyenCompanion extends UpdateCompanion<AdmissionCouncilData> {
     required int presidentId,
     required int secretaryId,
     required int member1Id,
-    this.member2Id = const Value.absent(),
-    this.member3Id = const Value.absent(),
+    required int member2Id,
+    required int member3Id,
   }) : year = Value(year),
        presidentId = Value(presidentId),
        secretaryId = Value(secretaryId),
-       member1Id = Value(member1Id);
+       member1Id = Value(member1Id),
+       member2Id = Value(member2Id),
+       member3Id = Value(member3Id);
   static Insertable<AdmissionCouncilData> custom({
     Expression<int>? id,
     Expression<String>? year,
@@ -1592,8 +1590,8 @@ class TieuBanXetTuyenCompanion extends UpdateCompanion<AdmissionCouncilData> {
     Value<int>? presidentId,
     Value<int>? secretaryId,
     Value<int>? member1Id,
-    Value<int?>? member2Id,
-    Value<int?>? member3Id,
+    Value<int>? member2Id,
+    Value<int>? member3Id,
   }) {
     return TieuBanXetTuyenCompanion(
       id: id ?? this.id,
@@ -9969,8 +9967,8 @@ typedef $TieuBanXetTuyenCreateCompanionBuilder =
       required int presidentId,
       required int secretaryId,
       required int member1Id,
-      Value<int?> member2Id,
-      Value<int?> member3Id,
+      required int member2Id,
+      required int member3Id,
     });
 typedef $TieuBanXetTuyenUpdateCompanionBuilder =
     TieuBanXetTuyenCompanion Function({
@@ -9979,8 +9977,8 @@ typedef $TieuBanXetTuyenUpdateCompanionBuilder =
       Value<int> presidentId,
       Value<int> secretaryId,
       Value<int> member1Id,
-      Value<int?> member2Id,
-      Value<int?> member3Id,
+      Value<int> member2Id,
+      Value<int> member3Id,
     });
 
 class $TieuBanXetTuyenFilterComposer
@@ -10148,8 +10146,8 @@ class $TieuBanXetTuyenTableManager
                 Value<int> presidentId = const Value.absent(),
                 Value<int> secretaryId = const Value.absent(),
                 Value<int> member1Id = const Value.absent(),
-                Value<int?> member2Id = const Value.absent(),
-                Value<int?> member3Id = const Value.absent(),
+                Value<int> member2Id = const Value.absent(),
+                Value<int> member3Id = const Value.absent(),
               }) => TieuBanXetTuyenCompanion(
                 id: id,
                 year: year,
@@ -10166,8 +10164,8 @@ class $TieuBanXetTuyenTableManager
                 required int presidentId,
                 required int secretaryId,
                 required int member1Id,
-                Value<int?> member2Id = const Value.absent(),
-                Value<int?> member3Id = const Value.absent(),
+                required int member2Id,
+                required int member3Id,
               }) => TieuBanXetTuyenCompanion.insert(
                 id: id,
                 year: year,

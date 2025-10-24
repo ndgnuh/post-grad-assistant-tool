@@ -99,10 +99,12 @@ Future<Uint8List> paymentAtmPdf({
           bankName != null && bankName.isNotEmpty,
           "Teacher ${teacher.name} does not have a bank name",
         );
-        assert(
-          citizenId != null && citizenId.isNotEmpty,
-          "Teacher ${teacher.name} does not have citizen ID",
-        );
+        if (teacher.isOutsider) {
+          assert(
+            citizenId != null && citizenId.isNotEmpty,
+            "Teacher ${teacher.name} does not have citizen ID",
+          );
+        }
 
         // Create summary row for each teacher
         final rows = <String>[
@@ -113,7 +115,7 @@ Future<Uint8List> paymentAtmPdf({
           afterTaxAmount.formatMoney(),
           bankAccount ?? "",
           bankName ?? "",
-          citizenId ?? "",
+          teacher.isOutsider ? citizenId! : "",
         ];
         summaryTable.add(rows);
       }

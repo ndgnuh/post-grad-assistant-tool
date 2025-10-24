@@ -101,7 +101,7 @@ final routesBySections = <String, List<RouteItem>>{
       subtitle: null,
     ),
     (
-      route: null,
+      route: AdmissionPaymentPage.routeName,
       label: "Thanh toán xét tuyển",
       icon: Symbols.attach_money,
       subtitle: null,
