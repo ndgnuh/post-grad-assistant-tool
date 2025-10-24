@@ -10,7 +10,6 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../business/copy_pasta.dart' as copy_pasta;
 import '../../business/copy_pasta.dart';
 import '../../custom_widgets.dart';
-import '../multiple_selection_page.dart';
 import './_download.dart';
 import './_forms.dart';
 import './_widgets.dart';
@@ -405,39 +404,39 @@ class _PageActions {
   NavigatorState get navigator => Navigator.of(context);
 
   void copyAdmissionRejection() async {
-    final candidateName = await showDialog<String>(
-      context: context,
-      builder: (context) => TextEditingDialog(
-        title: "Nhập tên ứng viên",
-        initialText: "",
-        keyboardType: TextInputType.text,
-      ),
-    );
-
-    if (candidateName == null || candidateName.isEmpty) {
-      return;
-    }
-
-    final selectionPage = MultipleSelectionPage<AdmissionCondition>(
-      title: "Chọn lý do không đủ điều kiện",
-      options: AdmissionCondition.values,
-      subtitleBuilder: <T>(condition) => Text(condition.description),
-      titleBuilder: <T>(condition) => Text(condition.unmetDescription),
-    );
-
-    final failedReasons = await navigator.push<Set<AdmissionCondition>?>(
-      MaterialPageRoute(
-        builder: (context) => selectionPage,
-      ),
-    );
-    if (failedReasons == null || failedReasons.isEmpty) {
-      return;
-    }
-
-    copy_pasta.copyAdmissionRejection(
-      candidateName: candidateName,
-      unmetConditions: failedReasons.toList(),
-    );
+    // final candidateName = await showDialog<String>(
+    //   context: context,
+    //   builder: (context) => TextEditingDialog(
+    //     title: "Nhập tên ứng viên",
+    //     initialText: "",
+    //     keyboardType: TextInputType.text,
+    //   ),
+    // );
+    //
+    // if (candidateName == null || candidateName.isEmpty) {
+    //   return;
+    // }
+    //
+    // final selectionPage = MultipleSelectionPage<AdmissionCondition>(
+    //   title: "Chọn lý do không đủ điều kiện",
+    //   options: AdmissionCondition.values,
+    //   subtitleBuilder: <T>(condition) => Text(condition.description),
+    //   titleBuilder: <T>(condition) => Text(condition.unmetDescription),
+    // );
+    //
+    // final failedReasons = await navigator.push<Set<AdmissionCondition>?>(
+    //   MaterialPageRoute(
+    //     builder: (context) => selectionPage,
+    //   ),
+    // );
+    // if (failedReasons == null || failedReasons.isEmpty) {
+    //   return;
+    // }
+    //
+    // copy_pasta.copyAdmissionRejection(
+    //   candidateName: candidateName,
+    //   unmetConditions: failedReasons.toList(),
+    // );
   }
 
   // void copyEmail(List<HocVien> admissionList) {

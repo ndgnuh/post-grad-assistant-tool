@@ -1,6 +1,5 @@
 import 'dart:io' show Platform;
 
-import 'package:fami_tools/pages/settings_page/settings_page.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,7 +8,6 @@ import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
-import 'business/db_v2_providers.dart';
 import 'pages/pages.dart' as pages;
 import 'preferences.dart';
 import 'shortcuts.dart';
