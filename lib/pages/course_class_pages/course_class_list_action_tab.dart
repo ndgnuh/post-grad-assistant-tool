@@ -1,8 +1,11 @@
+import 'package:fami_tools/business/copy_pasta.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+import 'providers.dart';
 import 'widgets.dart';
 
 class CourseClassActionTab extends StatelessWidget {
@@ -16,7 +19,9 @@ class CourseClassActionTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: gutter,
         children: [
-          SemesterPicker(),
+          SemesterPicker(
+            key: Key("semester-picker-1"),
+          ),
 
           Card(
             child: Column(
@@ -51,26 +56,34 @@ class CourseClassActionTab extends StatelessWidget {
 
                 Divider(),
 
-                ListTile(
-                  leading: const Icon(Symbols.email),
-                  title: const Text('Thông báo giảng dạy'),
-                  subtitle: const Text(
-                    'Email giảng dạy đầu đợt học cho giảng viên',
+                EmailNotificationButtonBuilder(
+                  provider: teachingAnnouncementProvider,
+                  builder: (context, callback) => ListTile(
+                    leading: const Icon(Symbols.email),
+                    title: const Text('Thông báo giảng dạy'),
+                    subtitle: const Text(
+                      'Email giảng dạy đầu đợt học cho giảng viên',
+                    ),
+                    trailing: const Icon(Symbols.send),
+                    onTap: callback,
+                    enabled: callback != null,
                   ),
-                  trailing: const Icon(Symbols.send),
-                  onTap: () {},
                 ),
 
                 Divider(),
 
-                ListTile(
-                  leading: const Icon(Symbols.email),
-                  title: const Text('Thông báo nộp điểm'),
-                  subtitle: const Text(
-                    'Email nhắc nhở hạn nộp điểm cho giảng viên',
+                EmailNotificationButtonBuilder(
+                  provider: gradeSubmissionAnnouncementProvider,
+                  builder: (context, callback) => ListTile(
+                    leading: const Icon(Symbols.email),
+                    title: const Text('Thông báo nộp điểm'),
+                    subtitle: const Text(
+                      'Email nhắc nhở hạn nộp điểm cho giảng viên',
+                    ),
+                    trailing: const Icon(Symbols.send),
+                    enabled: callback != null,
+                    onTap: callback,
                   ),
-                  trailing: const Icon(Symbols.send),
-                  onTap: () {},
                 ),
                 SizedBox(height: context.gutterSmall),
               ],
@@ -79,5 +92,35 @@ class CourseClassActionTab extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class EmailNotificationButtonBuilder extends ConsumerWidget {
+  final AsyncNotifierProvider<AsyncNotifier<Email?>, Email?> provider;
+  final Widget Function(BuildContext context, VoidCallback? callback) builder;
+
+  const EmailNotificationButtonBuilder({
+    super.key,
+    required this.provider,
+    required this.builder,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final messageAsync = ref.watch(provider);
+    switch (messageAsync) {
+      case AsyncLoading _:
+        return builder(context, null);
+      case AsyncError(:final error):
+        return Text("Error: $error");
+      case AsyncData(:final value):
+        if (value == null) return builder(context, null);
+        return builder(context, () {
+          showDialog(
+            context: context,
+            builder: (context) => EmailCopyDialog(email: value),
+          );
+        });
+    }
   }
 }

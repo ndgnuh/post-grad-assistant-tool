@@ -8054,27 +8054,29 @@ class TeachingAssignment extends Table
     'classId',
   );
   late final GeneratedColumn<int> classId = GeneratedColumn<int>(
-    'classId',
+    'class_id',
     aliasedName,
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL',
+    $customConstraints: 'NOT NULL REFERENCES LopTinChi(id)',
   );
   static const VerificationMeta _teacherIdMeta = const VerificationMeta(
     'teacherId',
   );
   late final GeneratedColumn<int> teacherId = GeneratedColumn<int>(
-    'teacherId',
+    'teacher_id',
     aliasedName,
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL',
+    $customConstraints: 'NOT NULL REFERENCES GiangVien(id)',
   );
-  static const VerificationMeta _orderMeta = const VerificationMeta('order');
-  late final GeneratedColumn<int> order = GeneratedColumn<int>(
-    'order',
+  static const VerificationMeta _sortOrderMeta = const VerificationMeta(
+    'sortOrder',
+  );
+  late final GeneratedColumn<int> sortOrder = GeneratedColumn<int>(
+    'sort_order',
     aliasedName,
     false,
     type: DriftSqlType.int,
@@ -8082,11 +8084,9 @@ class TeachingAssignment extends Table
     $customConstraints: 'NOT NULL DEFAULT 1',
     defaultValue: const CustomExpression('1'),
   );
-  static const VerificationMeta _contributionMeta = const VerificationMeta(
-    'contribution',
-  );
-  late final GeneratedColumn<double> contribution = GeneratedColumn<double>(
-    'contribution',
+  static const VerificationMeta _weightMeta = const VerificationMeta('weight');
+  late final GeneratedColumn<double> weight = GeneratedColumn<double>(
+    'weight',
     aliasedName,
     false,
     type: DriftSqlType.double,
@@ -8095,17 +8095,12 @@ class TeachingAssignment extends Table
     defaultValue: const CustomExpression('1.0'),
   );
   @override
-  List<GeneratedColumn> get $columns => [
-    classId,
-    teacherId,
-    order,
-    contribution,
-  ];
+  List<GeneratedColumn> get $columns => [classId, teacherId, sortOrder, weight];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'TeachingAssignment';
+  static const String $name = 'teaching_assignment';
   @override
   VerificationContext validateIntegrity(
     Insertable<TeachingAssignmentData> instance, {
@@ -8113,35 +8108,32 @@ class TeachingAssignment extends Table
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('classId')) {
+    if (data.containsKey('class_id')) {
       context.handle(
         _classIdMeta,
-        classId.isAcceptableOrUnknown(data['classId']!, _classIdMeta),
+        classId.isAcceptableOrUnknown(data['class_id']!, _classIdMeta),
       );
     } else if (isInserting) {
       context.missing(_classIdMeta);
     }
-    if (data.containsKey('teacherId')) {
+    if (data.containsKey('teacher_id')) {
       context.handle(
         _teacherIdMeta,
-        teacherId.isAcceptableOrUnknown(data['teacherId']!, _teacherIdMeta),
+        teacherId.isAcceptableOrUnknown(data['teacher_id']!, _teacherIdMeta),
       );
     } else if (isInserting) {
       context.missing(_teacherIdMeta);
     }
-    if (data.containsKey('order')) {
+    if (data.containsKey('sort_order')) {
       context.handle(
-        _orderMeta,
-        order.isAcceptableOrUnknown(data['order']!, _orderMeta),
+        _sortOrderMeta,
+        sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
       );
     }
-    if (data.containsKey('contribution')) {
+    if (data.containsKey('weight')) {
       context.handle(
-        _contributionMeta,
-        contribution.isAcceptableOrUnknown(
-          data['contribution']!,
-          _contributionMeta,
-        ),
+        _weightMeta,
+        weight.isAcceptableOrUnknown(data['weight']!, _weightMeta),
       );
     }
     return context;
@@ -8155,19 +8147,19 @@ class TeachingAssignment extends Table
     return TeachingAssignmentData(
       classId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}classId'],
+        data['${effectivePrefix}class_id'],
       )!,
       teacherId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}teacherId'],
+        data['${effectivePrefix}teacher_id'],
       )!,
-      order: attachedDatabase.typeMapping.read(
+      sortOrder: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}order'],
+        data['${effectivePrefix}sort_order'],
       )!,
-      contribution: attachedDatabase.typeMapping.read(
+      weight: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
-        data['${effectivePrefix}contribution'],
+        data['${effectivePrefix}weight'],
       )!,
     );
   }
@@ -8179,9 +8171,7 @@ class TeachingAssignment extends Table
 
   @override
   List<String> get customConstraints => const [
-    'PRIMARY KEY(classId, teacherId)',
-    'FOREIGN KEY(classId)REFERENCES LopTinChi(id)',
-    'FOREIGN KEY(teacherId)REFERENCES GiangVien(id)',
+    'PRIMARY KEY(class_id, teacher_id)',
   ];
   @override
   bool get dontWriteConstraints => true;
@@ -8191,21 +8181,21 @@ class TeachingAssignmentData extends DataClass
     implements Insertable<TeachingAssignmentData> {
   final int classId;
   final int teacherId;
-  final int order;
-  final double contribution;
+  final int sortOrder;
+  final double weight;
   const TeachingAssignmentData({
     required this.classId,
     required this.teacherId,
-    required this.order,
-    required this.contribution,
+    required this.sortOrder,
+    required this.weight,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['classId'] = Variable<int>(classId);
-    map['teacherId'] = Variable<int>(teacherId);
-    map['order'] = Variable<int>(order);
-    map['contribution'] = Variable<double>(contribution);
+    map['class_id'] = Variable<int>(classId);
+    map['teacher_id'] = Variable<int>(teacherId);
+    map['sort_order'] = Variable<int>(sortOrder);
+    map['weight'] = Variable<double>(weight);
     return map;
   }
 
@@ -8213,8 +8203,8 @@ class TeachingAssignmentData extends DataClass
     return TeachingAssignmentCompanion(
       classId: Value(classId),
       teacherId: Value(teacherId),
-      order: Value(order),
-      contribution: Value(contribution),
+      sortOrder: Value(sortOrder),
+      weight: Value(weight),
     );
   }
 
@@ -8224,42 +8214,40 @@ class TeachingAssignmentData extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return TeachingAssignmentData(
-      classId: serializer.fromJson<int>(json['classId']),
-      teacherId: serializer.fromJson<int>(json['teacherId']),
-      order: serializer.fromJson<int>(json['order']),
-      contribution: serializer.fromJson<double>(json['contribution']),
+      classId: serializer.fromJson<int>(json['class_id']),
+      teacherId: serializer.fromJson<int>(json['teacher_id']),
+      sortOrder: serializer.fromJson<int>(json['sort_order']),
+      weight: serializer.fromJson<double>(json['weight']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'classId': serializer.toJson<int>(classId),
-      'teacherId': serializer.toJson<int>(teacherId),
-      'order': serializer.toJson<int>(order),
-      'contribution': serializer.toJson<double>(contribution),
+      'class_id': serializer.toJson<int>(classId),
+      'teacher_id': serializer.toJson<int>(teacherId),
+      'sort_order': serializer.toJson<int>(sortOrder),
+      'weight': serializer.toJson<double>(weight),
     };
   }
 
   TeachingAssignmentData copyWith({
     int? classId,
     int? teacherId,
-    int? order,
-    double? contribution,
+    int? sortOrder,
+    double? weight,
   }) => TeachingAssignmentData(
     classId: classId ?? this.classId,
     teacherId: teacherId ?? this.teacherId,
-    order: order ?? this.order,
-    contribution: contribution ?? this.contribution,
+    sortOrder: sortOrder ?? this.sortOrder,
+    weight: weight ?? this.weight,
   );
   TeachingAssignmentData copyWithCompanion(TeachingAssignmentCompanion data) {
     return TeachingAssignmentData(
       classId: data.classId.present ? data.classId.value : this.classId,
       teacherId: data.teacherId.present ? data.teacherId.value : this.teacherId,
-      order: data.order.present ? data.order.value : this.order,
-      contribution: data.contribution.present
-          ? data.contribution.value
-          : this.contribution,
+      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+      weight: data.weight.present ? data.weight.value : this.weight,
     );
   }
 
@@ -8268,58 +8256,58 @@ class TeachingAssignmentData extends DataClass
     return (StringBuffer('TeachingAssignmentData(')
           ..write('classId: $classId, ')
           ..write('teacherId: $teacherId, ')
-          ..write('order: $order, ')
-          ..write('contribution: $contribution')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('weight: $weight')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(classId, teacherId, order, contribution);
+  int get hashCode => Object.hash(classId, teacherId, sortOrder, weight);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is TeachingAssignmentData &&
           other.classId == this.classId &&
           other.teacherId == this.teacherId &&
-          other.order == this.order &&
-          other.contribution == this.contribution);
+          other.sortOrder == this.sortOrder &&
+          other.weight == this.weight);
 }
 
 class TeachingAssignmentCompanion
     extends UpdateCompanion<TeachingAssignmentData> {
   final Value<int> classId;
   final Value<int> teacherId;
-  final Value<int> order;
-  final Value<double> contribution;
+  final Value<int> sortOrder;
+  final Value<double> weight;
   final Value<int> rowid;
   const TeachingAssignmentCompanion({
     this.classId = const Value.absent(),
     this.teacherId = const Value.absent(),
-    this.order = const Value.absent(),
-    this.contribution = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.weight = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   TeachingAssignmentCompanion.insert({
     required int classId,
     required int teacherId,
-    this.order = const Value.absent(),
-    this.contribution = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.weight = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : classId = Value(classId),
        teacherId = Value(teacherId);
   static Insertable<TeachingAssignmentData> custom({
     Expression<int>? classId,
     Expression<int>? teacherId,
-    Expression<int>? order,
-    Expression<double>? contribution,
+    Expression<int>? sortOrder,
+    Expression<double>? weight,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (classId != null) 'classId': classId,
-      if (teacherId != null) 'teacherId': teacherId,
-      if (order != null) 'order': order,
-      if (contribution != null) 'contribution': contribution,
+      if (classId != null) 'class_id': classId,
+      if (teacherId != null) 'teacher_id': teacherId,
+      if (sortOrder != null) 'sort_order': sortOrder,
+      if (weight != null) 'weight': weight,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -8327,15 +8315,15 @@ class TeachingAssignmentCompanion
   TeachingAssignmentCompanion copyWith({
     Value<int>? classId,
     Value<int>? teacherId,
-    Value<int>? order,
-    Value<double>? contribution,
+    Value<int>? sortOrder,
+    Value<double>? weight,
     Value<int>? rowid,
   }) {
     return TeachingAssignmentCompanion(
       classId: classId ?? this.classId,
       teacherId: teacherId ?? this.teacherId,
-      order: order ?? this.order,
-      contribution: contribution ?? this.contribution,
+      sortOrder: sortOrder ?? this.sortOrder,
+      weight: weight ?? this.weight,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -8344,16 +8332,16 @@ class TeachingAssignmentCompanion
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (classId.present) {
-      map['classId'] = Variable<int>(classId.value);
+      map['class_id'] = Variable<int>(classId.value);
     }
     if (teacherId.present) {
-      map['teacherId'] = Variable<int>(teacherId.value);
+      map['teacher_id'] = Variable<int>(teacherId.value);
     }
-    if (order.present) {
-      map['order'] = Variable<int>(order.value);
+    if (sortOrder.present) {
+      map['sort_order'] = Variable<int>(sortOrder.value);
     }
-    if (contribution.present) {
-      map['contribution'] = Variable<double>(contribution.value);
+    if (weight.present) {
+      map['weight'] = Variable<double>(weight.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -8366,8 +8354,8 @@ class TeachingAssignmentCompanion
     return (StringBuffer('TeachingAssignmentCompanion(')
           ..write('classId: $classId, ')
           ..write('teacherId: $teacherId, ')
-          ..write('order: $order, ')
-          ..write('contribution: $contribution, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('weight: $weight, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -9464,6 +9452,35 @@ typedef $GiangvienUpdateCompanionBuilder =
       Value<int?> academicGroupId,
     });
 
+final class $GiangvienReferences
+    extends BaseReferences<_$MyDriftDatabase, Giangvien, TeacherData> {
+  $GiangvienReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<TeachingAssignment, List<TeachingAssignmentData>>
+  _teachingAssignmentRefsTable(_$MyDriftDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.teachingAssignment,
+        aliasName: $_aliasNameGenerator(
+          db.giangvien.id,
+          db.teachingAssignment.teacherId,
+        ),
+      );
+
+  $TeachingAssignmentProcessedTableManager get teachingAssignmentRefs {
+    final manager = $TeachingAssignmentTableManager(
+      $_db,
+      $_db.teachingAssignment,
+    ).filter((f) => f.teacherId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _teachingAssignmentRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
 class $GiangvienFilterComposer extends Composer<_$MyDriftDatabase, Giangvien> {
   $GiangvienFilterComposer({
     required super.$db,
@@ -9560,6 +9577,31 @@ class $GiangvienFilterComposer extends Composer<_$MyDriftDatabase, Giangvien> {
     column: $table.academicGroupId,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> teachingAssignmentRefs(
+    Expression<bool> Function($TeachingAssignmentFilterComposer f) f,
+  ) {
+    final $TeachingAssignmentFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.teachingAssignment,
+      getReferencedColumn: (t) => t.teacherId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeachingAssignmentFilterComposer(
+            $db: $db,
+            $table: $db.teachingAssignment,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $GiangvienOrderingComposer
@@ -9737,6 +9779,31 @@ class $GiangvienAnnotationComposer
     column: $table.academicGroupId,
     builder: (column) => column,
   );
+
+  Expression<T> teachingAssignmentRefs<T extends Object>(
+    Expression<T> Function($TeachingAssignmentAnnotationComposer a) f,
+  ) {
+    final $TeachingAssignmentAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.teachingAssignment,
+      getReferencedColumn: (t) => t.teacherId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeachingAssignmentAnnotationComposer(
+            $db: $db,
+            $table: $db.teachingAssignment,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $GiangvienTableManager
@@ -9750,12 +9817,9 @@ class $GiangvienTableManager
           $GiangvienAnnotationComposer,
           $GiangvienCreateCompanionBuilder,
           $GiangvienUpdateCompanionBuilder,
-          (
-            TeacherData,
-            BaseReferences<_$MyDriftDatabase, Giangvien, TeacherData>,
-          ),
+          (TeacherData, $GiangvienReferences),
           TeacherData,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool teachingAssignmentRefs})
         > {
   $GiangvienTableManager(_$MyDriftDatabase db, Giangvien table)
     : super(
@@ -9845,9 +9909,41 @@ class $GiangvienTableManager
                 academicGroupId: academicGroupId,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (e.readTable(table), $GiangvienReferences(db, table, e)),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({teachingAssignmentRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (teachingAssignmentRefs) db.teachingAssignment,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (teachingAssignmentRefs)
+                    await $_getPrefetchedData<
+                      TeacherData,
+                      Giangvien,
+                      TeachingAssignmentData
+                    >(
+                      currentTable: table,
+                      referencedTable: $GiangvienReferences
+                          ._teachingAssignmentRefsTable(db),
+                      managerFromTypedResult: (p0) => $GiangvienReferences(
+                        db,
+                        table,
+                        p0,
+                      ).teachingAssignmentRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.teacherId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
         ),
       );
 }
@@ -9862,9 +9958,9 @@ typedef $GiangvienProcessedTableManager =
       $GiangvienAnnotationComposer,
       $GiangvienCreateCompanionBuilder,
       $GiangvienUpdateCompanionBuilder,
-      (TeacherData, BaseReferences<_$MyDriftDatabase, Giangvien, TeacherData>),
+      (TeacherData, $GiangvienReferences),
       TeacherData,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool teachingAssignmentRefs})
     >;
 typedef $TieuBanXetTuyenCreateCompanionBuilder =
     TieuBanXetTuyenCompanion Function({
@@ -12704,6 +12800,35 @@ typedef $LopTinChiUpdateCompanionBuilder =
       Value<CourseClassStatus?> status,
     });
 
+final class $LopTinChiReferences
+    extends BaseReferences<_$MyDriftDatabase, LopTinChi, CourseClassData> {
+  $LopTinChiReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<TeachingAssignment, List<TeachingAssignmentData>>
+  _teachingAssignmentRefsTable(_$MyDriftDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.teachingAssignment,
+        aliasName: $_aliasNameGenerator(
+          db.lopTinChi.id,
+          db.teachingAssignment.classId,
+        ),
+      );
+
+  $TeachingAssignmentProcessedTableManager get teachingAssignmentRefs {
+    final manager = $TeachingAssignmentTableManager(
+      $_db,
+      $_db.teachingAssignment,
+    ).filter((f) => f.classId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _teachingAssignmentRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
 class $LopTinChiFilterComposer extends Composer<_$MyDriftDatabase, LopTinChi> {
   $LopTinChiFilterComposer({
     required super.$db,
@@ -12782,6 +12907,31 @@ class $LopTinChiFilterComposer extends Composer<_$MyDriftDatabase, LopTinChi> {
     column: $table.status,
     builder: (column) => ColumnWithTypeConverterFilters(column),
   );
+
+  Expression<bool> teachingAssignmentRefs(
+    Expression<bool> Function($TeachingAssignmentFilterComposer f) f,
+  ) {
+    final $TeachingAssignmentFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.teachingAssignment,
+      getReferencedColumn: (t) => t.classId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeachingAssignmentFilterComposer(
+            $db: $db,
+            $table: $db.teachingAssignment,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $LopTinChiOrderingComposer
@@ -12922,6 +13072,31 @@ class $LopTinChiAnnotationComposer
 
   GeneratedColumnWithTypeConverter<CourseClassStatus?, int> get status =>
       $composableBuilder(column: $table.status, builder: (column) => column);
+
+  Expression<T> teachingAssignmentRefs<T extends Object>(
+    Expression<T> Function($TeachingAssignmentAnnotationComposer a) f,
+  ) {
+    final $TeachingAssignmentAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.teachingAssignment,
+      getReferencedColumn: (t) => t.classId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeachingAssignmentAnnotationComposer(
+            $db: $db,
+            $table: $db.teachingAssignment,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $LopTinChiTableManager
@@ -12935,12 +13110,9 @@ class $LopTinChiTableManager
           $LopTinChiAnnotationComposer,
           $LopTinChiCreateCompanionBuilder,
           $LopTinChiUpdateCompanionBuilder,
-          (
-            CourseClassData,
-            BaseReferences<_$MyDriftDatabase, LopTinChi, CourseClassData>,
-          ),
+          (CourseClassData, $LopTinChiReferences),
           CourseClassData,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool teachingAssignmentRefs})
         > {
   $LopTinChiTableManager(_$MyDriftDatabase db, LopTinChi table)
     : super(
@@ -13018,9 +13190,41 @@ class $LopTinChiTableManager
                 status: status,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (e.readTable(table), $LopTinChiReferences(db, table, e)),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({teachingAssignmentRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (teachingAssignmentRefs) db.teachingAssignment,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (teachingAssignmentRefs)
+                    await $_getPrefetchedData<
+                      CourseClassData,
+                      LopTinChi,
+                      TeachingAssignmentData
+                    >(
+                      currentTable: table,
+                      referencedTable: $LopTinChiReferences
+                          ._teachingAssignmentRefsTable(db),
+                      managerFromTypedResult: (p0) => $LopTinChiReferences(
+                        db,
+                        table,
+                        p0,
+                      ).teachingAssignmentRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.classId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
         ),
       );
 }
@@ -13035,29 +13239,74 @@ typedef $LopTinChiProcessedTableManager =
       $LopTinChiAnnotationComposer,
       $LopTinChiCreateCompanionBuilder,
       $LopTinChiUpdateCompanionBuilder,
-      (
-        CourseClassData,
-        BaseReferences<_$MyDriftDatabase, LopTinChi, CourseClassData>,
-      ),
+      (CourseClassData, $LopTinChiReferences),
       CourseClassData,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool teachingAssignmentRefs})
     >;
 typedef $TeachingAssignmentCreateCompanionBuilder =
     TeachingAssignmentCompanion Function({
       required int classId,
       required int teacherId,
-      Value<int> order,
-      Value<double> contribution,
+      Value<int> sortOrder,
+      Value<double> weight,
       Value<int> rowid,
     });
 typedef $TeachingAssignmentUpdateCompanionBuilder =
     TeachingAssignmentCompanion Function({
       Value<int> classId,
       Value<int> teacherId,
-      Value<int> order,
-      Value<double> contribution,
+      Value<int> sortOrder,
+      Value<double> weight,
       Value<int> rowid,
     });
+
+final class $TeachingAssignmentReferences
+    extends
+        BaseReferences<
+          _$MyDriftDatabase,
+          TeachingAssignment,
+          TeachingAssignmentData
+        > {
+  $TeachingAssignmentReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static LopTinChi _classIdTable(_$MyDriftDatabase db) =>
+      db.lopTinChi.createAlias(
+        $_aliasNameGenerator(db.teachingAssignment.classId, db.lopTinChi.id),
+      );
+
+  $LopTinChiProcessedTableManager get classId {
+    final $_column = $_itemColumn<int>('class_id')!;
+
+    final manager = $LopTinChiTableManager(
+      $_db,
+      $_db.lopTinChi,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_classIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static Giangvien _teacherIdTable(_$MyDriftDatabase db) =>
+      db.giangvien.createAlias(
+        $_aliasNameGenerator(db.teachingAssignment.teacherId, db.giangvien.id),
+      );
+
+  $GiangvienProcessedTableManager get teacherId {
+    final $_column = $_itemColumn<int>('teacher_id')!;
+
+    final manager = $GiangvienTableManager(
+      $_db,
+      $_db.giangvien,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_teacherIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
 
 class $TeachingAssignmentFilterComposer
     extends Composer<_$MyDriftDatabase, TeachingAssignment> {
@@ -13068,25 +13317,61 @@ class $TeachingAssignmentFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get classId => $composableBuilder(
-    column: $table.classId,
+  ColumnFilters<int> get sortOrder => $composableBuilder(
+    column: $table.sortOrder,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get teacherId => $composableBuilder(
-    column: $table.teacherId,
+  ColumnFilters<double> get weight => $composableBuilder(
+    column: $table.weight,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get order => $composableBuilder(
-    column: $table.order,
-    builder: (column) => ColumnFilters(column),
-  );
+  $LopTinChiFilterComposer get classId {
+    final $LopTinChiFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.classId,
+      referencedTable: $db.lopTinChi,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $LopTinChiFilterComposer(
+            $db: $db,
+            $table: $db.lopTinChi,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
-  ColumnFilters<double> get contribution => $composableBuilder(
-    column: $table.contribution,
-    builder: (column) => ColumnFilters(column),
-  );
+  $GiangvienFilterComposer get teacherId {
+    final $GiangvienFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.teacherId,
+      referencedTable: $db.giangvien,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $GiangvienFilterComposer(
+            $db: $db,
+            $table: $db.giangvien,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $TeachingAssignmentOrderingComposer
@@ -13098,25 +13383,61 @@ class $TeachingAssignmentOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get classId => $composableBuilder(
-    column: $table.classId,
+  ColumnOrderings<int> get sortOrder => $composableBuilder(
+    column: $table.sortOrder,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get teacherId => $composableBuilder(
-    column: $table.teacherId,
+  ColumnOrderings<double> get weight => $composableBuilder(
+    column: $table.weight,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get order => $composableBuilder(
-    column: $table.order,
-    builder: (column) => ColumnOrderings(column),
-  );
+  $LopTinChiOrderingComposer get classId {
+    final $LopTinChiOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.classId,
+      referencedTable: $db.lopTinChi,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $LopTinChiOrderingComposer(
+            $db: $db,
+            $table: $db.lopTinChi,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
-  ColumnOrderings<double> get contribution => $composableBuilder(
-    column: $table.contribution,
-    builder: (column) => ColumnOrderings(column),
-  );
+  $GiangvienOrderingComposer get teacherId {
+    final $GiangvienOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.teacherId,
+      referencedTable: $db.giangvien,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $GiangvienOrderingComposer(
+            $db: $db,
+            $table: $db.giangvien,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $TeachingAssignmentAnnotationComposer
@@ -13128,19 +13449,57 @@ class $TeachingAssignmentAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get classId =>
-      $composableBuilder(column: $table.classId, builder: (column) => column);
+  GeneratedColumn<int> get sortOrder =>
+      $composableBuilder(column: $table.sortOrder, builder: (column) => column);
 
-  GeneratedColumn<int> get teacherId =>
-      $composableBuilder(column: $table.teacherId, builder: (column) => column);
+  GeneratedColumn<double> get weight =>
+      $composableBuilder(column: $table.weight, builder: (column) => column);
 
-  GeneratedColumn<int> get order =>
-      $composableBuilder(column: $table.order, builder: (column) => column);
+  $LopTinChiAnnotationComposer get classId {
+    final $LopTinChiAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.classId,
+      referencedTable: $db.lopTinChi,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $LopTinChiAnnotationComposer(
+            $db: $db,
+            $table: $db.lopTinChi,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
-  GeneratedColumn<double> get contribution => $composableBuilder(
-    column: $table.contribution,
-    builder: (column) => column,
-  );
+  $GiangvienAnnotationComposer get teacherId {
+    final $GiangvienAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.teacherId,
+      referencedTable: $db.giangvien,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $GiangvienAnnotationComposer(
+            $db: $db,
+            $table: $db.giangvien,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $TeachingAssignmentTableManager
@@ -13154,16 +13513,9 @@ class $TeachingAssignmentTableManager
           $TeachingAssignmentAnnotationComposer,
           $TeachingAssignmentCreateCompanionBuilder,
           $TeachingAssignmentUpdateCompanionBuilder,
-          (
-            TeachingAssignmentData,
-            BaseReferences<
-              _$MyDriftDatabase,
-              TeachingAssignment,
-              TeachingAssignmentData
-            >,
-          ),
+          (TeachingAssignmentData, $TeachingAssignmentReferences),
           TeachingAssignmentData,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool classId, bool teacherId})
         > {
   $TeachingAssignmentTableManager(
     _$MyDriftDatabase db,
@@ -13182,34 +13534,92 @@ class $TeachingAssignmentTableManager
               ({
                 Value<int> classId = const Value.absent(),
                 Value<int> teacherId = const Value.absent(),
-                Value<int> order = const Value.absent(),
-                Value<double> contribution = const Value.absent(),
+                Value<int> sortOrder = const Value.absent(),
+                Value<double> weight = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TeachingAssignmentCompanion(
                 classId: classId,
                 teacherId: teacherId,
-                order: order,
-                contribution: contribution,
+                sortOrder: sortOrder,
+                weight: weight,
                 rowid: rowid,
               ),
           createCompanionCallback:
               ({
                 required int classId,
                 required int teacherId,
-                Value<int> order = const Value.absent(),
-                Value<double> contribution = const Value.absent(),
+                Value<int> sortOrder = const Value.absent(),
+                Value<double> weight = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TeachingAssignmentCompanion.insert(
                 classId: classId,
                 teacherId: teacherId,
-                order: order,
-                contribution: contribution,
+                sortOrder: sortOrder,
+                weight: weight,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $TeachingAssignmentReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({classId = false, teacherId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (classId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.classId,
+                                referencedTable: $TeachingAssignmentReferences
+                                    ._classIdTable(db),
+                                referencedColumn: $TeachingAssignmentReferences
+                                    ._classIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+                    if (teacherId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.teacherId,
+                                referencedTable: $TeachingAssignmentReferences
+                                    ._teacherIdTable(db),
+                                referencedColumn: $TeachingAssignmentReferences
+                                    ._teacherIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
         ),
       );
 }
@@ -13224,16 +13634,9 @@ typedef $TeachingAssignmentProcessedTableManager =
       $TeachingAssignmentAnnotationComposer,
       $TeachingAssignmentCreateCompanionBuilder,
       $TeachingAssignmentUpdateCompanionBuilder,
-      (
-        TeachingAssignmentData,
-        BaseReferences<
-          _$MyDriftDatabase,
-          TeachingAssignment,
-          TeachingAssignmentData
-        >,
-      ),
+      (TeachingAssignmentData, $TeachingAssignmentReferences),
       TeachingAssignmentData,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool classId, bool teacherId})
     >;
 typedef $DangKyHocCreateCompanionBuilder =
     DangKyHocCompanion Function({

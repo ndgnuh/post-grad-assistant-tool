@@ -199,15 +199,13 @@ create table "LopTinChi" (
     "trangThai" INTEGER mapped by `const CourseClassStatusConverter()` AS status
 ) as CourseClassData;
 
-create table "TeachingAssignment" (
-    "classId" INTEGER NOT NULL,
-    "teacherId" INTEGER NOT NULL,
-    "order" INTEGER NOT NULL DEFAULT 1 AS "order",
-    "contribution" REAL NOT NULL DEFAULT 1.0 AS contribution,
-    PRIMARY KEY("classId", "teacherId"),
-    FOREIGN KEY("classId") REFERENCES "LopTinChi"("id"),
-    FOREIGN KEY("teacherId") REFERENCES "GiangVien"("id")
-) as TeachingAssignmentData;
+create table "teaching_assignment" (
+    "class_id" INTEGER NOT NULL REFERENCES "LopTinChi"("id"),
+    "teacher_id" INTEGER NOT NULL REFERENCES "GiangVien"("id"),
+    "sort_order" INTEGER NOT NULL DEFAULT 1,
+    "weight" REAL NOT NULL DEFAULT 1.0,
+    PRIMARY KEY("class_id", "teacher_id")
+);
 
 create table "DangKyHoc" (
     idLopTinChi INTEGER NOT NULL AS courseClassId,

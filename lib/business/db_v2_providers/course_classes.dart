@@ -66,7 +66,7 @@ class TeachingAssignmentsNotifier
     final db = await ref.watch(driftDatabaseProvider.future);
     final query = db.teachingAssignment.select()
       ..where((t) => t.classId.equals(courseClassId))
-      ..orderBy([(t) => OrderingTerm(expression: t.order)]);
+      ..orderBy([(t) => OrderingTerm(expression: t.sortOrder)]);
     final assignments = await query.get();
     return assignments;
   }
@@ -106,13 +106,13 @@ class TeachingTeachersNotifier extends AsyncNotifier<Map<TeacherData, double>> {
 
     final query = db.teachingAssignment.select()
       ..where((t) => t.classId.equals(courseClassId))
-      ..orderBy([(t) => OrderingTerm(expression: t.order)]);
+      ..orderBy([(t) => OrderingTerm(expression: t.sortOrder)]);
     final assignments = await query.get();
 
     final teachings = <TeacherData, double>{};
     for (final assignment in assignments) {
       final teacherId = assignment.teacherId;
-      final contribution = assignment.contribution;
+      final contribution = assignment.weight;
       final teacher = await ref.watch(teacherByIdProvider(teacherId).future);
       if (teacher != null) {
         teachings[teacher] = contribution;
@@ -139,8 +139,8 @@ class TeachingTeachersNotifier extends AsyncNotifier<Map<TeacherData, double>> {
         (entry) => TeachingAssignmentCompanion.insert(
           classId: courseClassId,
           teacherId: entry.key.id,
-          contribution: Value(entry.value),
-          order: Value(order++),
+          weight: Value(entry.value),
+          sortOrder: Value(order++),
         ),
       ),
     );

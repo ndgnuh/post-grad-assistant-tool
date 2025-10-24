@@ -1,17 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../business/drift_orm.dart';
-import './providers.dart';
+import 'providers.dart';
+
+class RegistrationNotificationButton extends ConsumerWidget {
+  final Widget Function(BuildContext context, String? message) builder;
+
+  const RegistrationNotificationButton({
+    super.key,
+    required this.builder,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final messageAsync = ref.watch(courseRegistrationMessageProvider);
+    switch (messageAsync) {
+      case AsyncLoading _:
+        return builder(context, null);
+      case AsyncError(:final error):
+        return Text("Error: $error");
+      case AsyncData(:final value):
+        return builder(context, value);
+    }
+  }
+}
 
 class SemesterPicker extends ConsumerWidget {
   const SemesterPicker({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final modelAsync = ref.read(semesterSelectionModelProvider);
+    final modelAsync = ref.watch(semesterSelectionModelProvider);
     switch (modelAsync) {
-      case AsyncLoading _:
-        return const CircularProgressIndicator();
+      case AsyncLoading():
+        return SizedBox.shrink(child: const CircularProgressIndicator());
       case AsyncError(:final error):
         return Text("Error: $error");
       default:
@@ -35,27 +58,5 @@ class SemesterPicker extends ConsumerWidget {
         notifier.select(value);
       },
     );
-  }
-}
-
-class RegistrationNotificationButton extends ConsumerWidget {
-  final Widget Function(BuildContext context, String? message) builder;
-
-  const RegistrationNotificationButton({
-    super.key,
-    required this.builder,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final messageAsync = ref.watch(courseRegistrationNotificationProvider);
-    switch (messageAsync) {
-      case AsyncLoading _:
-        return builder(context, null);
-      case AsyncError(:final error):
-        return Text("Error: $error");
-      case AsyncData(:final value):
-        return builder(context, value);
-    }
   }
 }

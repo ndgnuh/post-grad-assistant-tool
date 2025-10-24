@@ -26,46 +26,8 @@ Future main() async {
     databaseFactory = databaseFactoryFfi;
   }
 
-  // final AcademicGroupNames = [
-  //   "Khoa học dữ liệu và ứng dụng",
-  //   "Cơ sở toán học cho tin học và hệ thống thông tin",
-  //   "Tối ưu và tính toán khoa học",
-  //   "Xác suất thống kê và ứng dụng",
-  //   "Giải tích",
-  //   "Đại số",
-  // ];
-
-  // final db = orm.AppDatabaseV2();
-  // for (final group in AcademicGroupNames) {
-  //   final insertion = db
-  //       .into(db.academicGroup)
-  //       .insert(
-  //         orm.AcademicGroupCompanion.insert(
-  //           title: group,
-  //         ),
-  //       );
-  //
-  //   await insertion;
-  // }
-  // db
-  //     .into(db.profile)
-  //     .insert(
-  //       orm.ProfileCompanion.insert(
-  //         name: 'Default User',
-  //         phoneNumber: orm.Value('0123456789'),
-  //         address: orm.Value('123 Default St.'),
-  //         email: orm.Value('default'),
-  //         gender: orm.Gender.unknown,
-  //       ),
-  //     );
-
   const app = MyApp();
-  runApp(
-    ProviderScope(
-      // child: GlobalTextScalingWrapper(child: app),
-      child: app,
-    ),
-  );
+  runApp(ProviderScope(child: app));
 }
 
 final messengerKey = GlobalKey<ScaffoldMessengerState>();

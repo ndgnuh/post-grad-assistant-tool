@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/experimental/persist.dart';
 
 import '../db_v2_providers.dart';
 import './common.dart';
@@ -20,7 +21,7 @@ class SemesterSelectionModelNotifier extends _Notifier with _Mixin {
   String get prefKey => 'selection-model/semester/$name';
 
   @override
-  FutureOr<SemesterSelectionModel> build() async {
+  Future<SemesterSelectionModel> build() async {
     final ids = await ref.watch(semesterIdsProvider.future);
 
     // Fetch options by ID
@@ -44,22 +45,17 @@ class SemesterSelectionModelNotifier extends _Notifier with _Mixin {
       );
     }
 
-    try {
-      final selectedOption = options.firstWhere(
-        (option) => option.semester == selectedId,
-      );
+    // Try to find the selected option
+    final selectedOption = options
+        .where(
+          (option) => option.semester == selectedId,
+        )
+        .firstOrNull;
 
-      return SelectionModel<SemesterData>(
-        selected: selectedOption,
-        options: options,
-      );
-    } catch (e) {
-      // If the selected option is not found, return with no selection
-      return SelectionModel<SemesterData>(
-        selected: null,
-        options: options,
-      );
-    }
+    return SelectionModel<SemesterData>(
+      selected: selectedOption,
+      options: options,
+    );
   }
 
   @override

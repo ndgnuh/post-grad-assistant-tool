@@ -41,40 +41,50 @@ class CourseClassListPage extends StatelessWidget {
         body: ConstrainedBody(
           child: TabBarView(
             children: [
-              Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(gutter),
-                    child: IntrinsicHeight(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        spacing: gutter,
-                        children: [
-                          Expanded(
-                            child: SemesterPicker(),
-                          ),
-                          FilledButton.icon(
-                            onPressed: null,
-                            label: Text("Thêm"),
-                            icon: Icon(Symbols.add),
-                          ),
-                          _ImportButton(),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: gutter),
-                    child: Divider(),
-                  ),
-                  Expanded(child: _CourseClassesView()),
-                ],
-              ),
+              CourseClassListTab(),
               CourseClassActionTab(),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class CourseClassListTab extends StatelessWidget {
+  const CourseClassListTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final gutter = context.gutter;
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.all(gutter),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: gutter,
+              children: [
+                Expanded(
+                  child: SemesterPicker(),
+                ),
+                FilledButton.icon(
+                  onPressed: null,
+                  label: Text("Thêm"),
+                  icon: Icon(Symbols.add),
+                ),
+                _ImportButton(),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: gutter),
+          child: Divider(),
+        ),
+        Expanded(child: _CourseClassesView()),
+      ],
     );
   }
 }

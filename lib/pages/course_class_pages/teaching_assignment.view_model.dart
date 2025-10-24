@@ -67,7 +67,7 @@ class AssignedTeachersNotifier extends AsyncNotifier<Map<TeacherData, double>> {
         teacherByIdProvider(assignment.teacherId).future,
       );
       if (teacher != null) {
-        result[teacher] = assignment.contribution;
+        result[teacher] = assignment.weight;
       }
     }
     return result;
