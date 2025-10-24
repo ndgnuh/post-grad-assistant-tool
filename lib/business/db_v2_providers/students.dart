@@ -26,11 +26,11 @@ final studentByIdProvider = AsyncNotifierProvider.family(
 );
 
 final studentIdsByCohortProvider = AsyncNotifierProvider.family(
-  (CohortData cohort) => StudentIdsProvider(cohort: cohort),
+  (CohortData cohort) => StudentIdsNotifier(cohort: cohort),
 );
 
 final studentIdsBySearch = AsyncNotifierProvider.family(
-  (CohortData cohort) => StudentIdsProvider(cohort: cohort),
+  (CohortData cohort) => StudentIdsNotifier(cohort: cohort),
 );
 
 final studentMutationProvider = NotifierProvider.family(
@@ -152,19 +152,31 @@ class StudentByIdNotifier extends AsyncNotifier<StudentData?> {
   );
 }
 
-class StudentIdsProvider extends AsyncNotifier<List<int>> {
+class StudentIdsNotifier extends AsyncNotifier<List<int>> {
   final CohortData? cohort;
   final String? searchQuery;
+  final AdmissionCouncilData? admissionCouncil;
 
-  StudentIdsProvider({
+  StudentIdsNotifier({
     this.cohort,
     this.searchQuery,
+    this.admissionCouncil,
   });
 
   @override
   FutureOr<List<int>> build() async {
     final db = await ref.watch(driftDatabaseProvider.future);
     final stmt = db.student.select();
+
+    switch (admissionCouncil) {
+      case AdmissionCouncilData council:
+        stmt.where(
+          (t) =>
+              t.admissionCouncilId.equals(council.id) &
+              t.admissionType.equals(AdmissionType.interview.value) &
+              t.status.isNotValue(StudentStatus.delayedAdmission.value),
+        );
+    }
 
     switch (cohort) {
       case CohortData cohort:

@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+import 'package:pdfrx/pdfrx.dart';
 
 import 'pages/pages.dart' as pages;
 import 'preferences.dart';
@@ -15,6 +16,7 @@ import 'themes.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  pdfrxFlutterInitialize();
 
   if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
     await setupHotKeys();
