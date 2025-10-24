@@ -1,44 +1,13 @@
-import 'dart:math';
-
 import 'package:fami_tools/business/db_v2_providers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../business/copy_pasta.dart' as copy_pasta;
 import '../../business/copy_pasta.dart';
 import '../../custom_widgets.dart';
-import './_download.dart';
-import './_forms.dart';
-import './_widgets.dart';
-import './common.providers.dart';
-import './index.dart';
-import 'list.list_tab.dart';
-
-part 'list.action_tab.dart';
-part 'list.procedure_tab.dart';
-
-final _cohortGroupLinkController = TextEditingController(text: "");
-
-final _interviewLocationController = TextEditingController(text: "");
-
-final _interviewTimeProvider = NotifierProvider(_InterviewDate.new);
-
-/// Create a heading for expansion panel
-Widget Function(BuildContext, bool) _simpleExpansionHeading(String text) {
-  Widget buildHeading(context, isExpanded) {
-    return ListTile(
-      title: Text(
-        text,
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
-  return buildHeading;
-}
+import 'admission_list_action_tab.dart';
+import 'admission_list_list_tab.dart';
+import 'admission_list_procedure_tab.dart';
 
 class AdmissionListPage extends StatelessWidget {
   static const routeName = "/admission/list";
@@ -67,8 +36,8 @@ class AdmissionListPage extends StatelessWidget {
           child: TabBarView(
             children: [
               AdmissionListTabView(),
-              _AdmissionActionTabView(),
-              _AdmissionProcedureTabView(),
+              AdmissionActionTabView(),
+              AdmissionProcedureTabView(),
             ],
           ),
         ),

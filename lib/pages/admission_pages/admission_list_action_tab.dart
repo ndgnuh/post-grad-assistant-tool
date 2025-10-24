@@ -1,4 +1,16 @@
-part of 'list.dart';
+import 'package:fami_tools/business/db_v2_providers.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
+
+import '../../custom_widgets.dart';
+import '_download.dart';
+import '_forms.dart';
+import 'admission_pages.dart';
+import 'providers.dart';
+import 'widgets.dart';
 
 class _AddButton extends ConsumerWidget {
   @override
@@ -19,14 +31,15 @@ class _AddButton extends ConsumerWidget {
   }
 }
 
-class _AdmissionActionTabView extends ConsumerStatefulWidget {
+class AdmissionActionTabView extends ConsumerStatefulWidget {
+  const AdmissionActionTabView({super.key});
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       _AdmissionActionTabViewState();
 }
 
 class _AdmissionActionTabViewState
-    extends ConsumerState<_AdmissionActionTabView> {
+    extends ConsumerState<AdmissionActionTabView> {
   final expansionState = List.generate(4, (_) => true);
 
   @override
@@ -40,7 +53,7 @@ class _AdmissionActionTabViewState
           ExpansionPanel(
             canTapOnHeader: true,
             isExpanded: expansionState[0],
-            headerBuilder: _simpleExpansionHeading("Thêm hồ sơ"),
+            headerBuilder: simpleExpansionHeading("Thêm hồ sơ"),
             body: ListBody(
               children: [
                 ListTile(title: _AddButton()),
@@ -53,7 +66,7 @@ class _AdmissionActionTabViewState
           ExpansionPanel(
             isExpanded: expansionState[1],
             canTapOnHeader: true,
-            headerBuilder: _simpleExpansionHeading(
+            headerBuilder: simpleExpansionHeading(
               "Tải hồ sơ",
             ),
             body: ListBody(
@@ -70,7 +83,7 @@ class _AdmissionActionTabViewState
           ExpansionPanel(
             isExpanded: expansionState[2],
             canTapOnHeader: true,
-            headerBuilder: _simpleExpansionHeading("Mời phỏng vấn"),
+            headerBuilder: simpleExpansionHeading("Mời phỏng vấn"),
             body: ListBody(
               children: [
                 ListTile(
@@ -98,7 +111,7 @@ class _AdmissionActionTabViewState
           ExpansionPanel(
             canTapOnHeader: true,
             isExpanded: expansionState[3],
-            headerBuilder: _simpleExpansionHeading(
+            headerBuilder: simpleExpansionHeading(
               "Báo trúng tuyển",
             ),
             body: ListBody(

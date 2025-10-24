@@ -4,10 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/db_v2_providers.dart';
-import '../../business/drift_orm.dart';
 import '../../custom_widgets.dart';
-import './common.providers.dart';
-import './index.dart';
+import 'providers.dart';
+import 'admission_pages.dart';
 
 Widget Function(BuildContext, bool) _simpleExpansionHeading(String text) {
   Widget buildHeading(context, isExpanded) {

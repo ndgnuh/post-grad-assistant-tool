@@ -1,4 +1,6 @@
-part of 'list.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 typedef _ProcedureStepGroup = ({String name, List<_ProcedureStep> steps});
 typedef _ProcedureStep = ({String name, String description});
@@ -64,13 +66,14 @@ Trường hợp còn lại là diện phỏng vấn xét tuyển.""",
 
 /// Information only page
 /// State are only for widgets
-class _AdmissionProcedureTabView extends StatefulWidget {
+class AdmissionProcedureTabView extends StatefulWidget {
+  const AdmissionProcedureTabView({super.key});
+
   @override
   State<StatefulWidget> createState() => _AdmissionProcedureTabViewState();
 }
 
-class _AdmissionProcedureTabViewState
-    extends State<_AdmissionProcedureTabView> {
+class _AdmissionProcedureTabViewState extends State<AdmissionProcedureTabView> {
   int currentStep = 0;
 
   void onStepContinue() {

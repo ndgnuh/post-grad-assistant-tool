@@ -4,7 +4,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../business/copy_pasta.dart';
 import '../../business/drift_orm.dart';
-import 'common.providers.dart';
+import 'providers.dart';
+
+/// Create a heading for expansion panel
+Widget Function(BuildContext, bool) simpleExpansionHeading(String text) {
+  Widget buildHeading(context, isExpanded) {
+    return ListTile(
+      title: Text(
+        text,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  return buildHeading;
+}
 
 class CohortSelector extends ConsumerWidget {
   const CohortSelector({super.key});

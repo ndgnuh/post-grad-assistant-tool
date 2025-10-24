@@ -1,16 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+
 import '../../custom_widgets.dart';
-import './_widgets.dart';
-
-class PageState extends ChangeNotifier {
-  final String admissionId;
-
-  PageState({
-    required this.admissionId,
-  });
-}
 
 class AdmissionEditPage extends StatelessWidget {
   final String? admissionId;
@@ -22,8 +13,6 @@ class AdmissionEditPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gutter = context.gutter;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(admissionId == null ? "Thêm hồ sơ" : "Chỉnh sửa hồ sơ"),
@@ -137,4 +126,12 @@ class AdmissionEditPage extends StatelessWidget {
       ),
     );
   }
+}
+
+class PageState extends ChangeNotifier {
+  final String admissionId;
+
+  PageState({
+    required this.admissionId,
+  });
 }

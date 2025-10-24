@@ -8,8 +8,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:diacritic/diacritic.dart' as diacritic;
 
 import '../../business/db_v2_providers.dart';
-import './_widgets.dart';
-import 'common.providers.dart';
+import 'widgets.dart';
 
 class AdmissionEnrollmentPage extends StatelessWidget {
   static const routeName = '/admission/enrollment';

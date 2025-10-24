@@ -2,23 +2,22 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import 'admission/index.dart';
+import 'admission_pages/admission_pages.dart';
 import 'course_class_pages/course_class_pages.dart';
 import 'course_pages/course_pages.dart';
 import 'draft.dart' show DraftPage;
 import 'home_page/home_page.dart';
 import 'mobile/thesis_assign_list.dart' show MobilePageThesisAssignList;
-
 import 'phd_students/index.dart';
 import 'semester_pages/semester_pages.dart';
 import 'setting_pages/setting_pages.dart';
 import 'student_pages/student_pages.dart';
 import 'teacher_pages/teacher_pages.dart';
-import 'thesis_pages/thesis_pages.dart';
 import 'thesis_defense/index.dart';
+import 'thesis_pages/thesis_pages.dart';
 
-const intialSettingsRoute = InitialSetupPage.routeName;
 const initialLoadingRotue = InitialLoadingPage.routeName;
+const intialSettingsRoute = InitialSetupPage.routeName;
 
 final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
@@ -36,10 +35,11 @@ final initialRoute = switch (kReleaseMode) {
   // Admission
   // false => AdmissionListPage.routeName,
   // false => AdmissionEnrollmentPage.routeName,
+  false => AdmissionPaymentPage.routeName,
 
   // Course classes pages
   // ====================
-  false => CourseClassListPage.routeName,
+  // false => CourseClassListPage.routeName,
 
   // Thesis defends
   // false => ThesisDefenseRegisterPage.routeName,
@@ -246,6 +246,8 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       return const AdmissionImportPage();
     case AdmissionEnrollmentPage.routeName:
       return const AdmissionEnrollmentPage(studentId: 67);
+    case AdmissionPaymentPage.routeName:
+      return const AdmissionPaymentPage();
 
     /// Thesis topic management pages
     case ThesisListPage.routeName:
