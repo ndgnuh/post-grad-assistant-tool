@@ -226,7 +226,7 @@ class TeacherDetail extends ConsumerWidget {
         else ...[
           for (final course in courses)
             ListTile(
-              title: Text(course.vietnameseTitle),
+              title: Text(course.vietnameseName),
               subtitle: Text("Mã HP: ${course.id}"),
               trailing: IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),

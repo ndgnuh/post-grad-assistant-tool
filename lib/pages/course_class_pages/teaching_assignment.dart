@@ -10,9 +10,8 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../business/db_v2_providers.dart';
-import '../../business/drift_orm.dart';
-// import './_view_model.dart';
 import './_interpersonal.dart' as interpersonal;
+// import './_view_model.dart';
 
 part 'teaching_assignment.view_model.dart';
 
@@ -203,7 +202,7 @@ class TeachingInvitationPanel extends ConsumerWidget {
     final invitation = interpersonal.teachingInvitationMessage(
       pronoun: pronoun,
       semester: viewModel.semester,
-      courseName: viewModel.course.vietnameseTitle,
+      courseName: viewModel.course.vietnameseName,
       numberOfRegisteredStudents: viewModel.registrationCount,
     );
 
@@ -345,27 +344,33 @@ class _CandidateTeachersSection extends ConsumerWidget {
       children: [
         ListTile(title: Text("Chọn giảng viên")),
         Card(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: context.gutterTiny),
-              for (final (i, teacher) in teachers.indexed) ...[
-                RadioListTile<TeacherData>(
-                  value: teacher,
-                  groupValue: selectedTeacher,
-                  onChanged: (value) {
-                    final notifier = ref.read(
-                      selectedCandidateTeacherProvider(classId).notifier,
-                    );
-                    notifier.select(teacher);
-                  },
-                  title: Text(teacher.name),
-                  subtitle: Text(teacher.personalEmail ?? ""),
-                ),
-                if (i < teachers.length - 1) Divider(),
+          child: RadioGroup(
+            groupValue: selectedTeacher,
+            onChanged: (value) {
+              final notifier = ref.read(
+                selectedCandidateTeacherProvider(classId).notifier,
+              );
+              if (value != null) {
+                notifier.select(value);
+              } else {
+                notifier.clear();
+              }
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: context.gutterTiny),
+                for (final (i, teacher) in teachers.indexed) ...[
+                  RadioListTile<TeacherData>(
+                    value: teacher,
+                    title: Text(teacher.name),
+                    subtitle: Text(teacher.personalEmail ?? ""),
+                  ),
+                  if (i < teachers.length - 1) Divider(),
+                ],
+                SizedBox(height: context.gutterTiny),
               ],
-              SizedBox(height: context.gutterTiny),
-            ],
+            ),
           ),
         ),
       ],

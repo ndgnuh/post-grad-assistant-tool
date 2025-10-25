@@ -14,19 +14,18 @@ final admissionCouncilIdsProvider = AsyncNotifierProvider(
   AdmissionCouncilIdsNotifier.new,
 );
 
-typedef _A = AdmissionCouncilData;
-
-class AdmissionCouncilByIdNotifier extends AsyncNotifier<_A?> {
+class AdmissionCouncilByIdNotifier extends AsyncNotifier<AdmissionCouncilData> {
   final int councilId;
   AdmissionCouncilByIdNotifier(this.councilId);
 
   @override
-  FutureOr<AdmissionCouncilData?> build() async {
+  FutureOr<AdmissionCouncilData> build() async {
     final db = await ref.watch(driftDatabaseProvider.future);
-    final query = db.tieuBanXetTuyen.select()
+    final query = db.admissionCouncil.select()
       ..where((tbl) => tbl.id.equals(councilId));
     final council = await query.getSingleOrNull();
-    return council;
+    assert(council != null, 'Không có tiểu ban xét tuyển với ID $councilId');
+    return council!;
   }
 }
 
@@ -34,7 +33,10 @@ class AdmissionCouncilIdsNotifier extends AsyncNotifier<List<int>> {
   @override
   FutureOr<List<int>> build() async {
     final db = await ref.watch(driftDatabaseProvider.future);
-    final query = db.tieuBanXetTuyen.select().map((c) => c.id);
-    return await query.get();
+    print(db);
+    final query = db.admissionCouncil.select().map((c) => c.id);
+    final ids = await query.get();
+    print(ids);
+    return ids;
   }
 }

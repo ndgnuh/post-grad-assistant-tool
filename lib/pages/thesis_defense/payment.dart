@@ -10,7 +10,7 @@ import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart' hide FutureProvider;
 
 import '../../business/db_v1_providers.dart';
-import '../../business/db_v2_providers.dart' hide Thesis;
+import '../../business/db_v2_providers.dart' hide Thesis, Teacher;
 import '../../business/domain_objects.dart';
 import '../../custom_widgets.dart' show DirectoryPicker;
 import '../../services/pdf_builder/index.dart' as _;

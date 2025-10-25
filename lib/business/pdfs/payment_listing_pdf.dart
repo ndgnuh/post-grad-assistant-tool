@@ -4,13 +4,13 @@ import 'package:number_to_vietnamese_words/number_to_vietnamese_words.dart';
 import 'package:pdf/pdf.dart';
 
 import '../../services/pdf_builder/index.dart';
-import '../../services/pdf_widgets.dart';
+import '../../services/pdf_widgets.dart' hide pt;
 
 const _headings = [
   "TT",
   "Số\nhóa đơn",
   "Số\nchứng từ",
-  "Ngày chứng từ",
+  "Ngày\nchứng từ",
   "Mục,\ntiểu mục",
   "Nội dung chi",
   "Số tiền\n(đ)",
@@ -35,6 +35,7 @@ Future<Uint8List> paymentListingPdf({
               TextSpan(text: "\n"),
               TextSpan(text: "ĐẠI HỌC BÁCH KHOA HÀ NỘI"),
               TextSpan(text: "\n"),
+              WidgetSpan(child: SizedBox(height: 3 * pt)),
               WidgetSpan(
                 child: Container(width: 100, height: 1, color: PdfColors.black),
               ),
@@ -43,7 +44,8 @@ Future<Uint8List> paymentListingPdf({
         ),
       ),
 
-      SizedBox(height: 10), // Space between footer and content
+      // The big title
+      SizedBox(height: 18 * pt),
       Center(
         child: RichText(
           textAlign: TextAlign.center,
@@ -57,12 +59,17 @@ Future<Uint8List> paymentListingPdf({
           ),
         ),
       ),
-      SizedBox(height: 10), // Space between footer and content
 
+      /// Money unit
+      SizedBox(height: 12 * pt),
       Footer(
         trailing: Text("Đơn vị tính: đồng"),
       ),
+
+      /// Listing table + money in words
+      SizedBox(height: 6 * pt),
       PaymentListingTable(model: model),
+      SizedBox(height: 6 * pt),
       Footer(
         trailing: Text(
           "(Bằng chữ: ${model.total.toVietnameseWords()} đồng)",
@@ -74,48 +81,47 @@ Future<Uint8List> paymentListingPdf({
         ),
       ),
 
-      SizedBox(height: 10), // Space between footer and content
-      Footer(
-        leading: SizedBox(
-          width: 120,
-          child: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
+      // Sign area
+      SizedBox(height: 12 * pt),
+      Flex(
+        direction: Axis.horizontal,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Flexible(
+            child: Text(
+              "LẬP BIỂU",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Flexible(
+            child: Text(
+              "KẾ TOÁN TRƯỞNG",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Flexible(
+            flex: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                TextSpan(text: "\n"),
-                TextSpan(
-                  text: "LẬP BIỂU",
+                Text(
+                  "Hà Nội, ngày ..... tháng ..... năm ..........",
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
+                Text(
+                  "TƯQ GIÁM ĐỐC",
                   style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "TRƯỞNG KHOA KHOA TOÁN - TIN",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                  softWrap: false,
                 ),
               ],
             ),
           ),
-        ),
-        title: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            children: [
-              TextSpan(text: "\n"),
-              TextSpan(
-                text: "KẾ TOÁN TRƯỞNG",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
-        trailing: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            children: [
-              TextSpan(text: "Hà Nội, ngày .... tháng .... năm ........"),
-              TextSpan(text: "\n"),
-              TextSpan(
-                text: "TUQ GIÁM ĐỐC\nTRƯỞNG KHOA KHOA TOÁN - TIN",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
+        ],
       ),
     ],
     pageFormat: IsoPageFormat.verticalA4,
@@ -136,9 +142,9 @@ class PaymentListingTable extends StatelessWidget {
 
     // Insider payments
     final insiderRows = <List<String>>[];
-    for (final entry in insiderEntries) {
+    for (final (i, entry) in insiderEntries.indexed) {
       final row = <String>[
-        "",
+        (i + 1).toString(),
         "",
         "",
         "",
@@ -149,10 +155,11 @@ class PaymentListingTable extends StatelessWidget {
       insiderRows.add(row);
     }
 
+    // Outsider payments
     final outsiderRows = <List<String>>[];
-    for (final entry in outsiderEntries) {
+    for (final (i, entry) in outsiderEntries.indexed) {
       final row = <String>[
-        "",
+        (i + 1).toString(),
         "",
         "",
         "",
@@ -183,6 +190,9 @@ class PaymentListingTable extends StatelessWidget {
       model.outsiderTotal.formatMoney(),
     ];
 
+    // If either insider or outsider rows are empty, their summary row is omitted
+    final hasMultipleSection = !(insiderRows.isEmpty || outsiderRows.isEmpty);
+
     // Final summary row
     final totalRow = [
       "",
@@ -190,15 +200,30 @@ class PaymentListingTable extends StatelessWidget {
       "",
       "",
       "",
-      "TỔNG CỘNG ($_magicInsiderCode + $_magicOutsiderCode)",
+      if (hasMultipleSection)
+        "TỔNG CỘNG ($_magicInsiderCode + $_magicOutsiderCode)"
+      else
+        "TỔNG CỘNG",
       (model.insiderTotal + model.outsiderTotal).formatMoney(),
     ];
 
-    final boldRows = {
-      insiderRows.length, // The insider summary row
-      insiderRows.length + outsiderRows.length + 1, // The outsider summary row
-      insiderRows.length + outsiderRows.length + 2, // The final total row
-    };
+    // All the rows
+    final allRows = [
+      _headings,
+      ...insiderRows,
+      if (hasMultipleSection) insiderSummaryRow,
+      ...outsiderRows,
+      if (hasMultipleSection) outsiderSummaryRow,
+      totalRow,
+    ];
+
+    // Which row are bold?
+    final boldRows = <int>{allRows.length - 1};
+    if (hasMultipleSection) {
+      // Insider summary row
+      boldRows.add(insiderRows.length + 1);
+      boldRows.add(insiderRows.length + outsiderRows.length + 2);
+    }
 
     return TableHelper.fromTextArray(
       headerAlignments: {for (int i = 0; i < 8; i++) i: Alignment.center},
@@ -206,6 +231,12 @@ class PaymentListingTable extends StatelessWidget {
       cellAlignments: {
         6: Alignment.centerRight,
         5: Alignment.centerLeft, // Content column
+      },
+      cellBuilder: (col, data, row) {
+        if (col == 5 && !boldRows.contains(row)) {
+          return Text(data.toString(), textAlign: TextAlign.justify);
+        }
+        return null; // Default cell
       },
       textStyleBuilder: (col, data, row) {
         if (boldRows.contains(row)) {
@@ -220,14 +251,7 @@ class PaymentListingTable extends StatelessWidget {
         3: FixedColumnWidth(90), // Fixed width for invoice number
         5: FlexColumnWidth(), // Wider column for content
       },
-      data: [
-        _headings,
-        ...insiderRows,
-        insiderSummaryRow,
-        ...outsiderRows,
-        outsiderSummaryRow,
-        totalRow,
-      ],
+      data: allRows,
     );
   }
 }

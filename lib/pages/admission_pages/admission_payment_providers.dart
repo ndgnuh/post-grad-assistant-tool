@@ -12,6 +12,44 @@ const _perCouncilPay = _presidentPay + _secretaryPay + _memberPay * 3;
 const _presidentPay = 70_000;
 const _secretaryPay = 70_000;
 
+final paymentListingPdfProvider = FutureProvider<Uint8List>((ref) async {
+  final councilSelecionModel = await ref.watch(
+    admissionCouncilSelectionProvider.future,
+  );
+  final maybeCouncil = councilSelecionModel.selected;
+  assert(maybeCouncil != null, "Chưa chọn hội đồng tuyển sinh");
+  final council = maybeCouncil!;
+
+  // List students of this council
+  final ids = await ref.watch(
+    paymentStudentIdsProvider(council).future,
+  );
+  final students = await Future.wait(
+    ids.map(
+      (id) => ref.watch(studentByIdProvider(id).future),
+    ),
+  );
+
+  // Teachers in the council
+  final entries = <pdfs.PaymentListingEntry>[];
+  for (final student in students) {
+    final pdfs.PaymentListingEntry entry = (
+      amount: _perCouncilPay,
+      reason:
+          "Thanh toán tiền cho tiểu ban xét tuyển thạc sĩ theo định hướng nghiên cứu của thí sinh ${student!.name}, theo Quyết định số ........./QĐ-ĐHBK-TS ngày ...../...../..........",
+    );
+    entries.add(entry);
+  }
+
+  /// Creating the PDF model
+  final model = pdfs.PaymentListingTableModel(
+    reason: _paymentReason(council.year),
+    insiderEntries: entries,
+    outsiderEntries: [],
+  );
+  return pdfs.paymentListingPdf(model: model);
+});
+
 final paymentTablePdfProvider = FutureProvider<Uint8List>((ref) async {
   final councilSelecionModel = await ref.watch(
     admissionCouncilSelectionProvider.future,
@@ -150,7 +188,7 @@ final saveDirectoryProvider = NotifierProvider(
 );
 
 String _paymentReason(Object year) =>
-    "Bồi dưỡng tiểu ban xét tuyển thạc sĩ theo định hướng nghiên cứu năm $year";
+    "Bồi dưỡng tiểu ban xét tuyển thạc sĩ theo\nđịnh hướng nghiên cứu năm $year";
 
 class SaveDirectoryNotifier extends Notifier<String?> {
   @override

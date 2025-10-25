@@ -244,8 +244,8 @@ class _CourseClassesTableView extends StatelessWidget {
       };
 
       final course = cc.course;
-      final courseName = "${course.id} ${course.vietnameseTitle}";
-      final creditCount = course.credits.toString();
+      final courseName = "${course.id} ${course.vietnameseName}";
+      final creditCount = course.numCredits.toString();
       final assignments = cc.teachers;
 
       final teachers = cc.teachers.keys.map((t) => t.name).join(", ");

@@ -102,7 +102,7 @@ Future<Uint8List> createPdf({
             "Đợt học",
           ],
           rowBuilder: (int i, CourseData course) {
-            String name = "${course.englishTitle}\n${course.vietnameseTitle}";
+            String name = "${course.englishName}\n${course.vietnameseName}";
             // if (name.length > 70) {
             //   name = "${hp.tenTiengAnh}\n${hp.tenTiengViet}";
             // }
@@ -110,8 +110,8 @@ Future<Uint8List> createPdf({
               "${i + 1}",
               course.id,
               name,
-              course.workload,
-              course.courseCategory.label,
+              course.numCredits.toString(),
+              course.category.label,
               semester,
             ];
           },

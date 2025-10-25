@@ -14,22 +14,19 @@ create table "NienKhoa" (
     "groupUrl" TEXT NOT NULL DEFAULT ("") as "groupUrl"
 ) as CohortData;
 
-create table "TieuBanXetTuyen" (
+create table "admission_council" (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nam TEXT NOT NULL as year,
-    idChuTich INTEGER NOT NULL as presidentId,
-    idThuKy INTEGER NOT NULL as secretaryId,
-    idUyVien1 INTEGER NOT NULL as member1Id,
-    idUyVien2 INTEGER NOT NULL as member2Id,
-    idUyVien3 INTEGER  NOT NULL as member3Id,
-    FOREIGN KEY(idChuTich) REFERENCES GiangVien(id),
-    FOREIGN KEY(idThuKy) REFERENCES GiangVien(id),
-    FOREIGN KEY(idUyVien1) REFERENCES GiangVien(id),
-    FOREIGN KEY(idUyVien2) REFERENCES GiangVien(id),
-    FOREIGN KEY(idUyVien3) REFERENCES GiangVien(id)
-) as AdmissionCouncilData;
+    year TEXT NOT NULL as year,
+    president_id INTEGER NOT NULL REFERENCES teacher(id),
+    secretary_id INTEGER NOT NULL REFERENCES teacher(id),
+    member_1_id INTEGER NOT NULL REFERENCES teacher(id),
+    member_2_id INTEGER NOT NULL REFERENCES teacher(id),
+    member_3_id INTEGER  NOT NULL REFERENCES teacher(id),
+    establishment_decision_id TEXT NOT NULL,
+    establishment_decision_date TEXT NOT NULL
+);
 
-CREATE TABLE "HocVien" (
+CREATE TABLE student (
 	"id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "soHoSo" TEXT as admissionId,
 	"nienKhoa"	TEXT as cohort,
@@ -55,9 +52,9 @@ CREATE TABLE "HocVien" (
 	"idTieuBanXetTuyen"	INTEGER as admissionCouncilId,
     "idDienTuyenSinh" TEXT mapped by `const AdmissionTypeConverter()` as admissionType,
 	"thanhToanXetTuyen"	BOOL NOT NULL DEFAULT false as isAdmissionPaid,
-	FOREIGN KEY(idTieuBanXetTuyen) REFERENCES TieuBanXetTuyen(id),
+	FOREIGN KEY(idTieuBanXetTuyen) REFERENCES admission_council(id),
 	FOREIGN KEY(nienKhoa) REFERENCES NienKhoa(nienKhoa) ON UPDATE CASCADE
-) as StudentData;
+);
 
 create table "hocky" (
     "hocKy" TEXT NOT NULL PRIMARY KEY as semester,
@@ -68,14 +65,17 @@ create table "hocky" (
     "hanNhapDiem" TEXT NOT NULL mapped by `const SureYmdDateConverter()` as gradeSubmissionDeadline
 ) as SemesterData;
 
-create table "hocphan" (
-    "maHocPhan"	TEXT NOT NULL PRIMARY KEY as id,
-    "tenTiengViet"	TEXT NOT NULL as vietnameseTitle,
-    "tenTiengAnh"	TEXT NOT NULL as englishTitle,
-    "soTinChi"	INTEGER NOT NULL as credits,
-    "khoiKienThuc"	TEXT NOT NULL mapped by `const CourseCategoryConverter()` as courseCategory,
-    "khoiLuong"	TEXT NOT NULL as workload
-) as CourseData;
+create table course (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "vietnamese_name" TEXT NOT NULL,
+    "english_name"  TEXT NOT NULL,
+    "category"	TEXT NOT NULL mapped by `const CourseCategoryConverter()`,
+    "num_credits" INTEGER NOT NULL,
+    "num_theory_hours" INTEGER NOT NULL,
+    "num_practice_hours" INTEGER NOT NULL,
+    "num_lab_hours" INTEGER NOT NULL,
+    "num_self_study_hours" INTEGER NOT NULL
+);
 
 create table "detaithacsi" (
 	"id" INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -101,18 +101,18 @@ create table "detaithacsi" (
 	"nam"	TEXT as year,
 	"dangKyBaoVe"	INTEGER NOT NULL DEFAULT 0 as isRegisteredForDefense,
 	"nopHoSo"	INTEGER NOT NULL DEFAULT 0 as isProfileSubmitted,
-	FOREIGN KEY("idChuTich") REFERENCES "GiangVien"("id"),
-	FOREIGN KEY("idGiangVien") REFERENCES "GiangVien"("id"),
-	FOREIGN KEY("idPhanBien1") REFERENCES "GiangVien"("id"),
-	FOREIGN KEY("idPhanBien2") REFERENCES "GiangVien"("id"),
-	FOREIGN KEY("idThuKy") REFERENCES "GiangVien"("id"),
-	FOREIGN KEY("idUyVien") REFERENCES "GiangVien"("id")
+	FOREIGN KEY("idChuTich") REFERENCES "teacher"("id"),
+	FOREIGN KEY("idGiangVien") REFERENCES "teacher"("id"),
+	FOREIGN KEY("idPhanBien1") REFERENCES "teacher"("id"),
+	FOREIGN KEY("idPhanBien2") REFERENCES "teacher"("id"),
+	FOREIGN KEY("idThuKy") REFERENCES "teacher"("id"),
+	FOREIGN KEY("idUyVien") REFERENCES "teacher"("id")
 ) as ThesisData;
 
 -- Currently, just place barely enough information about lecturers
 -- to be able to link them to students
 -- We migrate to english later
-create table "giangvien" (
+create table teacher (
 	"id" integer not null primary key autoincrement,
 	"maCanBo"	text as managementId,
 	"hoTen"	text not null as name,
@@ -130,7 +130,7 @@ create table "giangvien" (
 	"mst"	text as taxCode,
 	"note"	text as note,
 	"ncm"	integer as academicGroupId
-) as TeacherData;
+);
 
 create table "phd_cohort" (
     "cohort" text not null primary key,
@@ -164,22 +164,22 @@ create table "phd_student" (
     "school_email" text unique,
     "created_time" text not null default current_timestamp,
     "updated_time" text not null default current_timestamp,
-    foreign key("admission_president_id") references "giangvien"("id"),
-    foreign key("admission_president_id") references "giangvien"("id"),
-    foreign key("admission_secretary_id") references "giangvien"("id"),
-    foreign key("admission_1st_member_id") references "giangvien"("id"),
-    foreign key("admission_2nd_member_id") references "giangvien"("id"),
-    foreign key("admission_3rd_member_id") references "giangvien"("id"),
-    foreign key("supervisor_id") references "giangvien"("id"),
-    foreign key("secondary_supervisor_id") references "giangvien"("id")
+    foreign key("admission_president_id") references "teacher"("id"),
+    foreign key("admission_president_id") references "teacher"("id"),
+    foreign key("admission_secretary_id") references "teacher"("id"),
+    foreign key("admission_1st_member_id") references "teacher"("id"),
+    foreign key("admission_2nd_member_id") references "teacher"("id"),
+    foreign key("admission_3rd_member_id") references "teacher"("id"),
+    foreign key("supervisor_id") references "teacher"("id"),
+    foreign key("secondary_supervisor_id") references "teacher"("id")
 );
 
 create table "DangKyGiangDay" (
     "idGiangVien" INTEGER NOT NULL AS teacherId,
     "maHocPhan" TEXT NOT NULL AS courseId,
     PRIMARY KEY("idGiangVien", "maHocPhan"),
-    FOREIGN KEY("idGiangVien") REFERENCES "giangvien"("id"),
-    FOREIGN KEY("maHocPhan") REFERENCES "hocphan"("maHocPhan")
+    FOREIGN KEY("idGiangVien") REFERENCES teacher(id),
+    FOREIGN KEY("maHocPhan") REFERENCES course(id)
 ) as TeachingRegistrationData;
 
 create table "LopTinChi" (
@@ -201,7 +201,7 @@ create table "LopTinChi" (
 
 create table "teaching_assignment" (
     "class_id" INTEGER NOT NULL REFERENCES "LopTinChi"("id"),
-    "teacher_id" INTEGER NOT NULL REFERENCES "GiangVien"("id"),
+    "teacher_id" INTEGER NOT NULL REFERENCES "teacher"("id"),
     "sort_order" INTEGER NOT NULL DEFAULT 1,
     "weight" REAL NOT NULL DEFAULT 1.0,
     PRIMARY KEY("class_id", "teacher_id")
@@ -220,7 +220,7 @@ create table "DangKyHoc" (
 searchTeacher(
     :searchText as TEXT OR NULL,
     :outsider as BOOLEAN OR NULL
-): SELECT * FROM giangvien
+): SELECT * FROM teacher
     where hoten LIKE '%' || :searchText || '%'
     or email LIKE '%' || :searchText || '%'
     or macanbo LIKE '%' || :searchText || '%'

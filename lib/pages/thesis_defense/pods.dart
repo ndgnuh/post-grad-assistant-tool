@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../business/db_v1_providers.dart';
 import '../../business/db_v2_providers.dart'
-    hide Student, thesisByIdProvider, Thesis;
+    hide Student, thesisByIdProvider, Thesis, Teacher;
 import '../../business/domain_objects.dart';
 import './payment_pdf.dart';
 

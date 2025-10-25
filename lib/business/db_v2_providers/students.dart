@@ -54,7 +54,7 @@ class DelayedAdmissionStudentIdsNotifier extends AsyncNotifier<List<int>> {
   @override
   FutureOr<List<int>> build() async {
     final db = await ref.watch(driftDatabaseProvider.future);
-    final query = db.hocVien.select()
+    final query = db.student.select()
       ..where((tbl) => tbl.status.equals(StudentStatus.delayedAdmission.value));
     final students = await query.get();
     return students.map((e) => e.id).toList();
@@ -68,7 +68,7 @@ class FilteredAdmissionIdsNotifier extends AsyncNotifier<List<int>> {
   @override
   FutureOr<List<int>> build() async {
     final db = await ref.watch(driftDatabaseProvider.future);
-    final query = db.hocVien.select()
+    final query = db.student.select()
       ..orderBy([
         (tbl) => OrderingTerm(
           expression: tbl.admissionId,
@@ -92,7 +92,7 @@ class StudentByIdNotifier extends AsyncNotifier<StudentData?> {
   @override
   FutureOr<StudentData?> build() async {
     final db = await ref.watch(driftDatabaseProvider.future);
-    final query = db.hocVien.select()..where((tbl) => tbl.id.equals(studentId));
+    final query = db.student.select()..where((tbl) => tbl.id.equals(studentId));
     return await query.getSingleOrNull();
   }
 
@@ -104,7 +104,7 @@ class StudentByIdNotifier extends AsyncNotifier<StudentData?> {
     StudentStatus? status,
   }) async {
     final db = await ref.watch(driftDatabaseProvider.future);
-    final stmt = db.hocVien.update()..where((tbl) => tbl.id.equals(studentId));
+    final stmt = db.student.update()..where((tbl) => tbl.id.equals(studentId));
     await stmt.write(
       StudentCompanion(
         personalEmail: personalEmail != null
@@ -226,7 +226,7 @@ class StudentMutationNotifier extends Notifier<void> {
     }
 
     final db = await ref.watch(driftDatabaseProvider.future);
-    final stmt = db.hocVien.update()..where((t) => t.id.equals(this.studentId));
+    final stmt = db.student.update()..where((t) => t.id.equals(this.studentId));
     await stmt.write(
       StudentCompanion(
         cohort: Value(cohortId),
@@ -263,7 +263,7 @@ class StudentMutationNotifier extends Notifier<void> {
     final stmt = db.student.update()
       ..where((student) => student.id.equals(studentId));
     await stmt.write(
-      HocVienCompanion(
+      StudentCompanion(
         status: Value(nextStatus),
       ),
     );

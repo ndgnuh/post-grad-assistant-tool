@@ -502,7 +502,7 @@ Future<Uint8List> buildPaymentSummaryPdf({
 
 List<Widget> _buildPaymentSummary({
   required Context context,
-  required Map<Teacher, int> payments,
+  required Map<GiangVien, int> payments,
   required String paymentReason,
 }) {
   /// This function builds a payment summary PDF document.
@@ -514,7 +514,7 @@ List<Widget> _buildPaymentSummary({
 
   final totalBeforeTax = payments.values.fold(0, (a, b) => a + b);
   final taxRate = 0.1; // 10% tax rate
-  final afterTax = <Teacher, int>{};
+  final afterTax = <GiangVien, int>{};
   int totalTax = 0;
   int totalAfterTax = 0;
   paymentReason = paymentReason.toUpperCase();
@@ -699,7 +699,7 @@ List<Widget> _buildPaymentSummary({
 }
 
 class PayoutPerTeacher {
-  final Teacher teacher;
+  final GiangVien teacher;
   final int timesPresident;
   final int timesSecretary;
   final int timesReviewer;
@@ -759,9 +759,9 @@ class PayoutPerTeacher {
 // This is used to render payment documents
 class ThesisPaymentPdfModel {
   final List<ThesisProxy> theses;
-  final List<Teacher> teachers;
+  final List<GiangVien> teachers;
   final String paymentReason;
-  final Map<Teacher, PayoutPerTeacher> payoutPerTeacher;
+  final Map<GiangVien, PayoutPerTeacher> payoutPerTeacher;
   final Map<ThesisProxy, int> insiderListings;
   final Map<ThesisProxy, int> outsiderListings;
   final int totalBeforeTax;
@@ -783,12 +783,12 @@ class ThesisPaymentPdfModel {
     required this.totalOutsiderPayout,
   });
 
-  List<Teacher> get insiderTeachers => [
+  List<GiangVien> get insiderTeachers => [
     for (final teacher in teachers)
       if (!teacher.isForeign) teacher,
   ];
 
-  List<Teacher> get outsiderTeachers => [
+  List<GiangVien> get outsiderTeachers => [
     for (final teacher in teachers)
       if (teacher.isForeign) teacher,
   ];
@@ -809,11 +809,11 @@ class ThesisPaymentPdfModel {
     theses ??= [for (final proxy in thesisProxies) proxy.thesis];
 
     // Resolve payout per teachers and list of teachers
-    final teachers = <Teacher>{};
-    final timesPresident = <Teacher, int>{};
-    final timesSecretary = <Teacher, int>{};
-    final timesReviewer = <Teacher, int>{};
-    final timesMember = <Teacher, int>{};
+    final teachers = <GiangVien>{};
+    final timesPresident = <GiangVien, int>{};
+    final timesSecretary = <GiangVien, int>{};
+    final timesReviewer = <GiangVien, int>{};
+    final timesMember = <GiangVien, int>{};
 
     for (final thesis in thesisProxies) {
       final president = thesis.president!;
@@ -837,7 +837,7 @@ class ThesisPaymentPdfModel {
       teachers.add(member);
     }
 
-    final payoutPerTeacher = <Teacher, PayoutPerTeacher>{};
+    final payoutPerTeacher = <GiangVien, PayoutPerTeacher>{};
 
     // Sort teachers by foreign status and then by name
     final teachersList = teachers.toList()
@@ -868,7 +868,7 @@ class ThesisPaymentPdfModel {
     final insiderListings = <ThesisProxy, int>{};
     final outsiderListings = <ThesisProxy, int>{};
 
-    void addMoney(ThesisProxy thesis, Teacher teacher, int amount) {
+    void addMoney(ThesisProxy thesis, GiangVien teacher, int amount) {
       final tgt = (teacher.isForeign) ? outsiderListings : insiderListings;
       tgt[thesis] = (tgt[thesis] ?? 0) + amount;
     }

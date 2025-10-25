@@ -99,11 +99,16 @@ class AdmissionPaymentPage extends StatelessWidget {
                     ),
 
                     Divider(),
-                    ListTile(
-                      title: Text("Bản kê thanh toán"),
-                      subtitle: Text("Xem trước bản kê thanh toán"),
-                      trailing: Icon(Symbols.chevron_forward),
-                      enabled: false,
+                    _PdfViewButton(
+                      pdfProvider: paymentListingPdfProvider,
+                      sourceName: "ban-ke-thanh-toan.pdf",
+                      builder: (context, callback, error) => ListTile(
+                        title: Text("Bản kê thanh toán"),
+                        subtitle: Text(error ?? "Xem trước bản kê thanh toán"),
+                        trailing: Icon(Symbols.chevron_forward),
+                        enabled: callback != null,
+                        onTap: callback,
+                      ),
                     ),
 
                     Divider(),

@@ -581,7 +581,7 @@ enum DienTuyenSinh {
 
 @freezed
 abstract class GiangVien with _$GiangVien {
-  static const table = "GiangVien";
+  static const table = "teacher";
   static const idField = "id";
   factory GiangVien({
     required int id,
@@ -983,7 +983,7 @@ abstract class HocKy with _$HocKy {
 
 @freezed
 abstract class HocPhan with _$HocPhan {
-  static const table = "HocPhan";
+  static const table = "Course";
   static const idField = "maHocPhan";
   const factory HocPhan({
     required String maHocPhan,
@@ -1113,7 +1113,7 @@ enum HocVi {
 
 @freezed
 abstract class HocVien with _$HocVien {
-  static const table = "HocVien";
+  static const table = "student";
   static const idField = "id";
 
   const factory HocVien({
@@ -1627,7 +1627,7 @@ abstract class TeachingRegistration with _$TeachingRegistration {
 
 @freezed
 abstract class TieuBanXetTuyen with _$TieuBanXetTuyen {
-  static const table = "TieuBanXetTuyen";
+  static const table = "admission_council";
   const factory TieuBanXetTuyen({
     required int id,
     required String nam,

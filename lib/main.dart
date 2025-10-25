@@ -29,7 +29,20 @@ Future main() async {
   }
 
   const app = MyApp();
-  runApp(ProviderScope(child: app));
+  runApp(
+    ProviderScope(
+      child: app,
+      retry: (int retryCount, Object error) {
+        print(error);
+
+        if (retryCount >= 5) return null;
+        // Exponential backoff
+        return Duration(
+          milliseconds: 200 * (1 << retryCount),
+        );
+      },
+    ),
+  );
 }
 
 final messengerKey = GlobalKey<ScaffoldMessengerState>();

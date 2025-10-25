@@ -44,6 +44,10 @@ class SelectedCandidateTeacherNotifier extends AsyncNotifier<TeacherData?> {
   void select(TeacherData teacher) {
     state = AsyncData(teacher);
   }
+
+  void clear() {
+    state = AsyncData(null);
+  }
 }
 
 class AssignedTeachersNotifier extends AsyncNotifier<Map<TeacherData, double>> {

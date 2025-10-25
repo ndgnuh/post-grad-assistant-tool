@@ -12,7 +12,7 @@ final insiderTeachersProvider = AsyncNotifierProvider(
 );
 
 final teacherByIdProvider = AsyncNotifierProvider.family(
-  TeacherById.new,
+  TeacherByIdNotifier.new,
 );
 
 final teacherIdsByCourseProvider = AsyncNotifierProvider.family(
@@ -27,7 +27,7 @@ class InsiderTeacherIds extends AsyncNotifier<List<int>> {
   @override
   Future<List<int>> build() async {
     final db = await ref.watch(driftDatabaseProvider.future);
-    final insiderIds = await db.managers.giangvien
+    final insiderIds = await db.managers.teacher
         .filter((t) => t.isOutsider(true))
         .map((t) => t.id)
         .get();
@@ -50,16 +50,19 @@ class InsiderTeachers extends AsyncNotifier<List<TeacherData>> {
   }
 }
 
-class TeacherById extends AsyncNotifier<TeacherData?> {
+class TeacherByIdNotifier extends AsyncNotifier<TeacherData> {
   final int teacherId;
-  TeacherById(this.teacherId);
+  TeacherByIdNotifier(this.teacherId);
 
   @override
-  Future<TeacherData?> build() async {
+  Future<TeacherData> build() async {
     final db = await ref.watch(driftDatabaseProvider.future);
-    return db.managers.giangvien
+    final maybeTeacher = await db.managers.teacher
         .filter((t) => t.id.equals(teacherId))
         .getSingleOrNull();
+
+    assert(maybeTeacher != null, "Không tìm thấy giảng viên với ID $teacherId");
+    return maybeTeacher as TeacherData;
   }
 }
 

@@ -19,7 +19,7 @@ class CourseByIdNotifier extends AsyncNotifier<CourseData?> {
   @override
   Future<CourseData?> build() async {
     final db = await ref.watch(driftDatabaseProvider.future);
-    return db.managers.hocphan
+    return db.managers.course
         .filter((c) => c.id.equals(courseId))
         .getSingleOrNull();
   }
@@ -29,7 +29,7 @@ class CoursesNotifier extends AsyncNotifier<List<CourseData>> {
   @override
   FutureOr<List<CourseData>> build() async {
     final db = await ref.watch(driftDatabaseProvider.future);
-    final courses = await db.managers.hocphan.get();
+    final courses = await db.managers.course.get();
     return courses;
   }
 }

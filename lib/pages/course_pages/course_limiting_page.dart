@@ -158,7 +158,7 @@ class CourseSelection {
     var filtered = leftOverCourses;
     if (selectedCategory != null) {
       filtered = filtered
-          .where((course) => course.courseCategory == selectedCategory)
+          .where((course) => course.category == selectedCategory)
           .toSet();
     }
 
@@ -169,8 +169,8 @@ class CourseSelection {
     final lowerQuery = searchQuery.toLowerCase();
     return filtered.where((CourseData course) {
       return course.id.toLowerCase().contains(lowerQuery) ||
-          course.vietnameseTitle.toLowerCase().contains(lowerQuery) ||
-          course.englishTitle.toLowerCase().contains(lowerQuery);
+          course.vietnameseName.toLowerCase().contains(lowerQuery) ||
+          course.englishName.toLowerCase().contains(lowerQuery);
     }).toList();
   }
 
@@ -285,9 +285,9 @@ class _CourseListView extends StatelessWidget {
       itemBuilder: (context, i) {
         final course = courses[i];
         final label =
-            "${course.id} - ${course.vietnameseTitle} (${course.credits} TC)";
+            "${course.id} - ${course.vietnameseName} (${course.numCredits} TC)";
         return ListTile(
-          subtitle: Text(course.englishTitle),
+          subtitle: Text(course.englishName),
           title: Text(label),
           onTap: () => actionOnPressed(course),
           trailing: IconButton(
@@ -533,7 +533,7 @@ class _SelectedCourseLabel extends ConsumerWidget {
 
     final totalCredits = selectedCourses.fold<int>(
       0,
-      (sum, course) => sum + course.credits,
+      (sum, course) => sum + course.numCredits,
     );
     final totalCourse = selectedCourses.length;
     return ListTile(
