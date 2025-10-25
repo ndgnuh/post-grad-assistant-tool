@@ -197,7 +197,7 @@ class _CouncilMemberItem extends ConsumerWidget {
           ),
         SearchAnchor(
           suggestionsBuilder: (context, controller) async {
-            final db = await ref.read(driftDatabaseProvider.future);
+            final db = await ref.read(appDatabaseProvider.future);
             final teachers = await db
                 .searchTeacher(searchText: controller.text)
                 .get();

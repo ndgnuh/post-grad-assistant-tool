@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:intl/intl.dart';
 import 'package:number_to_vietnamese_words/number_to_vietnamese_words.dart';
 
 import '../../services/pdf_builder/index.dart';
@@ -24,6 +25,8 @@ class AdmissionPaymentTableModel {
   final TeacherData member1;
   final TeacherData member2;
   final TeacherData member3;
+  final String establishmentDecisionCode;
+  final DateTime establishmentDecisionDate;
 
   final int numberOfStudents;
   final int presidentAllowance;
@@ -47,6 +50,8 @@ class AdmissionPaymentTableModel {
     required this.presidentAllowance,
     required this.secretaryAllowance,
     required this.memberAllowance,
+    required this.establishmentDecisionCode,
+    required this.establishmentDecisionDate,
   });
 }
 
@@ -58,8 +63,13 @@ class AdmissionPaymentTablePdf extends StatelessWidget {
   Widget build(Context context) {
     final title1 = "THANH TOÁN TIỀN BỒI DƯỠNG";
     final title2 = "TIỂU BAN XÉT TUYỂN THẠC SĨ THEO ĐỊNH HƯỚNG NGHIÊN CỨU";
+    final dateFormat = DateFormat("ngày dd tháng MM năm yyyy");
+    final estCode = model.establishmentDecisionCode;
+    final estDay = model.establishmentDecisionDate.day;
+    final estMonth = model.establishmentDecisionDate.month;
+    final estYear = model.establishmentDecisionDate.year;
     final subtitle =
-        "(Kèm theo Quyết định số: ........./QĐ-ĐHBK-TS ngày ..... tháng ..... năm .......... của Chủ tịch HĐTS năm ..........)";
+        "(Kèm theo Quyết định số: $estCode ngày $estDay tháng $estMonth năm $estYear của Chủ tịch HĐTS năm $estYear)";
     final councilName = "Tiểu ban chuyên ngành: Toán tin";
 
     return Column(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../business/db_v2_providers.dart';
 import '../../preferences.dart';
+import 'providers.dart';
 import 'setting_pages.dart';
 import '../pages.dart' as pages;
 
@@ -19,19 +19,10 @@ class InitialLoadingPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final navigator = Navigator.of(context);
-    final isDarkModeState = ref.watch(isDarkModeProvider);
-    final databaseAsync = ref.watch(nullableDatabaseProvider);
 
-    switch (isDarkModeState) {
-      case AsyncLoading():
-        return loading;
-      case AsyncError(:final error):
-        return ErrorPage(error: error);
-      case AsyncData():
-        break;
-    }
+    final initialSetupDoneAsync = ref.watch(initialSetupDoneProvider);
 
-    switch (databaseAsync) {
+    switch (initialSetupDoneAsync) {
       case AsyncLoading():
         return loading;
       case AsyncError(:final error):
@@ -39,13 +30,15 @@ class InitialLoadingPage extends ConsumerWidget {
       case AsyncData(:final value):
         // Navigate to the initial setup page
         switch (value) {
-          case null:
+          case false:
             Future.microtask(() {
               navigator.pushReplacementNamed(InitialSetupPage.routeName);
             });
           default:
-            Future.microtask(() {
-              navigator.pushReplacementNamed(pages.initialRoute);
+            ref.watch(isDarkModeProvider.future).then((_) {
+              Future.microtask(() {
+                navigator.pushReplacementNamed(pages.initialRoute);
+              });
             });
         }
         return loading;

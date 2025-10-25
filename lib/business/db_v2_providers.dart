@@ -9,3 +9,4 @@ export './db_v2_providers/course_classes.dart';
 export './db_v2_providers/cohorts.dart';
 export './db_v2_providers/students.dart';
 export './db_v2_providers/admission_council.dart';
+export 'db_v2_providers/preference.dart';

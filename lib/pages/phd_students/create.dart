@@ -296,7 +296,7 @@ class _TeacherSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dbState = ref.watch(driftDatabaseProvider);
+    final dbState = ref.watch(appDatabaseProvider);
     switch (dbState) {
       case AsyncError(:final error, :final stackTrace):
         return Text('Error: $error\n$stackTrace');

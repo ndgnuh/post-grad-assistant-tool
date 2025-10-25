@@ -16,7 +16,7 @@ final semesterByIdProvider = AsyncNotifierProvider.family(
 class SemesterIdsNotifier extends AsyncNotifier<List<String>> {
   @override
   FutureOr<List<String>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final semesters = await db.managers.hocky.map((h) => h.semester).get();
     return semesters;
   }
@@ -28,7 +28,7 @@ class SemesterByIdNotifier extends AsyncNotifier<SemesterData?> {
 
   @override
   FutureOr<SemesterData?> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final stmt = db.hocky.select()..where((s) => s.semester.equals(semesterId));
     final semester = await stmt.getSingleOrNull();
     return semester;

@@ -20,7 +20,7 @@ class AdmissionCouncilByIdNotifier extends AsyncNotifier<AdmissionCouncilData> {
 
   @override
   FutureOr<AdmissionCouncilData> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final query = db.admissionCouncil.select()
       ..where((tbl) => tbl.id.equals(councilId));
     final council = await query.getSingleOrNull();
@@ -32,7 +32,7 @@ class AdmissionCouncilByIdNotifier extends AsyncNotifier<AdmissionCouncilData> {
 class AdmissionCouncilIdsNotifier extends AsyncNotifier<List<int>> {
   @override
   FutureOr<List<int>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     print(db);
     final query = db.admissionCouncil.select().map((c) => c.id);
     final ids = await query.get();

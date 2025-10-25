@@ -42,7 +42,7 @@ class ThesisListViewModelNotifier extends AsyncNotifier<ThesisListViewModel> {
       );
     }
 
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final ids = await db.searchTheses(searchText: searchText).get();
 
     final theses = <ThesisData>[];
@@ -57,7 +57,7 @@ class ThesisListViewModelNotifier extends AsyncNotifier<ThesisListViewModel> {
       final supervisor = await ref.watch(
         teacherByIdProvider(thesis.supervisorId).future,
       );
-      supervisors[thesis] = supervisor!;
+      supervisors[thesis] = supervisor;
 
       switch (thesis.studentId) {
         case int id:

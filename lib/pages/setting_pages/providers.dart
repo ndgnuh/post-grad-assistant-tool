@@ -1,5 +1,8 @@
+import 'package:fami_tools/preferences.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:file_picker/file_picker.dart';
+
+import '../../business/db_v2_providers.dart';
 
 final saveDirectoryProvider = NotifierProvider(
   SaveDirectoryNotifier.new,
@@ -19,3 +22,23 @@ class SaveDirectoryNotifier extends Notifier<String?> {
     state = picked;
   }
 }
+
+final initialSetupDoneProvider = FutureProvider<bool>((ref) async {
+  final mainDb = await ref.watch(nullableAppDatabaseProvider.future);
+  print(mainDb);
+  switch (mainDb) {
+    case null:
+      return false;
+  }
+
+  final fileDbAsync = ref.watch(nullableFileDatabaseProvider);
+  print(fileDbAsync);
+  final fileDb = await ref.watch(nullableFileDatabaseProvider.future);
+  switch (fileDb) {
+    case null:
+      return false;
+    default:
+  }
+
+  return true;
+});

@@ -65,7 +65,7 @@ Link nhóm Zalo: TBA""",
 class _PageBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dbState = ref.watch(driftDatabaseProvider);
+    final dbState = ref.watch(appDatabaseProvider);
     switch (dbState) {
       case AsyncLoading():
         return CircularProgressIndicator();
@@ -74,7 +74,7 @@ class _PageBody extends ConsumerWidget {
       default:
     }
 
-    final MyDriftDatabase db = dbState.value!;
+    final AppDatabase db = dbState.value!;
 
     final allTables = db.allTables.toList();
 

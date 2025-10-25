@@ -82,7 +82,7 @@ class StudentListViewModelNotifier extends AsyncNotifier<StudentListViewModel> {
     }
 
     // Query the Ids from DB
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final (fallback) = switch (filterMode) {
       FilterMode.and => true,
       FilterMode.or => false,

@@ -1,9 +1,0 @@
-import 'business_enums.dart';
-
-create table documents (
-    "hash" text not null primary key,
-    "type" text not null,
-    "content" blob not null
-);
-
--- vim: filetype=sql

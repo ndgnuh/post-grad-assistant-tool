@@ -26,7 +26,7 @@ final phdStudentIdsByCohortProvider = AsyncNotifierProvider.family(
 class PhdCohorts extends AsyncNotifier<List<String>> {
   @override
   Future<List<String>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final stmt = db.phdCohort.select()
       ..orderBy([
         (x) => OrderingTerm(expression: x.cohort, mode: OrderingMode.desc),
@@ -42,7 +42,7 @@ class PhdStudentByIdNotifier extends AsyncNotifier<PhdStudentData?> {
 
   @override
   Future<PhdStudentData?> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     return await db.managers.phdStudent
         .filter((student) => student.id.equals(studentId))
         .getSingleOrNull();
@@ -56,7 +56,7 @@ class PhdStudentIdsNotifier extends AsyncNotifier<List<int>> {
 
   @override
   Future<List<int>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final stmt = db.phdStudent.select();
 
     switch (cohort) {
@@ -81,7 +81,7 @@ class PhdStudentIdsByCohortNotifier extends AsyncNotifier<List<int>> {
 
   @override
   Future<List<int>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final query = db.managers.phdStudent
         .filter((p) => p.cohort.equals(cohort))
         .map((p) => p.id);
@@ -112,7 +112,7 @@ class PhdStudentsMutationNotifier extends Notifier<void> {
     required int? secondarySupervisorId,
     required String majorSpecialization,
   }) async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final companion = PhdStudentCompanion.insert(
       // Admission information
       admissionId: admissionId,

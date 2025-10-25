@@ -15,7 +15,7 @@ final cohortByIdProvider = AsyncNotifierProvider.family(
 class CohortIdsNotifer extends AsyncNotifier<List<String>> {
   @override
   FutureOr<List<String>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final cohorts = await db.nienKhoa
         .select()
         .map((cohort) => cohort.cohort)
@@ -30,7 +30,7 @@ class CohortByIdNotifier extends AsyncNotifier<CohortData?> {
 
   @override
   FutureOr<CohortData?> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final query = db.nienKhoa.select()
       ..where((tbl) => tbl.cohort.equals(cohortId));
     return await query.getSingleOrNull();

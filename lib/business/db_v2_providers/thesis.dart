@@ -39,7 +39,7 @@ Future<void> assignTeacherInRole({
   required CouncilRole role,
   required int? teacherId,
 }) async {
-  final db = await ref.read(driftDatabaseProvider.future);
+  final db = await ref.read(appDatabaseProvider.future);
   switch (role) {
     case CouncilRole.president:
       await db.setThesisPresidentId(
@@ -74,7 +74,7 @@ Future<TeacherData?> getTeacherInRole({
   required int thesisId,
   required CouncilRole role,
 }) async {
-  final db = await ref.watch(driftDatabaseProvider.future);
+  final db = await ref.watch(appDatabaseProvider.future);
 
   final id = await switch (role) {
     CouncilRole.president =>
@@ -99,7 +99,7 @@ class ThesisByIdNotifier extends AsyncNotifier<ThesisData?> {
 
   @override
   FutureOr<ThesisData?> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final stmt = db.detaithacsi.select();
     stmt.where((r) => r.id.equals(id));
     return await stmt.getSingleOrNull();
@@ -174,7 +174,7 @@ class ThesisIdsNotifier extends AsyncNotifier<List<int>> {
 
   @override
   Future<List<int>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final stmt = db.detaithacsi.select();
 
     switch (ignore) {
@@ -210,13 +210,13 @@ class ThesisIdsNotifier extends AsyncNotifier<List<int>> {
   }
 
   Future<void> track(int thesisId) async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     await db.trackThesis(thesisId: thesisId);
     ref.invalidateSelf();
   }
 
   Future<void> untrack(int thesisId) async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     await db.untrackThesis(thesisId: thesisId);
     ref.invalidateSelf();
   }

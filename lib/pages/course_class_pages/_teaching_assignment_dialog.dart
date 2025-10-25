@@ -125,7 +125,7 @@ class _TeachingAssignmentDialogState
             // Button for adding new teacher
             SearchAnchor(
               suggestionsBuilder: (context, controller) async {
-                final db = await ref.read(driftDatabaseProvider.future);
+                final db = await ref.read(appDatabaseProvider.future);
                 final searchedTeachers = await db
                     .searchTeacher(searchText: controller.text, outsider: false)
                     .get();

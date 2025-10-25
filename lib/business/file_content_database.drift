@@ -1,0 +1,9 @@
+import 'business_enums.dart';
+
+create table document_content (
+    "id" integer primary key autoincrement,
+    "type" text not null default "pdf",
+    "content" blob not null,
+);
+
+-- vim: filetype=sql

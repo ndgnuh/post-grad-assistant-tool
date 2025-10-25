@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../business/db_v2_providers.dart';
 import '../../business/pdfs/pdfs.dart' as pdfs;
-import '../../preferences.dart';
 import 'providers.dart';
 
 const _memberPay = 60_000;
@@ -32,22 +32,26 @@ final paymentListingPdfProvider = FutureProvider<Uint8List>((ref) async {
 
   // Teachers in the council
   final entries = <pdfs.PaymentListingEntry>[];
+  final estDate = council.establishmentDecisionDate;
+  final estCode = council.establishmentDecisionId;
+  final estDateStr = DateFormat("dd/MM/yyyy").format(estDate);
   for (final student in students) {
     final pdfs.PaymentListingEntry entry = (
       amount: _perCouncilPay,
       reason:
-          "Thanh toán tiền cho tiểu ban xét tuyển thạc sĩ theo định hướng nghiên cứu của thí sinh ${student!.name}, theo Quyết định số ........./QĐ-ĐHBK-TS ngày ...../...../..........",
+          "Thanh toán tiền cho tiểu ban xét tuyển thạc sĩ theo định hướng nghiên cứu của thí sinh ${student!.name}, theo Quyết định số $estCode ngày $estDateStr",
     );
     entries.add(entry);
   }
 
   /// Creating the PDF model
-  final model = pdfs.PaymentListingTableModel(
-    reason: _paymentReason(council.year),
-    insiderEntries: entries,
-    outsiderEntries: [],
+  final model = pdfs.AdmissionPaymentListingModel(
+    establishmentDecisionCode: estCode,
+    establishmentDecisionDate: estDate,
+    paymentPerStudent: _perCouncilPay,
+    studentNames: students.map((e) => e!.name).toList(),
   );
-  return pdfs.paymentListingPdf(model: model);
+  return pdfs.admissionPaymentListingPdf(model: model);
 });
 
 final paymentTablePdfProvider = FutureProvider<Uint8List>((ref) async {
@@ -82,11 +86,13 @@ final paymentTablePdfProvider = FutureProvider<Uint8List>((ref) async {
   );
 
   final model = pdfs.AdmissionPaymentTableModel(
-    president: president!,
-    secretary: secretary!,
-    member1: member1!,
-    member2: member2!,
-    member3: member3!,
+    establishmentDecisionCode: council.establishmentDecisionId,
+    establishmentDecisionDate: council.establishmentDecisionDate,
+    president: president,
+    secretary: secretary,
+    member1: member1,
+    member2: member2,
+    member3: member3,
     numberOfStudents: numStudents,
     presidentAllowance: _presidentPay,
     secretaryAllowance: _secretaryPay,
@@ -130,23 +136,23 @@ final paymentAtmPdfProvider = FutureProvider<Uint8List>((ref) async {
     reason: _paymentReason(council.year),
     entries: [
       pdfs.PaymentAtmEntry(
-        teacher: president!,
+        teacher: president,
         amount: _presidentPay * numStudents,
       ),
       pdfs.PaymentAtmEntry(
-        teacher: secretary!,
+        teacher: secretary,
         amount: _secretaryPay * numStudents,
       ),
       pdfs.PaymentAtmEntry(
-        teacher: member1!,
+        teacher: member1,
         amount: _memberPay * numStudents,
       ),
       pdfs.PaymentAtmEntry(
-        teacher: member2!,
+        teacher: member2,
         amount: _memberPay * numStudents,
       ),
       pdfs.PaymentAtmEntry(
-        teacher: member3!,
+        teacher: member3,
         amount: _memberPay * numStudents,
       ),
     ],
@@ -156,7 +162,7 @@ final paymentAtmPdfProvider = FutureProvider<Uint8List>((ref) async {
 
 final paymentRequestPdfProvider = FutureProvider((ref) async {
   final myName = await ref.watch(myNameProvider.future);
-  final myOrganization = await ref.watch(myDivisionProvider.future);
+  final myOrganization = await ref.watch(myFalcutyProvider.future);
   final councilSelecionModel = await ref.watch(
     admissionCouncilSelectionProvider.future,
   );
@@ -187,8 +193,8 @@ final saveDirectoryProvider = NotifierProvider(
   SaveDirectoryNotifier.new,
 );
 
-String _paymentReason(Object year) =>
-    "Bồi dưỡng tiểu ban xét tuyển thạc sĩ theo\nđịnh hướng nghiên cứu năm $year";
+String _paymentReason(Object year, [bool linebreak = false]) =>
+    "Bồi dưỡng tiểu ban xét tuyển thạc sĩ${linebreak ? '\n' : ' '}theo định hướng nghiên cứu năm $year";
 
 class SaveDirectoryNotifier extends Notifier<String?> {
   @override

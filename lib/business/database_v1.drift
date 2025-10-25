@@ -2,12 +2,31 @@ import 'business_enums.dart';
 import 'database_v1/fts.drift';
 -- import 'database_v1/methods.drift';
 
--- create table "document_roles" (
---     id TEXT NOT NULL PRIMARY KEY,
---     name TEXT NOT NULL,
---     description TEXT NOT NULL DEFAULT (""),
---     can_expire BOOLEAN NOT NULL DEFAULT FALSE
--- );
+create table "preference" (
+	"key"	text not null primary key,
+	"value" text
+);
+
+CREATE TABLE document_role (
+	id integer not null primary key autoincrement,
+	name text not null,
+    can_expire boolean not null default false,
+    category text not null default ("")
+);
+
+CREATE TABLE document (
+	id integer not null primary key autoincrement,
+	title text not null,
+	offical_code text,
+	signed_date text,
+	role_id integer not null REFERENCES document_role(id),
+	-- Content & archive
+	content_id integer,
+	archive_id text,
+	-- auto field
+	created_time datetime not null default CURRENT_TIMESTAMP,
+	updated_time datetime not null default CURRENT_TIMESTAMP
+);
 
 create table "NienKhoa" (
     "nienKhoa" TEXT NOT NULL PRIMARY KEY as "cohort",
@@ -23,7 +42,7 @@ create table "admission_council" (
     member_2_id INTEGER NOT NULL REFERENCES teacher(id),
     member_3_id INTEGER  NOT NULL REFERENCES teacher(id),
     establishment_decision_id TEXT NOT NULL,
-    establishment_decision_date TEXT NOT NULL
+    establishment_decision_date datetime NOT NULL
 );
 
 CREATE TABLE student (

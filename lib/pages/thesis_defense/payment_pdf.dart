@@ -7,7 +7,6 @@ import 'package:riverpod/riverpod.dart';
 
 import '../../business/db_v2_providers.dart' hide Thesis;
 import '../../business/domain_objects.dart';
-import '../../preferences.dart';
 import '../../services/pdf_builder/index.dart';
 import '../../business/db_v1_providers.dart';
 
@@ -28,12 +27,12 @@ final paymentListingPdfProvider = FutureProvider.autoDispose((ref) async {
 
 final paymentRequestPdfProvider = FutureProvider.autoDispose((ref) async {
   final myName = await ref.watch(myNameProvider.future);
-  final myDivision = await ref.watch(myDivisionProvider.future);
+  final myFalcuty = await ref.watch(myFalcutyProvider.future);
   final model = await ref.watch(thesisPaymentPdfModelProvider.future);
 
   return await buildPaymentRequestPdf(
     requesterName: myName ?? "",
-    requesterDivision: myDivision,
+    requesterDivision: myFalcuty,
     payReason: model.paymentReason,
     payAmount: model.totalBeforeTax,
   );

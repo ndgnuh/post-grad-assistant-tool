@@ -42,7 +42,7 @@ class CourseClassIdsBySemesterNotifier extends AsyncNotifier<List<int>> {
 
   @override
   FutureOr<List<int>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final query = db.select(db.lopTinChi)
       ..orderBy([
         (t) => OrderingTerm(expression: t.status),
@@ -63,7 +63,7 @@ class TeachingAssignmentsNotifier
 
   @override
   FutureOr<List<TeachingAssignmentData>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final query = db.teachingAssignment.select()
       ..where((t) => t.classId.equals(courseClassId))
       ..orderBy([(t) => OrderingTerm(expression: t.sortOrder)]);
@@ -78,7 +78,7 @@ class CourseClassByIdNotifier extends AsyncNotifier<CourseClassData?> {
 
   @override
   FutureOr<CourseClassData?> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final query = db.managers.lopTinChi.filter(
       (cc) => cc.id.equals(courseClassId),
     );
@@ -90,7 +90,7 @@ class CourseClassByIdNotifier extends AsyncNotifier<CourseClassData?> {
 class CourseClassSemestersNotifier extends AsyncNotifier<List<String>> {
   @override
   FutureOr<List<String>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final semesters = await db.getAllSemesters().get();
     return semesters;
   }
@@ -102,7 +102,7 @@ class TeachingTeachersNotifier extends AsyncNotifier<Map<TeacherData, double>> {
 
   @override
   FutureOr<Map<TeacherData, double>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
 
     final query = db.teachingAssignment.select()
       ..where((t) => t.classId.equals(courseClassId))
@@ -125,7 +125,7 @@ class TeachingTeachersNotifier extends AsyncNotifier<Map<TeacherData, double>> {
   /// Remove all the teaching assignments for the course class
   /// and then update with the new assignments
   Future<void> set(Map<TeacherData, double> assignment) async {
-    final db = await ref.read(driftDatabaseProvider.future);
+    final db = await ref.read(appDatabaseProvider.future);
 
     // Delete existing assignments
     await db.teachingAssignment.deleteWhere(
@@ -173,7 +173,7 @@ class RegistrationCountNotifier extends AsyncNotifier<int> {
     }
 
     // If the detailed list is not available, use the count from the course class record
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final stmt = db.lopTinChi.select()
       ..where((cc) => cc.id.equals(courseClassId));
     final count = await stmt
@@ -189,7 +189,7 @@ class StudentIdsByCourseClassNotifier extends AsyncNotifier<List<int>> {
 
   @override
   FutureOr<List<int>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final query = db.dangKyHoc.select()
       ..where((record) => record.courseClassId.equals(courseClassId))
       ..orderBy([(t) => OrderingTerm(expression: t.studentId)]);

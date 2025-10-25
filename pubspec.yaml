@@ -76,6 +76,7 @@ dependencies:
   hooks_riverpod: ^3.0.0-dev.17
   riverpod:
   pdfrx: ^2.0.0
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:

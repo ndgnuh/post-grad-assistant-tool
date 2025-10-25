@@ -1,6 +1,8 @@
 // This is experimental code for drift ORM
 import 'package:drift/drift.dart';
 
+export 'enums/document_role.dart';
+
 // Course classes
 export 'enums/day_of_week.dart';
 

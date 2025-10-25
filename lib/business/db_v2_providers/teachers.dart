@@ -26,7 +26,7 @@ final teachingCoursesProvider = AsyncNotifierProvider.family(
 class InsiderTeacherIds extends AsyncNotifier<List<int>> {
   @override
   Future<List<int>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final insiderIds = await db.managers.teacher
         .filter((t) => t.isOutsider(true))
         .map((t) => t.id)
@@ -56,7 +56,7 @@ class TeacherByIdNotifier extends AsyncNotifier<TeacherData> {
 
   @override
   Future<TeacherData> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final maybeTeacher = await db.managers.teacher
         .filter((t) => t.id.equals(teacherId))
         .getSingleOrNull();
@@ -73,7 +73,7 @@ class TeacherIdsByCourseProvider extends AsyncNotifier<List<int>> {
 
   @override
   Future<List<int>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final teacherIds = await db.managers.dangKyGiangDay
         .filter((d) => d.courseId.equals(courseId))
         .map((d) => d.teacherId)
@@ -87,7 +87,7 @@ class TeachingCoursesNotifier extends AsyncNotifier<Set<CourseData>> {
   TeachingCoursesNotifier(this.teacherId);
 
   Future<void> addCourse(String courseId) async {
-    final db = await ref.read(driftDatabaseProvider.future);
+    final db = await ref.read(appDatabaseProvider.future);
     // Check if the entry already exists
     final existing = await db.managers.dangKyGiangDay
         .filter(
@@ -108,7 +108,7 @@ class TeachingCoursesNotifier extends AsyncNotifier<Set<CourseData>> {
 
   @override
   Future<Set<CourseData>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final query = db.managers.dangKyGiangDay
         .filter((d) => d.teacherId.equals(teacherId))
         .map((d) => d.courseId);
@@ -126,7 +126,7 @@ class TeachingCoursesNotifier extends AsyncNotifier<Set<CourseData>> {
   }
 
   Future<void> removeCourse(String courseId) async {
-    final db = await ref.read(driftDatabaseProvider.future);
+    final db = await ref.read(appDatabaseProvider.future);
     final query = (db.delete(db.dangKyGiangDay)
       ..where(
         (d) => d.teacherId.equals(teacherId) & d.courseId.equals(courseId),

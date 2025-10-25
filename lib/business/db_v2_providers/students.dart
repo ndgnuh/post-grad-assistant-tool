@@ -53,7 +53,7 @@ class AdmissionStudentIdsNotifier extends AsyncNotifier<List<int>> {
 class DelayedAdmissionStudentIdsNotifier extends AsyncNotifier<List<int>> {
   @override
   FutureOr<List<int>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final query = db.student.select()
       ..where((tbl) => tbl.status.equals(StudentStatus.delayedAdmission.value));
     final students = await query.get();
@@ -67,7 +67,7 @@ class FilteredAdmissionIdsNotifier extends AsyncNotifier<List<int>> {
 
   @override
   FutureOr<List<int>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final query = db.student.select()
       ..orderBy([
         (tbl) => OrderingTerm(
@@ -91,7 +91,7 @@ class StudentByIdNotifier extends AsyncNotifier<StudentData?> {
 
   @override
   FutureOr<StudentData?> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final query = db.student.select()..where((tbl) => tbl.id.equals(studentId));
     return await query.getSingleOrNull();
   }
@@ -103,7 +103,7 @@ class StudentByIdNotifier extends AsyncNotifier<StudentData?> {
     String? phoneNumber,
     StudentStatus? status,
   }) async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final stmt = db.student.update()..where((tbl) => tbl.id.equals(studentId));
     await stmt.write(
       StudentCompanion(
@@ -165,7 +165,7 @@ class StudentIdsNotifier extends AsyncNotifier<List<int>> {
 
   @override
   FutureOr<List<int>> build() async {
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final stmt = db.student.select();
 
     switch (admissionCouncil) {
@@ -225,7 +225,7 @@ class StudentMutationNotifier extends Notifier<void> {
       throw Exception('Student not found');
     }
 
-    final db = await ref.watch(driftDatabaseProvider.future);
+    final db = await ref.watch(appDatabaseProvider.future);
     final stmt = db.student.update()..where((t) => t.id.equals(this.studentId));
     await stmt.write(
       StudentCompanion(
@@ -259,7 +259,7 @@ class StudentMutationNotifier extends Notifier<void> {
       _ => throw Exception('Invalid student status for toggling admission'),
     };
 
-    final db = await ref.read(driftDatabaseProvider.future);
+    final db = await ref.read(appDatabaseProvider.future);
     final stmt = db.student.update()
       ..where((student) => student.id.equals(studentId));
     await stmt.write(
