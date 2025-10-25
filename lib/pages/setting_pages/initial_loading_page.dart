@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../business/db_v2_providers.dart';
+import '../../preferences.dart';
 import 'setting_pages.dart';
 import '../pages.dart' as pages;
 
@@ -18,7 +19,18 @@ class InitialLoadingPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final navigator = Navigator.of(context);
+    final isDarkModeState = ref.watch(isDarkModeProvider);
     final databaseAsync = ref.watch(nullableDatabaseProvider);
+
+    switch (isDarkModeState) {
+      case AsyncLoading():
+        return loading;
+      case AsyncError(:final error):
+        return ErrorPage(error: error);
+      case AsyncData():
+        break;
+    }
+
     switch (databaseAsync) {
       case AsyncLoading():
         return loading;
