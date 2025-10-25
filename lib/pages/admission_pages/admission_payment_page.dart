@@ -84,6 +84,21 @@ class AdmissionPaymentPage extends StatelessWidget {
                     ),
 
                     Divider(),
+                    _PdfViewButton(
+                      sourceName: "bang-thanh-toan.pdf",
+                      pdfProvider: paymentTablePdfProvider,
+                      builder: (context, callback, error) => ListTile(
+                        title: Text("Bảng thanh toán"),
+                        subtitle: Text(
+                          error ?? "Xem trước bảng ký nhận thanh toán",
+                        ),
+                        trailing: Icon(Symbols.chevron_forward),
+                        enabled: callback != null,
+                        onTap: callback,
+                      ),
+                    ),
+
+                    Divider(),
                     ListTile(
                       title: Text("Bản kê thanh toán"),
                       subtitle: Text("Xem trước bản kê thanh toán"),
@@ -149,11 +164,20 @@ class _SaveButton extends ConsumerWidget {
 
     void onPressed() async {
       // Validate
-      if (_formKey.currentState!.validate() == false) {
+      final message = validate(ref);
+      if (message != null) {
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(validate(ref)!),
+          ),
+        );
         return;
       }
 
       // Actual saving
+      final paymentTablePdf = await ref.read(
+        paymentTablePdfProvider.future,
+      );
       final paymentRequestPdf = await ref.read(
         paymentRequestPdfProvider.future,
       );
@@ -162,12 +186,15 @@ class _SaveButton extends ConsumerWidget {
       );
 
       // Save files
-      final saveDirectory = ref.read(saveDirectoryProvider);
+      final saveDirectory = ref.read(saveDirectoryProvider)!;
       File(
-        path.join(saveDirectory!, "01-yeu-cau-thanh-toan.pdf"),
+        path.join(saveDirectory, "01-bang-thanh-toan.pdf"),
+      ).writeAsBytesSync(paymentTablePdf);
+      File(
+        path.join(saveDirectory, "02-yeu-cau-thanh-toan.pdf"),
       ).writeAsBytesSync(paymentRequestPdf);
       File(
-        path.join(saveDirectory, "02-tong-hop-thanh-toan-atm-x2.pdf"),
+        path.join(saveDirectory, "03-tong-hop-thanh-toan-atm-x2.pdf"),
       ).writeAsBytesSync(paymentAtmPdf);
 
       messenger.showSnackBar(

@@ -12,6 +12,51 @@ const _perCouncilPay = _presidentPay + _secretaryPay + _memberPay * 3;
 const _presidentPay = 70_000;
 const _secretaryPay = 70_000;
 
+final paymentTablePdfProvider = FutureProvider<Uint8List>((ref) async {
+  final councilSelecionModel = await ref.watch(
+    admissionCouncilSelectionProvider.future,
+  );
+  final maybeCouncil = councilSelecionModel.selected;
+  assert(maybeCouncil != null, "Chưa chọn hội đồng tuyển sinh");
+  final council = maybeCouncil!;
+
+  // Number of students
+  final ids = await ref.watch(
+    paymentStudentIdsProvider(council).future,
+  );
+  final numStudents = ids.length;
+
+  // Teachers in the council
+  final president = await ref.watch(
+    teacherByIdProvider(council.presidentId).future,
+  );
+  final secretary = await ref.watch(
+    teacherByIdProvider(council.secretaryId).future,
+  );
+  final member1 = await ref.watch(
+    teacherByIdProvider(council.member1Id).future,
+  );
+  final member2 = await ref.watch(
+    teacherByIdProvider(council.member2Id).future,
+  );
+  final member3 = await ref.watch(
+    teacherByIdProvider(council.member3Id).future,
+  );
+
+  final model = pdfs.AdmissionPaymentTableModel(
+    president: president!,
+    secretary: secretary!,
+    member1: member1!,
+    member2: member2!,
+    member3: member3!,
+    numberOfStudents: numStudents,
+    presidentAllowance: _presidentPay,
+    secretaryAllowance: _secretaryPay,
+    memberAllowance: _memberPay,
+  );
+  return pdfs.admissionPaymentTablePdf(model: model);
+});
+
 final paymentAtmPdfProvider = FutureProvider<Uint8List>((ref) async {
   final councilSelecionModel = await ref.watch(
     admissionCouncilSelectionProvider.future,
