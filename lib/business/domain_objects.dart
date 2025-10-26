@@ -31,6 +31,7 @@ String quoted(String s) {
   return '"$s"';
 }
 
+@Deprecated('Use drift data object instead')
 Future<void> _abstractUpdateAttr<T, S>({
   required String table,
   required String idField,
@@ -130,23 +131,37 @@ Future<void> _update<T>({
   });
 }
 
+@Deprecated('Use drift data object instead')
 typedef Cohort = NienKhoa;
+
+@Deprecated('Use drift data object instead')
 typedef Semester = HocKy;
+
+@Deprecated('Use drift data object instead')
 typedef ClassOfYear = NienKhoa;
+
+@Deprecated('Use drift data object instead')
 typedef AcademicYear = HocKy;
 
+@Deprecated('Use drift data object instead')
 typedef AdmissionCouncil = TieuBanXetTuyen;
 
+@Deprecated('Use drift data object instead')
 typedef Student = HocVien;
 
+@Deprecated('Use drift data object instead')
 typedef Teacher = GiangVien;
 
+@Deprecated('Use drift data object instead')
 typedef Thesis = DeTaiThacSi;
 
+@Deprecated('Use drift data object instead')
 typedef AdmissionType = DienTuyenSinh;
 
+@Deprecated('Use drift data object instead')
 typedef Course = HocPhan;
 
+@Deprecated('Use drift data object instead')
 class BoolIntSerializer implements JsonConverter<bool, int?> {
   const BoolIntSerializer();
 
@@ -157,6 +172,7 @@ class BoolIntSerializer implements JsonConverter<bool, int?> {
 }
 
 @freezed
+@Deprecated('Use drift data object instead')
 abstract class DangKyHoc with _$DangKyHoc {
   static const table = "DangKyHoc";
   factory DangKyHoc({
@@ -198,6 +214,7 @@ class DateSerializer implements JsonConverter<DateTime, String> {
 }
 
 @freezed
+@Deprecated('Use drift data object instead')
 abstract class ThesisProxy with _$ThesisProxy {
   const factory ThesisProxy({
     required Thesis thesis,
@@ -215,6 +232,7 @@ abstract class ThesisProxy with _$ThesisProxy {
 }
 
 @freezed
+@Deprecated('Use drift data object instead')
 abstract class DeTaiThacSi with _$DeTaiThacSi {
   static const table = "DeTaiThacSi";
 
@@ -558,6 +576,7 @@ abstract class DeTaiThacSi with _$DeTaiThacSi {
 }
 
 @JsonEnum(valueField: "value")
+@Deprecated('Use business enum module object instead')
 enum DienTuyenSinh {
   tichHop(value: "cn-ths", label: "Tích hợp Cử nhân - Thạc sĩ"),
   xetTuyen(value: "xt", label: "Xét tuyển");
@@ -580,6 +599,7 @@ enum DienTuyenSinh {
 }
 
 @freezed
+@Deprecated('Use drift data object instead')
 abstract class GiangVien with _$GiangVien {
   static const table = "teacher";
   static const idField = "id";
@@ -790,6 +810,7 @@ abstract class GiangVien with _$GiangVien {
 }
 
 @JsonEnum(valueField: "value")
+@Deprecated('Use business enum module object instead')
 enum GioiTinh {
   nam(value: "M", label: "Nam"),
   nu(value: "F", label: "Nữ");
@@ -802,9 +823,11 @@ enum GioiTinh {
   toString() => label;
 }
 
+@Deprecated('Use business enum module object instead')
 typedef Gender = GioiTinh;
 
 @JsonEnum(valueField: "value")
+@Deprecated('Use business enum module object instead')
 enum HocHam {
   gs("GS", "GS.", "Giáo sư"),
   pgs("PGS", "PGS.", "Phó giáo sư");
@@ -819,6 +842,7 @@ enum HocHam {
 }
 
 @freezed
+@Deprecated('Use drift data object instead')
 abstract class HocKy with _$HocKy {
   static const table = "HocKy";
   const factory HocKy({
@@ -982,6 +1006,7 @@ abstract class HocKy with _$HocKy {
 }
 
 @freezed
+@Deprecated('Use drift data object instead')
 abstract class HocPhan with _$HocPhan {
   static const table = "Course";
   static const idField = "maHocPhan";
@@ -1078,14 +1103,14 @@ abstract class HocPhan with _$HocPhan {
 
     return await dbSessionReadOnly((Database db) async {
       final ftsQuery = SelectQuery()
-        ..from("fts_HocPhan")
-        ..select(["maHocPhan"])
-        ..where("fts_HocPhan MATCH ?", [query]);
+        ..from("course_fts")
+        ..select(["id"])
+        ..where("course_fts MATCH ?", [query]);
 
       final hpQuery = SelectQuery()
         ..selectAll()
-        ..from("HocPhan")
-        ..where("maHocPhan in ?", [ftsQuery]);
+        ..from("course")
+        ..where("id in ?", [ftsQuery]);
 
       final sql = hpQuery.build();
       final rows = await db.rawQuery(sql);
@@ -1095,6 +1120,7 @@ abstract class HocPhan with _$HocPhan {
 }
 
 @JsonEnum(valueField: "value")
+@Deprecated('Use business enum module object instead')
 enum HocVi {
   cuNhan('CN', "CN.", 'Cử nhân'),
   kySu('KS', "KS.", 'Kỹ sư'),
@@ -1112,6 +1138,7 @@ enum HocVi {
 }
 
 @freezed
+@Deprecated('Use drift data object instead')
 abstract class HocVien with _$HocVien {
   static const table = "student";
   static const idField = "id";
@@ -1279,6 +1306,7 @@ abstract class HocVien with _$HocVien {
 }
 
 @freezed
+@Deprecated('Use drift data object instead')
 abstract class HoiDongLVTS with _$HoiDongLVTS {
   static const table = "HoiDongLVTS";
   const factory HoiDongLVTS({
@@ -1301,6 +1329,7 @@ abstract class HoiDongLVTS with _$HoiDongLVTS {
 }
 
 @JsonEnum(valueField: "value")
+@Deprecated('Use business enum module object instead')
 enum KhoiKienThuc {
   khac('khac', 'Khác'),
   cn('cn', 'Cử nhân'),
@@ -1320,6 +1349,7 @@ enum KhoiKienThuc {
 }
 
 @freezed
+@Deprecated('Use drift data object instead')
 abstract class LopTinChi with _$LopTinChi {
   static const table = "LopTinChi";
   const factory LopTinChi({
@@ -1509,6 +1539,7 @@ class MaybeDateSerializer implements JsonConverter<DateTime?, String?> {
 }
 
 @freezed
+@Deprecated('Use drift data object instead')
 abstract class NamTaiChinh with _$NamTaiChinh {
   static const table = "NamTaiChinh";
   const factory NamTaiChinh({
@@ -1529,6 +1560,7 @@ abstract class NamTaiChinh with _$NamTaiChinh {
 }
 
 @JsonEnum(valueField: "value")
+@Deprecated('Use business enum module object instead')
 enum NgayTrongTuan {
   t2(2, 'Thứ 2'),
   t3(3, 'Thứ 3'),
@@ -1557,6 +1589,7 @@ enum NgayTrongTuan {
 }
 
 @freezed
+@Deprecated('Use drift data object instead')
 abstract class NhomChuyenMon with _$NhomChuyenMon {
   static const table = "NhomChuyenMon";
   const factory NhomChuyenMon({required int id, required String tenNhom}) =
@@ -1567,6 +1600,7 @@ abstract class NhomChuyenMon with _$NhomChuyenMon {
 }
 
 @freezed
+@Deprecated('Use drift data object instead')
 abstract class NienKhoa with _$NienKhoa {
   static const table = "NienKhoa";
   const NienKhoa._();
@@ -1612,6 +1646,7 @@ abstract class NienKhoa with _$NienKhoa {
 
 /// Unused class, should I remove this
 @freezed
+@Deprecated('Use drift data object instead')
 abstract class TeachingRegistration with _$TeachingRegistration {
   static const table = "DangKyGiangDay";
   static const idField = "id";
@@ -1626,6 +1661,7 @@ abstract class TeachingRegistration with _$TeachingRegistration {
 }
 
 @freezed
+@Deprecated('Use drift data object instead')
 abstract class TieuBanXetTuyen with _$TieuBanXetTuyen {
   static const table = "admission_council";
   const factory TieuBanXetTuyen({
@@ -1700,6 +1736,7 @@ abstract class TieuBanXetTuyen with _$TieuBanXetTuyen {
 }
 
 @JsonEnum(valueField: "value")
+@Deprecated('Use business enum module object instead')
 enum TrangThaiHocVien {
   xetTuyenTriHoan('xt-pending', 'Xét tuyển (hoãn)'),
   binhThuong('bt', 'Bình thường'),
@@ -1717,6 +1754,7 @@ enum TrangThaiHocVien {
 }
 
 @JsonEnum(valueField: "value")
+@Deprecated('Use business enum module object instead')
 enum TrangThaiLopTinChi {
   huy(1),
   binhThuong(0);
@@ -1731,6 +1769,7 @@ enum TrangThaiLopTinChi {
   };
 }
 
+@Deprecated('Use business enum module object instead')
 enum VaiTroHoiDong {
   chuTich('chu-tich', 'Chủ tịch'),
   phanBien('phan-bien', 'Phản biện'),

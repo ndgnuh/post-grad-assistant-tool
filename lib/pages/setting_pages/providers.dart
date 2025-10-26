@@ -1,4 +1,4 @@
-import 'package:fami_tools/preferences.dart';
+import 'package:fami_tools/services/database.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -24,11 +24,16 @@ class SaveDirectoryNotifier extends Notifier<String?> {
 }
 
 final initialSetupDoneProvider = FutureProvider<bool>((ref) async {
+  // TODO: implement other pages and remove this completely
+  final mainDbPath = await ref.watch(appDatabasePathProvider.future);
+  CompatDatabasePathInjection.instance.inject(mainDbPath);
+
   final mainDb = await ref.watch(nullableAppDatabaseProvider.future);
-  print(mainDb);
+
   switch (mainDb) {
     case null:
       return false;
+    default:
   }
 
   final fileDbAsync = ref.watch(nullableFileDatabaseProvider);

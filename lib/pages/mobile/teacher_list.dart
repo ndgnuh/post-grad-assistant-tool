@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fami_tools/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -104,27 +105,31 @@ class MobilePageTeacherList extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = Provider.of<TeacherInfoPageState>(context, listen: false);
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Danh sách giảng viên"),
-        actions: [
-          SearchToggleButton(),
-          AddButton(),
-        ],
+      appBar: ConstrainedAppBar(
+        child: AppBar(
+          title: Text("Danh sách giảng viên"),
+          actions: [
+            SearchToggleButton(),
+            AddButton(),
+          ],
+        ),
       ),
-      body: Actions(
-        actions: {
-          SearchIntent: CallbackAction(
-            onInvoke: (intent) => state.openSearch(),
-          ),
-        },
-        child: FocusScope(
-          autofocus: true,
-          canRequestFocus: true,
-          child: Column(
-            children: [
-              TeacherSearchBar(),
-              Expanded(child: ListTeachers()),
-            ],
+      body: ConstrainedBody(
+        child: Actions(
+          actions: {
+            SearchIntent: CallbackAction(
+              onInvoke: (intent) => state.openSearch(),
+            ),
+          },
+          child: FocusScope(
+            autofocus: true,
+            canRequestFocus: true,
+            child: Column(
+              children: [
+                TeacherSearchBar(),
+                Expanded(child: ListTeachers()),
+              ],
+            ),
           ),
         ),
       ),

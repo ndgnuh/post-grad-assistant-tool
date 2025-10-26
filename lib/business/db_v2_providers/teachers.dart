@@ -15,14 +15,6 @@ final teacherByIdProvider = AsyncNotifierProvider.family(
   TeacherByIdNotifier.new,
 );
 
-final teacherIdsByCourseProvider = AsyncNotifierProvider.family(
-  TeacherIdsByCourseProvider.new,
-);
-
-final teachingCoursesProvider = AsyncNotifierProvider.family(
-  TeachingCoursesNotifier.new,
-);
-
 class InsiderTeacherIds extends AsyncNotifier<List<int>> {
   @override
   Future<List<int>> build() async {
@@ -64,75 +56,13 @@ class TeacherByIdNotifier extends AsyncNotifier<TeacherData> {
     assert(maybeTeacher != null, "Không tìm thấy giảng viên với ID $teacherId");
     return maybeTeacher as TeacherData;
   }
-}
 
-/// Ids of teachers that teach a given course
-class TeacherIdsByCourseProvider extends AsyncNotifier<List<int>> {
-  final String courseId;
-  TeacherIdsByCourseProvider(this.courseId);
-
-  @override
-  Future<List<int>> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
-    final teacherIds = await db.managers.dangKyGiangDay
-        .filter((d) => d.courseId.equals(courseId))
-        .map((d) => d.teacherId)
-        .get();
-    return teacherIds;
-  }
-}
-
-class TeachingCoursesNotifier extends AsyncNotifier<Set<CourseData>> {
-  final int teacherId;
-  TeachingCoursesNotifier(this.teacherId);
-
-  Future<void> addCourse(String courseId) async {
+  Future<void> updateTeacher(TeacherCompanion newData) async {
     final db = await ref.read(appDatabaseProvider.future);
-    // Check if the entry already exists
-    final existing = await db.managers.dangKyGiangDay
-        .filter(
-          (d) => d.teacherId.equals(teacherId) & d.courseId.equals(courseId),
-        )
-        .getSingleOrNull();
-
-    // If not, insert a new entry
-    if (existing == null) {
-      final entry = DangKyGiangDayCompanion.insert(
-        teacherId: teacherId,
-        courseId: courseId,
-      );
-      await db.into(db.dangKyGiangDay).insert(entry);
-      ref.invalidateSelf();
-    }
-  }
-
-  @override
-  Future<Set<CourseData>> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
-    final query = db.managers.dangKyGiangDay
-        .filter((d) => d.teacherId.equals(teacherId))
-        .map((d) => d.courseId);
-
-    final courseIds = await query.get();
-    final courses = <CourseData>{};
-
-    for (final courseId in courseIds) {
-      final course = await ref.watch(courseByIdProvider(courseId).future);
-      if (course != null) {
-        courses.add(course);
-      }
-    }
-    return courses;
-  }
-
-  Future<void> removeCourse(String courseId) async {
-    final db = await ref.read(appDatabaseProvider.future);
-    final query = (db.delete(db.dangKyGiangDay)
-      ..where(
-        (d) => d.teacherId.equals(teacherId) & d.courseId.equals(courseId),
-      ));
-    await query.go();
-    ref.invalidateSelf();
+    final stmt = db.teacher.update();
+    stmt.where((t) => t.id.equals(teacherId));
+    final newTeacherData = await stmt.writeReturning(newData);
+    state = AsyncData(newTeacherData.first);
   }
 }
 

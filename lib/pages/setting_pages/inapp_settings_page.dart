@@ -1,6 +1,7 @@
 // Setting pages
 import 'dart:io';
 
+import 'package:fami_tools/custom_widgets.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
@@ -9,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../custom_tiles.dart';
-import '../../preferences.dart';
+import '../../business/db_v2_providers.dart';
 
 class SettingsPage extends StatefulWidget {
   static const routeName = '/settings';
@@ -73,14 +74,18 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Settings")),
-      body: ListView(
-        children: [
-          _DatabaseTile(),
-          _DarkModeSwitchTile(),
-          MyNameSettingTile(),
-          MyDivisionSettingTile(),
-        ],
+      appBar: ConstrainedAppBar(
+        child: AppBar(title: const Text("Settings")),
+      ),
+      body: ConstrainedBody(
+        child: ListView(
+          children: [
+            _DatabaseTile(),
+            _DarkModeSwitchTile(),
+            MyNameSettingTile(),
+            MyDivisionSettingTile(),
+          ],
+        ),
       ),
     );
   }
@@ -104,7 +109,8 @@ class _DarkModeSwitchTile extends ConsumerWidget {
         false => const Text("Dark mode is disabled"),
       },
       onChanged: (shouldBeDark) async {
-        await setDarkMode(shouldBeDark);
+        final notifier = ref.read(isDarkModeProvider.notifier);
+        await notifier.set(shouldBeDark);
         ref.invalidate(isDarkModeProvider);
       },
     );
@@ -117,7 +123,7 @@ class MyDivisionSettingTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final myDivisionState = ref.watch(myDivisionProvider);
+    final myDivisionState = ref.watch(myFalcutyProvider);
 
     final myDivisionText = switch (myDivisionState) {
       AsyncData(:final value) => value,
@@ -139,7 +145,7 @@ class MyDivisionSettingTile extends ConsumerWidget {
 
         switch (newDivision) {
           case DialogValue(:final value):
-            await ref.read(myDivisionProvider.notifier).setDivision(value);
+            await ref.read(myFalcutyProvider.notifier).set(value);
         }
       },
     );
@@ -173,7 +179,7 @@ class MyNameSettingTile extends ConsumerWidget {
 
         switch (newName) {
           case DialogValue(:final value):
-            await ref.read(myNameProvider.notifier).setName(value);
+            await ref.read(myNameProvider.notifier).set(value);
         }
       },
     );

@@ -1,0 +1,20 @@
+import 'package:fami_tools/custom_widgets.dart';
+import 'package:flutter/material.dart';
+
+class RulesPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: ConstrainedAppBar(
+        child: AppBar(
+          title: Text("Quy định hiện hành"),
+        ),
+      ),
+      body: ConstrainedBody(
+        child: Center(
+          child: Text("Working on it..."),
+        ),
+      ),
+    );
+  }
+}

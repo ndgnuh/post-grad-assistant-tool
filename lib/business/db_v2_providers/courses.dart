@@ -12,16 +12,18 @@ final coursesProvider = AsyncNotifierProvider(
   CoursesNotifier.new,
 );
 
-class CourseByIdNotifier extends AsyncNotifier<CourseData?> {
+class CourseByIdNotifier extends AsyncNotifier<CourseData> {
   final String courseId;
   CourseByIdNotifier(this.courseId);
 
   @override
-  Future<CourseData?> build() async {
+  Future<CourseData> build() async {
     final db = await ref.watch(appDatabaseProvider.future);
-    return db.managers.course
+    final course = await db.managers.course
         .filter((c) => c.id.equals(courseId))
         .getSingleOrNull();
+    assert(course != null, "Course with ID $courseId not found");
+    return course as CourseData;
   }
 }
 

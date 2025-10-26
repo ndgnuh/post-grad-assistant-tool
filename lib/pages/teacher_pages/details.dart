@@ -1,11 +1,12 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
-import '../../business/db_v2_providers.dart' show teachingCoursesProvider;
-import '../../business/domain_objects.dart';
-import '../../business/pods.dart';
+import '../../business/db_v2_providers.dart';
+// import '../../business/domain_objects.dart';
 import '../../custom_tiles.dart';
 import '../../custom_widgets.dart';
 import '../../shortcuts.dart';
@@ -24,11 +25,11 @@ void copyToClipboard(String? text) {
   }
 }
 
-class Page extends StatelessWidget {
+class TeacherDetailsPage extends StatelessWidget {
   static const routeName = "/mobile/teacher_detail";
   final int id;
 
-  const Page({super.key, required this.id});
+  const TeacherDetailsPage({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {
@@ -41,21 +42,186 @@ class Page extends StatelessWidget {
           },
         ),
       },
-      child: Scaffold(
-        appBar: AppBar(title: const Text("Chi tiết giảng viên"), actions: []),
-        body: Padding(
-          padding: EdgeInsets.all(context.gutter),
-          child: TeacherDetail(teacherId: id),
+      child: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: ConstrainedAppBar(
+            withTabBar: true,
+            child: AppBar(
+              title: const Text("Chi tiết giảng viên"),
+              bottom: const TabBar(
+                tabs: [
+                  Tab(text: "Thông tin cá nhân"),
+                  Tab(text: "Giảng dạy"),
+                ],
+                isScrollable: true,
+              ),
+            ),
+          ),
+          body: ConstrainedBody(
+            child: TabBarView(
+              children: [
+                _TeacherDetailTab(teacherId: id),
+                _TeachingCoursesTab(teacherId: id),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
-class TeacherDetail extends ConsumerWidget {
+class _TeachingCoursesTab extends ConsumerWidget {
   final int teacherId;
 
-  const TeacherDetail({super.key, required this.teacherId});
+  const _TeachingCoursesTab({required this.teacherId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final coursesAsync = ref.watch(courseIdsByTeacherProvider(teacherId));
+    switch (coursesAsync) {
+      case AsyncLoading():
+        return const Center(child: CircularProgressIndicator());
+      case AsyncError(:final error, :final stackTrace):
+        return Center(child: Text("Lỗi: $error\n$stackTrace"));
+      default:
+    }
+    final courses = coursesAsync.value!;
+
+    // notifier to updates
+    final notifier = ref.read(
+      courseIdsByTeacherProvider(teacherId).notifier,
+    );
+
+    // Draw list of courses
+    final courseWidgets = <Widget>[];
+    for (final (i, courseId) in courses.indexed) {
+      courseWidgets.add(
+        _CourseTile(
+          key: ValueKey((teacherId, courseId)),
+          teacherId: teacherId,
+          courseId: courseId,
+        ),
+      );
+      if (i < courses.length - 1) {
+        courseWidgets.add(const Divider());
+      }
+    }
+
+    final courseListWidget = switch (courseWidgets.isEmpty) {
+      false => ListView(
+        children: courseWidgets,
+      ),
+      true => Center(
+        child: Text("Giảng viên chưa đăng ký giảng dạy học phần nào"),
+      ),
+    };
+
+    return Padding(
+      padding: EdgeInsets.all(context.gutter),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: context.gutter,
+        children: [
+          SearchAnchor(
+            suggestionsBuilder: (context, controller) async {
+              final db = await ref.read(appDatabaseProvider.future);
+              final searchTerm = controller.text;
+              if (searchTerm.isEmpty) {
+                return [];
+              }
+              final ids = await db.searchCourses(searchTerm: searchTerm).get();
+
+              final suggestions = <Widget>[];
+              for (final id in ids) {
+                final course = await ref.read(courseByIdProvider(id).future);
+                final suggestion = ListTile(
+                  title: Text(course.vietnameseName),
+                  subtitle: Text("Mã HP: ${course.id}"),
+                  onTap: () {
+                    notifier.addCourse(course.id);
+                    controller.closeView("");
+                  },
+                );
+                suggestions.add(suggestion);
+              }
+              return suggestions;
+            },
+            builder: (context, controller) => TextField(
+              controller: controller,
+              onChanged: (value) {
+                controller.text = value;
+                controller.openView();
+              },
+              decoration: const InputDecoration(
+                labelText: 'Thêm học phần giảng dạy',
+                suffixIcon: Icon(Icons.add),
+                prefixIcon: Icon(Icons.search),
+              ),
+            ),
+          ),
+          Expanded(child: courseListWidget),
+        ],
+      ),
+    );
+  }
+}
+
+class _CourseTile extends ConsumerWidget {
+  const _CourseTile({
+    super.key,
+    required this.teacherId,
+    required this.courseId,
+  });
+
+  final int teacherId;
+  final String courseId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final courseAsync = ref.watch(courseByIdProvider(courseId));
+    switch (courseAsync) {
+      case AsyncLoading():
+        return const ListTile(
+          title: Text("Loading..."),
+        );
+      case AsyncError(:final error):
+        return ListTile(
+          leading: const Icon(Icons.error),
+          title: Text("Lỗi: $error"),
+        );
+      default:
+    }
+
+    final course = courseAsync.value!;
+    final notifier = ref.read(
+      courseIdsByTeacherProvider(teacherId).notifier,
+    );
+    void delete() {
+      notifier.removeCourse(courseId);
+    }
+
+    return ListTile(
+      key: ValueKey((teacherId, courseId)),
+      title: Text(course.vietnameseName),
+      subtitle: Text("Mã HP: ${course.id}"),
+      trailing: IconButton(
+        icon: const Icon(
+          Symbols.delete,
+          color: Colors.red,
+        ),
+        onPressed: delete,
+      ),
+      onTap: delete,
+    );
+  }
+}
+
+class _TeacherDetailTab extends ConsumerWidget {
+  final int teacherId;
+
+  const _TeacherDetailTab({required this.teacherId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -68,220 +234,118 @@ class TeacherDetail extends ConsumerWidget {
       default:
     }
 
-    final coursesAsync = ref.watch(teachingCoursesProvider(teacherId));
-    switch (coursesAsync) {
-      case AsyncLoading():
-        return const Center(child: CircularProgressIndicator());
-      case AsyncError(:final error, :final stackTrace):
-        return Center(child: Text("Lỗi: $error\n$stackTrace"));
-      default:
-    }
-
     final teacher = teacherAsync.value!;
-    final courses = coursesAsync.value!;
     final teacherNotifier = ref.read(teacherByIdProvider(teacher.id).notifier);
 
-    return ListView(
-      children: [
-        HeadingListTile(title: "Thông tin cơ bản"),
-        StringTile(
-          titleText: "Họ tên",
-          leading: const Icon(Icons.person),
-          initialValue: teacher.hoTen,
-          onUpdate: (value) => teacherNotifier.updateName(value!),
-        ),
-        SingleSelectionTile<Gender>(
-          titleText: "Giới tính",
-          leading: const Icon(Icons.male),
-          options: Gender.values,
-          initialValue: teacher.gioiTinh,
-          onUpdate: teacherNotifier.updateGender,
-        ),
-        DateTile(
-          titleText: "Ngày sinh",
-          leading: const Icon(Icons.cake),
-          initialValue: teacher.ngaySinh,
-          onUpdate: (value) => teacherNotifier.updateDateOfBirth(value),
-        ),
-
-        // Thông tin công tác
-        HeadingListTile(title: "Thông tin công tác"),
-        StringTile(
-          titleText: "Mã cán bộ",
-          leading: const Icon(Icons.card_membership),
-          initialValue: teacher.maCanBo ?? "N/A",
-          onUpdate: (value) => teacherNotifier.updateStaffId(value),
-        ),
-        StringTile(
-          titleText: "Đơn vị",
-          leading: const Icon(Icons.school),
-          initialValue: teacher.donVi ?? notAvailableText,
-          onUpdate: (value) => teacherNotifier.updateUniversity(value!),
-        ),
-        StringTile(
-          titleText: "Chuyên ngành",
-          leading: const Icon(null),
-          initialValue: teacher.chuyenNganh ?? notAvailableText,
-        ),
-        SingleSelectionTile<HocHam>(
-          options: HocHam.values,
-          titleText: "Học hàm",
-          leading: const Icon(null),
-          initialValue: teacher.hocHam,
-          onUpdate: (rank) => teacherNotifier.updateAcademicRank(rank: rank),
-        ),
-        SingleSelectionTile<HocVi>(
-          titleText: "Học vị",
-          leading: const Icon(null),
-          options: HocVi.values,
-          initialValue: teacher.hocVi,
-          onUpdate: (deg) => teacherNotifier.updateAcademicDegree(degree: deg),
-        ),
-
-        // Thông tin liên hệ
-        HeadingListTile(title: "Thông tin liên hệ"),
-        StringTile(
-          titleText: "Email",
-          leading: const Icon(Icons.email),
-          initialValue: teacher.email ?? notAvailableText,
-          onUpdate: (value) => teacherNotifier.updateEmail(value),
-        ),
-        StringTile(
-          titleText: "Số điện thoại",
-          leading: const Icon(Icons.phone),
-          initialValue: teacher.sdt ?? notAvailableText,
-          onUpdate: (value) => teacherNotifier.updatePhone(value),
-        ),
-
-        // Thông tin thanh toán
-        // Mã số thuế, tài khoản ngân hàng, tên ngân hàng, chi nhánh
-        HeadingListTile(title: "Thông tin thanh toán"),
-        StringTile(
-          titleText: "Tài khoản ngân hàng",
-          leading: const Icon(Icons.account_balance_wallet),
-          initialValue: teacher.stk ?? notAvailableText,
-          onUpdate: (value) => teacherNotifier.updateBankAccount(value),
-        ),
-        StringTile(
-          titleText: "Tên ngân hàng",
-          leading: const Icon(Icons.location_city),
-          initialValue: teacher.nganHang ?? notAvailableText,
-          onUpdate: (value) => teacherNotifier.updateBankName(value),
-        ),
-        StringTile(
-          titleText: "Mã số thuế",
-          leading: const Icon(Icons.account_balance),
-          initialValue: teacher.mst ?? notAvailableText,
-          onUpdate: (value) => teacherNotifier.updateTaxCode(value),
-        ),
-        StringTile(
-          titleText: "CCCD",
-          leading: const Icon(Icons.person),
-          initialValue: teacher.cccd ?? notAvailableText,
-          onUpdate: (value) => teacherNotifier.updateCitizenId(value),
-        ),
-
-        HeadingListTile(title: "Học phần giảng dạy"),
-
-        SearchAnchor(
-          key: searchAnchorKey,
-          viewLeading: const Icon(Icons.search),
-          suggestionsBuilder: (context, controller) async {
-            final courses = await HocPhan.search(controller.text);
-            final notifier = ref.read(
-              teachingCoursesProvider(teacher.id).notifier,
-            );
-
-            return [
-              for (final (i, course) in courses.indexed)
-                ListTile(
-                  autofocus: (i == 0),
-                  title: Text(course.tenTiengViet),
-                  subtitle: Text("Mã HP: ${course.maHocPhan}"),
-                  onTap: () {
-                    try {
-                      notifier.addCourse(course.maHocPhan);
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Lỗi: ${e.toString()}")),
-                      );
-                    }
-
-                    controller.clear();
-                    controller.closeView("");
-                    controller.openView();
-                  },
-                ),
-            ];
-          },
-          builder: (context, controller) => ListTile(
-            title: Text("Thêm"),
-            leading: const Icon(Icons.add),
-            onTap: () => controller.openView(),
-          ),
-        ),
-
-        if (courses.isEmpty)
-          const Center(child: Text("Giảng viên không phụ trách học phần nào"))
-        else ...[
-          for (final course in courses)
-            ListTile(
-              title: Text(course.vietnameseName),
-              subtitle: Text("Mã HP: ${course.id}"),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: () {
-                  final notifier = ref.read(
-                    teachingCoursesProvider(teacher.id).notifier,
-                  );
-                  try {
-                    notifier.removeCourse(course.id);
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Lỗi: ${e.toString()}")),
-                    );
-                  }
-                },
+    return Padding(
+      padding: EdgeInsets.all(context.gutter),
+      child: ListView(
+        children: [
+          HeadingListTile(title: "Thông tin cơ bản"),
+          StringTile(
+            titleText: "Họ tên",
+            leading: const Icon(Icons.person),
+            initialValue: teacher.name,
+            onUpdate: (value) => teacherNotifier.updateTeacher(
+              TeacherCompanion(
+                name: value != null ? Value(value) : const Value.absent(),
               ),
             ),
+          ),
+
+          SingleSelectionTile<Gender>(
+            titleText: "Giới tính",
+            leading: const Icon(Icons.male),
+            options: Gender.values,
+            initialValue: teacher.gender,
+            // onUpdate: teacherNotifier.updateGender,
+          ),
+          DateTile(
+            titleText: "Ngày sinh",
+            leading: const Icon(Icons.cake),
+            initialValue: teacher.dateOfBirth,
+            // onUpdate: (value) => teacherNotifier.updateDateOfBirth(value),
+          ),
+
+          // Thông tin công tác
+          HeadingListTile(title: "Thông tin công tác"),
+          StringTile(
+            titleText: "Mã cán bộ",
+            leading: const Icon(Icons.card_membership),
+            initialValue: teacher.managementId ?? "N/A",
+            // onUpdate: (value) => teacherNotifier.updateStaffId(value),
+          ),
+          StringTile(
+            titleText: "Đơn vị",
+            leading: const Icon(Icons.school),
+            initialValue: teacher.department ?? notAvailableText,
+            // onUpdate: (value) => teacherNotifier.updateUniversity(value!),
+          ),
+          StringTile(
+            titleText: "Chuyên ngành",
+            leading: const Icon(null),
+            initialValue: "TODO",
+          ),
+
+          SingleSelectionTile<AcademicRank>(
+            options: AcademicRank.values,
+            titleText: "Học hàm",
+            leading: const Icon(null),
+            initialValue: teacher.academicRank,
+            // onUpdate: (rank) => teacherNotifier.updateAcademicRank(rank: rank),
+          ),
+          SingleSelectionTile<AcademicDegree>(
+            titleText: "Học vị",
+            leading: const Icon(null),
+            options: AcademicDegree.values,
+            initialValue: teacher.academicDegree,
+            // onUpdate: (deg) => teacherNotifier.updateAcademicDegree(degree: deg),
+          ),
+
+          // Thông tin liên hệ
+          HeadingListTile(title: "Thông tin liên hệ"),
+          StringTile(
+            titleText: "Email",
+            leading: const Icon(Icons.email),
+            initialValue: teacher.personalEmail ?? notAvailableText,
+            // onUpdate: (value) => teacherNotifier.updateEmail(value),
+          ),
+          StringTile(
+            titleText: "Số điện thoại",
+            leading: const Icon(Icons.phone),
+            initialValue: teacher.phone ?? notAvailableText,
+            // onUpdate: (value) => teacherNotifier.updatePhone(value),
+          ),
+
+          // Thông tin thanh toán
+          // Mã số thuế, tài khoản ngân hàng, tên ngân hàng, chi nhánh
+          HeadingListTile(title: "Thông tin thanh toán"),
+          StringTile(
+            titleText: "Tài khoản ngân hàng",
+            leading: const Icon(Icons.account_balance_wallet),
+            initialValue: teacher.bankAccount ?? notAvailableText,
+            // onUpdate: (value) => teacherNotifier.updateBankAccount(value),
+          ),
+          StringTile(
+            titleText: "Tên ngân hàng",
+            leading: const Icon(Icons.location_city),
+            initialValue: teacher.bankName ?? notAvailableText,
+            // onUpdate: (value) => teacherNotifier.updateBankName(value),
+          ),
+          StringTile(
+            titleText: "Mã số thuế (cũ)",
+            leading: const Icon(Icons.account_balance),
+            initialValue: teacher.taxCode ?? notAvailableText,
+            // onUpdate: (value) => teacherNotifier.updateTaxCode(value),
+          ),
+          StringTile(
+            titleText: "CCCD",
+            leading: const Icon(Icons.person),
+            initialValue: teacher.citizenId ?? notAvailableText,
+            // onUpdate: (value) => teacherNotifier.updateCitizenId(value),
+          ),
         ],
-      ],
+      ),
     );
   }
 }
-
-// class _ListOfTeachingCourses extends StatelessWidget {
-//   final Future<List<HocPhan>> futureTeachingCourses;
-//
-//   const _ListOfTeachingCourses({required this.futureTeachingCourses});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return FutureBuilder<List<HocPhan>>(
-//       future: futureTeachingCourses,
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.waiting) {
-//           return const Center(child: CircularProgressIndicator());
-//         } else if (snapshot.hasError) {
-//           return Center(child: Text("Lỗi: ${snapshot.error}"));
-//         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-//           return const Center(child: Text("Không có khóa học nào"));
-//         } else {
-//           final courses = snapshot.data!;
-//           return ListView.builder(
-//             shrinkWrap: true,
-//             itemCount: courses.length,
-//             itemBuilder: (context, index) {
-//               final course = courses[index];
-//               return ListTile(
-//                 title: Text(course.tenTiengViet),
-//                 subtitle: Text("Mã HP: ${course.maHocPhan}"),
-//                 autofocus: true,
-//               );
-//             },
-//           );
-//         }
-//       },
-//     );
-//   }
-// }

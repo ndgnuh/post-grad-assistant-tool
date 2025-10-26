@@ -11,7 +11,7 @@ export 'package:sqflite/sqflite.dart' show Database, Transaction;
 export 'sqlbuilder/sqlbuilder.dart'
     show Query, SelectQuery, UpdateQuery, InsertQuery, DeleteQuery;
 
-import '../preferences.dart' as preferences;
+import '../business/db_v2_providers.dart';
 
 Future initSqlite() async {
   if (kIsWeb) {
@@ -21,16 +21,25 @@ Future initSqlite() async {
   }
 }
 
+class CompatDatabasePathInjection {
+  String? dbPath;
+  void inject(String? path) {
+    dbPath = path;
+  }
+
+  static final instance = CompatDatabasePathInjection();
+}
+
 final defaultDatabasePath = path.join(path.current, "fami.sqlite3");
 
 final databaseProvider = FutureProvider<Database>((ref) async {
-  final databasePath = await ref.watch(preferences.databasePathProvider.future);
+  final databasePath = await ref.watch(appDatabasePathProvider.future);
   final db = await openDatabase(databasePath ?? defaultDatabasePath);
   return db;
 });
 
 final readOnlyDatabaseProvider = FutureProvider<Database>((ref) async {
-  final databasePath = await ref.watch(preferences.databasePathProvider.future);
+  final databasePath = CompatDatabasePathInjection.instance.dbPath;
   final db = await openDatabase(
     databasePath ?? defaultDatabasePath,
     readOnly: true,
@@ -40,7 +49,7 @@ final readOnlyDatabaseProvider = FutureProvider<Database>((ref) async {
 });
 
 Future<T> transaction<T>(Future<T> Function(Transaction) callback) async {
-  final databasePath = await preferences.getDatabasePath();
+  final databasePath = CompatDatabasePathInjection.instance.dbPath;
   final db = await openDatabase(databasePath!, singleInstance: false);
   final ret = await db.transaction(callback);
   await db.close();
@@ -48,7 +57,7 @@ Future<T> transaction<T>(Future<T> Function(Transaction) callback) async {
 }
 
 Future<T> dbSession<T>(Future<T> Function(Database) callback) async {
-  final databasePath = await preferences.getDatabasePath();
+  final databasePath = CompatDatabasePathInjection.instance.dbPath;
   var factoryWithLogs = SqfliteDatabaseFactoryLogger(
     databaseFactory,
     options: SqfliteLoggerOptions(type: SqfliteDatabaseFactoryLoggerType.all),
@@ -61,7 +70,7 @@ Future<T> dbSession<T>(Future<T> Function(Database) callback) async {
 }
 
 Future<T> dbSessionReadOnly<T>(Future<T> Function(Database) callback) async {
-  final databasePath = await preferences.getDatabasePath();
+  final databasePath = CompatDatabasePathInjection.instance.dbPath;
   final db = await openDatabase(
     databasePath!,
     readOnly: true,

@@ -15,6 +15,7 @@ import 'student_pages/student_pages.dart';
 import 'teacher_pages/teacher_pages.dart';
 import 'thesis_defense/index.dart';
 import 'thesis_pages/thesis_pages.dart';
+import 'document_pages/document_pages.dart';
 
 const initialLoadingRotue = InitialLoadingPage.routeName;
 const intialSettingsRoute = InitialSetupPage.routeName;
@@ -141,7 +142,7 @@ final routesBySections = <String, List<RouteItem>>{
       subtitle: null,
     ),
     (
-      route: PageAcademicYearList.routeName,
+      route: SemesterListPage.routeName,
       label: "Đợt học",
       icon: Symbols.calendar_month,
       subtitle: null,
@@ -227,15 +228,8 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       return const MobilePageThesisAssignList();
 
     /// Academic year pages
-    case PageAcademicYearList.routeName:
-      return const PageAcademicYearList();
-    case SemesterEditPage.routeName:
-      switch (args) {
-        case SemesterEditPageArgs args:
-          return SemesterEditPage.fromArguments(args);
-        default:
-          return const PageAcademicYearList();
-      }
+    case SemesterListPage.routeName:
+      return const SemesterListPage();
     case PageAcademicYearCreate.routeName:
       return const PageAcademicYearCreate();
 

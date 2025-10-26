@@ -1608,3 +1608,44 @@ class StringNotifier extends Notifier<String> {
     state = value;
   }
 }
+
+class CardSection extends StatelessWidget {
+  final String title;
+  final List<Widget> children;
+
+  const CardSection({
+    super.key,
+    required this.title,
+    required this.children,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final childrenWithDividers = <Widget>[];
+    for (var i = 0; i < children.length; i++) {
+      childrenWithDividers.add(children[i]);
+      if (i < children.length - 1) {
+        childrenWithDividers.add(Divider());
+      }
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(title: Text(title)),
+        Card(
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              SizedBox(height: context.gutterTiny),
+              ...childrenWithDividers,
+              SizedBox(height: context.gutterTiny),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}

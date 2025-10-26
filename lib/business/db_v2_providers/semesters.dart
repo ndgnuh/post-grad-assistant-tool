@@ -22,15 +22,16 @@ class SemesterIdsNotifier extends AsyncNotifier<List<String>> {
   }
 }
 
-class SemesterByIdNotifier extends AsyncNotifier<SemesterData?> {
+class SemesterByIdNotifier extends AsyncNotifier<SemesterData> {
   final String semesterId;
   SemesterByIdNotifier(this.semesterId);
 
   @override
-  FutureOr<SemesterData?> build() async {
+  FutureOr<SemesterData> build() async {
     final db = await ref.watch(appDatabaseProvider.future);
     final stmt = db.hocky.select()..where((s) => s.semester.equals(semesterId));
     final semester = await stmt.getSingleOrNull();
-    return semester;
+    assert(semester != null, "Semester with ID $semesterId not found");
+    return semester as SemesterData;
   }
 }

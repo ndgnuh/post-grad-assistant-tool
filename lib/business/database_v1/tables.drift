@@ -1,0 +1,233 @@
+import '../business_enums.dart';
+
+create table "preference" (
+	"key"	text not null primary key,
+	"value" text
+);
+
+CREATE TABLE document_role (
+	id integer not null primary key autoincrement,
+	name text not null,
+    can_expire boolean not null default false,
+    category text not null default ("")
+);
+
+CREATE TABLE document (
+	id integer not null primary key autoincrement,
+	title text not null,
+	offical_code text,
+	signed_date text,
+	role_id integer not null REFERENCES document_role(id),
+	-- Content & archive
+	content_id integer,
+	archive_id text,
+	-- auto field
+	created_time datetime not null default CURRENT_TIMESTAMP,
+	updated_time datetime not null default CURRENT_TIMESTAMP
+);
+
+create table "NienKhoa" (
+    "nienKhoa" TEXT NOT NULL PRIMARY KEY as "cohort",
+    "groupUrl" TEXT NOT NULL DEFAULT ("") as "groupUrl"
+) as CohortData;
+
+create table "admission_council" (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    year TEXT NOT NULL as year,
+    president_id INTEGER NOT NULL REFERENCES teacher(id),
+    secretary_id INTEGER NOT NULL REFERENCES teacher(id),
+    member_1_id INTEGER NOT NULL REFERENCES teacher(id),
+    member_2_id INTEGER NOT NULL REFERENCES teacher(id),
+    member_3_id INTEGER  NOT NULL REFERENCES teacher(id),
+    establishment_decision_id TEXT NOT NULL,
+    establishment_decision_date datetime NOT NULL
+);
+
+CREATE TABLE student (
+	"id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "soHoSo" TEXT as admissionId,
+	"nienKhoa"	TEXT as cohort,
+	"maHocVien"	TEXT as studentId,
+	"hoTen"	TEXT NOT NULL as name,
+	"ngaySinh"	TEXT mapped by `const YmdDateConverter()` as dateOfBirth,
+	"gioiTinh"	TEXT mapped by `const GenderConverter()` as gender,
+	"noiSinh"	TEXT as placeOfBirth,
+	"dienThoai"	TEXT as phone,
+	"email"	TEXT as personalEmail,
+	"emailHust"	TEXT as schoolEmail,
+    "truongTotNghiepDaiHoc" TEXT as bachelorUniversity,
+    "nganhTotNghiepDaiHoc" TEXT as bachelorMajor,
+    "heTotNghiepDaiHoc" TEXT as bachelorProgram,
+    "xepLoaiTotNghiepDaiHoc" TEXT as bachelorGraduationRank,
+    "ngayTotNghiepDaiHoc" TEXT mapped by `const YmdDateConverter()` as bachelorGraduationDate,
+    "dinhHuongChuyenSau" TEXT as intendedSpecialization,
+    "hocPhanDuocMien" TEXT as exemptedCourses,
+    "nganhDaoTaoThacSi" TEXT as masterMajor,
+	"maTrangThai"	TEXT mapped by `const StudentStatusConverter()` as status,
+    "flag_extend_1" BOOLEAN NOT NULL DEFAULT false as hasHirstExtension,
+    "flag_extend_2" BOOLEAN NOT NULL DEFAULT false as hasSecondExtension,
+	"idTieuBanXetTuyen"	INTEGER as admissionCouncilId,
+    "idDienTuyenSinh" TEXT mapped by `const AdmissionTypeConverter()` as admissionType,
+	"thanhToanXetTuyen"	BOOL NOT NULL DEFAULT false as isAdmissionPaid,
+	FOREIGN KEY(idTieuBanXetTuyen) REFERENCES admission_council(id),
+	FOREIGN KEY(nienKhoa) REFERENCES NienKhoa(nienKhoa) ON UPDATE CASCADE
+);
+
+create table "hocky" (
+    "hocKy" TEXT NOT NULL PRIMARY KEY as semester,
+    "moDangKy" TEXT NOT NULL mapped by `const SureYmdDateConverter()` as registrationOpenDate,
+    "dongDangKy" TEXT NOT NULL mapped by `const SureYmdDateConverter()` as registrationCloseDate,
+    "batDauHoc" TEXT NOT NULL mapped by `const SureYmdDateConverter()` as studyStartDate,
+    "ketThucHoc" TEXT NOT NULL mapped by `const SureYmdDateConverter()` as studyEndDate,
+    "hanNhapDiem" TEXT NOT NULL mapped by `const SureYmdDateConverter()` as gradeSubmissionDeadline
+) as SemesterData;
+
+create table course (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "vietnamese_name" TEXT NOT NULL,
+    "english_name"  TEXT NOT NULL,
+    "category"	TEXT NOT NULL mapped by `const CourseCategoryConverter()`,
+    "num_credits" INTEGER NOT NULL,
+    "num_theory_hours" INTEGER NOT NULL,
+    "num_practice_hours" INTEGER NOT NULL,
+    "num_lab_hours" INTEGER NOT NULL,
+    "num_self_study_hours" INTEGER NOT NULL
+);
+
+create table "detaithacsi" (
+	"id" INTEGER PRIMARY KEY AUTOINCREMENT,
+	"idGiangVien"	INTEGER NOT NULL as supervisorId,
+	"tenTiengViet"	TEXT NOT NULL as vietnameseTitle,
+	"tenTiengAnh"	TEXT NOT NULL as englishTitle,
+	"ghiChu"	TEXT NOT NULL DEFAULT ("") as note,
+	"idHocVien"	INTEGER as studentId,
+	"ngayGiao"	TEXT mapped by `const YmdDateConverter()` as assignedDate,
+	"soQdGiao"	TEXT as assignedDecisionNumber,
+	"hanBaoVe"	TEXT mapped by `const YmdDateConverter()` as defenseDeadline,
+	"soQdBaoVe"	TEXT as defenseDecisionNumber,
+	"ngayBaoVe"	TEXT mapped by `const YmdDateConverter()` as defenseDate,
+	"idChuTich"	INTEGER as presidentId,
+	"idPhanBien1"	INTEGER as firstReviewerId,
+	"idPhanBien2"	INTEGER as secondReviewerId,
+	"idThuKy"	INTEGER as secretaryId,
+	"idUyVien"	INTEGER as memberId,
+    "flag_tracking" BOOLEAN NOT NULL DEFAULT FALSE,
+    "flag_paid" BOOLEAN NOT NULL DEFAULT FALSE,
+    "flag_ignore" BOOLEAN NOT NULL DEFAULT FALSE,
+	"group"	TEXT ,
+	"nam"	TEXT as year,
+	"dangKyBaoVe"	INTEGER NOT NULL DEFAULT 0 as isRegisteredForDefense,
+	"nopHoSo"	INTEGER NOT NULL DEFAULT 0 as isProfileSubmitted,
+	FOREIGN KEY("idChuTich") REFERENCES "teacher"("id"),
+	FOREIGN KEY("idGiangVien") REFERENCES "teacher"("id"),
+	FOREIGN KEY("idPhanBien1") REFERENCES "teacher"("id"),
+	FOREIGN KEY("idPhanBien2") REFERENCES "teacher"("id"),
+	FOREIGN KEY("idThuKy") REFERENCES "teacher"("id"),
+	FOREIGN KEY("idUyVien") REFERENCES "teacher"("id")
+) as ThesisData;
+
+-- Currently, just place barely enough information about lecturers
+-- to be able to link them to students
+-- We migrate to english later
+create table teacher (
+	"id" integer not null primary key autoincrement,
+	"maCanBo"	text as managementId,
+	"hoTen"	text not null as name,
+	"donVi"	text as department,
+    "ngoaiTruong" boolean not null default true as isOutsider,
+    "gioiTinh" text mapped by `const GenderConverter()` as gender,
+    "hocHam" text mapped by `const AcademicRankConverter()` as academicRank,
+    "hocVi" text mapped by `const AcademicDegreeConverter()` as academicDegree,
+	"sdt"	text as phone,
+	"email"	text as personalEmail,
+	"cccd"	text as citizenId,
+	"ngaySinh"	text mapped by `const YmdDateConverter()` as dateOfBirth,
+	"stk"	text as bankAccount,
+	"nganHang"	text as bankName,
+	"mst"	text as taxCode,
+	"note"	text as note,
+	"ncm"	integer as academicGroupId
+);
+
+create table "phd_cohort" (
+    "cohort" text not null primary key,
+    "created_time" datetime not null default current_timestamp,
+    "updated_time" datetime not null default current_timestamp
+);
+
+create table "phd_student" (
+    "id" integer not null primary key autoincrement,
+    "cohort" text not null,
+	"management_id" text unique,
+    "admission_id"  text unique not null,
+    "name"  text not null,
+    "gender" text not null mapped by `const GenderConverter()` default 'M',
+    "date_of_birth"	datetime,
+    "place_of_birth" text,
+    "phone"	text not null unique,
+    "personal_email" text not null unique,
+    "major_name" text not null default 'toán học',
+    "major_id"  text not null default 9460101,
+    "major_specialization"	text not null default 'n/a',
+    "admission_president_id" integer,
+    "admission_secretary_id" integer,
+    "admission_1st_member_id" integer,
+    "admission_2nd_member_id" integer,
+    "admission_3rd_member_id" integer,
+    "admission_paid" boolean not null default false,
+    "thesis" text not null,
+    "supervisor_id"	integer not null,
+    "secondary_supervisor_id" integer,
+    "school_email" text unique,
+    "created_time" text not null default current_timestamp,
+    "updated_time" text not null default current_timestamp,
+    foreign key("admission_president_id") references "teacher"("id"),
+    foreign key("admission_president_id") references "teacher"("id"),
+    foreign key("admission_secretary_id") references "teacher"("id"),
+    foreign key("admission_1st_member_id") references "teacher"("id"),
+    foreign key("admission_2nd_member_id") references "teacher"("id"),
+    foreign key("admission_3rd_member_id") references "teacher"("id"),
+    foreign key("supervisor_id") references "teacher"("id"),
+    foreign key("secondary_supervisor_id") references "teacher"("id")
+);
+
+create table "teaching_registration" (
+    "teacher_id" INTEGER NOT NULL REFERENCES teacher(id),
+    "course_id" TEXT NOT NULL AS courseId REFERENCES course(id),
+    PRIMARY KEY("teacher_id", "course_id")
+);
+
+create table "LopTinChi" (
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "maLopHoc" TEXT NOT NULL AS classId,
+    "maHocPhan" TEXT NOT NULL AS courseId,
+    "idGiangVien" INTEGER AS teacherId,
+    "soLuongDangKy" INTEGER NOT NULL DEFAULT 0 AS registrationCount,
+    "urlTruyCap" TEXT AS accessUrl,
+    "customBeginDate" DATETIME,
+    "customEndDate" DATETIME,
+    "hocKy" TEXT NOT NULL AS semester,
+    "phongHoc" TEXT AS classroom,
+    "ngayHoc" TEXT AS dayOfWeek,
+    "tietBatDau" INTEGER AS startPeriod,
+    "tietKetThuc" INTEGER AS endPeriod,
+    "trangThai" INTEGER mapped by `const CourseClassStatusConverter()` AS status
+) as CourseClassData;
+
+create table "teaching_assignment" (
+    "class_id" INTEGER NOT NULL REFERENCES "LopTinChi"("id"),
+    "teacher_id" INTEGER NOT NULL REFERENCES "teacher"("id"),
+    "sort_order" INTEGER NOT NULL DEFAULT 1,
+    "weight" REAL NOT NULL DEFAULT 1.0,
+    PRIMARY KEY("class_id", "teacher_id")
+);
+
+create table "DangKyHoc" (
+    idLopTinChi INTEGER NOT NULL AS courseClassId,
+    idHocVien INTEGER NOT NULL AS studentId,
+    PRIMARY KEY(idLopTinChi, idHocVien),
+    FOREIGN KEY(idLopTinChi) REFERENCES LopTinChi(id),
+    FOREIGN KEY(idHocVien) REFERENCES phd_student(id)
+) as ClassCourseRegistrationData;
+
+-- vim: ft=sql

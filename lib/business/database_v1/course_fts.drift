@@ -1,0 +1,36 @@
+import 'tables.drift';
+
+create virtual table "course_fts" using fts5(
+    id,
+    vietnamese_name,
+    english_name,
+    prefix=3,
+    tokenize="trigram remove_diacritics 1 case_sensitive 0"
+);
+
+create trigger course_fts_delete after delete on "course" begin
+	delete from "course_fts" where rowid = (select rowid from "course_fts" where id = old.id);
+end;
+
+create trigger course_fts_insert after insert on "course" begin
+	insert into "course_fts"(id, vietnamese_name, english_name) values
+        (new.id, new.vietnamese_name, new.english_name);
+end;
+
+create trigger course_fts_update after update on "course" begin
+	delete from "course_fts" where rowid = (select rowid from "course_fts" where id = old.id);
+	insert into "course_fts"(id, vietnamese_name, english_name)
+        values (new.id, new.vietnamese_name, new.english_name);
+end;
+
+searchCourses(
+    :search_term as text,
+    :course_category as text or null
+):
+    select course.id from course
+    where id in (
+        select id from course_fts
+        where course_fts match :search_term
+    ) and (:course_category is null or course.category = :course_category);
+
+-- vim: ft=sql

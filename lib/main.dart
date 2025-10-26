@@ -9,8 +9,8 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'package:pdfrx/pdfrx.dart';
 
+import 'business/db_v2_providers.dart';
 import 'pages/pages.dart' as pages;
-import 'preferences.dart';
 import 'shortcuts.dart';
 import 'themes.dart';
 
@@ -33,8 +33,6 @@ Future main() async {
     ProviderScope(
       child: app,
       retry: (int retryCount, Object error) {
-        print(error);
-
         if (retryCount >= 5) return null;
         // Exponential backoff
         return Duration(
