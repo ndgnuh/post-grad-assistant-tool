@@ -25,7 +25,7 @@ final initialRoute = switch (kReleaseMode) {
 
   // Settings
   // false => InitialSetupPage.routeName,
-  // false => SettingsPage.routeName,
+  // false => SettingsPage.routeName,page
 
   // Student pages
   // false => StudentListPage.routeName,
@@ -36,11 +36,14 @@ final initialRoute = switch (kReleaseMode) {
   // Admission
   // false => AdmissionListPage.routeName,
   // false => AdmissionEnrollmentPage.routeName,
-  false => AdmissionPaymentPage.routeName,
+  // false => AdmissionPaymentPage.routeName,
 
   // Course classes pages
   // ====================
   // false => CourseClassListPage.routeName,
+
+  // Course pages
+  false => CourseListPage.routeName,
 
   // Thesis defends
   // false => ThesisDefenseRegisterPage.routeName,
@@ -93,7 +96,14 @@ final routesBySections = <String, List<RouteItem>>{
       icon: Symbols.settings,
       subtitle: null,
     ),
+    (
+      label: "Quy định hiện hành",
+      route: RulesPage.routeName,
+      icon: Symbols.rule,
+      subtitle: null,
+    ),
   ],
+
   "Thạc sĩ / công việc": [
     (
       route: AdmissionListPage.routeName,
@@ -212,17 +222,28 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     // Manage courses
     case CourseListPage.routeName:
       return CourseListPage();
-    case CourseDetailPage.routeName:
+    case CourseDetailsPage.routeName:
       switch (args) {
-        case CourseDetailPageArgs args:
-          return CourseDetailPage.fromArguments(args);
+        case String args:
+          return CourseDetailsPage(courseId: args);
         default:
           return CourseListPage();
       }
 
+    /// Rules and document
+    case RulesPage.routeName:
+      return RulesPage();
+
     /// Mobiles
     case TeacherSearchPage.routeName:
       return TeacherSearchPage();
+    case TeacherDetailsPage.routeName:
+      switch (args) {
+        case int id:
+          return TeacherDetailsPage(id: id);
+        default:
+          return TeacherSearchPage();
+      }
 
     case MobilePageThesisAssignList.routeName:
       return const MobilePageThesisAssignList();

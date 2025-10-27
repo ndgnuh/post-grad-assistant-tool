@@ -1,264 +1,342 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
-import '../../business/domain_objects.dart' show HocPhan, GiangVien;
+import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
+import '../teacher_pages/teacher_pages.dart';
 
-class CourseDetailPage extends StatelessWidget {
+class CourseDetailsPage extends StatelessWidget {
   static const String routeName = "/courses/detail";
-  final HocPhan course;
+  final String courseId;
 
-  const CourseDetailPage({
+  const CourseDetailsPage({
     super.key,
-    required this.course,
+    required this.courseId,
   });
 
-  factory CourseDetailPage.fromArguments(CourseDetailPageArgs args) {
-    return CourseDetailPage(course: args.course);
-  }
-
   @override
-  Widget build(context) {
-    return ChangeNotifierProvider(
-      create: (_) => PageCourseDetailState(course: course),
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 3,
       child: Scaffold(
         appBar: ConstrainedAppBar(
+          withTabBar: true,
           child: AppBar(
-            title: Text("Học phần ${course.maHocPhan}"),
-          ),
-        ),
-        body: ConstrainedBody(
-          child: Selector(
-            selector: (context, PageCourseDetailState state) {
-              return state.scrollController;
-            },
-            builder: (context, scrollController, child) => ListView(
-              children: [
-                // thông tin chugn
-                HeadingListTile(
-                  title: "Thông tin chung",
-                ),
-                ListTile(
-                  title: Text("Mã học phần"),
-                  subtitle: Text(course.maHocPhan),
-                ),
-                ListTile(
-                  title: Text("Tên học phần"),
-                  subtitle: Text(course.tenTiengViet),
-                ),
-                ListTile(
-                  title: Text("Tên học phần (tiếng Anh)"),
-                  subtitle: Text(course.tenTiengAnh ?? "Chưa có thông tin"),
-                ),
-                ListTile(
-                  title: Text("Số tín chỉ"),
-                  subtitle: Text(course.soTinChi.toString()),
-                ),
-                ListTile(
-                  title: Text("Khối lượng"),
-                  subtitle: Text(course.khoiLuong),
-                ),
-                ListTile(
-                  title: Text("Khối kiến thức"),
-                  subtitle: Text(course.khoiKienThuc.label),
-                ),
-
-                // Giảng viên
-                HeadingListTile(
-                  title: "Giảng viên giảng dạy",
-                ),
-                _AddTeachingStaffTile(course: course),
-                Selector<PageCourseDetailState, Future<List<GiangVien>>>(
-                  selector: (context, state) => state.futureTeachingStaffs,
-                  builder: (context, futureStaffs, child) => FutureBuilder(
-                    future: futureStaffs,
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.done:
-                          final staffs = snapshot.data!;
-                          return _ListTeachingStaffs(
-                            course: course,
-                            teachers: staffs,
-                          );
-                        default:
-                          return SizedBox.square(
-                            dimension: 20,
-                            child: CircularProgressIndicator(),
-                          );
-                      }
-                    },
-                  ),
-                ),
+            title: Text("Học phần $courseId"),
+            bottom: TabBar(
+              tabs: [
+                Tab(text: "Chi tiết"),
+                Tab(text: "Lớp học phần"),
+                Tab(text: "Giảng viên"),
               ],
             ),
           ),
         ),
+        body: ConstrainedBody(
+          child: TabBarView(
+            children: [
+              _CourseInfoTab(courseId: courseId),
+              Center(
+                child: Text("TODO: danh sách lớp với học phần này..."),
+              ),
+              _CourseTeachingRegistrationTab(courseId: courseId),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-class CourseDetailPageArgs {
-  final HocPhan course;
-  const CourseDetailPageArgs({
-    required this.course,
+class _AddTeacherInput extends ConsumerWidget {
+  final String courseId;
+
+  const _AddTeacherInput({
+    required this.courseId,
   });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SearchAnchor(
+      suggestionsBuilder: (context, controller) async {
+        final db = await ref.read(appDatabaseProvider.future);
+        final stmt = db.searchTeachers(
+          searchtext: controller.text,
+          isOutsider: false,
+        );
+        final ids = await stmt.get();
+
+        final suggestions = <Widget>[];
+        for (final id in ids) {
+          final teacher = await ref.read(
+            teacherByIdProvider(id).future,
+          );
+
+          final suggestion = ListTile(
+            leading: CircleAvatar(
+              child: Icon(Symbols.person),
+            ),
+            title: Text(teacher.name),
+            subtitle: Text(teacher.personalEmail ?? 'Không có email'),
+            onTap: () {
+              final notifier = ref.read(
+                teacherIdsByCourseProvider(courseId).notifier,
+              );
+              notifier.addTeacher(id);
+              controller.closeView("");
+            },
+          );
+
+          suggestions.add(suggestion);
+        }
+
+        return suggestions;
+      },
+      builder: (context, controller) => TextField(
+        onChanged: (_) => controller.openView(),
+        controller: controller,
+        decoration: InputDecoration(
+          prefixIcon: Icon(Symbols.search),
+          suffixIcon: Icon(Symbols.add),
+          hintText: "Tìm kiếm giảng viên...",
+          labelText: "Thêm giảng viên dạy học phần này",
+        ),
+      ),
+    );
+  }
 }
 
-class PageCourseDetailState extends ChangeNotifier {
-  late HocPhan course;
-  late Future<List<GiangVien>> futureTeachingStaffs;
-  late ScrollController scrollController;
+class _CourseInfoTab extends ConsumerWidget {
+  final String courseId;
 
-  PageCourseDetailState({required this.course}) {
-    scrollController = ScrollController();
-    futureTeachingStaffs = course.teachingStaffs;
-  }
+  const _CourseInfoTab({required this.courseId});
 
-  void refresh({bool scrollToEnd = false}) {
-    futureTeachingStaffs = course.teachingStaffs;
-    notifyListeners();
-    if (scrollToEnd) {
-      scrollController.animateTo(
-        scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final courseAsync = ref.watch(courseByIdProvider(courseId));
+    switch (courseAsync) {
+      case AsyncLoading():
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      case AsyncError(:final error):
+        return Center(
+          child: Text("Lỗi khi tải thông tin học phần: $error"),
+        );
+      default:
     }
+
+    final course = courseAsync.value!;
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(context.gutter),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: context.gutter,
+        children: [
+          CardSection(
+            title: "Thông tin chung",
+            children: [
+              ListTile(
+                title: Text("Mã học phần"),
+                subtitle: Text(course.id),
+              ),
+              ListTile(
+                title: Text("Tên học phần"),
+                subtitle: Text(course.vietnameseName),
+              ),
+              ListTile(
+                title: Text("Tên học phần (tiếng Anh)"),
+                subtitle: Text(course.englishName),
+              ),
+              ListTile(
+                title: Text("Số tín chỉ"),
+                subtitle: Text(course.numCredits.toString()),
+              ),
+            ],
+          ),
+          CardSection(
+            title: "Khối lượng",
+            children: [
+              ListTile(
+                title: Text("Số tiết lý thuyết"),
+                subtitle: Text(course.numTheoryHours.toString()),
+              ),
+              ListTile(
+                title: Text("Số tiết bài tập"),
+                subtitle: Text(course.numPracticeHours.toString()),
+              ),
+              ListTile(
+                title: Text("Số tiết thực hành"),
+                subtitle: Text(course.numLabHours.toString()),
+              ),
+              ListTile(
+                title: Text("Số tiết tự học"),
+                subtitle: Text(course.numSelfStudyHours.toString()),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
 
-class _AddTeachingStaffTile extends StatelessWidget {
-  final HocPhan course;
-  const _AddTeachingStaffTile({required this.course});
+class _CourseTeachingRegistrationTab extends StatelessWidget {
+  final String courseId;
+
+  const _CourseTeachingRegistrationTab({required this.courseId});
 
   @override
   Widget build(BuildContext context) {
-    final state = Provider.of<PageCourseDetailState>(
-      context,
-      listen: false,
+    return Padding(
+      padding: EdgeInsets.all(context.gutter),
+      child: Column(
+        spacing: context.gutter,
+        verticalDirection: context.verticalDirection,
+        children: [
+          _AddTeacherInput(courseId: courseId),
+          TickerMode(
+            enabled: true,
+            child: _TeachingTeachersList(courseId: courseId),
+          ),
+        ],
+      ),
     );
+  }
+}
 
-    return SearchAnchor(
-      suggestionsBuilder: (context, searchController) async {
-        final searchQuery = searchController.text;
-        final teachers = await GiangVien.search(
-          searchQuery,
-          isLocalStaff: true,
+class _TeachingTeachersList extends ConsumerWidget {
+  final String courseId;
+  const _TeachingTeachersList({required this.courseId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final teacherIdsAsync = ref.watch(
+      teacherIdsByCourseProvider(courseId),
+    );
+    switch (teacherIdsAsync) {
+      case AsyncLoading():
+        return const Center(
+          child: CircularProgressIndicator(),
         );
+      case AsyncError(:final error):
+        return Center(
+          child: Text("Lỗi khi tải danh sách giảng viên: $error"),
+        );
+      default:
+    }
 
-        return [
-          for (final teacher in teachers)
-            ListTile(
-              title: Text(teacher.hoTenChucDanh),
-              subtitle: Text(teacher.email ?? ""),
-              onTap: () async {
-                await course.addTeachingStaff(teacher.id);
-                searchController.closeView("");
-                state.refresh(scrollToEnd: true);
+    final teacherIds = teacherIdsAsync.value!;
+    return Expanded(
+      child: ListView.separated(
+        shrinkWrap: true,
+        separatorBuilder: (context, index) => const Divider(),
+        itemCount: teacherIds.length,
+        itemBuilder: (context, index) {
+          final teacherId = teacherIds[index];
+          return _TeachingTeacherTile(
+            key: ValueKey((courseId, teacherId)),
+            teacherId: teacherId,
+            courseId: courseId,
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _TeachingTeacherTile extends ConsumerWidget {
+  final int teacherId;
+  final String courseId;
+  const _TeachingTeacherTile({
+    super.key,
+    required this.courseId,
+    required this.teacherId,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final teacherAsync = ref.watch(teacherByIdProvider(teacherId));
+    switch (teacherAsync) {
+      case AsyncLoading():
+        return const ListTile(
+          title: Text("Loading..."),
+        );
+      case AsyncError(:final error):
+        return ListTile(
+          title: Text("Lỗi khi tải thông tin giảng viên: $error"),
+        );
+      default:
+    }
+
+    final teacher = teacherAsync.value!;
+    return ListTile(
+      leading: CircleAvatar(
+        child: Icon(Symbols.person),
+      ),
+      title: Text(teacher.name),
+      subtitle: Text(teacher.personalEmail ?? 'Không có email'),
+      onTap: () => showDialog(
+        context: context,
+        builder: (context) => MenuDialog(
+          items: [
+            MenuDialogItem(
+              icon: Symbols.info,
+              title: "Chi tiết",
+              subtitle: "Xem thông tin chi tiết của giảng viên",
+              onTap: () => goToTeacherDetails(context),
+            ),
+            MenuDialogItem(
+              icon: Symbols.delete,
+              title: "Xóa",
+              subtitle: "Gỡ đăng ký giảng dạy của giảng viên khỏi học phần",
+              onTap: () {
+                removeTeacher(context, ref, teacher);
               },
             ),
-        ];
-      },
-      builder: (context, searchController) => ListTile(
-        leading: Icon(Icons.add),
-        subtitle: Text("Click để tìm giảng viên"),
-        title: Text("Thêm giảng viên giảng dạy"),
-        onTap: () => searchController.openView(),
+          ],
+        ),
       ),
     );
   }
-}
 
-class _CourseListView extends StatelessWidget {
-  final List<HocPhan> courses;
-  const _CourseListView({
-    required this.courses,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: courses.length,
-      itemBuilder: (context, index) {
-        final course = courses[index];
-
-        final title = course.tenTiengViet;
-        final subtitle = [
-          "Mã học phần: ${course.maHocPhan}",
-          "Khối lượng: ${course.khoiLuong}",
-          "Khối kiến thức: ${course.khoiKienThuc.label}",
-        ].join("\n");
-        return ListTile(
-          title: Text(title),
-          subtitle: Text(subtitle),
-          onTap: () {
-            Navigator.pushNamed(
-              context,
-              CourseDetailPage.routeName,
-              arguments: CourseDetailPageArgs(course: course),
-            );
-          },
-        );
-      },
+  void goToTeacherDetails(BuildContext context) {
+    final navigator = Navigator.of(context);
+    navigator.pushNamed(
+      TeacherDetailsPage.routeName,
+      arguments: teacherId,
     );
   }
-}
 
-class _ListTeachingStaffs extends StatelessWidget {
-  final HocPhan course;
-
-  final List<GiangVien> teachers;
-  const _ListTeachingStaffs({
-    required this.course,
-    required this.teachers,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final state = Provider.of<PageCourseDetailState>(
-      context,
-      listen: false,
-    );
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: teachers.length,
-      itemBuilder: (context, index) {
-        final teacher = teachers[index];
-        return ListTile(
-          title: Text(teacher.hoTenChucDanh),
-          subtitle: Text(teacher.email ?? "N/A"),
-          onTap: () async {
-            // Open confirmation dialog
-            final confirm = await showDialog<bool>(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text("Xác nhận"),
-                content: Text("Bạn có chắc muốn xóa giảng viên này?"),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, false),
-                    child: Text("Hủy"),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, true),
-                    child: Text("Xóa"),
-                  ),
-                ],
-              ),
-            );
-
-            // cancel
-            if (confirm != true) return;
-
-            // Proceed with deletion
-            await course.removeTeachingStaff(teacher.id);
-            state.refresh(scrollToEnd: true);
-          },
-        );
-      },
+  void removeTeacher(BuildContext context, WidgetRef ref, TeacherData teacher) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Xác nhận"),
+        content: Text(
+          "Xóa đăng ký giảng dạy của giảng viên ${teacher.name} khỏi học phần này",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text("Hủy"),
+          ),
+          TextButton(
+            onPressed: () {
+              final notifier = ref.read(
+                teacherIdsByCourseProvider(courseId).notifier,
+              );
+              notifier.removeTeacher(teacherId);
+              Navigator.of(context).pop();
+            },
+            child: Text("Gỡ"),
+          ),
+        ],
+      ),
     );
   }
 }

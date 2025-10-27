@@ -10,6 +10,7 @@ import '../../business/db_v2_providers.dart';
 import '../../custom_tiles.dart';
 import '../../custom_widgets.dart';
 import '../../shortcuts.dart';
+import '../course_pages/course_pages.dart';
 
 const notAvailableText = "N/A";
 
@@ -131,7 +132,7 @@ class _TeachingCoursesTab extends ConsumerWidget {
               if (searchTerm.isEmpty) {
                 return [];
               }
-              final ids = await db.searchCourses(searchTerm: searchTerm).get();
+              final ids = await db.searchCourses(searchText: searchTerm);
 
               final suggestions = <Widget>[];
               for (final id in ids) {

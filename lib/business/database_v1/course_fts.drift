@@ -23,14 +23,21 @@ create trigger course_fts_update after update on "course" begin
         values (new.id, new.vietnamese_name, new.english_name);
 end;
 
-searchCourses(
-    :search_term as text,
-    :course_category as text or null
-):
-    select course.id from course
-    where id in (
-        select id from course_fts
-        where course_fts match :search_term
-    ) and (:course_category is null or course.category = :course_category);
+
+-- searchCourses(
+--     :search_term as text,
+--     :course_category as text or null
+-- ):
+--     select course.id from course
+--     where 
+--     (
+--         :search_term is null
+--         or
+--         id in (
+--             select id from course_fts
+--             where course_fts match :search_term
+--         )
+--     )
+--     and (:course_category is null or course.category = :course_category);
 
 -- vim: ft=sql

@@ -10769,6 +10769,17 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final TeachingAssignment teachingAssignment = TeachingAssignment(this);
   late final DangKyHoc dangKyHoc = DangKyHoc(this);
+  Selectable<int> searchTeachers({
+    required String searchtext,
+    required bool isOutsider,
+  }) {
+    return customSelect(
+      'SELECT id FROM teacher WHERE hoten LIKE \'%\' || ?1 || \'%\' OR email LIKE \'%\' || ?1 || \'%\' OR macanbo LIKE \'%\' || ?1 || \'%\' OR sdt LIKE \'%\' || ?1 || \'%\' OR email LIKE \'%\' || ?1 || \'%\' OR cccd LIKE \'%\' || ?1 || \'%\' OR stk LIKE \'%\' || ?1 || \'%\' OR mst LIKE \'%\' || ?1 || \'%\' AND(?2 IS NULL OR ngoaitruong = ?2)',
+      variables: [Variable<String>(searchtext), Variable<bool>(isOutsider)],
+      readsFrom: {teacher},
+    ).map((QueryRow row) => row.read<int>('id'));
+  }
+
   Selectable<TeacherData> searchTeacher({String? searchText, bool? outsider}) {
     return customSelect(
       'SELECT * FROM teacher WHERE hoten LIKE \'%\' || ?1 || \'%\' OR email LIKE \'%\' || ?1 || \'%\' OR macanbo LIKE \'%\' || ?1 || \'%\' OR sdt LIKE \'%\' || ?1 || \'%\' OR email LIKE \'%\' || ?1 || \'%\' OR cccd LIKE \'%\' || ?1 || \'%\' OR stk LIKE \'%\' || ?1 || \'%\' OR mst LIKE \'%\' || ?1 || \'%\' AND(?2 IS NULL OR ngoaitruong = ?2)',
@@ -10902,20 +10913,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       variables: [Variable<String>(searchText)],
       readsFrom: {detaithacsi, ftsDeTaiThacSi},
     ).map((QueryRow row) => row.read<int>('id'));
-  }
-
-  Selectable<String> searchCourses({
-    required String searchTerm,
-    String? courseCategory,
-  }) {
-    return customSelect(
-      'SELECT course.id FROM course WHERE id IN (SELECT id FROM course_fts WHERE course_fts MATCH ?1) AND(?2 IS NULL OR course.category = ?2)',
-      variables: [
-        Variable<String>(searchTerm),
-        Variable<String>(courseCategory),
-      ],
-      readsFrom: {course, courseFts},
-    ).map((QueryRow row) => row.read<String>('id'));
   }
 
   @override

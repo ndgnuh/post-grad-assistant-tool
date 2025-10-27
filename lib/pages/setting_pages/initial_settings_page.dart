@@ -12,6 +12,7 @@ import '../../business/db_v2_providers.dart';
 import '../../business/file_content_database.dart';
 import '../../custom_widgets.dart';
 import 'providers.dart';
+import 'widgets.dart';
 
 class InitialSetupPage extends StatelessWidget {
   static const String routeName = "/initial/setup";
@@ -30,22 +31,53 @@ class InitialSetupPage extends StatelessWidget {
             spacing: context.gutter,
             children: [
               Text("Xin chào", style: textTheme.headlineLarge),
+              Text("Hãy cài đặt hai CSDL để sử dụng app"),
 
               // Create new database card
-              Card(
-                child: Column(
-                  children: [
-                    SizedBox(height: context.gutterTiny),
-                    _SaveDirectoryPicker(),
-                    Divider(),
-                    _CreateNewButton(),
-                    Divider(),
-                    _CreateNewFileDatabaseButton(),
-                    Divider(),
-                    _ImportDatabaseButton(),
-                    SizedBox(height: context.gutterTiny),
-                  ],
-                ),
+              CardSection(
+                title: "Cơ sở dữ liệu chính",
+                subtitle:
+                    "Lưu trữ thông tin học viên, giảng viên, lớp tín chỉ, luận văn...",
+                children: [
+                  _CreateNewButton(),
+                  AppDatabaseImportButtonBuilder(
+                    builder: (context, fileDatabasePath, callback) {
+                      return ListTile(
+                        leading: Icon(Symbols.upload),
+                        title: Text("Nhập CSDL"),
+                        subtitle: Text(switch (fileDatabasePath) {
+                          null => "Chọn cơ sở dữ liệu file hiện có trong máy",
+                          String path => "Đã chọn: $path",
+                        }),
+                        trailing: Icon(Symbols.chevron_right),
+                        onTap: callback,
+                      );
+                    },
+                  ),
+                ],
+              ),
+
+              //File Content Database
+              CardSection(
+                title: "Cơ sở dữ liệu file",
+                subtitle: "Lưu trữ các file văn bản PDF",
+                children: [
+                  _CreateNewFileDatabaseButton(),
+                  FileDatabaseImportButtonBuilder(
+                    builder: (context, fileDatabasePath, callback) {
+                      return ListTile(
+                        leading: Icon(Symbols.upload),
+                        title: Text("Nhập CSDL"),
+                        subtitle: Text(switch (fileDatabasePath) {
+                          null => "Chọn cơ sở dữ liệu file hiện có trong máy",
+                          String path => "Đã chọn: $path",
+                        }),
+                        trailing: Icon(Symbols.chevron_right),
+                        onTap: callback,
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -63,11 +95,11 @@ class _CreateNewButton extends ConsumerWidget {
 
     return ListTile(
       leading: Icon(Symbols.add),
-      title: Text("Tạo CSDL"),
+      title: Text("Tạo mới"),
       subtitle: Text(
-        "Tạo cơ sở dữ liệu mới và bắt đầu sử dụng ứng dụng",
+        "Tạo cơ sở dữ liệu mới",
       ),
-      trailing: Icon(Icons.chevron_right),
+      trailing: Icon(Symbols.chevron_right),
       onTap: () {
         if (directory == null) {
           messenger.showSnackBar(
@@ -92,8 +124,9 @@ class _CreateNewFileDatabaseButton extends ConsumerWidget {
     final navigator = Navigator.of(context);
     return ListTile(
       leading: Icon(Symbols.add),
-      title: Text("Tạo CSDL file"),
-      subtitle: Text("Tạo CSDL mới để lưu các văn bản tài liệu"),
+      title: Text("Tạo mới"),
+      subtitle: Text("Tạo cơ sở dữ liệu mới"),
+      trailing: Icon(Symbols.chevron_right),
       onTap: () async {
         final dbFile = await FileContentDatabase.createTemporaryDatabase();
         final dbFileContent = await dbFile.readAsBytes();
@@ -119,50 +152,6 @@ class _CreateNewFileDatabaseButton extends ConsumerWidget {
             notifier.setDatabasePath(path);
             navigator.pushNamed(InitialLoadingPage.routeName);
         }
-      },
-    );
-  }
-}
-
-class _ImportDatabaseButton extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ListTile(
-      leading: Icon(Symbols.upload),
-      title: Text("Nhập CSDL"),
-      subtitle: Text(
-        "Chọn cơ sở dữ liệu hiện có trong máy",
-      ),
-      trailing: Icon(Icons.chevron_right),
-      onTap: () async {
-        final databasePath = await FilePicker.platform.pickFiles(
-          allowMultiple: false,
-          dialogTitle: 'Chọn file cơ sở dữ liệu',
-          withData: false,
-        );
-        final dbPath = databasePath?.files.single.path;
-        if (dbPath == null) return;
-
-        final notifer = ref.read(appDatabasePathProvider.notifier);
-        notifer.setDatabasePath(dbPath);
-      },
-    );
-  }
-}
-
-class _SaveDirectoryPicker extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final directory = ref.watch(saveDirectoryProvider);
-
-    return ListTile(
-      leading: Icon(Symbols.folder),
-      title: Text("Thư mục lưu CSDL"),
-      subtitle: Text(directory ?? "Nhấn để chọn thư mục lưu"),
-      trailing: Icon(Icons.chevron_right),
-      onTap: () {
-        final notifier = ref.read(saveDirectoryProvider.notifier);
-        notifier.picktDirectory();
       },
     );
   }

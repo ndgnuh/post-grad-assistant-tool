@@ -1610,12 +1610,14 @@ class StringNotifier extends Notifier<String> {
 }
 
 class CardSection extends StatelessWidget {
-  final String title;
+  final String? title;
+  final String? subtitle;
   final List<Widget> children;
 
   const CardSection({
     super.key,
-    required this.title,
+    this.title,
+    this.subtitle,
     required this.children,
   });
 
@@ -1632,7 +1634,11 @@ class CardSection extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        ListTile(title: Text(title)),
+        if (title != null)
+          ListTile(
+            title: Text(title!),
+            subtitle: subtitle != null ? Text(subtitle!) : null,
+          ),
         Card(
           clipBehavior: Clip.antiAlias,
           child: Column(

@@ -1,11 +1,11 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../business/domain_objects.dart' show HocPhan;
+import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
 import 'course_pages.dart';
+import 'providers.dart';
 
 class CourseListPage extends StatelessWidget {
   static const String routeName = "/courses/list";
@@ -13,39 +13,25 @@ class CourseListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => _State(),
-      child: Scaffold(
-        appBar: ConstrainedAppBar(
-          child: AppBar(
-            title: Text("Danh sách học phần"),
-          ),
+    return Scaffold(
+      appBar: ConstrainedAppBar(
+        child: AppBar(
+          title: Text("Danh sách học phần"),
         ),
-        body: ConstrainedBody(
+      ),
+      body: ConstrainedBody(
+        child: Padding(
+          padding: EdgeInsets.all(context.gutter),
           child: Column(
+            verticalDirection: context.verticalDirection,
+            spacing: context.gutter,
             children: [
               ListTile(
                 leading: Icon(Icons.search),
                 title: _SearchBar(),
               ),
               Expanded(
-                child: Selector<_State, Future>(
-                  selector: (context, state) => state.futureSearchedCourses,
-                  builder: (context, futureCourses, child) => FutureBuilder(
-                    future: futureCourses,
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.done:
-                          return _CourseListView(courses: snapshot.data!);
-                        default:
-                          return SizedBox.square(
-                            dimension: 20,
-                            child: CircularProgressIndicator(),
-                          );
-                      }
-                    },
-                  ),
-                ),
+                child: _CourseListView(),
               ),
             ],
           ),
@@ -55,93 +41,96 @@ class CourseListPage extends StatelessWidget {
   }
 }
 
-class _CourseListView extends StatelessWidget {
-  final List<HocPhan> courses;
-  const _CourseListView({
-    required this.courses,
+class _CourseItem extends ConsumerWidget {
+  final String courseId;
+
+  const _CourseItem({
+    super.key,
+    required this.courseId,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      separatorBuilder: (context, index) => Divider(),
-      itemCount: courses.length,
-      itemBuilder: (context, index) {
-        final course = courses[index];
-
-        final title = course.tenTiengViet;
-        final subtitle = [
-          "Mã học phần: ${course.maHocPhan}",
-          "Khối lượng: ${course.khoiLuong}",
-          "Khối kiến thức: ${course.khoiKienThuc.label}",
-        ].join("\n");
+  Widget build(BuildContext context, WidgetRef ref) {
+    final courseAsync = ref.watch(courseByIdProvider(courseId));
+    switch (courseAsync) {
+      case AsyncLoading():
+        return const ListTile(
+          title: Text("Loading..."),
+        );
+      case AsyncError(:final error):
         return ListTile(
-          title: Text(title),
-          subtitle: Text(subtitle),
-          onTap: () {
-            Navigator.pushNamed(
-              context,
-              CourseDetailPage.routeName,
-              arguments: CourseDetailPageArgs(course: course),
-            );
-          },
+          title: Text("Lỗi rồi"),
+          subtitle: Text(error.toString()),
+        );
+      default:
+    }
+
+    final course = courseAsync.value!;
+    final title = course.vietnameseName;
+
+    final subtitle = [
+      "Mã học phần: ${course.id}",
+      "Số tín chỉ: ${course.numCredits}",
+      "Khối kiến thức: ${course.category.label}",
+    ].join("\n");
+
+    return ListTile(
+      title: Text(title),
+      subtitle: Text(subtitle),
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          CourseDetailsPage.routeName,
+          arguments: course.id,
         );
       },
     );
   }
 }
 
-class _SearchBar extends StatelessWidget {
+class _CourseListView extends ConsumerWidget {
+  const _CourseListView();
+
   @override
-  Widget build(BuildContext context) {
-    final state = Provider.of<_State>(context, listen: false);
-    return ListTile(
-      title: TextFormField(
-        autofocus: true,
-        onChanged: (value) => state.debounceAndSearch(value),
-        onFieldSubmitted: (value) => state.searchCourses(value),
-        onTap: () {
-          final controller = state.searchController;
-          controller.selection = TextSelection(
-            baseOffset: 0,
-            extentOffset: controller.text.length,
-          );
-        },
-        controller: state.searchController,
-        decoration: InputDecoration(
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: "Mã học phần, tên học phần",
-          labelText: "Tìm kiếm",
-        ),
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final courseIdsAsync = ref.watch(courseIdsProvider);
+    switch (courseIdsAsync) {
+      case AsyncLoading():
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      case AsyncError(:final error):
+        return Center(child: Text("Error: $error"));
+      default:
+    }
+
+    final courseIds = courseIdsAsync.value!;
+    return ListView.separated(
+      separatorBuilder: (context, index) => Divider(),
+      itemCount: courseIds.length,
+      itemBuilder: (context, index) {
+        final courseId = courseIds[index];
+        return _CourseItem(
+          key: ValueKey(courseId),
+          courseId: courseId,
+        );
+      },
     );
   }
 }
 
-class _State extends ChangeNotifier {
-  static const _debounceDuration = Duration(milliseconds: 400);
-  final searchController = TextEditingController();
-
-  late Future<List<HocPhan>> futureSearchedCourses;
-  late List<HocPhan> searchedCourses;
-
-  Timer _debounceTimer = Timer(Duration.zero, () {});
-  _State() {
-    searchCourses("");
-  }
-
-  Future<void> debounceAndSearch(String query) async {
-    _debounceTimer.cancel();
-    _debounceTimer = Timer(_debounceDuration, () => searchCourses(query));
-  }
-
-  Future<void> searchCourses(String query) async {
-    if (query.isEmpty) {
-      futureSearchedCourses = HocPhan.all();
-    } else {
-      futureSearchedCourses = HocPhan.search(query);
-    }
-    searchedCourses = await futureSearchedCourses;
-    notifyListeners();
+class _SearchBar extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notifier = ref.read(searchTextProvider.notifier);
+    return TextFormField(
+      onChanged: notifier.setDebounce,
+      onFieldSubmitted: notifier.set,
+      decoration: InputDecoration(
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        hintText: "Mã học phần, tên học phần",
+        labelText: "Tìm kiếm",
+      ),
+    );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 
@@ -27,4 +29,16 @@ extension Breakpoints on BuildContext {
 
   bool get isMediumOrLargerScreen => screenSize != ScreenSize.small;
   bool get isMediumOrSmallerScreen => screenSize != ScreenSize.large;
+
+  /// Returns the vertical direction based on the platform.
+  // On the desktop, UI elements are typically arranged from top to bottom (downwards).
+  // On the mobile, input fields and interactive elements are often positioned to accommodate
+  // the touch screen and gripping position, which is usually from bottom to top (upwards).
+  VerticalDirection get verticalDirection {
+    if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+      return VerticalDirection.down;
+    } else {
+      return VerticalDirection.up;
+    }
+  }
 }

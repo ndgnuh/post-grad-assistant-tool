@@ -5,6 +5,21 @@ import 'database_v1/course_fts.drift';
 
 
 
+searchTeachers(
+    :searchText as text or null,
+    :isOutsider as boolean or null
+): select id from teacher
+    where hoten like '%' || :searchtext || '%'
+    or email like '%' || :searchtext || '%'
+    or macanbo like '%' || :searchtext || '%'
+    or sdt like '%' || :searchtext || '%'
+    or email like '%' || :searchtext || '%'
+    or cccd like '%' || :searchtext || '%'
+    or stk like '%' || :searchtext || '%'
+    or mst like '%' || :searchtext || '%'
+    and (:is_outsider is null or ngoaitruong = :is_outsider);
+
+
 searchTeacher(
     :searchText as TEXT OR NULL,
     :outsider as BOOLEAN OR NULL
