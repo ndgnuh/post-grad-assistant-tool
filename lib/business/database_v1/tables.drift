@@ -208,7 +208,7 @@ create table "LopTinChi" (
     "customEndDate" DATETIME,
     "hocKy" TEXT NOT NULL AS semester,
     "phongHoc" TEXT AS classroom,
-    "ngayHoc" TEXT AS dayOfWeek,
+    "ngayHoc" INTEGER mapped by `const DayOfWeekConverter()` AS dayOfWeek,
     "tietBatDau" INTEGER AS startPeriod,
     "tietKetThuc" INTEGER AS endPeriod,
     "trangThai" INTEGER mapped by `const CourseClassStatusConverter()` AS status

@@ -2383,17 +2383,15 @@ class LopTinChi extends Table with TableInfo<LopTinChi, CourseClassData> {
     requiredDuringInsert: false,
     $customConstraints: '',
   );
-  static const VerificationMeta _dayOfWeekMeta = const VerificationMeta(
-    'dayOfWeek',
-  );
-  late final GeneratedColumn<String> dayOfWeek = GeneratedColumn<String>(
-    'ngayHoc',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
+  late final GeneratedColumnWithTypeConverter<enums.DayOfWeek?, int> dayOfWeek =
+      GeneratedColumn<int>(
+        'ngayHoc',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      ).withConverter<enums.DayOfWeek?>(LopTinChi.$converterdayOfWeekn);
   static const VerificationMeta _startPeriodMeta = const VerificationMeta(
     'startPeriod',
   );
@@ -2526,12 +2524,6 @@ class LopTinChi extends Table with TableInfo<LopTinChi, CourseClassData> {
         classroom.isAcceptableOrUnknown(data['phongHoc']!, _classroomMeta),
       );
     }
-    if (data.containsKey('ngayHoc')) {
-      context.handle(
-        _dayOfWeekMeta,
-        dayOfWeek.isAcceptableOrUnknown(data['ngayHoc']!, _dayOfWeekMeta),
-      );
-    }
     if (data.containsKey('tietBatDau')) {
       context.handle(
         _startPeriodMeta,
@@ -2596,9 +2588,11 @@ class LopTinChi extends Table with TableInfo<LopTinChi, CourseClassData> {
         DriftSqlType.string,
         data['${effectivePrefix}phongHoc'],
       ),
-      dayOfWeek: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}ngayHoc'],
+      dayOfWeek: LopTinChi.$converterdayOfWeekn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}ngayHoc'],
+        ),
       ),
       startPeriod: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -2622,6 +2616,10 @@ class LopTinChi extends Table with TableInfo<LopTinChi, CourseClassData> {
     return LopTinChi(attachedDatabase, alias);
   }
 
+  static TypeConverter<enums.DayOfWeek, int> $converterdayOfWeek =
+      const enums.DayOfWeekConverter();
+  static TypeConverter<enums.DayOfWeek?, int?> $converterdayOfWeekn =
+      NullAwareTypeConverter.wrap($converterdayOfWeek);
   static TypeConverter<enums.CourseClassStatus, int> $converterstatus =
       const enums.CourseClassStatusConverter();
   static TypeConverter<enums.CourseClassStatus?, int?> $converterstatusn =
@@ -2641,7 +2639,7 @@ class CourseClassData extends DataClass implements Insertable<CourseClassData> {
   final DateTime? customEndDate;
   final String semester;
   final String? classroom;
-  final String? dayOfWeek;
+  final enums.DayOfWeek? dayOfWeek;
   final int? startPeriod;
   final int? endPeriod;
   final enums.CourseClassStatus? status;
@@ -2685,7 +2683,9 @@ class CourseClassData extends DataClass implements Insertable<CourseClassData> {
       map['phongHoc'] = Variable<String>(classroom);
     }
     if (!nullToAbsent || dayOfWeek != null) {
-      map['ngayHoc'] = Variable<String>(dayOfWeek);
+      map['ngayHoc'] = Variable<int>(
+        LopTinChi.$converterdayOfWeekn.toSql(dayOfWeek),
+      );
     }
     if (!nullToAbsent || startPeriod != null) {
       map['tietBatDau'] = Variable<int>(startPeriod);
@@ -2754,7 +2754,7 @@ class CourseClassData extends DataClass implements Insertable<CourseClassData> {
       customEndDate: serializer.fromJson<DateTime?>(json['customEndDate']),
       semester: serializer.fromJson<String>(json['hocKy']),
       classroom: serializer.fromJson<String?>(json['phongHoc']),
-      dayOfWeek: serializer.fromJson<String?>(json['ngayHoc']),
+      dayOfWeek: serializer.fromJson<enums.DayOfWeek?>(json['ngayHoc']),
       startPeriod: serializer.fromJson<int?>(json['tietBatDau']),
       endPeriod: serializer.fromJson<int?>(json['tietKetThuc']),
       status: serializer.fromJson<enums.CourseClassStatus?>(json['trangThai']),
@@ -2774,7 +2774,7 @@ class CourseClassData extends DataClass implements Insertable<CourseClassData> {
       'customEndDate': serializer.toJson<DateTime?>(customEndDate),
       'hocKy': serializer.toJson<String>(semester),
       'phongHoc': serializer.toJson<String?>(classroom),
-      'ngayHoc': serializer.toJson<String?>(dayOfWeek),
+      'ngayHoc': serializer.toJson<enums.DayOfWeek?>(dayOfWeek),
       'tietBatDau': serializer.toJson<int?>(startPeriod),
       'tietKetThuc': serializer.toJson<int?>(endPeriod),
       'trangThai': serializer.toJson<enums.CourseClassStatus?>(status),
@@ -2792,7 +2792,7 @@ class CourseClassData extends DataClass implements Insertable<CourseClassData> {
     Value<DateTime?> customEndDate = const Value.absent(),
     String? semester,
     Value<String?> classroom = const Value.absent(),
-    Value<String?> dayOfWeek = const Value.absent(),
+    Value<enums.DayOfWeek?> dayOfWeek = const Value.absent(),
     Value<int?> startPeriod = const Value.absent(),
     Value<int?> endPeriod = const Value.absent(),
     Value<enums.CourseClassStatus?> status = const Value.absent(),
@@ -2912,7 +2912,7 @@ class LopTinChiCompanion extends UpdateCompanion<CourseClassData> {
   final Value<DateTime?> customEndDate;
   final Value<String> semester;
   final Value<String?> classroom;
-  final Value<String?> dayOfWeek;
+  final Value<enums.DayOfWeek?> dayOfWeek;
   final Value<int?> startPeriod;
   final Value<int?> endPeriod;
   final Value<enums.CourseClassStatus?> status;
@@ -2961,7 +2961,7 @@ class LopTinChiCompanion extends UpdateCompanion<CourseClassData> {
     Expression<DateTime>? customEndDate,
     Expression<String>? semester,
     Expression<String>? classroom,
-    Expression<String>? dayOfWeek,
+    Expression<int>? dayOfWeek,
     Expression<int>? startPeriod,
     Expression<int>? endPeriod,
     Expression<int>? status,
@@ -2995,7 +2995,7 @@ class LopTinChiCompanion extends UpdateCompanion<CourseClassData> {
     Value<DateTime?>? customEndDate,
     Value<String>? semester,
     Value<String?>? classroom,
-    Value<String?>? dayOfWeek,
+    Value<enums.DayOfWeek?>? dayOfWeek,
     Value<int?>? startPeriod,
     Value<int?>? endPeriod,
     Value<enums.CourseClassStatus?>? status,
@@ -3052,7 +3052,9 @@ class LopTinChiCompanion extends UpdateCompanion<CourseClassData> {
       map['phongHoc'] = Variable<String>(classroom.value);
     }
     if (dayOfWeek.present) {
-      map['ngayHoc'] = Variable<String>(dayOfWeek.value);
+      map['ngayHoc'] = Variable<int>(
+        LopTinChi.$converterdayOfWeekn.toSql(dayOfWeek.value),
+      );
     }
     if (startPeriod.present) {
       map['tietBatDau'] = Variable<int>(startPeriod.value);
@@ -12229,7 +12231,7 @@ typedef $LopTinChiCreateCompanionBuilder =
       Value<DateTime?> customEndDate,
       required String semester,
       Value<String?> classroom,
-      Value<String?> dayOfWeek,
+      Value<enums.DayOfWeek?> dayOfWeek,
       Value<int?> startPeriod,
       Value<int?> endPeriod,
       Value<enums.CourseClassStatus?> status,
@@ -12246,7 +12248,7 @@ typedef $LopTinChiUpdateCompanionBuilder =
       Value<DateTime?> customEndDate,
       Value<String> semester,
       Value<String?> classroom,
-      Value<String?> dayOfWeek,
+      Value<enums.DayOfWeek?> dayOfWeek,
       Value<int?> startPeriod,
       Value<int?> endPeriod,
       Value<enums.CourseClassStatus?> status,
@@ -12339,9 +12341,10 @@ class $LopTinChiFilterComposer extends Composer<_$AppDatabase, LopTinChi> {
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get dayOfWeek => $composableBuilder(
+  ColumnWithTypeConverterFilters<enums.DayOfWeek?, enums.DayOfWeek, int>
+  get dayOfWeek => $composableBuilder(
     column: $table.dayOfWeek,
-    builder: (column) => ColumnFilters(column),
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnFilters<int> get startPeriod => $composableBuilder(
@@ -12448,7 +12451,7 @@ class $LopTinChiOrderingComposer extends Composer<_$AppDatabase, LopTinChi> {
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get dayOfWeek => $composableBuilder(
+  ColumnOrderings<int> get dayOfWeek => $composableBuilder(
     column: $table.dayOfWeek,
     builder: (column) => ColumnOrderings(column),
   );
@@ -12513,7 +12516,7 @@ class $LopTinChiAnnotationComposer extends Composer<_$AppDatabase, LopTinChi> {
   GeneratedColumn<String> get classroom =>
       $composableBuilder(column: $table.classroom, builder: (column) => column);
 
-  GeneratedColumn<String> get dayOfWeek =>
+  GeneratedColumnWithTypeConverter<enums.DayOfWeek?, int> get dayOfWeek =>
       $composableBuilder(column: $table.dayOfWeek, builder: (column) => column);
 
   GeneratedColumn<int> get startPeriod => $composableBuilder(
@@ -12591,7 +12594,7 @@ class $LopTinChiTableManager
                 Value<DateTime?> customEndDate = const Value.absent(),
                 Value<String> semester = const Value.absent(),
                 Value<String?> classroom = const Value.absent(),
-                Value<String?> dayOfWeek = const Value.absent(),
+                Value<enums.DayOfWeek?> dayOfWeek = const Value.absent(),
                 Value<int?> startPeriod = const Value.absent(),
                 Value<int?> endPeriod = const Value.absent(),
                 Value<enums.CourseClassStatus?> status = const Value.absent(),
@@ -12623,7 +12626,7 @@ class $LopTinChiTableManager
                 Value<DateTime?> customEndDate = const Value.absent(),
                 required String semester,
                 Value<String?> classroom = const Value.absent(),
-                Value<String?> dayOfWeek = const Value.absent(),
+                Value<enums.DayOfWeek?> dayOfWeek = const Value.absent(),
                 Value<int?> startPeriod = const Value.absent(),
                 Value<int?> endPeriod = const Value.absent(),
                 Value<enums.CourseClassStatus?> status = const Value.absent(),

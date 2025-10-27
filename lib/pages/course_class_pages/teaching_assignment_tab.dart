@@ -6,79 +6,69 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/db_v2_providers.dart';
-import 'teaching_assignment_page_providers.dart';
+import 'teaching_assignment_providers.dart';
 
-class TeachingAssignmentPage extends StatelessWidget {
-  static const String routeName = '/course-class/teaching-assignment';
-  final int courseClassId;
+class TeachingAssignmentTab extends StatelessWidget {
+  final int classId;
 
-  const TeachingAssignmentPage({
+  const TeachingAssignmentTab({
     super.key,
-    required this.courseClassId,
+    required this.classId,
   });
 
   @override
   Widget build(BuildContext context) {
     final gutter = context.responsiveGutter;
 
-    return Scaffold(
-      appBar: ConstrainedAppBar(
-        child: AppBar(
-          title: Text('Phân công giảng dạy'),
-        ),
-      ),
-      body: ConstrainedBody(
-        child: Padding(
-          padding: EdgeInsets.all(gutter),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            spacing: gutter,
-            children: [
-              Expanded(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    _CandidateTeachersSection(classId: courseClassId),
-                    SizedBox(height: gutter),
-                    _TeachingInvitationPanel(classId: courseClassId),
-                    SizedBox(height: gutter),
-                    _AssignmentSection(courseClassId: courseClassId),
-                  ],
-                ),
-              ),
-
-              // Add to the temporary list
-              _AddCurrentTeacherButton(
-                courseClassId: courseClassId,
-                builder: (context, onPressed) => OutlinedButton.icon(
-                  onPressed: onPressed,
-                  label: Text("Thêm giảng viên đã chọn"),
-                  icon: Icon(Symbols.add),
-                ),
-              ),
-
-              // Reset to initial state
-              _ResetButton(
-                courseClassId: courseClassId,
-                builder: (context, onPressed) => OutlinedButton.icon(
-                  onPressed: onPressed,
-                  label: Text("Reset về trạng thái ban đầu"),
-                  icon: Icon(Symbols.refresh),
-                ),
-              ),
-
-              // Store assignment
-              _SaveButton(
-                courseClassId: courseClassId,
-                builder: (context, callback) => FilledButton.icon(
-                  onPressed: callback,
-                  icon: Icon(Symbols.save),
-                  label: Text("Lưu"),
-                ),
-              ),
-            ],
+    return Padding(
+      padding: EdgeInsets.all(gutter),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: gutter,
+        children: [
+          Expanded(
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                _CandidateTeachersSection(classId: classId),
+                SizedBox(height: gutter),
+                _TeachingInvitationPanel(classId: classId),
+                SizedBox(height: gutter),
+                _AssignmentSection(courseClassId: classId),
+              ],
+            ),
           ),
-        ),
+
+          // Add to the temporary list
+          _AddCurrentTeacherButton(
+            courseClassId: classId,
+            builder: (context, onPressed) => OutlinedButton.icon(
+              onPressed: onPressed,
+              label: Text("Thêm giảng viên đã chọn"),
+              icon: Icon(Symbols.add),
+            ),
+          ),
+
+          // Reset to initial state
+          _ResetButton(
+            courseClassId: classId,
+            builder: (context, onPressed) => OutlinedButton.icon(
+              onPressed: onPressed,
+              label: Text("Reset về trạng thái ban đầu"),
+              icon: Icon(Symbols.refresh),
+            ),
+          ),
+
+          // Store assignment
+          _SaveButton(
+            courseClassId: classId,
+            builder: (context, callback) => FilledButton.icon(
+              onPressed: callback,
+              icon: Icon(Symbols.save),
+              label: Text("Lưu"),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -419,7 +409,6 @@ class _SaveButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final navigator = Navigator.of(context);
     final messenger = ScaffoldMessenger.of(context);
     return builder(
       context,
@@ -428,16 +417,20 @@ class _SaveButton extends ConsumerWidget {
         final viewModel = await ref.read(
           teachingAssignmentViewModelProvider(courseClassId).future,
         );
-        final totalWeight = viewModel.totalWeight;
-        if (totalWeight != 1.0) {
-          messenger.showSnackBar(
-            SnackBar(
-              content: Text(
-                "Tổng trọng số hiện tại là $totalWeight, vui lòng điều chỉnh để tổng bằng 1.0 trước khi lưu",
+
+        // Only check if there is at least one teacher assigned
+        if (viewModel.assignedTeachers.isNotEmpty) {
+          final totalWeight = viewModel.totalWeight;
+          if (totalWeight != 1.0) {
+            messenger.showSnackBar(
+              SnackBar(
+                content: Text(
+                  "Tổng trọng số hiện tại là $totalWeight, vui lòng điều chỉnh để tổng bằng 1.0 trước khi lưu",
+                ),
               ),
-            ),
-          );
-          return;
+            );
+            return;
+          }
         }
 
         final notifier = ref.read(
@@ -447,7 +440,6 @@ class _SaveButton extends ConsumerWidget {
         messenger.showSnackBar(
           const SnackBar(content: Text("Đã lưu phân công giảng dạy")),
         );
-        navigator.pop();
       },
     );
   }

@@ -1,17 +1,13 @@
 import 'dart:async';
 
-import 'package:fami_tools/business/copy_pasta.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../business/copy_pasta.dart';
 import '../../business/db_v2_providers.dart';
 import '../../business/selection_models.dart';
-
-final courseClassViewModelsProvider = AsyncNotifierProvider(
-  CourseClassViewModelsNotifier.new,
-);
 
 final courseClassViewModelByIdProvider = AsyncNotifierProvider.family(
   CourseClassViewModelByIdNotifier.new,
@@ -20,6 +16,46 @@ final courseClassViewModelByIdProvider = AsyncNotifierProvider.family(
 final semesterSelectionModelProvider = AsyncNotifierProvider(
   () => SemesterSelectionModelNotifier("course-class"),
 );
+
+final courseClassUrlNotificationProvider = FutureProvider((Ref ref) async {
+  final semesterSelection = await ref.watch(
+    semesterSelectionModelProvider.future,
+  );
+  final selectedSemester = semesterSelection.selected;
+  if (selectedSemester == null) return null;
+
+  final semester = selectedSemester;
+  final courseClassIds = await ref.watch(
+    courseClassIdsBySemesterProvider(semester.semester).future,
+  );
+
+  final models = <CourseClassViewModel>[];
+  for (final classId in courseClassIds) {
+    final model = await ref.watch(
+      courseClassViewModelByIdProvider(classId).future,
+    );
+    models.add(model);
+  }
+
+  final lines = <String>[];
+  for (final model in models) {
+    final name = model.course.vietnameseName;
+    final url = model.courseClass.accessUrl ?? "Chưa có";
+    final line = "- $name: $url";
+    lines.add(line);
+  }
+
+  return """
+@all
+Chào các bạn, mình gửi danh sách lớp đợt học ${semester.semester} kèm theo nhóm lớp.
+Các bạn truy cập vào danh sách lớp theo đúng lớp mình đã đăng ký nhé.
+
+${lines.join("\n")}
+
+Các thầy cô sẽ được add vào nhóm sau.
+"""
+      .trim();
+});
 
 /// Return course class IDs for the selected semester
 /// along with a boolean indicating whether no semester is selected
@@ -55,6 +91,10 @@ class CourseClassViewModel {
   final Map<TeacherData, double> teachers;
   final CourseData course;
   final int registrationCount;
+
+  String get className {
+    return courseClass.classId.replaceFirst(course.id, course.vietnameseName);
+  }
 
   const CourseClassViewModel({
     required this.semester,
@@ -106,38 +146,6 @@ class CourseClassViewModelByIdNotifier
       semester: semester,
       registrationCount: registrationCount,
     );
-  }
-}
-
-class CourseClassViewModelsNotifier
-    extends AsyncNotifier<List<CourseClassViewModel>> {
-  @override
-  FutureOr<List<CourseClassViewModel>> build() async {
-    final semesterModel = await ref.watch(
-      semesterSelectionModelProvider.future,
-    );
-    if (semesterModel.selected == null) {
-      return [];
-    }
-
-    final semester = semesterModel.selected!;
-
-    final courseClassIds = await ref.watch(
-      courseClassIdsBySemesterProvider(semester.semester).future,
-    );
-
-    final courseClassViewModels = <CourseClassViewModel>[];
-
-    for (final id in courseClassIds) {
-      final viewModel = await ref.watch(
-        courseClassViewModelByIdProvider(id).future,
-      );
-      if (viewModel != null) {
-        courseClassViewModels.add(viewModel);
-      }
-    }
-
-    return courseClassViewModels;
   }
 }
 

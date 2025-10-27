@@ -48,12 +48,33 @@ class CourseClassActionTab extends StatelessWidget {
 
                 Divider(),
 
-                ListTile(
-                  leading: const Icon(Symbols.class_),
-                  title: const Text('Thông báo danh sách lớp'),
-                  subtitle: const Text('Thông báo nhóm lớp cho học viên'),
-                  trailing: const Icon(Symbols.content_copy),
-                  onTap: () {},
+                Consumer(
+                  builder: (context, ref, _) {
+                    final messenger = ScaffoldMessenger.of(context);
+                    final message = ref
+                        .watch(courseClassUrlNotificationProvider)
+                        .value;
+
+                    return ListTile(
+                      leading: const Icon(Symbols.class_),
+                      title: const Text('Thông báo danh sách lớp'),
+                      subtitle: const Text('Thông báo nhóm lớp cho học viên'),
+                      trailing: const Icon(Symbols.content_copy),
+                      onTap: () {
+                        if (message == null) return;
+                        final data = ClipboardData(text: message);
+                        Clipboard.setData(data);
+                        messenger.showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Đã sao chép thông báo vào clipboard',
+                            ),
+                          ),
+                        );
+                      },
+                      enabled: message != null,
+                    );
+                  },
                 ),
 
                 Divider(),

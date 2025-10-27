@@ -21,8 +21,10 @@ class DialogValue<T> {
 }
 
 class InformationTile<T> extends StatefulWidget {
+  final bool editOnTap;
   final String titleText;
   final Widget? leading;
+  final Widget? trailing;
   final T? initialValue;
   final String Function(T? value)? formatValue;
   final ValueNotifier<T?>? valueNotifier;
@@ -38,6 +40,8 @@ class InformationTile<T> extends StatefulWidget {
     super.key,
     required this.titleText,
     required this.initialValue,
+    this.editOnTap = false,
+    this.trailing,
     this.onUpdate,
     this.valueNotifier,
     this.leading,
@@ -116,8 +120,21 @@ class _InformationTileState<T> extends State<InformationTile<T>> {
             title: Text(titleText),
             subtitle: Text(valueText),
             leading: widget.leading,
-            trailing: editButton,
-            onTap: () => copyCurrentValue(context),
+            trailing: widget.trailing ?? editButton,
+            onLongPress: () {
+              if (widget.editOnTap && !readOnly) {
+                copyCurrentValue(context);
+              } else if (!readOnly) {
+                showEditDialog(context);
+              }
+            },
+            onTap: () {
+              if (widget.editOnTap && !readOnly) {
+                showEditDialog(context);
+              } else {
+                copyCurrentValue(context);
+              }
+            },
           );
         },
       ),
@@ -199,7 +216,9 @@ class TextEditingDialog2 extends StatelessWidget {
 
 class StringTile extends StatelessWidget {
   final String titleText;
+  final bool editOnTap;
   final Widget? leading;
+  final Widget? trailing;
   final String initialValue;
   final ValueNotifier<String>? valueNotifier;
   final ValueChanged<String?>? onUpdate;
@@ -210,10 +229,12 @@ class StringTile extends StatelessWidget {
   const StringTile({
     super.key,
     required this.titleText,
+    this.editOnTap = false,
     this.onUpdate,
     this.readOnly = false,
     this.valueNotifier,
     this.leading,
+    this.trailing,
     this.initialValue = "",
     this.inputFormatters,
     this.keyboardType,
@@ -225,8 +246,10 @@ class StringTile extends StatelessWidget {
       titleText: titleText,
       initialValue: initialValue,
       valueNotifier: valueNotifier,
+      editOnTap: editOnTap,
       onUpdate: onUpdate,
       leading: leading,
+      trailing: trailing,
       readOnly: readOnly,
       formatValue: (value) => value ?? "",
       showEditingDialog: (context, valueNotifier) async {

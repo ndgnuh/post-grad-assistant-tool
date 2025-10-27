@@ -93,6 +93,36 @@ class CourseClassByIdNotifier extends AsyncNotifier<CourseClassData> {
   void cancelClass() => updateStatus(CourseClassStatus.canceled);
   void reopenClass() => updateStatus(CourseClassStatus.normal);
 
+  void _update(CourseClassCompanion updated) async {
+    final db = await ref.read(appDatabaseProvider.future);
+    final stmt = db.lopTinChi.update();
+    stmt.where((c) => c.id.equals(courseClassId));
+    final result = await stmt.writeReturning(updated);
+    state = AsyncData(result.first);
+  }
+
+  void updateClassroom(String? classroom) => _update(
+    LopTinChiCompanion(
+      classroom: Value(classroom),
+    ),
+  );
+
+  void updateStartPeriod(int? startPeriod) => _update(
+    LopTinChiCompanion(startPeriod: Value(startPeriod)),
+  );
+
+  void updateAccessUrl(String? url) => _update(
+    LopTinChiCompanion(accessUrl: Value(url)),
+  );
+
+  void updateEndPeriod(int? endPeriod) => _update(
+    LopTinChiCompanion(endPeriod: Value(endPeriod)),
+  );
+
+  void updateDayOfWeek(DayOfWeek? dayOfWeek) => _update(
+    LopTinChiCompanion(dayOfWeek: Value(dayOfWeek)),
+  );
+
   void updateStatus(CourseClassStatus status) async {
     final db = await ref.read(appDatabaseProvider.future);
     final stmt = db.lopTinChi.update();
