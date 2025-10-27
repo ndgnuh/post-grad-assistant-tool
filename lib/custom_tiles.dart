@@ -349,22 +349,44 @@ class SingleSelectionTile<T> extends StatelessWidget {
 }
 
 class EnumTile<T> extends StatefulWidget {
-  final String titleText;
+  final String? titleText;
+  final Widget? title;
   final Widget? leading;
+  final Widget? trailing;
   final T? initialValue;
   final List<T> options;
   final ValueNotifier<T>? valueNotifier;
   final ValueChanged<T>? onUpdate;
+  final String Function(T? value)? enumFormatter;
 
   const EnumTile({
     super.key,
-    required this.titleText,
     required this.options,
+    this.titleText,
+    this.title,
     this.initialValue,
     this.onUpdate,
     this.valueNotifier,
+    this.enumFormatter,
+    this.trailing,
     this.leading,
   });
+
+  Widget get titleWidget {
+    assert(
+      titleText != null || title != null,
+      "Either titleText or title must be provided",
+    );
+    assert(
+      !(titleText != null && title != null),
+      "Only one of titleText or title can be provided",
+    );
+    if (title != null) {
+      return title!;
+    } else {
+      return Text(titleText!);
+    }
+  }
 
   @override
   State<EnumTile<T>> createState() => _EnumTileState<T>();
@@ -392,7 +414,6 @@ class _EnumTileState<T> extends State<EnumTile<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final titleText = widget.titleText;
     final messenger = ScaffoldMessenger.of(context);
 
     void copyCurrentValue() {
@@ -404,21 +425,29 @@ class _EnumTileState<T> extends State<EnumTile<T>> {
     return ValueListenableBuilder(
       valueListenable: valueNotifier,
       builder: (context, value, child) {
+        final subtitle = switch (widget.enumFormatter) {
+          null => value.toString(),
+          String Function(T? value) formatter => formatter(value),
+        };
+
         return ListTile(
-          title: Text(titleText),
-          subtitle: Text(value.toString()),
+          title: widget.titleWidget,
+          subtitle: Text(subtitle),
           leading: widget.leading,
-          trailing: IconButton(
-            icon: Icon(Icons.copy),
-            onPressed: copyCurrentValue,
-          ),
+          trailing:
+              widget.trailing ??
+              IconButton(
+                icon: Icon(Icons.copy),
+                onPressed: copyCurrentValue,
+              ),
           onLongPress: copyCurrentValue,
           onTap: () async {
             final newValue = await showDialog<T>(
               context: context,
               builder: (context) => EnumSelectionDialog<T>(
-                title: titleText,
+                title: "Chọn giá trị mới",
                 options: widget.options,
+                enumFormatter: widget.enumFormatter,
                 initialValue: value,
               ),
             );
@@ -436,33 +465,39 @@ class _EnumTileState<T> extends State<EnumTile<T>> {
 class EnumSelectionDialog<T> extends StatelessWidget {
   final String title;
   final T? initialValue;
+  final String Function(T? value)? enumFormatter;
   final List<T> options;
 
   const EnumSelectionDialog({
     super.key,
     required this.title,
     required this.options,
+    this.enumFormatter,
     this.initialValue,
   });
 
   @override
   Widget build(BuildContext context) {
+    final enumFormatter_ = enumFormatter ?? (value) => value.toString();
+
     return AlertDialog(
       scrollable: true,
       title: Text(title),
-      content: Column(
-        children: [
-          for (final option in options)
-            RadioListTile(
-              title: Text(option.toString()),
-              selected: option == initialValue,
-              groupValue: initialValue,
-              value: option,
-              onChanged: (T? newValue) {
-                Navigator.of(context).pop(newValue);
-              },
-            ),
-        ],
+      content: RadioGroup(
+        groupValue: initialValue,
+        onChanged: (T? newValue) {
+          Navigator.of(context).pop(newValue);
+        },
+        child: Column(
+          children: [
+            for (final option in options)
+              RadioListTile(
+                title: Text(enumFormatter_(option)),
+                selected: option == initialValue,
+                value: option,
+              ),
+          ],
+        ),
       ),
       actions: [
         TextButton(

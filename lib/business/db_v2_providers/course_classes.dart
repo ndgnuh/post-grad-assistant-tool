@@ -90,10 +90,10 @@ class CourseClassByIdNotifier extends AsyncNotifier<CourseClassData> {
     return courseClass!;
   }
 
-  void cancelClass() => changeStatus(CourseClassStatus.canceled);
-  void reopenClass() => changeStatus(CourseClassStatus.normal);
+  void cancelClass() => updateStatus(CourseClassStatus.canceled);
+  void reopenClass() => updateStatus(CourseClassStatus.normal);
 
-  void changeStatus(CourseClassStatus status) async {
+  void updateStatus(CourseClassStatus status) async {
     final db = await ref.read(appDatabaseProvider.future);
     final stmt = db.lopTinChi.update();
     stmt.where((c) => c.id.equals(courseClassId));

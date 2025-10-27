@@ -313,6 +313,18 @@ class _CourseClassActionDialog extends ConsumerWidget {
     return MenuDialog(
       items: [
         MenuDialogItem(
+          title: "Chi tiết",
+          subtitle: "Xem thông tin lớp",
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => CourseClassDetailsPage(
+                classId: classId,
+              ),
+            ),
+          ),
+        ),
+
+        MenuDialogItem(
           title: "Mời dạy",
           subtitle: "Mời và phân công giảng viên cho lớp",
           onTap: () => Navigator.of(context).push(

@@ -8,6 +8,8 @@ import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
 
 class SemesterDetailsPage extends ConsumerWidget {
+  static const routeName = "/semester/details";
+
   final String semesterId;
   const SemesterDetailsPage({
     super.key,

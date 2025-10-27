@@ -1655,3 +1655,36 @@ class CardSection extends StatelessWidget {
     );
   }
 }
+
+class ErrorScaffold extends StatelessWidget {
+  final Object error;
+  final StackTrace stackTrace;
+  const ErrorScaffold({
+    super.key,
+    required this.error,
+    required this.stackTrace,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: ConstrainedAppBar(child: AppBar(title: Text("Error"))),
+      body: ConstrainedBody(
+        child: Column(
+          children: [
+            Text(
+              error.toString(),
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: context.gutter),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Text(stackTrace.toString()),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

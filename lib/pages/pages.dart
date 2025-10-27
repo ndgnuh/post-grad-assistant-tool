@@ -253,8 +253,13 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     /// Academic year pages
     case SemesterListPage.routeName:
       return const SemesterListPage();
-    case PageAcademicYearCreate.routeName:
-      return const PageAcademicYearCreate();
+    case SemesterDetailsPage.routeName:
+      switch (args) {
+        case String semesterId:
+          return SemesterDetailsPage(semesterId: semesterId);
+        default:
+          return const SemesterListPage();
+      }
 
     /// Admission pages
     case AdmissionListPage.routeName:
