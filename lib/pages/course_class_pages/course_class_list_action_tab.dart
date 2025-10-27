@@ -1,10 +1,12 @@
 import 'package:fami_tools/business/copy_pasta.dart';
+import 'package:fami_tools/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+import 'course_class_pages.dart';
 import 'providers.dart';
 import 'widgets.dart';
 
@@ -88,6 +90,43 @@ class CourseClassActionTab extends StatelessWidget {
                 SizedBox(height: context.gutterSmall),
               ],
             ),
+          ),
+
+          // Import/add classes
+          CardSection(
+            // title: "Tạo lớp học",
+            children: [
+              ListTile(
+                leading: const Icon(Symbols.upload_file),
+                title: const Text('Nhập danh sách lớp'),
+                subtitle: const Text(
+                  'Nhập danh sách lớp từ file số lượng đăng ký của BĐT',
+                ),
+                onTap: () {
+                  final tabController = DefaultTabController.maybeOf(
+                    context,
+                  );
+
+                  CourseClassImportPage.pickFileAndNavigateTo(context).then((
+                    bool? success,
+                  ) {
+                    if (success == true) {
+                      tabController?.animateTo(0);
+                    }
+                  });
+                },
+              ),
+              ListTile(
+                leading: const Icon(Symbols.add_circle),
+                title: const Text('Tạo lớp học'),
+                subtitle: const Text('Tạo lớp học mới thủ công'),
+                onTap: () {
+                  Navigator.of(context).pushNamed(
+                    CourseClassCreatePage.routeName,
+                  );
+                },
+              ),
+            ],
           ),
         ],
       ),

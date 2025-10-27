@@ -41,4 +41,12 @@ extension Breakpoints on BuildContext {
       return VerticalDirection.up;
     }
   }
+
+  void showMessage(String message) {
+    final messenger = ScaffoldMessenger.of(this);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 }

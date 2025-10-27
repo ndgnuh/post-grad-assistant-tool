@@ -40,7 +40,7 @@ final initialRoute = switch (kReleaseMode) {
 
   // Course classes pages
   // ====================
-  // false => CourseClassListPage.routeName,
+  false => CourseClassListPage.routeName,
 
   // Course pages
   false => CourseListPage.routeName,
@@ -218,6 +218,8 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     // Course classes
     case CourseClassListPage.routeName:
       return CourseClassListPage();
+    case CourseClassCreatePage.routeName:
+      return CourseClassCreatePage();
 
     // Manage courses
     case CourseListPage.routeName:

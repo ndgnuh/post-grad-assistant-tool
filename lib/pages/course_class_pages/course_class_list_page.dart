@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -20,7 +21,6 @@ class CourseClassListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gutter = context.gutter;
     return DefaultTabController(
       initialIndex: 0,
       length: 2,
@@ -74,7 +74,6 @@ class CourseClassListTab extends StatelessWidget {
                   label: Text("Thêm"),
                   icon: Icon(Symbols.add),
                 ),
-                _ImportButton(),
               ],
             ),
           ),
@@ -83,7 +82,9 @@ class CourseClassListTab extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: gutter),
           child: Divider(),
         ),
-        Expanded(child: _CourseClassesView()),
+        Expanded(
+          child: _CourseClassesView(),
+        ),
       ],
     );
   }

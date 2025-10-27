@@ -54,6 +54,12 @@ class CourseClassIdsBySemesterNotifier extends AsyncNotifier<List<int>> {
     final courseClassIds = await query.map((c) => c.id).get();
     return courseClassIds;
   }
+
+  Future<void> importClasses(List<CourseClassCompanion> classes) async {
+    final db = await ref.read(appDatabaseProvider.future);
+    await db.lopTinChi.insertAll(classes);
+    ref.invalidateSelf();
+  }
 }
 
 class TeachingAssignmentsNotifier
