@@ -18,12 +18,6 @@ final teachingAssignmentsProvider = AsyncNotifierProvider.family(
   TeachingAssignmentsNotifier.new,
 );
 
-/// Provide the teachers assigned to
-/// teach a course class, along with their contribution percentage
-final teachingTeachersProvider = AsyncNotifierProvider.family(
-  TeachingTeachersNotifier.new,
-);
-
 final courseClassSemestersProvider = AsyncNotifierProvider(
   CourseClassSemestersNotifier.new,
 );
@@ -78,18 +72,39 @@ class TeachingAssignmentsNotifier
   }
 }
 
-class CourseClassByIdNotifier extends AsyncNotifier<CourseClassData?> {
+class CourseClassByIdNotifier extends AsyncNotifier<CourseClassData> {
   final int courseClassId;
   CourseClassByIdNotifier(this.courseClassId);
 
   @override
-  FutureOr<CourseClassData?> build() async {
+  FutureOr<CourseClassData> build() async {
     final db = await ref.watch(appDatabaseProvider.future);
     final query = db.managers.lopTinChi.filter(
       (cc) => cc.id.equals(courseClassId),
     );
     final courseClass = await query.getSingleOrNull();
-    return courseClass;
+    assert(
+      courseClass != null,
+      "Course class with id $courseClassId not found",
+    );
+    return courseClass!;
+  }
+
+  void cancelClass() => changeStatus(CourseClassStatus.canceled);
+  void reopenClass() => changeStatus(CourseClassStatus.normal);
+
+  void changeStatus(CourseClassStatus status) async {
+    final db = await ref.read(appDatabaseProvider.future);
+    final stmt = db.lopTinChi.update();
+    stmt.where((c) => c.id.equals(courseClassId));
+
+    final updated = await stmt.writeReturning(
+      LopTinChiCompanion(
+        status: Value(status),
+      ),
+    );
+
+    state = AsyncData(updated.first);
   }
 }
 
@@ -99,61 +114,6 @@ class CourseClassSemestersNotifier extends AsyncNotifier<List<String>> {
     final db = await ref.watch(appDatabaseProvider.future);
     final semesters = await db.getAllSemesters().get();
     return semesters;
-  }
-}
-
-class TeachingTeachersNotifier extends AsyncNotifier<Map<TeacherData, double>> {
-  final int courseClassId;
-  TeachingTeachersNotifier(this.courseClassId);
-
-  @override
-  FutureOr<Map<TeacherData, double>> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
-
-    final query = db.teachingAssignment.select()
-      ..where((t) => t.classId.equals(courseClassId))
-      ..orderBy([(t) => OrderingTerm(expression: t.sortOrder)]);
-    final assignments = await query.get();
-
-    final teachings = <TeacherData, double>{};
-    for (final assignment in assignments) {
-      final teacherId = assignment.teacherId;
-      final contribution = assignment.weight;
-      final teacher = await ref.watch(teacherByIdProvider(teacherId).future);
-      if (teacher != null) {
-        teachings[teacher] = contribution;
-      }
-    }
-
-    return teachings;
-  }
-
-  /// Remove all the teaching assignments for the course class
-  /// and then update with the new assignments
-  Future<void> set(Map<TeacherData, double> assignment) async {
-    final db = await ref.read(appDatabaseProvider.future);
-
-    // Delete existing assignments
-    await db.teachingAssignment.deleteWhere(
-      (t) => t.classId.equals(courseClassId),
-    );
-
-    // Add new assignments
-    var order = 1;
-    await db.teachingAssignment.insertAll(
-      assignment.entries.map(
-        (entry) => TeachingAssignmentCompanion.insert(
-          classId: courseClassId,
-          teacherId: entry.key.id,
-          weight: Value(entry.value),
-          sortOrder: Value(order++),
-        ),
-      ),
-    );
-
-    // Refetch the data
-    ref.invalidateSelf();
-    return;
   }
 }
 

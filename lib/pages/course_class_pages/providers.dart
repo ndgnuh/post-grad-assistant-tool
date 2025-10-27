@@ -21,6 +21,21 @@ final semesterSelectionModelProvider = AsyncNotifierProvider(
   () => SemesterSelectionModelNotifier("course-class"),
 );
 
+/// Return course class IDs for the selected semester
+/// along with a boolean indicating whether no semester is selected
+final courseClassIdsProvider = FutureProvider((ref) async {
+  final semesterSelection = await ref.watch(
+    semesterSelectionModelProvider.future,
+  );
+  final selectedSemester = semesterSelection.selected;
+  if (selectedSemester == null) return ([], true);
+
+  final courseClassIds = await ref.watch(
+    courseClassIdsBySemesterProvider(selectedSemester.semester).future,
+  );
+  return (courseClassIds, false);
+});
+
 final courseRegistrationMessageProvider = AsyncNotifierProvider(
   CourseRegistrationMessageNotifier.new,
 );
@@ -35,12 +50,14 @@ final teachingAnnouncementProvider = AsyncNotifierProvider(
 
 @immutable
 class CourseClassViewModel {
+  final SemesterData semester;
   final CourseClassData courseClass;
   final Map<TeacherData, double> teachers;
   final CourseData course;
   final int registrationCount;
 
   const CourseClassViewModel({
+    required this.semester,
     required this.courseClass,
     required this.teachers,
     required this.course,
@@ -49,29 +66,33 @@ class CourseClassViewModel {
 }
 
 class CourseClassViewModelByIdNotifier
-    extends AsyncNotifier<CourseClassViewModel?> {
+    extends AsyncNotifier<CourseClassViewModel> {
   final int courseClassId;
   CourseClassViewModelByIdNotifier(this.courseClassId);
 
   @override
-  FutureOr<CourseClassViewModel?> build() async {
+  FutureOr<CourseClassViewModel> build() async {
     final courseClass = await ref.watch(
       courseClassByIdProvider(courseClassId).future,
     );
-    if (courseClass == null) return null;
 
     final course = await ref.watch(
       courseByIdProvider(courseClass.courseId).future,
     );
-    if (course == null) return null;
+
+    final teachingAssignments = await ref.watch(
+      teachingAssignmentByClassProvider(courseClass.id).future,
+    );
+    final teachingTeachers = <TeacherData, double>{};
+    for (final assignment in teachingAssignments) {
+      final teacher = await ref.watch(
+        teacherByIdProvider(assignment.teacherId).future,
+      );
+      teachingTeachers[teacher] = assignment.weight;
+    }
 
     final semester = await ref.watch(
       semesterByIdProvider(courseClass.semester).future,
-    );
-    if (semester == null) return null;
-
-    final teachingTeachers = await ref.watch(
-      teachingTeachersProvider(courseClass.id).future,
     );
 
     final registrationCount = await ref.watch(
@@ -82,6 +103,7 @@ class CourseClassViewModelByIdNotifier
       courseClass: courseClass,
       teachers: teachingTeachers,
       course: course,
+      semester: semester,
       registrationCount: registrationCount,
     );
   }
@@ -146,22 +168,9 @@ sealed class EmailToTeachersNotifier extends AsyncNotifier<Email?> {
         teachingAssignmentsProvider(classId).future,
       );
       for (final assignment in assignments) {
-        // Assertion teacher exists
-        final maybeTeacher = await ref.watch(
+        final teacher = await ref.watch(
           teacherByIdProvider(assignment.teacherId).future,
         );
-        assert(
-          maybeTeacher != null,
-          "Cannot find teacher with ID ${assignment.teacherId}",
-        );
-
-        // Asertion email not null
-        final teacher = maybeTeacher!;
-        assert(
-          teacher.personalEmail != null,
-          "Cannot find email for teacher ${teacher.name}",
-        );
-
         recipients.add(teacher.personalEmail!);
       }
     }

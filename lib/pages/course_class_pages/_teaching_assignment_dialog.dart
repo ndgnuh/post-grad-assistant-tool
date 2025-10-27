@@ -1,4 +1,4 @@
-part of 'course_class_list_page.dart';
+part of 'course_class_list_tab.dart';
 
 class _TeachingAssignmentDialog extends ConsumerStatefulWidget {
   final int classId;
@@ -48,7 +48,7 @@ class _TeachingAssignmentDialogState
   @override
   Widget build(BuildContext context) {
     final navigator = Navigator.of(context);
-    final gutter = context.responsiveGutter;
+    final gutter = context.gutter;
 
     return AlertDialog(
       title: Text("Phân công giảng viên"),
@@ -163,20 +163,20 @@ class _TeachingAssignmentDialogState
         ),
 
         // Save button
-        FilledButton(
-          onPressed: () async {
-            if (formKey.currentState?.validate() != true) {
-              return;
-            }
-            final notifier = ref.read(
-              teachingTeachersProvider(widget.classId).notifier,
-            );
-
-            await notifier.set(teachers);
-            navigator.pop();
-          },
-          child: Text("Lưu"),
-        ),
+        // FilledButton(
+        //   onPressed: () async {
+        //     if (formKey.currentState?.validate() != true) {
+        //       return;
+        //     }
+        //     final notifier = ref.read(
+        //       teachingTeachersProvider(widget.classId).notifier,
+        //     );
+        //
+        //     await notifier.set(teachers);
+        //     navigator.pop();
+        //   },
+        //   child: Text("Lưu"),
+        // ),
       ],
     );
   }
