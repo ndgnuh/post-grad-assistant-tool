@@ -74,8 +74,8 @@ dependencies:
   flutter_riverpod: ^3.0.0-dev.17
   riverpod_annotation: ^3.0.0-dev.17
   hooks_riverpod: ^3.0.0-dev.17
-  riverpod:
-  pdfrx: ^2.0.0
+  riverpod: any
+  pdfrx: ^2.2.7
   path_provider: ^2.1.5
 
 dev_dependencies:

@@ -48,13 +48,20 @@ class PaymentAtmModel {
 
 Future<Uint8List> paymentAtmPdf({
   required PaymentAtmModel model,
+  double baseFontSize = 10,
+  EdgeInsets margin = const EdgeInsets.all(1.0 * PdfPageFormat.cm),
+  EdgeInsets tableCellPadding = const EdgeInsets.symmetric(
+    vertical: 2 * pt,
+    horizontal: 3 * pt,
+  ),
 }) async {
   return await buildMultiPageDocument(
     pageFormat: IsoPageFormat.horizontalA4,
-    margin: EdgeInsets.all(1.0 * PdfPageFormat.cm),
-    baseFontSize: 10,
+    margin: margin,
+    baseFontSize: baseFontSize,
     build: (context) {
       final paymentReason = model.reason.toUpperCase();
+      final year = DateTime.now().year;
 
       // Default theme
       final theme = Theme.of(context);
@@ -143,47 +150,48 @@ Future<Uint8List> paymentAtmPdf({
         "Mã số thuế",
       ];
 
+      final titleStyle = TextStyle(
+        fontSize: baseFontSize + 2,
+        fontWeight: FontWeight.bold,
+      );
+
       return <Widget>[
         // Header
-        Footer(
-          leading: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              children: [
-                TextSpan(text: "BỘ GIÁO DỤC VÀ ĐÀO TẠO"),
-                TextSpan(text: "\n"),
-                TextSpan(
-                  text: "ĐẠI HỌC BÁCH KHOA HÀ NỘI",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                TextSpan(text: "\n"),
-              ],
+        Column(
+          children: [
+            Text(
+              "BỘ GIÁO DỤC VÀ ĐÀO TẠO",
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-          ),
+            SizedBox(height: 3 * pt),
+            Text(
+              "ĐẠI HỌC BÁCH KHOA HÀ NỘI",
+            ),
+          ],
         ),
 
         // Title
+        SizedBox(height: 24 * pt),
         Center(
           child: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               children: [
-                TextSpan(text: "BẢNG TỔNG HỢP THANH TOÁN"),
-                TextSpan(text: "\n"),
-                TextSpan(text: paymentReason),
+                TextSpan(text: "BẢNG TỔNG HỢP THANH TOÁN\n", style: titleStyle),
+                WidgetSpan(child: SizedBox(height: 3 * pt)),
+                TextSpan(text: paymentReason, style: titleStyle),
               ],
             ),
           ),
         ),
 
-        SizedBox(height: 10), // Space between title and content
         // The summary table
+        SizedBox(height: 12 * pt),
         TableHelper.fromTextArray(
           headerAlignments: {
             for (int i = 0; i < 8; i++) i: Alignment.center,
           },
-          cellPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          cellPadding: tableCellPadding,
           cellAlignment: Alignment.center,
           cellAlignments: {1: Alignment.centerLeft},
           headerStyle: TextStyle(fontWeight: FontWeight.bold),
@@ -200,18 +208,22 @@ Future<Uint8List> paymentAtmPdf({
         ),
 
         // Summary text
-        SizedBox(height: 10), // Space between table and summary text
+        SizedBox(height: 12 * pt), // Space between table and summary text
 
         Center(
-          child: Text(
-            "Tổng số còn lĩnh: ${totalAfterTax.formatMoney()}đ Bằng chữ: ${totalAfterTax.toVietnameseWords()} đồng.",
-            textAlign: TextAlign.justify,
-            style: TextStyle(fontWeight: FontWeight.bold),
+          child: InfoField(
+            texts: [
+              "Tổng số còn lĩnh: ",
+              "${totalAfterTax.formatMoney()}đ",
+              ". Bằng chữ: ",
+              "${totalAfterTax.toVietnameseWords()} đồng",
+              ".",
+            ],
           ),
         ),
 
         // The date & the signing area
-        SizedBox(height: 10), // Space between title and content
+        SizedBox(height: 12 * pt), // Space between title and content
         Footer(
           leading: RichText(
             textAlign: TextAlign.center,
@@ -241,7 +253,7 @@ Future<Uint8List> paymentAtmPdf({
             textAlign: TextAlign.center,
             text: TextSpan(
               children: [
-                TextSpan(text: "Hà Nội, ngày .... tháng .... năm ........"),
+                TextSpan(text: "Hà Nội, ngày .... tháng .... năm $year"),
                 TextSpan(text: "\n"),
                 TextSpan(
                   text: "TRƯỞNG KHOA KHOA TOÁN - TIN",

@@ -68,6 +68,7 @@ class AdmissionPaymentPage extends StatelessWidget {
                     SizedBox(height: context.gutterSmall),
 
                     _PdfViewButton(
+                      title: "Đề thị thanh toán",
                       pdfProvider: paymentRequestPdfProvider,
                       sourceName: "yeu-cau-thanh-toan.pdf",
                       builder: (context, callback, error) => ListTile(
@@ -85,6 +86,7 @@ class AdmissionPaymentPage extends StatelessWidget {
 
                     Divider(),
                     _PdfViewButton(
+                      title: "Bảng thanh toán",
                       sourceName: "bang-thanh-toan.pdf",
                       pdfProvider: paymentTablePdfProvider,
                       builder: (context, callback, error) => ListTile(
@@ -100,6 +102,7 @@ class AdmissionPaymentPage extends StatelessWidget {
 
                     Divider(),
                     _PdfViewButton(
+                      title: "Bản kê thanh toán",
                       pdfProvider: paymentListingPdfProvider,
                       sourceName: "ban-ke-thanh-toan.pdf",
                       builder: (context, callback, error) => ListTile(
@@ -115,6 +118,7 @@ class AdmissionPaymentPage extends StatelessWidget {
                     _PdfViewButton(
                       sourceName: "tong-hop-thanh-toan-atm.pdf",
                       pdfProvider: paymentAtmPdfProvider,
+                      title: "Tổng hợp thanh toán",
                       builder: (context, callback, error) => ListTile(
                         title: Text("Tổng hợp thanh toán"),
                         subtitle: Text(
@@ -242,9 +246,11 @@ class _SaveDirectoryPicker extends StatelessWidget {
 class _PdfViewButton extends ConsumerWidget {
   final FutureProvider<Uint8List> pdfProvider;
   final String sourceName;
+  final String title;
   final Widget Function(BuildContext, VoidCallback?, String?) builder;
 
   const _PdfViewButton({
+    required this.title,
     required this.pdfProvider,
     required this.sourceName,
     required this.builder,
@@ -262,7 +268,8 @@ class _PdfViewButton extends ConsumerWidget {
           MaterialPageRoute(
             builder: (context) => PdfDataViewerPage(
               pdfData: value,
-              title: "Yêu cầu thanh toán",
+              sourceName: sourceName,
+              title: title,
             ),
           ),
         );

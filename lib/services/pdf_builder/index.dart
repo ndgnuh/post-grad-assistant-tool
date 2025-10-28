@@ -80,3 +80,29 @@ Future<Uint8List> buildMultiPageDocument({
 
   return await document.save();
 }
+
+class InfoField extends StatelessWidget {
+  final List<String> texts;
+  final TextStyle? highlightStyle;
+
+  InfoField({
+    required this.texts,
+    this.highlightStyle,
+  });
+
+  @override
+  Widget build(Context context) {
+    final highlightStyle =
+        this.highlightStyle ?? TextStyle(fontWeight: FontWeight.bold);
+    final widgets = [
+      for (final (i, child) in texts.indexed)
+        if (i % 2 == 0)
+          TextSpan(text: child)
+        else
+          TextSpan(text: child, style: highlightStyle),
+    ];
+    return RichText(
+      text: TextSpan(children: widgets),
+    );
+  }
+}

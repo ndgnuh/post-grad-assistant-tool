@@ -1116,25 +1116,47 @@ class _PaymentRequestPage extends StatelessWidget {
   Widget build(Context context) {
     final payMoneyNumber = payAmount.formatMoney();
     final payMoneyText = payAmount.toVietnameseWords();
+    final year = DateTime.now().year;
+
+    Widget infoField(List<String> children) {
+      final widgets = [
+        for (final (i, child) in children.indexed)
+          if (i % 2 == 0)
+            TextSpan(text: child)
+          else
+            TextSpan(
+              text: child,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+      ];
+
+      return RichText(
+        text: TextSpan(
+          children: widgets,
+        ),
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Footer(
           leading: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "Đơn vị: Đại học Bách khoa Hà Nội",
+                "BỘ GIÁO DỤC VÀ ĐÀO TẠO",
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
+              SizedBox(height: 3 * pt),
               Text(
-                "Mã QHNC: ......................................",
+                "ĐẠI HỌC BÁCH KHOA HÀ NỘI",
               ),
             ],
           ),
         ), // Footer with leading content
 
-        SizedBox(height: 20), // Space between footer and content
+        Spacer(),
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -1142,18 +1164,22 @@ class _PaymentRequestPage extends StatelessWidget {
               "GIẤY ĐỀ NGHỊ THANH TOÁN",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            Text("Ngày ..... tháng ..... năm .........."),
+            SizedBox(height: 3 * pt),
+            Text("Ngày ......... tháng ......... năm $year"),
           ],
         ),
 
-        SizedBox(height: 10), // Space between title and content
+        SizedBox(height: 12 * pt), // Space between title and content
         RichText(
           textAlign: TextAlign.center,
           text: TextSpan(
             children: [
               TextSpan(
                 text: "Kính gửi: ",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
               TextSpan(
                 text: "BAN TÀI CHÍNH KẾ HOẠCH - ĐẠI HỌC BÁCH KHOA HÀ NỘI",
@@ -1162,20 +1188,41 @@ class _PaymentRequestPage extends StatelessWidget {
           ),
         ),
 
-        SizedBox(height: 5), // Space between title and content
-        RichText(
-          textAlign: TextAlign.justify,
-          text: TextSpan(
-            text:
-                """Họ và tên người đề nghị thanh toán: $requesterName
-Bộ phận (hoặc địa chỉ): $requesterDivision
-Nội dung thanh toán: $payReason
-Số tiền: $payMoneyNumberđ. Viết bằng chữ: $payMoneyText đồng.
-(Kèm theo ........ chứng từ gốc)""",
-          ),
-        ),
+        SizedBox(height: 12 * pt), // Space between title and content
+        infoField([
+          "Họ và tên người đề nghị thanh toán: ",
+          requesterName,
+        ]),
+        SizedBox(height: 6 * pt),
+        infoField([
+          "Bộ phận (hoặc địa chỉ): ",
+          requesterDivision,
+        ]),
+        SizedBox(height: 6 * pt),
+        infoField([
+          "Nội dung thanh toán: ",
+          payReason,
+        ]),
+        SizedBox(height: 6 * pt),
+        infoField([
+          "Số tiền: ",
+          "$payMoneyNumberđ",
+          ". Viết bằng chữ: ",
+          "$payMoneyText đồng",
+          ".",
+        ]),
+        SizedBox(height: 6 * pt),
+        Text("(Kèm theo ........ chứng từ gốc)"),
 
-        SizedBox(height: 10), // Space between content and footer
+        //         RichText(
+        //           textAlign: TextAlign.justify,
+        //           text: TextSpan(
+        //             text:
+        //                 """
+        // """,
+        //           ),
+        //         ),
+        SizedBox(height: 12 * pt), // Space between content and footer
         Footer(
           leading: RichText(
             textAlign: TextAlign.center,
@@ -1214,6 +1261,8 @@ Số tiền: $payMoneyNumberđ. Viết bằng chữ: $payMoneyText đồng.
             ),
           ),
         ),
+
+        Spacer(flex: 4),
       ],
     );
   }

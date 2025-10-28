@@ -40,14 +40,14 @@ final initialRoute = switch (kReleaseMode) {
 
   // Course classes pages
   // ====================
-  false => CourseClassListPage.routeName,
+  // false => CourseClassListPage.routeName,
 
   // Course pages
-  false => CourseListPage.routeName,
+  // false => CourseListPage.routeName,
 
   // Thesis defends
   // false => ThesisDefenseRegisterPage.routeName,
-  // false => ThesisDefensePaymentPage.routeName,
+  false => ThesisDefensePaymentPage.routeName,
   // false => ThesisListPage.routeName,
 
   // PhD students pages

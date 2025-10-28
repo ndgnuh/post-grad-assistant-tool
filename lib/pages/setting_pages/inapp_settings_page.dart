@@ -84,6 +84,14 @@ class _SettingsPageState extends State<SettingsPage> {
             _DarkModeSwitchTile(),
             MyNameSettingTile(),
             MyDivisionSettingTile(),
+
+            ListTile(
+              title: const Text("Quyền truy cập file"),
+              subtitle: const Text("Click để cấp"),
+              onTap: () {
+                Permission.manageExternalStorage.request();
+              },
+            ),
           ],
         ),
       ),

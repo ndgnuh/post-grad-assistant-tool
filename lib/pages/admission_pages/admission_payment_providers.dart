@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../business/db_v2_providers.dart';
 import '../../business/pdfs/pdfs.dart' as pdfs;
+import '../../services/pdf_builder/index.dart';
 import 'providers.dart';
 
 const _memberPay = 60_000;
@@ -157,7 +158,12 @@ final paymentAtmPdfProvider = FutureProvider<Uint8List>((ref) async {
       ),
     ],
   );
-  return pdfs.paymentAtmPdf(model: model);
+  return pdfs.paymentAtmPdf(
+    model: model,
+    baseFontSize: 12,
+    margin: EdgeInsets.all(1.5 * inch),
+    tableCellPadding: EdgeInsets.all(6 * pt),
+  );
 });
 
 final paymentRequestPdfProvider = FutureProvider((ref) async {

@@ -7,10 +7,12 @@ import '../../custom_widgets.dart';
 
 class PdfDataViewerPage extends StatelessWidget {
   final Uint8List pdfData;
+  final String sourceName;
   final String title;
 
   const PdfDataViewerPage({
     super.key,
+    required this.sourceName,
     required this.pdfData,
     required this.title,
   });
@@ -18,18 +20,11 @@ class PdfDataViewerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ConstrainedAppBar(
-        child: AppBar(
-          title: Text(title),
-        ),
+      appBar: AppBar(
+        title: Text(title),
       ),
-      body: ConstrainedBody(
-        child: Expanded(
-          child: PdfViewer.data(
-            pdfData,
-            sourceName: "$title.pdf",
-          ),
-        ),
+      body: Expanded(
+        child: PdfViewer.data(pdfData, sourceName: sourceName),
       ),
     );
   }
