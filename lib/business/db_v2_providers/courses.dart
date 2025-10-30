@@ -18,7 +18,7 @@ class CourseByIdNotifier extends AsyncNotifier<CourseData> {
 
   @override
   Future<CourseData> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
+    final db = await ref.watch(mainDatabaseProvider.future);
     final course = await db.managers.course
         .filter((c) => c.id.equals(courseId))
         .getSingleOrNull();
@@ -30,7 +30,7 @@ class CourseByIdNotifier extends AsyncNotifier<CourseData> {
 class CoursesNotifier extends AsyncNotifier<List<CourseData>> {
   @override
   FutureOr<List<CourseData>> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
+    final db = await ref.watch(mainDatabaseProvider.future);
     final courses = await db.managers.course.get();
     return courses;
   }

@@ -30,7 +30,7 @@ class TeachingRegistrationNotifier
 
   @override
   FutureOr<List<TeachingRegistrationData>> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
+    final db = await ref.watch(mainDatabaseProvider.future);
     final stmt = db.teachingRegistration.select();
     stmt.orderBy([(r) => OrderingTerm(expression: r.courseId)]);
 
@@ -56,7 +56,7 @@ class TeachingRegistrationNotifier
     required int teacherId,
     required String courseId,
   }) async {
-    final db = await ref.read(appDatabaseProvider.future);
+    final db = await ref.read(mainDatabaseProvider.future);
     db.teachingRegistration.deleteWhere(
       (tr) => tr.teacherId.equals(teacherId) & tr.courseId.equals(courseId),
     );
@@ -67,7 +67,7 @@ class TeachingRegistrationNotifier
     required int teacherId,
     required String courseId,
   }) async {
-    final db = await ref.read(appDatabaseProvider.future);
+    final db = await ref.read(mainDatabaseProvider.future);
     final entry = TeachingRegistrationCompanion.insert(
       teacherId: teacherId,
       courseId: courseId,

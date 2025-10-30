@@ -18,7 +18,7 @@ final teacherByIdProvider = AsyncNotifierProvider.family(
 class InsiderTeacherIds extends AsyncNotifier<List<int>> {
   @override
   Future<List<int>> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
+    final db = await ref.watch(mainDatabaseProvider.future);
     final insiderIds = await db.managers.teacher
         .filter((t) => t.isOutsider(true))
         .map((t) => t.id)
@@ -48,7 +48,7 @@ class TeacherByIdNotifier extends AsyncNotifier<TeacherData> {
 
   @override
   Future<TeacherData> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
+    final db = await ref.watch(mainDatabaseProvider.future);
     final maybeTeacher = await db.managers.teacher
         .filter((t) => t.id.equals(teacherId))
         .getSingleOrNull();
@@ -58,7 +58,7 @@ class TeacherByIdNotifier extends AsyncNotifier<TeacherData> {
   }
 
   Future<void> updateTeacher(TeacherCompanion newData) async {
-    final db = await ref.read(appDatabaseProvider.future);
+    final db = await ref.read(mainDatabaseProvider.future);
     final stmt = db.teacher.update();
     stmt.where((t) => t.id.equals(teacherId));
     final newTeacherData = await stmt.writeReturning(newData);

@@ -36,8 +36,8 @@ class CourseClassIdsBySemesterNotifier extends AsyncNotifier<List<int>> {
 
   @override
   FutureOr<List<int>> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
-    final query = db.select(db.lopTinChi)
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final query = db.select(db.courseClass)
       ..orderBy([
         (t) => OrderingTerm(expression: t.status),
         (t) => OrderingTerm(expression: t.courseId),
@@ -50,8 +50,8 @@ class CourseClassIdsBySemesterNotifier extends AsyncNotifier<List<int>> {
   }
 
   Future<void> importClasses(List<CourseClassCompanion> classes) async {
-    final db = await ref.read(appDatabaseProvider.future);
-    await db.lopTinChi.insertAll(classes);
+    final db = await ref.read(mainDatabaseProvider.future);
+    await db.courseClass.insertAll(classes);
     ref.invalidateSelf();
   }
 }
@@ -63,7 +63,7 @@ class TeachingAssignmentsNotifier
 
   @override
   FutureOr<List<TeachingAssignmentData>> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
+    final db = await ref.watch(mainDatabaseProvider.future);
     final query = db.teachingAssignment.select()
       ..where((t) => t.classId.equals(courseClassId))
       ..orderBy([(t) => OrderingTerm(expression: t.sortOrder)]);
@@ -78,8 +78,8 @@ class CourseClassByIdNotifier extends AsyncNotifier<CourseClassData> {
 
   @override
   FutureOr<CourseClassData> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
-    final query = db.managers.lopTinChi.filter(
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final query = db.managers.courseClass.filter(
       (cc) => cc.id.equals(courseClassId),
     );
     final courseClass = await query.getSingleOrNull();
@@ -94,42 +94,42 @@ class CourseClassByIdNotifier extends AsyncNotifier<CourseClassData> {
   void reopenClass() => updateStatus(CourseClassStatus.normal);
 
   void _update(CourseClassCompanion updated) async {
-    final db = await ref.read(appDatabaseProvider.future);
-    final stmt = db.lopTinChi.update();
+    final db = await ref.read(mainDatabaseProvider.future);
+    final stmt = db.courseClass.update();
     stmt.where((c) => c.id.equals(courseClassId));
     final result = await stmt.writeReturning(updated);
     state = AsyncData(result.first);
   }
 
   void updateClassroom(String? classroom) => _update(
-    LopTinChiCompanion(
+    CourseClassCompanion(
       classroom: Value(classroom),
     ),
   );
 
   void updateStartPeriod(int? startPeriod) => _update(
-    LopTinChiCompanion(startPeriod: Value(startPeriod)),
+    CourseClassCompanion(startPeriod: Value(startPeriod)),
   );
 
   void updateAccessUrl(String? url) => _update(
-    LopTinChiCompanion(accessUrl: Value(url)),
+    CourseClassCompanion(accessUrl: Value(url)),
   );
 
   void updateEndPeriod(int? endPeriod) => _update(
-    LopTinChiCompanion(endPeriod: Value(endPeriod)),
+    CourseClassCompanion(endPeriod: Value(endPeriod)),
   );
 
   void updateDayOfWeek(DayOfWeek? dayOfWeek) => _update(
-    LopTinChiCompanion(dayOfWeek: Value(dayOfWeek)),
+    CourseClassCompanion(dayOfWeek: Value(dayOfWeek)),
   );
 
   void updateStatus(CourseClassStatus status) async {
-    final db = await ref.read(appDatabaseProvider.future);
-    final stmt = db.lopTinChi.update();
+    final db = await ref.read(mainDatabaseProvider.future);
+    final stmt = db.courseClass.update();
     stmt.where((c) => c.id.equals(courseClassId));
 
     final updated = await stmt.writeReturning(
-      LopTinChiCompanion(
+      CourseClassCompanion(
         status: Value(status),
       ),
     );
@@ -141,8 +141,7 @@ class CourseClassByIdNotifier extends AsyncNotifier<CourseClassData> {
 class CourseClassSemestersNotifier extends AsyncNotifier<List<String>> {
   @override
   FutureOr<List<String>> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
-    final semesters = await db.getAllSemesters().get();
+    final semesters = await ref.watch(semesterIdsProvider.future);
     return semesters;
   }
 }
@@ -169,8 +168,8 @@ class RegistrationCountNotifier extends AsyncNotifier<int> {
     }
 
     // If the detailed list is not available, use the count from the course class record
-    final db = await ref.watch(appDatabaseProvider.future);
-    final stmt = db.lopTinChi.select()
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final stmt = db.courseClass.select()
       ..where((cc) => cc.id.equals(courseClassId));
     final count = await stmt
         .map((cc) => cc.registrationCount)
@@ -185,9 +184,9 @@ class StudentIdsByCourseClassNotifier extends AsyncNotifier<List<int>> {
 
   @override
   FutureOr<List<int>> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
-    final query = db.dangKyHoc.select()
-      ..where((record) => record.courseClassId.equals(courseClassId))
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final query = db.studyRegistration.select()
+      ..where((record) => record.classId.equals(courseClassId))
       ..orderBy([(t) => OrderingTerm(expression: t.studentId)]);
     final studentIds = await query.map((scc) => scc.studentId).get();
     return studentIds;

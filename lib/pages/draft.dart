@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -22,16 +23,53 @@ class DraftPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final dbAsync = ref.watch(mainDatabaseProvider);
+    switch (dbAsync) {
+      case AsyncLoading():
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Draft Page'),
+          ),
+          body: const Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      case AsyncError(:final error):
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Draft Page'),
+          ),
+          body: Center(
+            child: Text('Error: $error'),
+          ),
+        );
+      default:
+    }
+
+    final db = dbAsync.value!;
+    final stream = db.searchTheses(searchText: "Thùy").watch();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Draft Page'),
       ),
       body: Center(
-        child: FilledButton(
-          onPressed: () {
-            final email = Email(
-              subject: "Về chương trình thạc sĩ Toán Tin",
-              body: """
+        child: Column(
+          children: [
+            StreamBuilder(
+              stream: stream,
+              builder: (context, theses) {
+                for (final thesis in theses.data ?? []) {
+                  print(thesis);
+                }
+                return Text("Total theses: ${theses.data?.length ?? 0}");
+              },
+            ),
+            FilledButton(
+              onPressed: () {
+                final email = Email(
+                  subject: "Về chương trình thạc sĩ Toán Tin",
+                  body: """
 
 Mình là Hùng, trợ lý đào tạo sau đại học của khoa Toán - Tin. Chúc mừng các bạn trúng tuyển chương trình Thạc sĩ Toán - Tin. Ban Đào tạo sẽ gửi email nhập học cho các bạn.
 
@@ -45,17 +83,19 @@ Sau khi thực hiện các thủ tục nhập học xong, các bạn phản hồ
 Ngoài ra, các bạn tham gia nhóm Zalo học viên ở dưới để tiện cho việc nhận thông báo và phổ biến công việc. Các bạn nếu gặp vấn đề gì trong quá trình nhập học cũng có thể liên hệ với mình thông qua email này.
 
 Link nhóm Zalo: TBA""",
-              recipients: {"ndgnuh99@gmail.com"},
-            );
-            final mailto = email.mailtoLink;
-            url_launcher.launchUrl(
-              mailto,
-              mode: url_launcher.LaunchMode.externalApplication,
-            );
+                  recipients: {"ndgnuh99@gmail.com"},
+                );
+                final mailto = email.mailtoLink;
+                url_launcher.launchUrl(
+                  mailto,
+                  mode: url_launcher.LaunchMode.externalApplication,
+                );
 
-            Clipboard.setData(ClipboardData(text: mailto.toString()));
-          },
-          child: const Text('Send mailto'),
+                Clipboard.setData(ClipboardData(text: mailto.toString()));
+              },
+              child: const Text('Send mailto'),
+            ),
+          ],
         ),
       ),
     );
@@ -65,7 +105,7 @@ Link nhóm Zalo: TBA""",
 class _PageBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dbState = ref.watch(appDatabaseProvider);
+    final dbState = ref.watch(mainDatabaseProvider);
     switch (dbState) {
       case AsyncLoading():
         return CircularProgressIndicator();

@@ -4,9 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod/riverpod.dart';
 
-import '../../business/db_v1_providers.dart' as v1_providers;
 import '../../business/db_v2_providers.dart';
-import '../../business/domain_objects.dart' as v1;
 import '../../business/selection_models.dart';
 
 final cohortSelectionModelProvider = AsyncNotifierProvider(
@@ -82,7 +80,7 @@ class StudentListViewModelNotifier extends AsyncNotifier<StudentListViewModel> {
     }
 
     // Query the Ids from DB
-    final db = await ref.watch(appDatabaseProvider.future);
+    final db = await ref.watch(mainDatabaseProvider.future);
     final (fallback) = switch (filterMode) {
       FilterMode.and => true,
       FilterMode.or => false,
@@ -133,7 +131,7 @@ class StudentListViewModelNotifier extends AsyncNotifier<StudentListViewModel> {
     bool fallback,
   ) {
     return switch (cohort) {
-      CohortData cohort => student.cohort.equals(cohort.cohort),
+      CohortData cohort => student.cohort.equals(cohort.id),
       _ => Constant(fallback),
     };
   }

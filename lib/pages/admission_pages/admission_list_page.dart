@@ -473,22 +473,22 @@ class _PageActions {
   //   );
   // }
 
-  void copyWrongCategoryEmail() async {
-    final candidateName = await showDialog<String>(
-      context: context,
-      builder: (context) => TextEditingDialog(
-        title: "Nhập tên ứng viên",
-      ),
-    );
-
-    if (candidateName == null || candidateName.isEmpty) {
-      return;
-    }
-
-    copyAdmissionWrongCategory(
-      candidateName: candidateName,
-    );
-  }
+  // void copyWrongCategoryEmail() async {
+  //   final candidateName = await showDialog<String>(
+  //     context: context,
+  //     builder: (context) => TextEditingDialog(
+  //       title: "Nhập tên ứng viên",
+  //     ),
+  //   );
+  //
+  //   if (candidateName == null || candidateName.isEmpty) {
+  //     return;
+  //   }
+  //
+  //   copyAdmissionWrongCategory(
+  //     candidateName: candidateName,
+  //   );
+  // }
 
   Future<void> getStudents(AdmissionType? admissionType) async {
     await ref.read(admissionStudentIdsProvider.future);
@@ -732,16 +732,16 @@ class _PageActions {
 //   }
 // }
 
-class _PaymentButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton.icon(
-      icon: Icon(Symbols.payment),
-      label: Text("Thanh toán"),
-      onPressed: null,
-    );
-  }
-}
+// class _PaymentButton extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return OutlinedButton.icon(
+//       icon: Icon(Symbols.payment),
+//       label: Text("Thanh toán"),
+//       onPressed: null,
+//     );
+//   }
+// }
 
 // class _AdmissionListView extends StatelessWidget {
 //   final List<HocVien> admissionList;

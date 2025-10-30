@@ -26,7 +26,7 @@ final courseClassUrlNotificationProvider = FutureProvider((Ref ref) async {
 
   final semester = selectedSemester;
   final courseClassIds = await ref.watch(
-    courseClassIdsBySemesterProvider(semester.semester).future,
+    courseClassIdsBySemesterProvider(semester.id).future,
   );
 
   final models = <CourseClassViewModel>[];
@@ -47,7 +47,7 @@ final courseClassUrlNotificationProvider = FutureProvider((Ref ref) async {
 
   return """
 @all
-Chào các bạn, mình gửi danh sách lớp đợt học ${semester.semester} kèm theo nhóm lớp.
+Chào các bạn, mình gửi danh sách lớp đợt học ${semester.id} kèm theo nhóm lớp.
 Các bạn truy cập vào danh sách lớp theo đúng lớp mình đã đăng ký nhé.
 
 ${lines.join("\n")}
@@ -67,7 +67,7 @@ final courseClassIdsProvider = FutureProvider((ref) async {
   if (selectedSemester == null) return ([], true);
 
   final courseClassIds = await ref.watch(
-    courseClassIdsBySemesterProvider(selectedSemester.semester).future,
+    courseClassIdsBySemesterProvider(selectedSemester.id).future,
   );
   return (courseClassIds, false);
 });
@@ -165,7 +165,7 @@ sealed class EmailToTeachersNotifier extends AsyncNotifier<Email?> {
 
     // Get classes by semester
     final courseClassIds = await ref.watch(
-      courseClassIdsBySemesterProvider(selectedSemester.semester).future,
+      courseClassIdsBySemesterProvider(selectedSemester.id).future,
     );
     if (courseClassIds.isEmpty) return null;
 
@@ -179,7 +179,11 @@ sealed class EmailToTeachersNotifier extends AsyncNotifier<Email?> {
         final teacher = await ref.watch(
           teacherByIdProvider(assignment.teacherId).future,
         );
-        recipients.add(teacher.personalEmail!);
+        assert(
+          teacher.email != null,
+          "Giảng viên ${teacher.name} [${teacher.id}] không có email",
+        );
+        recipients.add(teacher.email!);
       }
     }
 
@@ -195,10 +199,10 @@ class GradeSubmissionAnnouncementNotifier extends EmailToTeachersNotifier {
   @override
   String body(SemesterData selectedSemester) {
     final dateFmt = DateFormat("dd/MM/yyyy");
-    final semesterName = selectedSemester.semester;
-    final studyEndDate = dateFmt.format(selectedSemester.studyEndDate);
+    final semesterName = selectedSemester.id;
+    final studyEndDate = dateFmt.format(selectedSemester.classEndDate);
     final submissionDeadline = dateFmt.format(
-      selectedSemester.studyEndDate.add(const Duration(days: 7)),
+      selectedSemester.classEndDate.add(const Duration(days: 7)),
     );
 
     return """Kính gửi các Thầy, các Cô,
@@ -212,19 +216,19 @@ Em cảm ơn Thầy/Cô ạ.""";
 
   @override
   String subject(SemesterData semester) =>
-      "[Nhắc việc] Nộp điểm đợt học ${semester.semester}";
+      "[Nhắc việc] Nộp điểm đợt học ${semester.id}";
 }
 
 class TeachingAnnouncementNotifier extends EmailToTeachersNotifier {
   @override
   String body(SemesterData selectedSemester) {
     final dateFmt = DateFormat("dd/MM/yyyy");
-    final semesterName = selectedSemester.semester;
+    final semesterName = selectedSemester.id;
     final studyStartDate = dateFmt.format(
-      selectedSemester.studyStartDate,
+      selectedSemester.classBeginDate,
     );
     final studyEndDate = dateFmt.format(
-      selectedSemester.studyEndDate,
+      selectedSemester.classEndDate,
     );
     final submissionDeadline = dateFmt.format(
       selectedSemester.gradeSubmissionDeadline,
@@ -251,7 +255,7 @@ Nguyễn Đức Hùng""";
 
   @override
   String subject(SemesterData semester) {
-    return "[Thông báo] Về việc giảng dạy cao học đợt học ${semester.semester}";
+    return "[Thông báo] Về việc giảng dạy cao học đợt học ${semester.id}";
   }
 }
 
@@ -268,9 +272,9 @@ class CourseRegistrationMessageNotifier extends AsyncNotifier<String?> {
     // If any semester is selected, returns the notification
     final dateFmt = DateFormat("dd/MM/yyyy");
     final semester = selectedSemester;
-    final semesterName = semester.semester;
-    final registerFromString = dateFmt.format(semester.registrationOpenDate);
-    final registerToString = dateFmt.format(semester.registrationCloseDate);
+    final semesterName = semester.id;
+    final registerFromString = dateFmt.format(semester.registrationBeginDate);
+    final registerToString = dateFmt.format(semester.registrationEndDate);
 
     return "Đợt học $semesterName mở đăng ký từ $registerFromString đến $registerToString. Các bạn nhớ đăng ký học đúng thời gian nhé!";
   }

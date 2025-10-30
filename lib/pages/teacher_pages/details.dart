@@ -127,7 +127,7 @@ class _TeachingCoursesTab extends ConsumerWidget {
         children: [
           SearchAnchor(
             suggestionsBuilder: (context, controller) async {
-              final db = await ref.read(appDatabaseProvider.future);
+              final db = await ref.read(mainDatabaseProvider.future);
               final searchTerm = controller.text;
               if (searchTerm.isEmpty) {
                 return [];
@@ -270,16 +270,17 @@ class _TeacherDetailTab extends ConsumerWidget {
 
           // Thông tin công tác
           HeadingListTile(title: "Thông tin công tác"),
-          StringTile(
-            titleText: "Mã cán bộ",
-            leading: const Icon(Icons.card_membership),
-            initialValue: teacher.managementId ?? "N/A",
-            // onUpdate: (value) => teacherNotifier.updateStaffId(value),
-          ),
+          if (!teacher.isOutsider)
+            StringTile(
+              titleText: "Mã cán bộ",
+              leading: const Icon(Icons.card_membership),
+              initialValue: teacher.staffId ?? "N/A",
+              // onUpdate: (value) => teacherNotifier.updateStaffId(value),
+            ),
           StringTile(
             titleText: "Đơn vị",
             leading: const Icon(Icons.school),
-            initialValue: teacher.department ?? notAvailableText,
+            initialValue: teacher.staffId ?? notAvailableText,
             // onUpdate: (value) => teacherNotifier.updateUniversity(value!),
           ),
           StringTile(
@@ -308,13 +309,13 @@ class _TeacherDetailTab extends ConsumerWidget {
           StringTile(
             titleText: "Email",
             leading: const Icon(Icons.email),
-            initialValue: teacher.personalEmail ?? notAvailableText,
+            initialValue: teacher.emails.join(", "),
             // onUpdate: (value) => teacherNotifier.updateEmail(value),
           ),
           StringTile(
             titleText: "Số điện thoại",
             leading: const Icon(Icons.phone),
-            initialValue: teacher.phone ?? notAvailableText,
+            initialValue: teacher.phoneNumber ?? notAvailableText,
             // onUpdate: (value) => teacherNotifier.updatePhone(value),
           ),
 
@@ -336,7 +337,7 @@ class _TeacherDetailTab extends ConsumerWidget {
           StringTile(
             titleText: "Mã số thuế (cũ)",
             leading: const Icon(Icons.account_balance),
-            initialValue: teacher.taxCode ?? notAvailableText,
+            initialValue: teacher.deprecatedTaxCode ?? notAvailableText,
             // onUpdate: (value) => teacherNotifier.updateTaxCode(value),
           ),
           StringTile(

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_riverpod/experimental/persist.dart';
 
 import '../db_v2_providers.dart';
 import './common.dart';
@@ -28,9 +27,7 @@ class SemesterSelectionModelNotifier extends _Notifier with _Mixin {
     final options = <SemesterData>[];
     for (final id in ids) {
       final option = await ref.watch(semesterByIdProvider(id).future);
-      if (option != null) {
-        options.add(option);
-      }
+      options.add(option);
     }
 
     // Fetch preference from previous selection
@@ -48,7 +45,7 @@ class SemesterSelectionModelNotifier extends _Notifier with _Mixin {
     // Try to find the selected option
     final selectedOption = options
         .where(
-          (option) => option.semester == selectedId,
+          (option) => option.id == selectedId,
         )
         .firstOrNull;
 
@@ -64,7 +61,7 @@ class SemesterSelectionModelNotifier extends _Notifier with _Mixin {
     if (item == null) {
       await pref.remove(prefKey);
     } else {
-      await pref.setString(prefKey, item.semester);
+      await pref.setString(prefKey, item.id);
     }
   }
 }

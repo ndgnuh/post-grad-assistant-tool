@@ -7,8 +7,8 @@ String teachingInvitationMessage({
   required String courseName,
   required int numberOfRegisteredStudents,
 }) {
-  final startTime = semester.studyStartDate;
-  final endTime = semester.studyEndDate;
+  final startTime = semester.classBeginDate;
+  final endTime = semester.classEndDate;
   final startTimeStr = DateFormat('dd/MM/yyyy').format(startTime);
   final endTimeStr = DateFormat('dd/MM/yyyy').format(endTime);
   final teachingTime = "$startTimeStr - $endTimeStr";

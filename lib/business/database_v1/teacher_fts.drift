@@ -1,0 +1,54 @@
+import 'tables.drift';
+
+--- Full text search tables
+create virtual table "teacher_fts" using fts5(
+    id, name, university, falcuty, specialization,
+    phone_number, work_email, personal_email, citizen_id, bank_account,
+	prefix='2 3 5 7', 
+	tokenize="trigram remove_diacritics 1 case_sensitive 0"
+);
+
+-- insert into teacher_fts(
+--     id, name, university, falcuty, specialization,
+--     phone_number, work_email, personal_email, citizen_id, bank_account
+-- )
+-- select
+--     id, name, university, falcuty, specialization,
+--     phone_number, work_email, personal_email, citizen_id, bank_account
+-- from teacher;
+
+
+create trigger teacher_fts_delete after delete on "teacher" begin
+	delete from "teacher_fts" where id = old.id;
+end;
+
+create trigger teacher_fts_insert after insert on "teacher" begin
+    insert into teacher_fts(
+        id, name, university, falcuty, specialization,
+        phone_number, work_email, personal_email, citizen_id, bank_account
+    )
+    values (
+        NEW.id, NEW.name, NEW.university, NEW.falcuty, NEW.specialization,
+        NEW.phone_number, NEW.work_email, NEW.personal_email, NEW.citizen_id, NEW.bank_account
+    );
+end;
+
+create trigger teacher_fts_update after update on "teacher" begin
+    insert into teacher_fts(
+        id, name, university, falcuty, specialization,
+        phone_number, work_email, personal_email, citizen_id, bank_account
+    )
+    values (
+        NEW.id, NEW.name, NEW.university, NEW.falcuty, NEW.specialization,
+        NEW.phone_number, NEW.work_email, NEW.personal_email, NEW.citizen_id, NEW.bank_account
+    );
+end;
+
+
+
+-- searchTeacherIdsFts(:searchText as text): 
+--     select cast(teacher_fts.id as integer) from teacher_fts where teacher_fts match :searchText);
+
+
+-- vim: ft=sql
+

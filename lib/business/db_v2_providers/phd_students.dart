@@ -26,7 +26,7 @@ final phdStudentIdsByCohortProvider = AsyncNotifierProvider.family(
 class PhdCohorts extends AsyncNotifier<List<String>> {
   @override
   Future<List<String>> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
+    final db = await ref.watch(mainDatabaseProvider.future);
     final stmt = db.phdCohort.select()
       ..orderBy([
         (x) => OrderingTerm(expression: x.cohort, mode: OrderingMode.desc),
@@ -36,16 +36,18 @@ class PhdCohorts extends AsyncNotifier<List<String>> {
   }
 }
 
-class PhdStudentByIdNotifier extends AsyncNotifier<PhdStudentData?> {
+class PhdStudentByIdNotifier extends AsyncNotifier<PhdStudentData> {
   final int studentId;
   PhdStudentByIdNotifier(this.studentId);
 
   @override
-  Future<PhdStudentData?> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
-    return await db.managers.phdStudent
+  Future<PhdStudentData> build() async {
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final student = await db.managers.phdStudent
         .filter((student) => student.id.equals(studentId))
         .getSingleOrNull();
+    assert(student != null, 'PhD Student with ID $studentId not found');
+    return student!;
   }
 }
 
@@ -56,7 +58,7 @@ class PhdStudentIdsNotifier extends AsyncNotifier<List<int>> {
 
   @override
   Future<List<int>> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
+    final db = await ref.watch(mainDatabaseProvider.future);
     final stmt = db.phdStudent.select();
 
     switch (cohort) {
@@ -66,27 +68,13 @@ class PhdStudentIdsNotifier extends AsyncNotifier<List<int>> {
 
     stmt.orderBy([
       (s) => OrderingTerm(expression: s.cohort, mode: OrderingMode.desc),
+      (s) => OrderingTerm(expression: s.status, mode: OrderingMode.asc),
       (s) => OrderingTerm(expression: s.admissionId, mode: OrderingMode.asc),
     ]);
 
     final ids = await stmt.map((p) => p.id).get();
 
     return ids.whereType<int>().toList();
-  }
-}
-
-class PhdStudentIdsByCohortNotifier extends AsyncNotifier<List<int>> {
-  final String cohort;
-  PhdStudentIdsByCohortNotifier(this.cohort);
-
-  @override
-  Future<List<int>> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
-    final query = db.managers.phdStudent
-        .filter((p) => p.cohort.equals(cohort))
-        .map((p) => p.id);
-    final result = await query.get();
-    return result.whereType<int>().toList()..sort();
   }
 }
 
@@ -112,11 +100,12 @@ class PhdStudentsMutationNotifier extends Notifier<void> {
     required int? secondarySupervisorId,
     required String majorSpecialization,
   }) async {
-    final db = await ref.watch(appDatabaseProvider.future);
+    final db = await ref.watch(mainDatabaseProvider.future);
     final companion = PhdStudentCompanion.insert(
       // Admission information
       admissionId: admissionId,
       cohort: cohort,
+      status: StudentStatus.admission,
 
       // Basic information
       name: name,

@@ -44,7 +44,7 @@ class CohortSelector extends ConsumerWidget {
         for (final cohort in model.options)
           DropdownMenuEntry(
             value: cohort,
-            label: cohort.cohort,
+            label: cohort.id,
           ),
       ],
       onSelected: (cohort) {
@@ -186,7 +186,7 @@ class EnrollButtonBuilder extends ConsumerWidget {
 
       final notifier = ref.read(studentMutationProvider(studentUid).notifier);
       await notifier.enroll(
-        cohortId: cohort.cohort,
+        cohortId: cohort.id,
         studentId: studentId,
         schoolEmail: schoolEmail,
         admissionCouncilId: council.id,

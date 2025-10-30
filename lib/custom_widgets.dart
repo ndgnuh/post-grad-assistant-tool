@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:diacritic/diacritic.dart';
 import 'package:file_picker/file_picker.dart';
@@ -10,10 +9,6 @@ import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' hide Provider;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
-import 'datamodels.dart' show toSqliteDate;
-import 'datamodels.dart' show tryFormatHumanDate;
-import 'datamodels.dart' show tryParseDMY;
 
 export 'custom_widgets/datetime_picker.dart';
 export 'custom_widgets/directory_picker.dart';
@@ -178,59 +173,59 @@ void setControllerValue(ChangeNotifier controller, Object? value) {
   }
 }
 
-class DateEditingDialog extends StatelessWidget {
-  final DateTime? initialDate;
-  final String title;
-  final void Function(DateTime) onSubmit;
-
-  const DateEditingDialog({
-    super.key,
-    this.title = "Chỉnh sửa ngày",
-    this.initialDate,
-    required this.onSubmit,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final controller = EzDateInputController(
-      value: initialDate,
-      dateFormat: DateFormat("dd/MM/yyyy"),
-    );
-    return AlertDialog(
-      title: Text(title),
-      content: EzDateInput(controller: controller, label: "Ngày"),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text("Hủy"),
-        ),
-        TextButton(
-          onPressed: () {
-            onSubmit(controller.value!);
-            Navigator.of(context).pop();
-          },
-          child: const Text("Lưu"),
-        ),
-      ],
-    );
-  }
-
-  static void show({
-    required BuildContext context,
-    DateTime? initialDate,
-    String title = "Chỉnh sửa ngày",
-    required void Function(DateTime) onSubmit,
-  }) {
-    showDialog(
-      context: context,
-      builder: (context) => DateEditingDialog(
-        title: title,
-        initialDate: initialDate,
-        onSubmit: onSubmit,
-      ),
-    );
-  }
-}
+// class DateEditingDialog extends StatelessWidget {
+//   final DateTime? initialDate;
+//   final String title;
+//   final void Function(DateTime) onSubmit;
+//
+//   const DateEditingDialog({
+//     super.key,
+//     this.title = "Chỉnh sửa ngày",
+//     this.initialDate,
+//     required this.onSubmit,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final controller = EzDateInputController(
+//       value: initialDate,
+//       dateFormat: DateFormat("dd/MM/yyyy"),
+//     );
+//     return AlertDialog(
+//       title: Text(title),
+//       content: EzDateInput(controller: controller, label: "Ngày"),
+//       actions: [
+//         TextButton(
+//           onPressed: () => Navigator.of(context).pop(),
+//           child: const Text("Hủy"),
+//         ),
+//         TextButton(
+//           onPressed: () {
+//             onSubmit(controller.value!);
+//             Navigator.of(context).pop();
+//           },
+//           child: const Text("Lưu"),
+//         ),
+//       ],
+//     );
+//   }
+//
+//   static void show({
+//     required BuildContext context,
+//     DateTime? initialDate,
+//     String title = "Chỉnh sửa ngày",
+//     required void Function(DateTime) onSubmit,
+//   }) {
+//     showDialog(
+//       context: context,
+//       builder: (context) => DateEditingDialog(
+//         title: title,
+//         initialDate: initialDate,
+//         onSubmit: onSubmit,
+//       ),
+//     );
+//   }
+// }
 
 /// A box for drafting page layout.
 /// Parameters:
@@ -386,79 +381,79 @@ class EzCopy extends StatelessWidget {
   }
 }
 
-class EzDateInput extends StatelessWidget {
-  final EzDateInputController controller;
-  final String? label;
-  final bool enabled;
-  final bool readOnly;
+// class EzDateInput extends StatelessWidget {
+//   final EzDateInputController controller;
+//   final String? label;
+//   final bool enabled;
+//   final bool readOnly;
+//
+//   const EzDateInput({
+//     super.key,
+//     required this.controller,
+//     this.label,
+//     this.enabled = true,
+//     this.readOnly = false,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return TextFormField(
+//       inputFormatters: [formattedDateInputFormatter],
+//       controller: controller.formatController,
+//       decoration: InputDecoration(
+//         labelText: label ?? "Chọn ngày",
+//         hintText: "dd/mm/yyyy",
+//         filled: true,
+//         fillColor: Colors.transparent,
+//         floatingLabelBehavior: FloatingLabelBehavior.always,
+//       ),
+//       readOnly: readOnly,
+//       enabled: enabled,
+//     );
+//   }
+// }
 
-  const EzDateInput({
-    super.key,
-    required this.controller,
-    this.label,
-    this.enabled = true,
-    this.readOnly = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      inputFormatters: [formattedDateInputFormatter],
-      controller: controller.formatController,
-      decoration: InputDecoration(
-        labelText: label ?? "Chọn ngày",
-        hintText: "dd/mm/yyyy",
-        filled: true,
-        fillColor: Colors.transparent,
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-      ),
-      readOnly: readOnly,
-      enabled: enabled,
-    );
-  }
-}
-
-class EzDateInputController extends ChangeNotifier {
-  final TextEditingController formatController = TextEditingController();
-  late DateFormat dateFormat;
-
-  EzDateInputController({DateTime? value, DateFormat? dateFormat}) {
-    this.dateFormat = dateFormat ?? DateFormat("dd/MM/yyyy");
-    formatController.text = switch (value) {
-      DateTime date => toSqliteDate(date) ?? "",
-      _ => "",
-    };
-  }
-
-  DateTime? get value {
-    final text = formatController.text.trim();
-    if (text.isEmpty) return null;
-
-    // Try to parse the date from the text
-    final parsedDate = tryParseDMY(text);
-    if (parsedDate != null) {
-      return parsedDate;
-    }
-
-    // If parsing fails, return null
-    return null;
-  }
-
-  set value(DateTime? newValue) {
-    // Set the text in the format controller
-    formatController.text = switch (newValue) {
-      DateTime date => dateFormat.format(date),
-      _ => "",
-    };
-    notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    formatController.dispose();
-  }
-}
+// class EzDateInputController extends ChangeNotifier {
+//   final TextEditingController formatController = TextEditingController();
+//   late DateFormat dateFormat;
+//
+//   EzDateInputController({DateTime? value, DateFormat? dateFormat}) {
+//     this.dateFormat = dateFormat ?? DateFormat("dd/MM/yyyy");
+//     formatController.text = switch (value) {
+//       DateTime date => toSqliteDate(date) ?? "",
+//       _ => "",
+//     };
+//   }
+//
+//   DateTime? get value {
+//     final text = formatController.text.trim();
+//     if (text.isEmpty) return null;
+//
+//     // Try to parse the date from the text
+//     final parsedDate = tryParseDMY(text);
+//     if (parsedDate != null) {
+//       return parsedDate;
+//     }
+//
+//     // If parsing fails, return null
+//     return null;
+//   }
+//
+//   set value(DateTime? newValue) {
+//     // Set the text in the format controller
+//     formatController.text = switch (newValue) {
+//       DateTime date => dateFormat.format(date),
+//       _ => "",
+//     };
+//     notifyListeners();
+//   }
+//
+//   @override
+//   void dispose() {
+//     super.dispose();
+//     formatController.dispose();
+//   }
+// }
 
 class EzDatePicker extends StatelessWidget {
   final String? label;
@@ -480,7 +475,9 @@ class EzDatePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final valueString = tryFormatHumanDate(value);
+    final dateFormat = DateFormat("dd/MM/yyyy");
+    final valueString = (value != null) ? dateFormat.format(value!) : "?";
+
     return TextFormField(
       decoration: InputDecoration(
         filled: true,
@@ -491,7 +488,7 @@ class EzDatePicker extends StatelessWidget {
       ),
       controller:
           controller?.formatController ??
-          TextEditingController(text: valueString ?? ""),
+          TextEditingController(text: valueString),
       enabled: enabled,
       readOnly: true,
       onTap: switch (readOnly) {
@@ -523,21 +520,6 @@ class EzDatePicker extends StatelessWidget {
       case (ValueChanged callback, DateTime value):
         callback(value);
     }
-  }
-}
-
-/// A wrapper for [Text] widget that display
-/// [DateTime] as dd/mm/yyyy
-class EzDmyText extends StatelessWidget {
-  final DateTime? date;
-  final String? placeholder;
-
-  const EzDmyText(this.date, {super.key, this.placeholder = "N/A"});
-
-  @override
-  Widget build(BuildContext context) {
-    final formattedDate = tryFormatHumanDate(date);
-    return Text(formattedDate ?? placeholder!);
   }
 }
 
@@ -1476,7 +1458,6 @@ class _InfoTileState<T> extends State<InfoTile<T>> {
           context: context,
           currentValue: value,
         );
-        print(newValue);
         widget.onSubmit(newValue);
         setState(() {
           value = newValue;
@@ -1586,27 +1567,58 @@ class ConsumerWidgetBuilder extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) => builder(context, ref);
 }
 
-class StringNotifier extends Notifier<String> {
+class NullableStateNotifier<T> extends Notifier<T?> {
+  final T? initialValue;
   final Duration debounceDuration;
   Timer? debounceTimer;
 
-  StringNotifier({
+  NullableStateNotifier({
+    this.initialValue,
     this.debounceDuration = const Duration(milliseconds: 300),
   });
 
   @override
-  String build() => '';
+  T? build() => initialValue;
 
-  void debounceSet(String value) {
+  void debounceSet(T? value) {
     if (debounceTimer?.isActive ?? false) {
       debounceTimer?.cancel();
     }
     debounceTimer = Timer(debounceDuration, () => set(value));
   }
 
-  void set(String value) {
-    state = value;
+  void clear() => state = null;
+
+  void set(T? value) => state = value;
+}
+
+class TextNotifier extends StateNotifier<String> {
+  final controller = TextEditingController();
+
+  TextNotifier({super.initialValue = "", super.debounceDuration});
+}
+
+class StateNotifier<T> extends Notifier<T> {
+  final T initialValue;
+  final Duration debounceDuration;
+  Timer? debounceTimer;
+
+  StateNotifier({
+    required this.initialValue,
+    this.debounceDuration = const Duration(milliseconds: 300),
+  });
+
+  @override
+  T build() => initialValue;
+
+  void debounceSet(T value) {
+    if (debounceTimer?.isActive ?? false) {
+      debounceTimer?.cancel();
+    }
+    debounceTimer = Timer(debounceDuration, () => set(value));
   }
+
+  void set(T value) => state = value;
 }
 
 class CardSection extends StatelessWidget {

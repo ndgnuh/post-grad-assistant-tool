@@ -1,0 +1,16 @@
+CREATE VIRTUAL TABLE thesis_fts USING fts5(
+    id,
+    idGiangVien,
+    idHocVien,
+    tenTiengAnh,
+    tenTiengViet,
+    giangVien,
+    hocVien,
+    tokenize="trigram remove_diacritics 1 case_sensitive 0",
+    prefix="2 3 5 7"
+);
+
+
+
+-- vim: ft=sql
+

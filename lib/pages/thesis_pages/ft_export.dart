@@ -82,7 +82,7 @@ Future<Uint8List> buildThesisListPdf({
         rowBuilder: (int r, dt) {
           final thesis = theses[r];
           final teacher = supervisors[theses[r]]!;
-          final contact = teacher.personalEmail ?? teacher.phone;
+          final contact = teacher.email ?? teacher.phoneNumber;
           return [
             teacher.name,
             thesis.vietnameseTitle,

@@ -51,35 +51,6 @@ enum DocumentClass {
 }
 
 // DMY Date converter
-class YmdDateConverter extends TypeConverter<DateTime?, String?> {
-  const YmdDateConverter();
-
-  @override
-  DateTime? fromSql(String? fromDb) {
-    if (fromDb == null || fromDb.isEmpty) return null;
-
-    final pattern = RegExp(r'^(\d{4})[-\/](\d{2})[-\/](\d{2})$');
-    final matched = pattern.firstMatch(fromDb);
-    switch (matched) {
-      case null:
-        throw Exception('Invalid date format: $fromDb');
-      case final m:
-        final year = int.parse(m.group(1)!);
-        final month = int.parse(m.group(2)!);
-        final day = int.parse(m.group(3)!);
-        return DateTime(year, month, day);
-    }
-  }
-
-  @override
-  String? toSql(DateTime? value) {
-    if (value == null) return null;
-    final day = value.day.toString().padLeft(2, '0');
-    final month = value.month.toString().padLeft(2, '0');
-    final year = value.year.toString().padLeft(4, '0');
-    return '$year-$month-$day';
-  }
-}
 
 enum CourseClassStatus {
   normal(0, "Bình thường"),
@@ -140,33 +111,6 @@ class CourseClassStatusConverter extends TypeConverter<CourseClassStatus, int> {
 
   @override
   int toSql(CourseClassStatus status) => status.value;
-}
-
-class SureYmdDateConverter extends TypeConverter<DateTime, String> {
-  const SureYmdDateConverter();
-
-  @override
-  DateTime fromSql(String fromDb) {
-    final pattern = RegExp(r'^(\d{4})[-\/](\d{2})[-\/](\d{2})$');
-    final matched = pattern.firstMatch(fromDb);
-    switch (matched) {
-      case null:
-        throw Exception('Invalid date format: $fromDb');
-      case final m:
-        final year = int.parse(m.group(1)!);
-        final month = int.parse(m.group(2)!);
-        final day = int.parse(m.group(3)!);
-        return DateTime(year, month, day);
-    }
-  }
-
-  @override
-  String toSql(DateTime value) {
-    final day = value.day.toString().padLeft(2, '0');
-    final month = value.month.toString().padLeft(2, '0');
-    final year = value.year.toString().padLeft(4, '0');
-    return '$year-$month-$day';
-  }
 }
 
 // Application stuff

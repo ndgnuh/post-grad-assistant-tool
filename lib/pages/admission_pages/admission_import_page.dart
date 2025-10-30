@@ -1,5 +1,3 @@
-import 'package:excel/excel.dart';
-import 'package:fami_tools/datamodels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -134,7 +132,7 @@ class _ImportTable extends ConsumerWidget {
                 DataCell(Text(item.admissionType.label)),
                 DataCell(Text(item.name)),
                 DataCell(Text(item.gender.label)),
-                DataCell(Text(item.dateOfBirth.toDmy())),
+                DataCell(Text(dateFormat.format(item.dateOfBirth))),
                 DataCell(Text(item.placeOfBirth)),
                 DataCell(Text(item.email)),
                 DataCell(Text(item.phoneNumber)),

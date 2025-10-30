@@ -1,23 +1,15 @@
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../drift_orm.dart';
 import '../file_content_database.dart';
+import '../db_v2_providers.dart';
 
 const String pathKey = 'database-path';
 
-final appDatabasePathProvider = AsyncNotifierProvider(
-  () => DatabasePathNotifier("app-db"),
-);
-
-final fileContentDatabasePathProvider = AsyncNotifierProvider(
-  () => DatabasePathNotifier("file-db"),
-);
-
 /// Provide the main databsae of the app
-final nullableAppDatabaseProvider = FutureProvider(
+final nullableMainDatabaseProvider = FutureProvider(
   (ref) async {
-    final databasePath = await ref.watch(appDatabasePathProvider.future);
+    final databasePath = await ref.watch(mainDatabasePathProvider.future);
     if (databasePath == null) return null;
     final db = AppDatabase.intialize(databasePath);
     return db;
@@ -29,7 +21,7 @@ final nullableAppDatabaseProvider = FutureProvider(
 final nullableFileDatabaseProvider = FutureProvider(
   (ref) async {
     final databasePath = await ref.watch(
-      fileContentDatabasePathProvider.future,
+      fileDatabasePathProvider.future,
     );
     if (databasePath == null) return null;
     return FileContentDatabase.initialize(databasePath);
@@ -37,9 +29,9 @@ final nullableFileDatabaseProvider = FutureProvider(
 );
 
 /// Provide the main databsae of the app, ensure it is initialized
-final appDatabaseProvider = FutureProvider<AppDatabase>(
+final mainDatabaseProvider = FutureProvider<AppDatabase>(
   (ref) async {
-    final db = await ref.watch(nullableAppDatabaseProvider.future);
+    final db = await ref.watch(nullableMainDatabaseProvider.future);
     assert(db != null, 'Main database is not initialized!');
     return db!;
   },

@@ -1,4 +1,5 @@
 export 'db_v2_providers/admission_council.dart';
+export 'db_v2_providers/local_preferences.dart';
 export 'db_v2_providers/cohorts.dart';
 export 'db_v2_providers/course_classes.dart';
 export 'db_v2_providers/courses.dart';

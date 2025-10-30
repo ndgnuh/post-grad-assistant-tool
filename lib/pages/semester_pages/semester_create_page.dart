@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:fami_tools/custom_widgets.dart';
-import 'package:fami_tools/business/domain_objects.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:fami_tools/business/db_v2_providers.dart';
 
 class PageAcademicYearCreate extends StatefulWidget {
   static const routeName = '/academic_year/create';
@@ -159,31 +160,69 @@ class _PageAcademicYearCreateState extends State<PageAcademicYearCreate> {
 
           // Button to create the academic year
           ListTile(
-            title: ElevatedButton(
-              onPressed: () async {
-                if (_nameController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Vui lòng nhập tên đợt học")),
-                  );
-                  return;
-                }
-
-                final created = await HocKy.create(
-                  hocKy: _nameController.text,
-                  moDangKy: _moDangKy.value,
-                  dongDangKy: _dongDangKy.value,
-                  batDauHoc: _batDauHoc.value,
-                  ketThucHoc: _ketThucHoc.value,
-                  hanNhapDiem: _hanNhapDiem.value,
-                );
-
-                navigator.pop(created);
-              },
-              child: const Text("Tạo đợt học"),
+            title: _CreateNewButton(
+              nameController: _nameController,
+              moDangKy: _moDangKy,
+              dongDangKy: _dongDangKy,
+              batDauHoc: _batDauHoc,
+              ketThucHoc: _ketThucHoc,
+              hanNhapDiem: _hanNhapDiem,
+              navigator: navigator,
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _CreateNewButton extends ConsumerWidget {
+  const _CreateNewButton({
+    required TextEditingController nameController,
+    required ValueNotifier<DateTime> moDangKy,
+    required ValueNotifier<DateTime> dongDangKy,
+    required ValueNotifier<DateTime> batDauHoc,
+    required ValueNotifier<DateTime> ketThucHoc,
+    required ValueNotifier<DateTime> hanNhapDiem,
+    required this.navigator,
+  }) : _nameController = nameController,
+       _moDangKy = moDangKy,
+       _dongDangKy = dongDangKy,
+       _batDauHoc = batDauHoc,
+       _ketThucHoc = ketThucHoc,
+       _hanNhapDiem = hanNhapDiem;
+
+  final TextEditingController _nameController;
+  final ValueNotifier<DateTime> _moDangKy;
+  final ValueNotifier<DateTime> _dongDangKy;
+  final ValueNotifier<DateTime> _batDauHoc;
+  final ValueNotifier<DateTime> _ketThucHoc;
+  final ValueNotifier<DateTime> _hanNhapDiem;
+  final NavigatorState navigator;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ElevatedButton(
+      onPressed: () async {
+        if (_nameController.text.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Vui lòng nhập tên đợt học")),
+          );
+          return;
+        }
+
+        final notifier = ref.read(semesterIdsProvider.notifier);
+        notifier.addSemester(
+          id: _nameController.text,
+          registrationBeginDate: _moDangKy.value,
+          registrationEndDate: _dongDangKy.value,
+          classBeginDate: _batDauHoc.value,
+          classEndDate: _ketThucHoc.value,
+          gradeSubmissionDeadline: _hanNhapDiem.value,
+        );
+        navigator.pop();
+      },
+      child: const Text("Tạo đợt học"),
     );
   }
 }

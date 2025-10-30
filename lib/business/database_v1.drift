@@ -1,65 +1,30 @@
 import 'database_v1/tables.drift';
-import 'database_v1/fts.drift';
+import 'database_v1/thesis_fts.drift';
 import 'database_v1/course_fts.drift';
+import 'database_v1/teacher_fts.drift';
 -- import 'database_v1/methods.drift';
 
 
+-- searchTeachers(
+--     :searchText as text or null,
+--     :isOutsider as boolean or null
+-- ): select id from teacher
+--     where hoten like '%' || :searchtext || '%'
+--     or email like '%' || :searchtext || '%'
+--     or macanbo like '%' || :searchtext || '%'
+--     or sdt like '%' || :searchtext || '%'
+--     or email like '%' || :searchtext || '%'
+--     or cccd like '%' || :searchtext || '%'
+--     or stk like '%' || :searchtext || '%'
+--     or mst like '%' || :searchtext || '%'
+--     and (:is_outsider is null or ngoaitruong = :is_outsider);
 
-searchTeachers(
-    :searchText as text or null,
-    :isOutsider as boolean or null
-): select id from teacher
-    where hoten like '%' || :searchtext || '%'
-    or email like '%' || :searchtext || '%'
-    or macanbo like '%' || :searchtext || '%'
-    or sdt like '%' || :searchtext || '%'
-    or email like '%' || :searchtext || '%'
-    or cccd like '%' || :searchtext || '%'
-    or stk like '%' || :searchtext || '%'
-    or mst like '%' || :searchtext || '%'
-    and (:is_outsider is null or ngoaitruong = :is_outsider);
-
-
-searchTeacher(
-    :searchText as TEXT OR NULL,
-    :outsider as BOOLEAN OR NULL
-): SELECT * FROM teacher
-    where hoten LIKE '%' || :searchText || '%'
-    or email LIKE '%' || :searchText || '%'
-    or macanbo LIKE '%' || :searchText || '%'
-    or sdt LIKE '%' || :searchText || '%'
-    or email LIKE '%' || :searchText || '%'
-    or cccd LIKE '%' || :searchText || '%'
-    or stk LIKE '%' || :searchText || '%'
-    or mst LIKE '%' || :searchText || '%'
-    and (:outsider is null or ngoaitruong = :outsider);
 
 -- Thesis
-getTrackingThesisIds: SELECT id FROM detaithacsi WHERE flag_tracking = 1 order by "soQdBaoVe";
-trackThesis: UPDATE detaithacsi SET flag_tracking = 1 WHERE id = :thesisId;
-untrackThesis: UPDATE detaithacsi SET flag_tracking = 0 WHERE id = :thesisId;
+getTrackingThesisIds: SELECT id FROM thesis WHERE flag_tracking = 1 order by "soQdBaoVe";
+trackThesis: UPDATE thesis SET flag_tracking = 1 WHERE id = :thesisId;
+untrackThesis: UPDATE thesis SET flag_tracking = 0 WHERE id = :thesisId;
 
-getThesisPresidentId: SELECT idChuTich FROM detaithacsi WHERE id = :thesisId;
-getThesis1stReviewerId: SELECT idPhanBien1 FROM detaithacsi WHERE id = :thesisId;
-getThesis2ndReviewerId: SELECT idPhanBien2 FROM detaithacsi WHERE id = :thesisId;
-getThesisSecretaryId: SELECT idThuKy FROM detaithacsi WHERE id = :thesisId;
-getThesisMemberId: SELECT idUyVien FROM detaithacsi WHERE id = :thesisId;
-setThesisPresidentId: UPDATE detaithacsi SET idChuTich = :teacherId WHERE id = :thesisId;
-setThesis1stReviewerId: UPDATE detaithacsi SET idPhanBien1 = :teacherId WHERE id = :thesisId;
-setThesis2ndReviewerId: UPDATE detaithacsi SET idPhanBien2 = :teacherId WHERE id = :thesisId;
-setThesisSecretaryId: UPDATE detaithacsi SET idThuKy = :teacherId WHERE id = :thesisId;
-setThesisMemberId: UPDATE detaithacsi SET idUyVien = :teacherId WHERE id = :thesisId;
 
--- course class
-getAllSemesters: SELECT DISTINCT hocKy FROM LopTinChi ORDER BY hocKy DESC;
-
--- Search functions
--------------------
--- Search for theses
-searchTheses(
-    :searchText as TEXT
-): SELECT id FROM detaithacsi
-    WHERE id in (select id from fts_DeTaiThacSi
-                 where fts_DeTaiThacSi match :searchText);
 
 -- vim: ft=sql

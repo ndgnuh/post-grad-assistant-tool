@@ -1,11 +1,12 @@
 import 'dart:io';
 
+import 'package:fami_tools/business/db_v2_providers/teachers.dart';
 import 'package:fami_tools/business/drift_orm.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:pdf/pdf.dart';
 
-import '../../business/domain_objects.dart' hide AdmissionType;
 import '../../services/pdf_widgets.dart' as pw;
 
 extension _DateDmy on DateTime {
@@ -16,6 +17,7 @@ extension _DateDmy on DateTime {
 }
 
 Future<void> saveAdmissionForms({
+  required WidgetRef ref, // TODO: properly use ref
   required String saveDirectory,
   required List<StudentData> candidates,
   required AdmissionCouncilData council,
@@ -40,35 +42,35 @@ Future<void> saveAdmissionForms({
   await _buildBang3NhanXet(
     candidates: candidatesXt,
     saveDirectory: saveDirectory,
-    gv: await GiangVien.getById(council.presidentId),
+    gv: await ref.read(teacherByIdProvider(council.presidentId).future),
     role: "Chủ tịch tiểu ban",
     year: year,
   );
   await _buildBang3NhanXet(
     candidates: candidatesXt,
     saveDirectory: saveDirectory,
-    gv: await GiangVien.getById(council.secretaryId),
+    gv: await ref.read(teacherByIdProvider(council.secretaryId).future),
     role: "Thư ký tiểu ban",
     year: year,
   );
   await _buildBang3NhanXet(
     candidates: candidatesXt,
     saveDirectory: saveDirectory,
-    gv: await GiangVien.getById(council.member1Id),
+    gv: await ref.read(teacherByIdProvider(council.member1Id).future),
     role: "Ủy viên",
     year: year,
   );
   await _buildBang3NhanXet(
     candidates: candidatesXt,
     saveDirectory: saveDirectory,
-    gv: await GiangVien.getById(council.member2Id),
+    gv: await ref.read(teacherByIdProvider(council.member2Id).future),
     role: "Ủy viên",
     year: year,
   );
   await _buildBang3NhanXet(
     candidates: candidatesXt,
     saveDirectory: saveDirectory,
-    gv: await GiangVien.getById(council.member3Id),
+    gv: await ref.read(teacherByIdProvider(council.member3Id).future),
     role: "Ủy viên",
     year: year,
   );
@@ -305,7 +307,7 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
 Future<pw.Document> _buildBang3NhanXet({
   required List<StudentData> candidates,
   required String saveDirectory,
-  required GiangVien gv,
+  required TeacherData gv,
   required String role,
   required String year,
 }) async {
@@ -313,7 +315,7 @@ Future<pw.Document> _buildBang3NhanXet({
   final doc = pw.Document(
     pageMode: PdfPageMode.fullscreen,
     theme: theme,
-    title: "Bảng 3: Đánh giá của thành viên tiểu ban - ${gv.hoTenChucDanh}",
+    title: "Bảng 3: Đánh giá của thành viên tiểu ban - ${gv.name}",
     producer: "Nguyễn Đức Hùng",
     author: "Nguyễn Đức Hùng",
   );
@@ -340,7 +342,7 @@ Future<pw.Document> _buildBang3NhanXet({
           pw.Text(
             "Họ và tên, chức danh, nhiệm vụ trong tiểu ban: ",
           ),
-          pw.Text(gv.hoTenChucDanh),
+          pw.Text(gv.name),
           pw.Text(" - "),
           pw.Text(role),
         ],
@@ -357,7 +359,7 @@ Future<pw.Document> _buildBang3NhanXet({
                 height: 1.5 * PdfPageFormat.cm,
                 borderStyle: pw.BorderStyle.none,
               ),
-              pw.BoldText(gv.hoTenChucDanh),
+              pw.BoldText(gv.name),
             ],
           ),
         ],
@@ -424,7 +426,7 @@ Future<pw.Document> _buildBang3NhanXet({
   final file = File(
     p.join(
       saveDirectory,
-      "Bảng 3 ${gv.hoTen}.pdf",
+      "Bảng 3 ${gv.name}.pdf",
     ),
   );
   await file.writeAsBytes(await doc.save());

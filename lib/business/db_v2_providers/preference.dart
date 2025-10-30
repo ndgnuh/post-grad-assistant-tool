@@ -4,12 +4,10 @@ import 'package:drift/drift.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../drift_orm.dart';
 import '../db_v2_providers.dart';
 
 final myNameProvider = AsyncNotifierProvider(MyNameNotifier.new);
 final myFalcutyProvider = AsyncNotifierProvider(MyFalcutyNotifier.new);
-final isDarkModeProvider = AsyncNotifierProvider(IsDarkModeNotifier.new);
 
 Future<String?> _getPreference<T>(AppDatabase db, _PreferenceKey key) async {
   final stmt = db.preference.select();
@@ -27,13 +25,13 @@ sealed class _DbPreferenceNotifier<T> extends AsyncNotifier<T> {
 
   @override
   FutureOr<T> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
+    final db = await ref.watch(mainDatabaseProvider.future);
     return fromSql(await _getPreference(db, key));
   }
 
   Future<void> set(T value) async {
     final sqlValue = toSql(value);
-    final db = await ref.watch(appDatabaseProvider.future);
+    final db = await ref.watch(mainDatabaseProvider.future);
     final stmt = db.preference.update();
     stmt.where((t) => t.key.equals(key.key));
     await stmt.write(

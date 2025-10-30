@@ -42,24 +42,20 @@ class SemesterDetailsPage extends ConsumerWidget {
 
     // Information, formatted and stored as variables
     final semester = semesterAsync.value!;
-    final semesterName = semester.semester;
+    final semesterName = semester.id;
     final dateFormat = DateFormat('dd/MM/yyyy');
     final registrationOpenDate = dateFormat.format(
-      semester.registrationOpenDate,
+      semester.registrationBeginDate,
     );
     final registrationCloseDate = dateFormat.format(
-      semester.registrationCloseDate,
+      semester.registrationEndDate,
     );
     final studyStartDate = dateFormat.format(
-      semester.studyStartDate,
-    );
-    final studyEndDate = dateFormat.format(
-      semester.studyEndDate,
+      semester.classBeginDate,
     );
     final gradeSubmissionDeadline = dateFormat.format(
       semester.gradeSubmissionDeadline,
     );
-    final navigator = Navigator.of(context);
 
     return Scaffold(
       appBar: ConstrainedAppBar(
@@ -75,7 +71,7 @@ class SemesterDetailsPage extends ConsumerWidget {
                   builder: (context) => AlertDialog(
                     title: const Text("Xóa đợt học"),
                     content: Text(
-                      "Bạn có chắc muốn xóa đợt học ${semester.semester}?",
+                      "Bạn có chắc muốn xóa đợt học ${semester.id}?",
                     ),
                     actions: [
                       TextButton(

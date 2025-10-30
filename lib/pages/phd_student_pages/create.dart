@@ -296,7 +296,7 @@ class _TeacherSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dbState = ref.watch(appDatabaseProvider);
+    final dbState = ref.watch(mainDatabaseProvider);
     switch (dbState) {
       case AsyncError(:final error, :final stackTrace):
         return Text('Error: $error\n$stackTrace');
@@ -320,9 +320,9 @@ class _TeacherSelector extends ConsumerWidget {
           ];
         }
 
-        final query = db.searchTeacher(
+        final query = db.searchTeachers(
           searchText: controller.text,
-          outsider: false,
+          isOutsider: false,
         );
 
         final teachers = await query.get();
@@ -330,8 +330,8 @@ class _TeacherSelector extends ConsumerWidget {
         return [
           for (final teacher in teachers)
             ListTile(
-              title: Text(teacher.name ?? ''),
-              subtitle: Text(teacher.personalEmail ?? ''),
+              title: Text(teacher.name),
+              subtitle: Text(teacher.email ?? ''),
               onTap: () {
                 valueController.value = teacher;
                 formatController.text = teacher.name;

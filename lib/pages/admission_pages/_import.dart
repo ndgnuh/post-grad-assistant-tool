@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fami_tools/datamodels.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../services/database.dart' hide dbSession;
+import '../../business/business_enums.dart';
 
 part '_import.freezed.dart';
 part '_import.g.dart';
@@ -54,30 +53,14 @@ Future<List<JsonSchema>?> readProfilesFromJson() async {
 }
 
 Future<void> saveDataToDatabase(List<JsonSchema> data) async {
-  dbSession((Database db) async {
-    for (final row in data) {
-      final student = row.toStudent();
-      // Check if the student with the same admission ID already exists
-      final sql = SelectQuery()
-        ..from(Student.table)
-        ..where("soHoSo = ?", [student.soHoSo])
-        ..limit(1);
-      final ids = await db.rawQuery(sql.build());
-      if (ids.isNotEmpty) {
-        // If exists, skip to the next record
-        continue;
-      }
-
-      await student.create();
-    }
-  });
+  // TODO: use drift DB
 }
 
 class AdmissionTypeWebConverter extends JsonConverter<AdmissionType, String> {
   const AdmissionTypeWebConverter();
   @override
   AdmissionType fromJson(String json) {
-    return AdmissionType.fromWebString(json);
+    return AdmissionType.fromValue(json);
   }
 
   @override
@@ -91,8 +74,8 @@ class GenderWebConverter extends JsonConverter<Gender, String> {
 
   @override
   Gender fromJson(String str) => switch (str.trim().toLowerCase()) {
-    "nam" => Gender.nam,
-    "nữ" => Gender.nu,
+    "nam" => Gender.male,
+    "nữ" => Gender.female,
     _ => throw Exception("Invalid gender string"),
   };
 
@@ -168,24 +151,4 @@ abstract class JsonSchema with _$JsonSchema {
       _$JsonSchemaFromJson(json);
 
   const JsonSchema._();
-
-  Student toStudent() => Student(
-    id: -1,
-    maTrangThai: TrangThaiHocVien.xetTuyen,
-    soHoSo: admissionId,
-    hoTen: name,
-    idDienTuyenSinh: admissionType,
-    gioiTinh: gender,
-    ngaySinh: dateOfBirth,
-    noiSinh: placeOfBirth,
-    email: email,
-    dienThoai: phoneNumber,
-    truongTotNghiepDaiHoc: bachelorUniversity,
-    nganhTotNghiepDaiHoc: bachelorMajor,
-    heTotNghiepDaiHoc: bachelorDegreeType,
-    ngayTotNghiepDaiHoc: bachelorGraduationDate,
-    xepLoaiTotNghiepDaiHoc: bachelorGraduationRank,
-    nganhDaoTaoThacSi: masterMajor,
-    dinhHuongChuyenSau: specializationOrientation,
-  );
 }

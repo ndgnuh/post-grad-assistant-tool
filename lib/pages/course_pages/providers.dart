@@ -24,7 +24,7 @@ final shouldPromptInputProvider = Provider((ref) {
 });
 
 final courseIdsProvider = FutureProvider<List<String>>((ref) async {
-  final db = await ref.watch(appDatabaseProvider.future);
+  final db = await ref.watch(mainDatabaseProvider.future);
 
   final categorySelection = ref.watch(courseCategorySelectionProvider);
   final searchText = ref.watch(searchTextProvider);

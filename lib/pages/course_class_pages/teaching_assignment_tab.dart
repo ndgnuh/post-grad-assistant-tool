@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/db_v2_providers.dart';
+import '../../custom_tiles.dart';
 import 'teaching_assignment_providers.dart';
 
 class TeachingAssignmentTab extends StatelessWidget {
@@ -158,6 +159,7 @@ class _TeachingInvitationPanel extends ConsumerWidget {
     WidgetRef ref,
     TeachingAssignmentViewModel viewModel,
   ) {
+    // TODO: refactor this mess
     final invitationState = ref.watch(
       teachingInvitationMessageProvider(classId),
     );
@@ -169,6 +171,18 @@ class _TeachingInvitationPanel extends ConsumerWidget {
       default:
     }
 
+    final teacherSelectionAsync = ref.watch(
+      candidateSelectionProvider(classId),
+    );
+    switch (teacherSelectionAsync) {
+      case AsyncLoading():
+        return const Center(child: CircularProgressIndicator());
+      case AsyncError(:final error):
+        return Center(child: Text('Error: $error'));
+      default:
+    }
+
+    final teacher = teacherSelectionAsync.value!.selected;
     final invitation = invitationState.value!;
 
     return Column(
@@ -183,6 +197,8 @@ class _TeachingInvitationPanel extends ConsumerWidget {
               SizedBox(height: context.gutterTiny),
               _PolitenessSwitch(classId: classId),
               Divider(),
+
+              //
               ListTile(
                 title: Text("Văn mẫu"),
                 subtitle: Text(invitation),
@@ -195,6 +211,28 @@ class _TeachingInvitationPanel extends ConsumerWidget {
                 },
                 trailing: Icon(Symbols.content_copy),
               ),
+
+              if (teacher != null) ...[
+                Divider(),
+                StringTile(
+                  trailing: Icon(Symbols.content_copy),
+                  leading: Icon(Symbols.phone),
+                  readOnly: true,
+                  titleText: ("Điện thoại"),
+                  initialValue: teacher.phoneNumber ?? "Chưa có",
+                ),
+              ],
+
+              if (teacher != null) ...[
+                Divider(),
+                StringTile(
+                  trailing: Icon(Symbols.content_copy),
+                  leading: Icon(Symbols.email),
+                  readOnly: true,
+                  titleText: ("Email"),
+                  initialValue: teacher.email ?? "Chưa có",
+                ),
+              ],
               SizedBox(height: context.gutterTiny),
             ],
           ),

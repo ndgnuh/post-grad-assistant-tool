@@ -46,7 +46,7 @@ class CohortSelectionModelNotifier extends _Notifier with _Mixin {
 
     try {
       final selectedCohort = cohorts.firstWhere(
-        (cohort) => cohort.cohort == selectedId,
+        (cohort) => cohort.id == selectedId,
       );
 
       return SelectionModel<CohortData>(
@@ -68,7 +68,7 @@ class CohortSelectionModelNotifier extends _Notifier with _Mixin {
     if (item == null) {
       await pref.remove(prefKey);
     } else {
-      await pref.setString(prefKey, item.cohort);
+      await pref.setString(prefKey, item.id);
     }
   }
 }

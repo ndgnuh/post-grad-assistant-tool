@@ -50,7 +50,7 @@ class SemesterPicker extends ConsumerWidget {
         for (final semester in model.options)
           DropdownMenuEntry(
             value: semester,
-            label: semester.semester.toString(),
+            label: semester.id.toString(),
           ),
       ],
       onSelected: (value) async {

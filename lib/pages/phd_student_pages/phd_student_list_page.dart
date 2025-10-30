@@ -1,0 +1,169 @@
+import 'package:fami_tools/business/db_v2_providers.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
+
+import '../../business/business_enums.dart';
+import '../../custom_widgets.dart';
+import './providers.dart';
+import './widgets.dart';
+import 'phd_student_pages.dart';
+
+class PhdStudentListPage extends StatelessWidget {
+  static const routeName = '/phd-students';
+  const PhdStudentListPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final gutter = context.gutter;
+    return Scaffold(
+      appBar: ConstrainedAppBar(
+        child: AppBar(
+          title: const Text('PhD Students'),
+        ),
+      ),
+      body: ConstrainedBody(
+        child: Padding(
+          padding: EdgeInsets.all(context.gutter),
+          child: Column(
+            spacing: gutter,
+            verticalDirection: context.verticalDirection,
+            children: [
+              IntrinsicHeight(
+                child: Row(
+                  spacing: gutter,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: CohortSelector(),
+                    ),
+                    _GotoCreateButton(),
+                  ],
+                ),
+              ),
+              Expanded(child: _PhdStudentListView()),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PhdStudentListView extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final idsAsync = ref.watch(filteredPhdStudentIdsProvider);
+    switch (idsAsync) {
+      case AsyncLoading():
+        return const Center(child: CircularProgressIndicator());
+      case AsyncError():
+        return Center(child: Text('Error: ${idsAsync.error}'));
+      default:
+    }
+
+    final ids = idsAsync.value!;
+    if (ids.isEmpty) {
+      return const Center(child: Text('Không có NCS trong khóa này'));
+    }
+
+    return ListView.separated(
+      separatorBuilder: (context, index) => const Divider(),
+      itemBuilder: (context, index) {
+        return _PhdStudentInfo(studentId: ids[index]);
+      },
+      itemCount: ids.length,
+    );
+  }
+}
+
+class _GotoCreateButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton.icon(
+      onPressed: () {
+        Navigator.of(context).pushNamed(PhdStudentCreatePage.routeName);
+      },
+      label: const Text('Thêm'),
+      icon: const Icon(Symbols.add),
+    );
+  }
+}
+
+class _PhdStudentInfo extends ConsumerWidget {
+  final int studentId;
+  const _PhdStudentInfo({
+    required this.studentId,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final modelAsync = ref.watch(phdStudentViewModelByIdProvider(studentId));
+    switch (modelAsync) {
+      case AsyncLoading():
+        return const Center(child: CircularProgressIndicator());
+      case AsyncError():
+        return Center(child: Text('Error: ${modelAsync.error}'));
+      default:
+    }
+
+    final model = modelAsync.value!;
+    final student = model.student;
+    final supervisor = model.supervisor;
+    final secondarySupervisor = model.secondarySupervisor;
+
+    final supervisorNames = [
+      supervisor.name,
+      if (secondarySupervisor != null) secondarySupervisor.name,
+    ].join(", ");
+
+    // Stauts line
+    final studentStatus = switch (student.status) {
+      StudentStatus.admission => "Đợi xét tuyển",
+      StudentStatus.normal => "Đang học",
+      StudentStatus.studying => "Đang học",
+      StudentStatus.quit => "Thôi học",
+      StudentStatus.graduated => "Đã tốt nghiệp",
+      StudentStatus.delayedAdmission => "Hoãn xét tuyển",
+    };
+
+    final subtitle = Table(
+      defaultColumnWidth: IntrinsicColumnWidth(),
+      columnWidths: {2: FlexColumnWidth()},
+      children: [
+        TableRow(
+          children: [
+            Icon(Symbols.info),
+            Text(" "),
+            Text("Trạng thái: $studentStatus"),
+          ],
+        ),
+        TableRow(
+          children: [
+            Icon(Symbols.person),
+            Text(" "),
+            Text(
+              "Hướng dẫn: $supervisorNames",
+              softWrap: false,
+              style: TextStyle(overflow: TextOverflow.ellipsis),
+            ),
+          ],
+        ),
+      ],
+    );
+
+    return ListTile(
+      title: Text(student.name),
+      titleAlignment: ListTileTitleAlignment.titleHeight,
+      leading: CircleAvatar(
+        child: Text(student.name.split(" ").last.substring(0, 1)),
+      ),
+      subtitle: IntrinsicWidth(child: subtitle),
+      onTap: () => Navigator.of(context).pushNamed(
+        PhdStudentDetailsPage.routeName,
+        arguments: studentId,
+      ),
+    );
+  }
+}

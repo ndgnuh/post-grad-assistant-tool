@@ -7,7 +7,7 @@ final thesisIdsProvider = AsyncNotifierProvider(
 );
 
 final searchTextProvider = NotifierProvider(
-  () => StringNotifier(),
+  () => StateNotifier<String>(initialValue: ""),
 );
 
 final thesisListViewModelProvider = AsyncNotifierProvider(
@@ -42,8 +42,9 @@ class ThesisListViewModelNotifier extends AsyncNotifier<ThesisListViewModel> {
       );
     }
 
-    final db = await ref.watch(appDatabaseProvider.future);
-    final ids = await db.searchTheses(searchText: searchText).get();
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final stmt = db.searchTheses(searchText: searchText);
+    final ids = await stmt.map((r) => r.id).get();
 
     final theses = <ThesisData>[];
     final supervisors = <ThesisData, TeacherData>{};

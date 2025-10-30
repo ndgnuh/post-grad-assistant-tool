@@ -356,20 +356,20 @@ class _SaveButton extends ConsumerWidget {
       return;
     }
 
-    final companions = <LopTinChiCompanion>[];
+    final companions = <CourseClassCompanion>[];
     for (final info in classesToImport) {
-      final companion = LopTinChiCompanion.insert(
+      final companion = CourseClassCompanion.insert(
         classId: info.classId,
         courseId: info.courseId,
         registrationCount: Value(info.registrationCount),
-        semester: semester.semester,
+        semester: semester.id,
       );
       companions.add(companion);
     }
 
     // Import classes
     final notifer = ref.read(
-      courseClassIdsBySemesterProvider(semester.semester).notifier,
+      courseClassIdsBySemesterProvider(semester.id).notifier,
     );
     notifer.importClasses(companions);
     navigator.pop(true);

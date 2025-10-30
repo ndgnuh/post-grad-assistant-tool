@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../business/db_v1_providers.dart' as v1_providers;
 import '../../business/db_v2_providers.dart';
 import './providers.dart';
 
@@ -62,7 +61,7 @@ class CohortSelector extends ConsumerWidget {
         for (final cohort in cohorts)
           DropdownMenuEntry(
             value: cohort,
-            label: cohort.cohort,
+            label: cohort.id,
           ),
       ],
     );
@@ -85,7 +84,6 @@ class FilterModeButton extends ConsumerWidget {
 
     final model = modelAsync.value!;
     final selected = model.selected ?? FilterMode.or;
-    final options = model.options;
 
     return AspectRatio(
       aspectRatio: 1.5,
@@ -96,24 +94,6 @@ class FilterModeButton extends ConsumerWidget {
         },
         child: Text(selected.label),
       ),
-    );
-
-    return SegmentedButton<FilterMode>(
-      expandedInsets: EdgeInsets.zero,
-      segments: [
-        for (final option in options)
-          ButtonSegment(
-            value: option,
-            label: Text(option.label),
-          ),
-      ],
-      multiSelectionEnabled: false,
-      showSelectedIcon: false,
-      selected: {selected},
-      onSelectionChanged: (selections) {
-        final notifier = ref.read(filterModeSelectionModelProvider.notifier);
-        notifier.select(selections.firstOrNull);
-      },
     );
   }
 }
@@ -128,7 +108,6 @@ class StudentReloadButton extends ConsumerWidget {
         onPressed: () {
           ref.invalidate(studentListViewModelProvider);
           ref.invalidate(studentByIdProvider);
-          ref.invalidate(v1_providers.studentByIdProvider);
         },
         icon: Icon(Symbols.refresh),
       ),

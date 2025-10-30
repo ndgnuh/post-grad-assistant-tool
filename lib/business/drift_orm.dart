@@ -7,15 +7,37 @@ export './business_enums.dart';
 
 part 'drift_orm.g.dart';
 
-// const falseExpr = Constant(false);
-// const trueExpr = Constant(true);
+extension AnyEmail on TeacherData {
+  String? get email => workEmail ?? personalEmail;
 
-typedef Cohort = NienKhoa;
-typedef CourseClassCompanion = LopTinChiCompanion;
-// Alias because the original name is not english
-typedef Thesis = Detaithacsi;
+  List<String> get emails => [
+    if (workEmail != null) workEmail as String,
+    if (personalEmail != null) personalEmail as String,
+  ];
+}
 
-@DriftDatabase(include: {"database_v1.drift"})
+extension TeacherTitles on TeacherData {
+  String get nameWithTitle {
+    switch ((academicRank, academicDegree)) {
+      case (AcademicRank rank, AcademicDegree degree):
+        return '${rank.short} ${degree.short} $name';
+      case (AcademicRank rank, null):
+        return '${rank.short} $name';
+      case (null, AcademicDegree degree):
+        return '${degree.short} $name';
+      case (null, null):
+        return name;
+    }
+  }
+}
+
+@DriftDatabase(
+  include: {"database_v1.drift"},
+  queries: {
+    'searchTeacherIdsFts':
+        'SELECT id FROM teacher_fts WHERE teacher_fts MATCH ?;',
+  },
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
@@ -31,6 +53,33 @@ class AppDatabase extends _$AppDatabase {
     );
     final db = AppDatabase(executor);
     return db;
+  }
+
+  SimpleSelectStatement<Thesis, ThesisData> searchTheses({
+    String? searchText,
+  }) {
+    final stmt = thesis.select();
+
+    switch (searchText?.trim()) {
+      case String searchText:
+        final stmtTeacher = selectOnly(teacher)
+          ..where(teacher.name.contains(searchText))
+          ..addColumns([teacher.id]);
+
+        final stmtStudent = selectOnly(student)
+          ..where(student.name.contains(searchText))
+          ..addColumns([student.id]);
+
+        stmt.where(
+          (t) =>
+              t.vietnameseTitle.contains(searchText) |
+              t.englishTitle.contains(searchText) |
+              t.studentId.isInQuery(stmtStudent) |
+              t.supervisorId.isInQuery(stmtTeacher),
+        );
+    }
+
+    return stmt;
   }
 
   Future<List<String>> searchCourses({
@@ -71,9 +120,44 @@ class AppDatabase extends _$AppDatabase {
       return results;
     }
   }
-}
 
-extension Translation on AppDatabase {
-  Cohort get cohort => nienKhoa;
-  Thesis get thesis => detaithacsi;
+  /// Search teachers by name and outsider status
+  /// Returns only the ids of the teachers
+  SimpleSelectStatement<Teacher, TeacherData> searchTeachers({
+    String searchText = "",
+    bool? isOutsider,
+  }) {
+    final stmt = select(teacher);
+
+    if (isOutsider != null) {
+      stmt.where((t) => t.isOutsider.equals(isOutsider));
+    }
+
+    if (searchText.isNotEmpty) {
+      final st = searchText.trim();
+
+      final idsFts = selectOnly(teacher);
+      idsFts.addColumns([teacher.id]);
+      idsFts.where(
+        CustomExpression(
+          "id in (select id from teacher_fts where teacher_fts MATCH '$st')",
+        ),
+      );
+
+      stmt.where(
+        (t) =>
+            t.name.contains(st) |
+            t.staffId.contains(st) |
+            t.workEmail.contains(st) |
+            t.citizenId.contains(st) |
+            t.bankAccount.contains(st) |
+            t.personalEmail.contains(st) |
+            t.phoneNumber.contains(st),
+        // t.id.isInQuery(idsFts),
+        // t.isInQuery(idsFtsQuery as BaseSelectStatement<IntColumn>),
+      );
+    }
+
+    return stmt;
+  }
 }

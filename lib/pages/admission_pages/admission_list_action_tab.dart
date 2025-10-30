@@ -333,6 +333,7 @@ class _SavePaperworkButton extends ConsumerWidget {
         }
 
         saveAdmissionForms(
+          ref: ref,
           saveDirectory: saveDirectory,
           candidates: students,
           council: council,

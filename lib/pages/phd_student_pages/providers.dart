@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:number_to_vietnamese_words/number_to_vietnamese_words.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../../business/copy_pasta.dart';
@@ -19,9 +18,58 @@ final genderSelectionModelProvider = AsyncNotifierProvider(
   () => GenderSelectionModelNotifier("phd-students"),
 );
 
+final filteredPhdStudentIdsProvider = FutureProvider((ref) async {
+  final cohortModel = await ref.watch(cohortSelectionModelProvider.future);
+  final cohort = cohortModel.selected;
+  if (cohort == null) {
+    final ids = await ref.watch(phdStudentIdsProvider.future);
+    return ids;
+  } else {
+    final ids = ref.watch(
+      phdStudentIdsByCohortProvider(cohort).future,
+    );
+    return ids;
+  }
+});
+
 final phdStudentListViewModelProvider = AsyncNotifierProvider(
   PhdStudentListViewModelNotifier.new,
 );
+
+final phdStudentViewModelByIdProvider = FutureProvider.family(
+  (Ref ref, int studentId) async {
+    final student = await ref.watch(
+      phdStudentByIdProvider(studentId).future,
+    );
+
+    final teacher = await ref.watch(
+      teacherByIdProvider(student.supervisorId).future,
+    );
+
+    final secondarySupervisor = switch (student.secondarySupervisorId) {
+      null => null,
+      int id => await ref.watch(teacherByIdProvider(id).future),
+    };
+
+    return PhdStudentViewModel(
+      student: student,
+      supervisor: teacher,
+      secondarySupervisor: secondarySupervisor,
+    );
+  },
+);
+
+class PhdStudentViewModel {
+  final PhdStudentData student;
+  final TeacherData supervisor;
+  final TeacherData? secondarySupervisor;
+
+  PhdStudentViewModel({
+    required this.student,
+    required this.supervisor,
+    required this.secondarySupervisor,
+  });
+}
 
 class AdmissionCouncilArrangementEmailNotifier extends AsyncNotifier<Email> {
   final int phdStudentId;
@@ -41,7 +89,6 @@ class AdmissionCouncilArrangementEmailNotifier extends AsyncNotifier<Email> {
     final supervisor = await ref.watch(
       teacherByIdProvider(supervisorId).future,
     );
-    assert(supervisor != null, "Supervisor with id $supervisorId not found");
 
     final coSupervisorId = student.secondarySupervisorId;
     final coSupervisor = switch (coSupervisorId) {
@@ -51,14 +98,14 @@ class AdmissionCouncilArrangementEmailNotifier extends AsyncNotifier<Email> {
 
     // Recipients
     final recipients = <String>{};
-    switch (supervisor?.personalEmail) {
+    switch (supervisor.email) {
       case String email:
         recipients.add(email);
       default:
         throw Exception("Supervisor email not found");
     }
 
-    switch ((coSupervisor, coSupervisor?.personalEmail)) {
+    switch ((coSupervisor, coSupervisor?.email)) {
       case (TeacherData _, String email):
         recipients.add(email);
         break;
@@ -69,7 +116,7 @@ class AdmissionCouncilArrangementEmailNotifier extends AsyncNotifier<Email> {
     }
 
     // Teacher's pronouns
-    final pronoun = Pronoun.fromGender(gender: supervisor!.gender);
+    final pronoun = Pronoun.fromGender(gender: supervisor.gender);
     final coPronoun = switch (coSupervisor) {
       null => null,
       TeacherData t => Pronoun.fromGender(gender: t.gender),
@@ -150,11 +197,9 @@ class PhdStudentListViewModelNotifier
         int id => await ref.watch(teacherByIdProvider(id).future),
       };
 
-      if (supervisor != null) {
-        students.add(student);
-        supervisors[student] = supervisor;
-        secondarySupervisors[student] = secondarySupervisor;
-      }
+      students.add(student);
+      supervisors[student] = supervisor;
+      secondarySupervisors[student] = secondarySupervisor;
     }
 
     return PhdStudentListViewModel(

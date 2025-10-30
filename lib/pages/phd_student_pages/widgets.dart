@@ -2,7 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../business/copy_pasta.dart';
+import '../../business/db_v2_providers.dart';
 import './providers.dart';
+
+class PhdStudentInfo extends ConsumerWidget {
+  final int studentId;
+  final Widget Function(BuildContext, PhdStudentData) builder;
+  final Widget loading;
+  const PhdStudentInfo({
+    super.key,
+    this.loading = const CircularProgressIndicator(),
+    required this.studentId,
+    required this.builder,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final phdStudentAsync = ref.watch(phdStudentByIdProvider(studentId));
+    return phdStudentAsync.when(
+      data: (phdStudent) => builder(context, phdStudent),
+      loading: () => loading,
+      error: (error, stack) => Text("Lỗi: $error"),
+    );
+  }
+}
 
 class CohortSelector extends ConsumerWidget {
   const CohortSelector({super.key});

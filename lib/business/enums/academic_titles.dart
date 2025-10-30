@@ -1,13 +1,18 @@
 import 'package:drift/drift.dart';
 
 enum AcademicDegree {
-  bachelor(value: "bachelor", label: "Cử nhân"),
-  master(value: "master", label: "Thạc sĩ"),
-  doctor(value: "doctor", label: "Tiến sĩ");
+  bachelor(value: "bachelor", label: "Cử nhân", short: "CN."),
+  master(value: "master", label: "Thạc sĩ", short: "ThS."),
+  doctor(value: "doctor", label: "Tiến sĩ", short: "TS.");
 
   final String value;
   final String label;
-  const AcademicDegree({required this.value, required this.label});
+  final String short;
+  const AcademicDegree({
+    required this.value,
+    required this.label,
+    required this.short,
+  });
 
   @override
   String toString() => label;
@@ -32,12 +37,17 @@ class AcademicDegreeConverter extends TypeConverter<AcademicDegree?, String?> {
 }
 
 enum AcademicRank {
-  associateProfessor(value: "PGS", label: "Phó giáo sư"),
-  professor(value: "GS", label: "Giáo sư");
+  associateProfessor(value: "PGS", label: "Phó giáo sư", short: "PGS."),
+  professor(value: "GS", label: "Giáo sư", short: "GS.");
 
   final String value;
   final String label;
-  const AcademicRank({required this.value, required this.label});
+  final String short;
+  const AcademicRank({
+    required this.value,
+    required this.label,
+    required this.short,
+  });
 
   @override
   String toString() => label;

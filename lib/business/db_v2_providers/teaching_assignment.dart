@@ -16,7 +16,7 @@ class TeachingAssignmentByClassNotifier
 
   @override
   FutureOr<List<TeachingAssignmentData>> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
+    final db = await ref.watch(mainDatabaseProvider.future);
     final stmt = db.teachingAssignment.select();
     stmt.where(
       (t) => t.classId.equals(courseClassId),
@@ -30,7 +30,7 @@ class TeachingAssignmentByClassNotifier
   }
 
   void setAssignment(List<TeachingAssignmentCompanion> assignments) async {
-    final db = await ref.read(appDatabaseProvider.future);
+    final db = await ref.read(mainDatabaseProvider.future);
     final results = <TeachingAssignmentData>[];
     await db.transaction(() async {
       final deleteStmt = db.teachingAssignment.delete();

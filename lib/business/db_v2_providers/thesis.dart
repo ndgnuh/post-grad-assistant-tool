@@ -33,74 +33,14 @@ final trackedThesisIdsProvider = AsyncNotifierProvider(
   () => ThesisIdsNotifier(tracking: true),
 );
 
-Future<void> assignTeacherInRole({
-  required Ref ref,
-  required int thesisId,
-  required CouncilRole role,
-  required int? teacherId,
-}) async {
-  final db = await ref.read(appDatabaseProvider.future);
-  switch (role) {
-    case CouncilRole.president:
-      await db.setThesisPresidentId(
-        thesisId: thesisId,
-        teacherId: teacherId,
-      );
-    case CouncilRole.reviewer1:
-      await db.setThesis1stReviewerId(
-        thesisId: thesisId,
-        teacherId: teacherId,
-      );
-    case CouncilRole.reviewer2:
-      await db.setThesis2ndReviewerId(
-        thesisId: thesisId,
-        teacherId: teacherId,
-      );
-    case CouncilRole.secretary:
-      await db.setThesisSecretaryId(
-        thesisId: thesisId,
-        teacherId: teacherId,
-      );
-    case CouncilRole.member:
-      await db.setThesisMemberId(
-        thesisId: thesisId,
-        teacherId: teacherId,
-      );
-  }
-}
-
-Future<TeacherData?> getTeacherInRole({
-  required Ref ref,
-  required int thesisId,
-  required CouncilRole role,
-}) async {
-  final db = await ref.watch(appDatabaseProvider.future);
-
-  final id = await switch (role) {
-    CouncilRole.president =>
-      db.getThesisPresidentId(thesisId: thesisId).getSingleOrNull(),
-    CouncilRole.reviewer1 =>
-      db.getThesis1stReviewerId(thesisId: thesisId).getSingleOrNull(),
-    CouncilRole.reviewer2 =>
-      db.getThesis2ndReviewerId(thesisId: thesisId).getSingleOrNull(),
-    CouncilRole.secretary =>
-      db.getThesisSecretaryId(thesisId: thesisId).getSingleOrNull(),
-    CouncilRole.member =>
-      db.getThesisMemberId(thesisId: thesisId).getSingleOrNull(),
-  };
-  if (id == null) return null;
-
-  return await ref.watch(teacherByIdProvider(id).future);
-}
-
 class ThesisByIdNotifier extends AsyncNotifier<ThesisData?> {
   final int id;
   ThesisByIdNotifier(this.id);
 
   @override
   FutureOr<ThesisData?> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
-    final stmt = db.detaithacsi.select();
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final stmt = db.thesis.select();
     stmt.where((r) => r.id.equals(id));
     return await stmt.getSingleOrNull();
   }
@@ -112,23 +52,25 @@ sealed class ThesisCouncilMemberProvider extends AsyncNotifier<TeacherData?> {
 
   ThesisCouncilMemberProvider(this.thesisId, this.role);
 
-  assign(int? teacherId) async {
-    await assignTeacherInRole(
-      ref: ref,
-      thesisId: thesisId,
-      role: role,
-      teacherId: teacherId,
-    );
-    ref.invalidateSelf();
+  Future<void> assign(int? teacherId) async {
+    // await assignTeacherInRole(
+    //   ref: ref,
+    //   thesisId: thesisId,
+    //   role: role,
+    //   teacherId: teacherId,
+    // );
+    // ref.invalidateSelf();
   }
 
   @override
   Future<TeacherData?> build() async {
-    return await getTeacherInRole(
-      ref: ref,
-      thesisId: thesisId,
-      role: role,
-    );
+    // FIXME: proper implementation
+    return null;
+    // return await getTeacherInRole(
+    //   ref: ref,
+    //   thesisId: thesisId,
+    //   role: role,
+    // );
   }
 
   Future<void> unassign() => assign(null);
@@ -174,8 +116,8 @@ class ThesisIdsNotifier extends AsyncNotifier<List<int>> {
 
   @override
   Future<List<int>> build() async {
-    final db = await ref.watch(appDatabaseProvider.future);
-    final stmt = db.detaithacsi.select();
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final stmt = db.thesis.select();
 
     switch (ignore) {
       case true:
@@ -210,13 +152,13 @@ class ThesisIdsNotifier extends AsyncNotifier<List<int>> {
   }
 
   Future<void> track(int thesisId) async {
-    final db = await ref.watch(appDatabaseProvider.future);
+    final db = await ref.watch(mainDatabaseProvider.future);
     await db.trackThesis(thesisId: thesisId);
     ref.invalidateSelf();
   }
 
   Future<void> untrack(int thesisId) async {
-    final db = await ref.watch(appDatabaseProvider.future);
+    final db = await ref.watch(mainDatabaseProvider.future);
     await db.untrackThesis(thesisId: thesisId);
     ref.invalidateSelf();
   }

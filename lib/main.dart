@@ -33,7 +33,7 @@ Future main() async {
     ProviderScope(
       child: app,
       retry: (int retryCount, Object error) {
-        if (retryCount >= 5) return null;
+        if (retryCount >= 3) return null;
         // Exponential backoff
         return Duration(
           milliseconds: 200 * (1 << retryCount),
@@ -156,7 +156,7 @@ class MyApp extends ConsumerWidget {
     final isDarkModeState = ref.watch(isDarkModeProvider);
 
     final isDarkMode = switch (isDarkModeState) {
-      AsyncData(:final value) => value,
+      AsyncData(:final value) => value ?? false,
       _ => false,
     };
 

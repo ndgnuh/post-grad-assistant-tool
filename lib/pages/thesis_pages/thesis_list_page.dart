@@ -5,7 +5,6 @@ import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../business/domain_objects.dart';
 import '../../custom_widgets.dart';
 import './providers.dart';
 import './widgets.dart';
@@ -99,11 +98,13 @@ class _CreateButton extends StatelessWidget {
     return OutlinedButton.icon(
       icon: Icon(Icons.add),
       label: Text("Thêm đề tài"),
-      onPressed: () => navigator.push(
-        MaterialPageRoute(
-          builder: (context) => ThesisCreatePage(),
-        ),
-      ),
+      onPressed: () {
+        navigator.push(
+          MaterialPageRoute(
+            builder: (context) => ThesisListPage(),
+          ),
+        );
+      },
     );
   }
 }
@@ -120,100 +121,6 @@ class _SearchBar extends ConsumerWidget {
       onSubmitted: (text) => notifier.set(text),
       onChanged: (text) => notifier.debounceSet(text),
     );
-  }
-}
-
-class _State extends ChangeNotifier {
-  late List<Thesis> searchedTheses;
-  final TextEditingController searchController = TextEditingController();
-  bool? _assigned;
-  ConnectionState searching = ConnectionState.none;
-
-  /// Initialize the state
-  _State() {
-    searchedTheses = [];
-  }
-  // filter get/setter
-  bool? get assigned => _assigned;
-
-  set assigned(bool? value) {
-    _assigned = value;
-    search();
-  }
-
-  // search string get/setter
-  String get searchQuery => searchController.text;
-
-  set searchQuery(String? value) {
-    searchController.text = value ?? "";
-    search();
-  }
-
-  // Delete theses from DB
-  Future<void> deleteThesis(Thesis thesis) async {
-    // TODO: re-implement
-    // final context = Get.context!;
-    // final messenger = ScaffoldMessenger.of(context);
-    //
-    // final confirmed = await showDialog<bool>(
-    //   context: context,
-    //   builder: (context) => AlertDialog.adaptive(
-    //     title: Text("Xóa đề tài"),
-    //     content: Text(
-    //       "Chắc chắn muốn xóa đề tài?",
-    //     ),
-    //     actions: [
-    //       TextButton(
-    //         onPressed: () => Get.back(result: false),
-    //         child: Text("Hủy"),
-    //       ),
-    //       TextButton(
-    //         onPressed: () => Get.back(result: true),
-    //         child: Text("Xóa"),
-    //       ),
-    //     ],
-    //   ),
-    // );
-    //
-    // if (confirmed == true) {
-    //   await thesis.delete();
-    //   messenger.showMessage("Đề tài đã được xóa thành công");
-    //   await search();
-    // }
-  }
-
-  /// Export all unassigned theses to a PDF file.
-  Future<void> exportExampleThesesPdf() async {
-    // TODO: replace context
-    // final context = Get.context!;
-    // final messenger = ScaffoldMessenger.of(context);
-    //
-    // final outputPath = await FilePicker.platform.saveFile(
-    //   dialogTitle: "Xuất danh sách đề tài hướng dẫn",
-    //   fileName: "DanhSach_DeTai_ThamKhao.pdf",
-    // );
-    //
-    // if (outputPath == null) {
-    //   messenger.showMessage("Xuất PDF bị hủy");
-    //   return;
-    // }
-    //
-    // final theses = await DeTaiThacSi.search(assigned: false);
-    //
-    // await exportThesisListPdf(outputPath: outputPath, theses: theses);
-    // messenger.showMessage("Xuất danh Pdf thành công");
-  }
-
-  /// Search for theses based on the current search query and assigned filter.
-  Future<void> search() async {
-    searching = ConnectionState.active;
-    notifyListeners();
-    searchedTheses = await DeTaiThacSi.search(
-      searchQuery: searchQuery,
-      assigned: _assigned,
-    );
-    searching = ConnectionState.done;
-    notifyListeners();
   }
 }
 
@@ -410,8 +317,8 @@ class _TopicListView extends ConsumerWidget {
     }
 
     final theses = viewModel.theses;
-    final students = viewModel.students;
-    final teachers = viewModel.supervisors;
+    // final students = viewModel.students;
+    // final teachers = viewModel.supervisors;
 
     return ListView.separated(
       separatorBuilder: (context, i) => Divider(),

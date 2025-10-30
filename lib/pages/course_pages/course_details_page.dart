@@ -63,30 +63,26 @@ class _AddTeacherInput extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return SearchAnchor(
       suggestionsBuilder: (context, controller) async {
-        final db = await ref.read(appDatabaseProvider.future);
+        final db = await ref.read(mainDatabaseProvider.future);
         final stmt = db.searchTeachers(
-          searchtext: controller.text,
+          searchText: controller.text,
           isOutsider: false,
         );
-        final ids = await stmt.get();
+        final teachers = await stmt.get();
 
         final suggestions = <Widget>[];
-        for (final id in ids) {
-          final teacher = await ref.read(
-            teacherByIdProvider(id).future,
-          );
-
+        for (final teacher in teachers) {
           final suggestion = ListTile(
             leading: CircleAvatar(
               child: Icon(Symbols.person),
             ),
             title: Text(teacher.name),
-            subtitle: Text(teacher.personalEmail ?? 'Không có email'),
+            subtitle: Text(teacher.emails.join(', ')),
             onTap: () {
               final notifier = ref.read(
                 teacherIdsByCourseProvider(courseId).notifier,
               );
-              notifier.addTeacher(id);
+              notifier.addTeacher(teacher.id);
               controller.closeView("");
             },
           );
@@ -279,7 +275,7 @@ class _TeachingTeacherTile extends ConsumerWidget {
         child: Icon(Symbols.person),
       ),
       title: Text(teacher.name),
-      subtitle: Text(teacher.personalEmail ?? 'Không có email'),
+      subtitle: Text(teacher.emails.join(", ")),
       onTap: () => showDialog(
         context: context,
         builder: (context) => MenuDialog(

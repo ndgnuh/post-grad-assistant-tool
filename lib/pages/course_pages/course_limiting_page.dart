@@ -8,7 +8,6 @@ import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 import '../../business/copy_pasta.dart';
 import '../../business/db_v2_providers.dart';
-import '../../business/han_che_hoc_phan.dart';
 import '../../business/selection_models.dart';
 import '../../custom_widgets.dart';
 
@@ -212,7 +211,6 @@ class _ActionMenuLarge extends StatelessWidget {
 class _ActionMenuMedium extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
     return Column(
       mainAxisSize: MainAxisSize.min,
       spacing: context.responsiveGutter,
@@ -301,8 +299,8 @@ class _CourseListView extends StatelessWidget {
 }
 
 class _CourseSelectionNotifier extends AsyncNotifier<CourseSelection> {
-  List<HocPhan> searchedHocPhan = [];
-  Set<HocPhan> selectedHocPhan = {};
+  List<CourseData> searchedHocPhan = [];
+  Set<CourseData> selectedHocPhan = {};
 
   @override
   FutureOr<CourseSelection> build() async {
@@ -341,7 +339,7 @@ class _EmailButton extends ConsumerWidget {
         final selectedSemester = await ref.read(
           _semesterSelectionModelProvider.future,
         );
-        final semester = selectedSemester.selected?.semester.toString();
+        final semester = selectedSemester.selected?.id.toString();
         final email = Email(
           subject:
               "Danh mục hạn chế học phần Khoa Toán - Tin, đợt học $semester",
@@ -406,20 +404,20 @@ class _ExportPdfButton extends ConsumerWidget {
     SemesterData semester,
   ) async {
     // final output = FilePicker.platform.saveFile();
-    final data = await createPdf(
-      courses: courses,
-      semester: semester.semester,
-    );
+    // final data = await createPdf(
+    //   courses: courses,
+    //   semester: semester.id,
+    // );
 
-    final outputPath = await FilePicker.platform.saveFile(
-      dialogTitle: "Chọn thư mục lưu",
-      fileName: "Danh mục hạn chế học phần ${semester.semester}.pdf",
-    );
-    if (outputPath != null) {
-      final file = File(outputPath);
-      await file.create();
-      await file.writeAsBytes(data);
-    }
+    // final outputPath = await FilePicker.platform.saveFile(
+    //   dialogTitle: "Chọn thư mục lưu",
+    //   fileName: "Danh mục hạn chế học phần ${semester.id}.pdf",
+    // );
+    // if (outputPath != null) {
+    //   final file = File(outputPath);
+    //   await file.create();
+    //   await file.writeAsBytes(data);
+    // }
   }
 }
 
@@ -595,7 +593,7 @@ class _SemesterSelector extends ConsumerWidget {
           for (final semester in semesters)
             DropdownMenuEntry(
               value: semester,
-              label: semester.semester,
+              label: semester.id,
             ),
         ],
         onSelected: (value) {
