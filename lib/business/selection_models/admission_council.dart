@@ -4,7 +4,6 @@ import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import './common.dart';
-import './../../business/drift_orm.dart';
 import '../db_v2_providers.dart';
 
 typedef CouncilSelectionModel = SelectionModel<AdmissionCouncilData>;
@@ -19,47 +18,29 @@ class CouncilSelectionModelNotifier extends _Notifier with _Mixin {
   String get prefKey => 'selection-models/admission-council/$name';
 
   @override
-  Future<SelectionModel<AdmissionCouncilData>> build() async {
-    final councils = await ref.watch(admissionCouncilIdsProvider.future);
-
-    // Fetch councils by ID
-    final councilOptions = <AdmissionCouncilData>[];
-    for (final id in councils) {
-      final council = await ref.watch(admissionCouncilByIdProvider(id).future);
-      if (council != null) {
-        councilOptions.add(council);
-      }
-    }
-
-    // Fetch preference from previous selection
-    final pref = await SharedPreferences.getInstance();
-    final selectedId = pref.getInt(prefKey);
-
-    // If none selected
-    if (selectedId == null) {
-      return SelectionModel<AdmissionCouncilData>(
-        selected: null,
-        options: councilOptions,
-      );
-    }
-
-    final selectedCouncil = councilOptions.firstWhere(
-      (council) => council.id == selectedId,
-    );
-
-    return SelectionModel<AdmissionCouncilData>(
-      selected: selectedCouncil,
-      options: councilOptions,
-    );
+  FutureOr<AdmissionCouncilData?> load(SharedPreferences prefs) {
+    final id = prefs.getInt(prefKey);
+    if (id == null) return null;
+    return ref.watch(admissionCouncilByIdProvider(id).future);
   }
 
   @override
-  Future<void> saveSelection(AdmissionCouncilData? item) async {
-    final pref = await SharedPreferences.getInstance();
+  FutureOr<List<AdmissionCouncilData>> get options async {
+    final ids = await ref.watch(admissionCouncilIdsProvider.future);
+    final councilOptions = <AdmissionCouncilData>[];
+    for (final id in ids) {
+      final council = await ref.watch(admissionCouncilByIdProvider(id).future);
+      councilOptions.add(council);
+    }
+    return councilOptions;
+  }
+
+  @override
+  void save(SharedPreferences prefs, AdmissionCouncilData? item) async {
     if (item == null) {
-      await pref.remove(prefKey);
+      await prefs.remove(prefKey);
     } else {
-      await pref.setInt(prefKey, item.id);
+      await prefs.setInt(prefKey, item.id);
     }
   }
 }

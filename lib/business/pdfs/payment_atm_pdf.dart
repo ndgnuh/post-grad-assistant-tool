@@ -1,50 +1,12 @@
 import 'dart:typed_data';
 
-import 'package:number_to_vietnamese_words/number_to_vietnamese_words.dart';
-import 'package:pdf/pdf.dart';
+import 'package:fami_tools/business/pdfs/common_widgets.dart';
+import 'package:fami_tools/utilities/pdf_building.dart';
+import 'package:fami_tools/utilities/strings.dart';
 
 import '../drift_orm.dart';
-import '../../services/pdf_builder/index.dart';
 
 const _taxPercent = 0.1;
-
-class PaymentAtmEntry {
-  final TeacherData teacher;
-  final int amount;
-
-  int get tax => teacher.isOutsider ? (amount * _taxPercent).round() : 0;
-  int get afterTax => amount - tax;
-
-  const PaymentAtmEntry({
-    required this.teacher,
-    required this.amount,
-  });
-}
-
-class PaymentAtmModel {
-  final String reason;
-  final List<PaymentAtmEntry> entries;
-
-  int get totalBeforeTax => entries.fold(
-    0,
-    (previousValue, element) => previousValue + element.amount,
-  );
-
-  int get totalTax => entries.fold(
-    0,
-    (previousValue, element) => previousValue + element.tax,
-  );
-
-  int get totalAfterTax => entries.fold(
-    0,
-    (previousValue, element) => previousValue + element.afterTax,
-  );
-
-  PaymentAtmModel({
-    required this.reason,
-    required this.entries,
-  });
-}
 
 Future<Uint8List> paymentAtmPdf({
   required PaymentAtmModel model,
@@ -56,7 +18,7 @@ Future<Uint8List> paymentAtmPdf({
   ),
 }) async {
   return await buildMultiPageDocument(
-    pageFormat: IsoPageFormat.horizontalA4,
+    pageFormat: PdfPageFormat.a4,
     margin: margin,
     baseFontSize: baseFontSize,
     build: (context) {
@@ -157,18 +119,7 @@ Future<Uint8List> paymentAtmPdf({
 
       return <Widget>[
         // Header
-        Column(
-          children: [
-            Text(
-              "BỘ GIÁO DỤC VÀ ĐÀO TẠO",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 3 * pt),
-            Text(
-              "ĐẠI HỌC BÁCH KHOA HÀ NỘI",
-            ),
-          ],
-        ),
+        HustTitle(),
 
         // Title
         SizedBox(height: 24 * pt),
@@ -265,5 +216,43 @@ Future<Uint8List> paymentAtmPdf({
         ),
       ];
     },
+  );
+}
+
+class PaymentAtmEntry {
+  final TeacherData teacher;
+  final int amount;
+
+  const PaymentAtmEntry({
+    required this.teacher,
+    required this.amount,
+  });
+  int get afterTax => amount - tax;
+
+  int get tax => teacher.isOutsider ? (amount * _taxPercent).round() : 0;
+}
+
+class PaymentAtmModel {
+  final String reason;
+  final List<PaymentAtmEntry> entries;
+
+  PaymentAtmModel({
+    required this.reason,
+    required this.entries,
+  });
+
+  int get totalAfterTax => entries.fold(
+    0,
+    (previousValue, element) => previousValue + element.afterTax,
+  );
+
+  int get totalBeforeTax => entries.fold(
+    0,
+    (previousValue, element) => previousValue + element.amount,
+  );
+
+  int get totalTax => entries.fold(
+    0,
+    (previousValue, element) => previousValue + element.tax,
   );
 }

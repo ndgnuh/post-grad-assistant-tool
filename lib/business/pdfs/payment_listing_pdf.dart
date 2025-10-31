@@ -1,10 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:number_to_vietnamese_words/number_to_vietnamese_words.dart';
-import 'package:pdf/pdf.dart';
-
-import '../../services/pdf_builder/index.dart';
-import '../../services/pdf_widgets.dart' hide pt;
+import 'package:fami_tools/utilities/pdf_building.dart';
+import 'package:fami_tools/utilities/strings.dart';
 
 const _headings = [
   "TT",
@@ -23,6 +20,8 @@ Future<Uint8List> paymentListingPdf({
   required PaymentListingTableModel model,
 }) async {
   return await buildMultiPageDocument(
+    pageFormat: PdfPageFormat.a4,
+    baseFontSize: 11.0,
     margin: EdgeInsets.all(0.7 * PdfPageFormat.inch),
     build: (context) => [
       Footer(
@@ -124,8 +123,6 @@ Future<Uint8List> paymentListingPdf({
         ],
       ),
     ],
-    pageFormat: IsoPageFormat.verticalA4,
-    baseFontSize: 11.0,
   );
 }
 

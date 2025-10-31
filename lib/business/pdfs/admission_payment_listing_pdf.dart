@@ -1,20 +1,15 @@
 import 'dart:typed_data';
 
+import 'package:fami_tools/utilities/pdf_building.dart';
+import 'package:fami_tools/utilities/strings.dart';
 import 'package:intl/intl.dart';
-import 'package:number_to_vietnamese_words/number_to_vietnamese_words.dart';
-import 'package:pdf/pdf.dart';
-
-import '../../services/pdf_builder/index.dart';
-import '../drift_orm.dart';
-import 'utils.dart';
 
 Future<Uint8List> admissionPaymentListingPdf({
   required AdmissionPaymentListingModel model,
 }) async {
   return await buildSinglePageDocument(
     baseFontSize: 12,
-    pageFormat: IsoPageFormat.verticalA4,
-    margin: EdgeInsets.all(1 * inch),
+    pageFormat: PdfPageFormat.a4,
     build: (context) => AdmissionPaymentListingPdf(
       model: model,
     ),
@@ -27,34 +22,36 @@ class AdmissionPaymentListingModel {
   final List<String> studentNames;
   final int paymentPerStudent;
 
-  int get totalAmount => paymentPerStudent * studentNames.length;
-  String get totalAmountInWords => totalAmount.toVietnameseWords();
-
-  String formatEntry(String studentName) {
-    final dateStr = DateFormat("dd/MM/yyyy").format(establishmentDecisionDate);
-    return 'Thanh toán tiền cho tiểu ban xét tuyển thạc sĩ theo định hướng nghiên cứu của thí sinh $studentName, theo Quyết định số $establishmentDecisionCode ngày $dateStr';
-  }
-
   AdmissionPaymentListingModel({
     required this.paymentPerStudent,
     required this.studentNames,
     required this.establishmentDecisionCode,
     required this.establishmentDecisionDate,
   });
+  int get totalAmount => paymentPerStudent * studentNames.length;
+
+  String get totalAmountInWords => totalAmount.toVietnameseWords();
+
+  String formatEntry(String studentName) {
+    final dateStr = DateFormat("dd/MM/yyyy").format(establishmentDecisionDate);
+    return 'Thanh toán tiền cho tiểu ban xét tuyển thạc sĩ theo định hướng nghiên cứu của thí sinh $studentName, theo Quyết định số $establishmentDecisionCode ngày $dateStr';
+  }
 }
 
 class AdmissionPaymentListingPdf extends StatelessWidget {
   final AdmissionPaymentListingModel model;
   AdmissionPaymentListingPdf({required this.model});
 
-  int get paymentPerStudent => model.paymentPerStudent;
-  List<String> get studentNames => model.studentNames;
   String get establishmentDecisionCode => model.establishmentDecisionCode;
   DateTime get establishmentDecisionDate => model.establishmentDecisionDate;
+  int get paymentPerStudent => model.paymentPerStudent;
+  List<String> get studentNames => model.studentNames;
   int get totalAmount => model.totalAmount;
 
   @override
   Widget build(Context context) {
+    final style = context.defaultTextStyle;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -203,13 +200,16 @@ class AdmissionPaymentListingPdf extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(child: BoldText("NGƯỜI LẬP BIỂU")),
-            Flexible(child: BoldText("KẾ TOÁN TRƯỞNG")),
+            Flexible(child: Text("NGƯỜI LẬP BIỂU", style: style.bold)),
+            Flexible(child: Text("KẾ TOÁN TRƯỞNG", style: style.bold)),
             Flexible(
               child: Column(
                 children: [
-                  ItalicText("Ngày ..... tháng ..... năm .........."),
-                  BoldText("THỦ TRƯỞNG ĐƠN VỊ"),
+                  Text(
+                    "Ngày ..... tháng ..... năm ..........",
+                    style: style.italic,
+                  ),
+                  Text("THỦ TRƯỞNG ĐƠN VỊ", style: style.bold),
                 ],
               ),
             ),

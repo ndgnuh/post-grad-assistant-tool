@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SelectionModel<T> {
   final T? selected;
@@ -43,10 +46,30 @@ class SelectionModel<T> {
 }
 
 mixin SelectionModelMixin<T> on AsyncNotifier<SelectionModel<T>> {
+  // Name of the stored preference
   String get prefKey;
 
+  // List of options
+  FutureOr<List<T>> get options;
+
+  // Load stored selection
+  FutureOr<T?> load(SharedPreferences prefs);
+
+  // Save selection
+  void save(SharedPreferences prefs, T? item);
+
+  @override
+  FutureOr<SelectionModel<T>> build() async {
+    final prefs = await SharedPreferences.getInstance();
+    final selected = await load(prefs);
+
+    return SelectionModel<T>(
+      selected: selected,
+      options: await options,
+    );
+  }
+
   void deselect() async {
-    await saveSelection(null);
     switch (state) {
       case AsyncLoading():
         return;
@@ -55,7 +78,8 @@ mixin SelectionModelMixin<T> on AsyncNotifier<SelectionModel<T>> {
       case AsyncData():
         final model = state.value!;
         state = AsyncData(model.deselect());
-        await saveSelection(null);
+        final prefs = await SharedPreferences.getInstance();
+        save(prefs, null);
     }
   }
 
@@ -69,11 +93,11 @@ mixin SelectionModelMixin<T> on AsyncNotifier<SelectionModel<T>> {
         final model = state.value!.cycle();
 
         state = AsyncData(model);
-        await saveSelection(model.selected);
+        final prefs = await SharedPreferences.getInstance();
+        save(prefs, model.selected);
     }
   }
 
-  Future<void> saveSelection(T? item);
   void select(T? item) async {
     switch (state) {
       case AsyncLoading():
@@ -82,8 +106,9 @@ mixin SelectionModelMixin<T> on AsyncNotifier<SelectionModel<T>> {
         return;
       case AsyncData():
         final model = state.value!;
+        final prefs = await SharedPreferences.getInstance();
         state = AsyncData(model.select(item));
-        await saveSelection(item);
+        save(prefs, item);
     }
   }
 }

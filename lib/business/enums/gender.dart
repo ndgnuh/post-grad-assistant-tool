@@ -11,6 +11,20 @@ enum Gender {
 
   @override
   String toString() => label;
+
+  static Gender fromValue(String value) => switch (value.trim().toUpperCase()) {
+    "M" => Gender.male,
+    "F" => Gender.female,
+    _ => Gender.male,
+  };
+
+  static Gender? fromValueOrNull(String? value) {
+    try {
+      return fromValue(value ?? "");
+    } catch (e) {
+      return null;
+    }
+  }
 }
 
 class GenderConverter extends TypeConverter<Gender, String> {

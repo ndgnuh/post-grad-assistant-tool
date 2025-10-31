@@ -18,7 +18,6 @@ extension AnyEmail on TeacherData {
 
 extension TeacherTitles on TeacherData {
   String get nameWithTitle {
-    print((academicRank, academicDegree));
     switch ((academicRank, academicDegree)) {
       case (AcademicRank rank, AcademicDegree degree):
         return '${rank.short} ${degree.short} $name';

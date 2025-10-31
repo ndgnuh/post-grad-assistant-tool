@@ -20,55 +20,31 @@ class CohortSelectionModelNotifier extends _Notifier with _Mixin {
   String get prefKey => 'selection-model/cohort/$name';
 
   @override
-  FutureOr<CohortSelectionModel> build() async {
-    final cohortById = await ref.watch(cohortIdsProvider.future);
+  FutureOr<CohortData?> load(SharedPreferences prefs) {
+    final id = prefs.getString(prefKey);
+    if (id == null) return null;
+    return ref.watch(cohortByIdProvider(id).future);
+  }
 
-    // Fetch cohorts by ID
+  @override
+  FutureOr<List<CohortData>> get options async {
+    final ids = await ref.watch(cohortIdsProvider.future);
     final cohorts = <CohortData>[];
-    for (final id in cohortById) {
+    for (final id in ids) {
       final cohort = await ref.watch(cohortByIdProvider(id).future);
       if (cohort != null) {
         cohorts.add(cohort);
       }
     }
-
-    // Fetch preference from previous selection
-    final pref = await SharedPreferences.getInstance();
-    final selectedId = pref.getString(prefKey);
-
-    // If none selected
-    if (selectedId == null) {
-      return SelectionModel<CohortData>(
-        selected: null,
-        options: cohorts,
-      );
-    }
-
-    try {
-      final selectedCohort = cohorts.firstWhere(
-        (cohort) => cohort.id == selectedId,
-      );
-
-      return SelectionModel<CohortData>(
-        selected: selectedCohort,
-        options: cohorts,
-      );
-    } catch (e) {
-      // If the selected cohort is not found, return with no selection
-      return SelectionModel<CohortData>(
-        selected: null,
-        options: cohorts,
-      );
-    }
+    return cohorts;
   }
 
   @override
-  Future<void> saveSelection(CohortData? item) async {
-    final pref = await SharedPreferences.getInstance();
+  void save(SharedPreferences prefs, CohortData? item) {
     if (item == null) {
-      await pref.remove(prefKey);
+      prefs.remove(prefKey);
     } else {
-      await pref.setString(prefKey, item.id);
+      prefs.setString(prefKey, item.id);
     }
   }
 }

@@ -9055,17 +9055,17 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
     $customConstraints: 'NOT NULL DEFAULT 9460101',
     defaultValue: const CustomExpression('9460101'),
   );
-  static const VerificationMeta _majorSpecializationMeta =
-      const VerificationMeta('majorSpecialization');
-  late final GeneratedColumn<String> majorSpecialization =
+  late final GeneratedColumnWithTypeConverter<enums.PhdSpecialization, String>
+  majorSpecialization =
       GeneratedColumn<String>(
         'major_specialization',
         aliasedName,
         false,
         type: DriftSqlType.string,
-        requiredDuringInsert: false,
-        $customConstraints: 'NOT NULL DEFAULT \'n/a\'',
-        defaultValue: const CustomExpression('\'n/a\''),
+        requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
+      ).withConverter<enums.PhdSpecialization>(
+        PhdStudent.$convertermajorSpecialization,
       );
   static const VerificationMeta _admissionPresidentIdMeta =
       const VerificationMeta('admissionPresidentId');
@@ -9332,15 +9332,6 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
         majorId.isAcceptableOrUnknown(data['major_id']!, _majorIdMeta),
       );
     }
-    if (data.containsKey('major_specialization')) {
-      context.handle(
-        _majorSpecializationMeta,
-        majorSpecialization.isAcceptableOrUnknown(
-          data['major_specialization']!,
-          _majorSpecializationMeta,
-        ),
-      );
-    }
     if (data.containsKey('admission_president_id')) {
       context.handle(
         _admissionPresidentIdMeta,
@@ -9509,10 +9500,12 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
         DriftSqlType.string,
         data['${effectivePrefix}major_id'],
       )!,
-      majorSpecialization: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}major_specialization'],
-      )!,
+      majorSpecialization: PhdStudent.$convertermajorSpecialization.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}major_specialization'],
+        )!,
+      ),
       admissionPresidentId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}admission_president_id'],
@@ -9577,6 +9570,8 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
 
   static TypeConverter<enums.Gender, String> $convertergender =
       const enums.GenderConverter();
+  static TypeConverter<enums.PhdSpecialization, String>
+  $convertermajorSpecialization = enums.phdSpecializationConverter;
   static TypeConverter<enums.StudentStatus, String> $converterstatus =
       const enums.StudentStatusConverter();
   @override
@@ -9607,7 +9602,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
   final String personalEmail;
   final String majorName;
   final String majorId;
-  final String majorSpecialization;
+  final enums.PhdSpecialization majorSpecialization;
   final int? admissionPresidentId;
   final int? admissionSecretaryId;
   final int? admission1stMemberId;
@@ -9674,7 +9669,11 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     map['personal_email'] = Variable<String>(personalEmail);
     map['major_name'] = Variable<String>(majorName);
     map['major_id'] = Variable<String>(majorId);
-    map['major_specialization'] = Variable<String>(majorSpecialization);
+    {
+      map['major_specialization'] = Variable<String>(
+        PhdStudent.$convertermajorSpecialization.toSql(majorSpecialization),
+      );
+    }
     if (!nullToAbsent || admissionPresidentId != null) {
       map['admission_president_id'] = Variable<int>(admissionPresidentId);
     }
@@ -9778,7 +9777,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       personalEmail: serializer.fromJson<String>(json['personal_email']),
       majorName: serializer.fromJson<String>(json['major_name']),
       majorId: serializer.fromJson<String>(json['major_id']),
-      majorSpecialization: serializer.fromJson<String>(
+      majorSpecialization: serializer.fromJson<enums.PhdSpecialization>(
         json['major_specialization'],
       ),
       admissionPresidentId: serializer.fromJson<int?>(
@@ -9824,7 +9823,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       'personal_email': serializer.toJson<String>(personalEmail),
       'major_name': serializer.toJson<String>(majorName),
       'major_id': serializer.toJson<String>(majorId),
-      'major_specialization': serializer.toJson<String>(majorSpecialization),
+      'major_specialization': serializer.toJson<enums.PhdSpecialization>(
+        majorSpecialization,
+      ),
       'admission_president_id': serializer.toJson<int?>(admissionPresidentId),
       'admission_secretary_id': serializer.toJson<int?>(admissionSecretaryId),
       'admission_1st_member_id': serializer.toJson<int?>(admission1stMemberId),
@@ -9854,7 +9855,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     String? personalEmail,
     String? majorName,
     String? majorId,
-    String? majorSpecialization,
+    enums.PhdSpecialization? majorSpecialization,
     Value<int?> admissionPresidentId = const Value.absent(),
     Value<int?> admissionSecretaryId = const Value.absent(),
     Value<int?> admission1stMemberId = const Value.absent(),
@@ -10080,7 +10081,7 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
   final Value<String> personalEmail;
   final Value<String> majorName;
   final Value<String> majorId;
-  final Value<String> majorSpecialization;
+  final Value<enums.PhdSpecialization> majorSpecialization;
   final Value<int?> admissionPresidentId;
   final Value<int?> admissionSecretaryId;
   final Value<int?> admission1stMemberId;
@@ -10135,7 +10136,7 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     required String personalEmail,
     this.majorName = const Value.absent(),
     this.majorId = const Value.absent(),
-    this.majorSpecialization = const Value.absent(),
+    required enums.PhdSpecialization majorSpecialization,
     this.admissionPresidentId = const Value.absent(),
     this.admissionSecretaryId = const Value.absent(),
     this.admission1stMemberId = const Value.absent(),
@@ -10154,6 +10155,7 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
        name = Value(name),
        phone = Value(phone),
        personalEmail = Value(personalEmail),
+       majorSpecialization = Value(majorSpecialization),
        thesis = Value(thesis),
        supervisorId = Value(supervisorId),
        status = Value(status);
@@ -10235,7 +10237,7 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     Value<String>? personalEmail,
     Value<String>? majorName,
     Value<String>? majorId,
-    Value<String>? majorSpecialization,
+    Value<enums.PhdSpecialization>? majorSpecialization,
     Value<int?>? admissionPresidentId,
     Value<int?>? admissionSecretaryId,
     Value<int?>? admission1stMemberId,
@@ -10323,7 +10325,11 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
       map['major_id'] = Variable<String>(majorId.value);
     }
     if (majorSpecialization.present) {
-      map['major_specialization'] = Variable<String>(majorSpecialization.value);
+      map['major_specialization'] = Variable<String>(
+        PhdStudent.$convertermajorSpecialization.toSql(
+          majorSpecialization.value,
+        ),
+      );
     }
     if (admissionPresidentId.present) {
       map['admission_president_id'] = Variable<int>(admissionPresidentId.value);
@@ -18710,7 +18716,7 @@ typedef $PhdStudentCreateCompanionBuilder =
       required String personalEmail,
       Value<String> majorName,
       Value<String> majorId,
-      Value<String> majorSpecialization,
+      required enums.PhdSpecialization majorSpecialization,
       Value<int?> admissionPresidentId,
       Value<int?> admissionSecretaryId,
       Value<int?> admission1stMemberId,
@@ -18739,7 +18745,7 @@ typedef $PhdStudentUpdateCompanionBuilder =
       Value<String> personalEmail,
       Value<String> majorName,
       Value<String> majorId,
-      Value<String> majorSpecialization,
+      Value<enums.PhdSpecialization> majorSpecialization,
       Value<int?> admissionPresidentId,
       Value<int?> admissionSecretaryId,
       Value<int?> admission1stMemberId,
@@ -18824,9 +18830,14 @@ class $PhdStudentFilterComposer extends Composer<_$AppDatabase, PhdStudent> {
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get majorSpecialization => $composableBuilder(
+  ColumnWithTypeConverterFilters<
+    enums.PhdSpecialization,
+    enums.PhdSpecialization,
+    String
+  >
+  get majorSpecialization => $composableBuilder(
     column: $table.majorSpecialization,
-    builder: (column) => ColumnFilters(column),
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnFilters<int> get admissionPresidentId => $composableBuilder(
@@ -19094,7 +19105,8 @@ class $PhdStudentAnnotationComposer
   GeneratedColumn<String> get majorId =>
       $composableBuilder(column: $table.majorId, builder: (column) => column);
 
-  GeneratedColumn<String> get majorSpecialization => $composableBuilder(
+  GeneratedColumnWithTypeConverter<enums.PhdSpecialization, String>
+  get majorSpecialization => $composableBuilder(
     column: $table.majorSpecialization,
     builder: (column) => column,
   );
@@ -19204,7 +19216,8 @@ class $PhdStudentTableManager
                 Value<String> personalEmail = const Value.absent(),
                 Value<String> majorName = const Value.absent(),
                 Value<String> majorId = const Value.absent(),
-                Value<String> majorSpecialization = const Value.absent(),
+                Value<enums.PhdSpecialization> majorSpecialization =
+                    const Value.absent(),
                 Value<int?> admissionPresidentId = const Value.absent(),
                 Value<int?> admissionSecretaryId = const Value.absent(),
                 Value<int?> admission1stMemberId = const Value.absent(),
@@ -19260,7 +19273,7 @@ class $PhdStudentTableManager
                 required String personalEmail,
                 Value<String> majorName = const Value.absent(),
                 Value<String> majorId = const Value.absent(),
-                Value<String> majorSpecialization = const Value.absent(),
+                required enums.PhdSpecialization majorSpecialization,
                 Value<int?> admissionPresidentId = const Value.absent(),
                 Value<int?> admissionSecretaryId = const Value.absent(),
                 Value<int?> admission1stMemberId = const Value.absent(),

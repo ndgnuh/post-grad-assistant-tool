@@ -13,55 +13,33 @@ typedef _Notifier = AsyncNotifier<SemesterSelectionModel>;
 
 class SemesterSelectionModelNotifier extends _Notifier with _Mixin {
   final String name;
-  final bool withNull;
-  SemesterSelectionModelNotifier(this.name, {this.withNull = false});
+  SemesterSelectionModelNotifier(this.name);
 
   @override
   String get prefKey => 'selection-model/semester/$name';
 
   @override
-  Future<SemesterSelectionModel> build() async {
-    final ids = await ref.watch(semesterIdsProvider.future);
-
-    // Fetch options by ID
-    final options = <SemesterData>[];
-    for (final id in ids) {
-      final option = await ref.watch(semesterByIdProvider(id).future);
-      options.add(option);
-    }
-
-    // Fetch preference from previous selection
-    final pref = await SharedPreferences.getInstance();
-    final selectedId = pref.getString(prefKey);
-
-    // If none selected
-    if (selectedId == null) {
-      return SelectionModel<SemesterData>(
-        selected: null,
-        options: options,
-      );
-    }
-
-    // Try to find the selected option
-    final selectedOption = options
-        .where(
-          (option) => option.id == selectedId,
-        )
-        .firstOrNull;
-
-    return SelectionModel<SemesterData>(
-      selected: selectedOption,
-      options: options,
-    );
+  FutureOr<SemesterData?> load(SharedPreferences prefs) async {
+    final id = prefs.getString(prefKey);
+    if (id == null) return null;
+    return await ref.read(semesterByIdProvider(id).future);
   }
 
   @override
-  Future<void> saveSelection(SemesterData? item) async {
-    final pref = await SharedPreferences.getInstance();
+  FutureOr<List<SemesterData>> get options async {
+    final ids = await ref.read(semesterIdsProvider.future);
+    final semesters = await Future.wait([
+      for (final id in ids) ref.read(semesterByIdProvider(id).future),
+    ]);
+    return semesters;
+  }
+
+  @override
+  void save(SharedPreferences prefs, SemesterData? item) {
     if (item == null) {
-      await pref.remove(prefKey);
+      prefs.remove(prefKey);
     } else {
-      await pref.setString(prefKey, item.id);
+      prefs.setString(prefKey, item.id);
     }
   }
 }

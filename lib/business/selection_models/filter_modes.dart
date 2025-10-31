@@ -21,31 +21,26 @@ class FilterModeSelectionModelNotifier extends _Notifier with _Mixin {
   });
 
   @override
+  FutureOr<List<FilterMode>> get options => FilterMode.values;
+
+  @override
   String get prefKey => "selection-models/filter-mode/$name";
 
   @override
-  FutureOr<FilterModeSelectionModel> build() async {
-    final options = FilterMode.values;
-    final prefs = await SharedPreferences.getInstance();
-    final selectedName = prefs.getString(prefKey);
-    final selected = [
-      for (final gender in FilterMode.values)
-        if (gender.name == selectedName) gender,
-    ].firstOrNull;
-
-    return FilterModeSelectionModel(
-      selected: selected ?? initialSelection,
-      options: options,
+  FilterMode? load(SharedPreferences prefs) {
+    final value = prefs.getString(prefKey);
+    return FilterMode.values.firstWhere(
+      (mode) => mode.name == value,
+      orElse: () => initialSelection,
     );
   }
 
   @override
-  Future<void> saveSelection(FilterMode? item) async {
-    final prefs = await SharedPreferences.getInstance();
+  void save(SharedPreferences prefs, FilterMode? item) {
     if (item == null) {
-      await prefs.remove(prefKey);
+      prefs.remove(prefKey);
     } else {
-      await prefs.setString(prefKey, item.name);
+      prefs.setString(prefKey, item.name);
     }
   }
 }

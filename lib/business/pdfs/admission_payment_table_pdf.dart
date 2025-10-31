@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
+import 'package:fami_tools/utilities/pdf_building.dart';
+import 'package:fami_tools/utilities/strings.dart';
 import 'package:intl/intl.dart';
-import 'package:number_to_vietnamese_words/number_to_vietnamese_words.dart';
 
-import '../../services/pdf_builder/index.dart';
 import '../drift_orm.dart';
 
 Future<Uint8List> admissionPaymentTablePdf({
@@ -11,7 +11,7 @@ Future<Uint8List> admissionPaymentTablePdf({
 }) async {
   return await buildSinglePageDocument(
     baseFontSize: 12,
-    pageFormat: IsoPageFormat.horizontalA4,
+    pageFormat: PdfPageFormat.a4,
     margin: EdgeInsets.all(1 * inch),
     build: (context) => AdmissionPaymentTablePdf(
       model: model,
@@ -33,13 +33,6 @@ class AdmissionPaymentTableModel {
   final int secretaryAllowance;
   final int memberAllowance;
 
-  int get presidentTotal => presidentAllowance * numberOfStudents;
-  int get secretaryTotal => secretaryAllowance * numberOfStudents;
-  int get memberTotal => memberAllowance * numberOfStudents;
-  int get totalPerStudent =>
-      presidentAllowance + secretaryAllowance + 3 * memberAllowance;
-  int get totalAmount => totalPerStudent * numberOfStudents;
-
   AdmissionPaymentTableModel({
     required this.president,
     required this.secretary,
@@ -53,6 +46,13 @@ class AdmissionPaymentTableModel {
     required this.establishmentDecisionCode,
     required this.establishmentDecisionDate,
   });
+  int get memberTotal => memberAllowance * numberOfStudents;
+  int get presidentTotal => presidentAllowance * numberOfStudents;
+  int get secretaryTotal => secretaryAllowance * numberOfStudents;
+  int get totalAmount => totalPerStudent * numberOfStudents;
+
+  int get totalPerStudent =>
+      presidentAllowance + secretaryAllowance + 3 * memberAllowance;
 }
 
 class AdmissionPaymentTablePdf extends StatelessWidget {
@@ -160,9 +160,6 @@ class AdmissionPaymentTablePdf extends StatelessWidget {
 }
 
 class _AdmissionPaymentTable extends StatelessWidget {
-  final AdmissionPaymentTableModel model;
-  _AdmissionPaymentTable({required this.model});
-
   static const List<String> headerTexts = [
     "STT",
     "Họ và tên",
@@ -173,6 +170,9 @@ class _AdmissionPaymentTable extends StatelessWidget {
     "Thành tiền\n(VNĐ)",
     "Ký nhận",
   ];
+  final AdmissionPaymentTableModel model;
+
+  _AdmissionPaymentTable({required this.model});
 
   List<Widget> get headerCells => [
     for (final headerText in headerTexts)
@@ -207,36 +207,6 @@ class _AdmissionPaymentTable extends StatelessWidget {
       cell(""),
     ],
   );
-
-  TableRow memberRow(int index, TeacherData teacher) => TableRow(
-    children: [
-      cell(index.toString()),
-      cell(teacher.name, align: Alignment.centerLeft),
-      cell("Khoa Toán - Tin"),
-      cell("Ủy viên"),
-      cell(model.memberAllowance.formatMoney()),
-      cell(model.numberOfStudents.toString()),
-      cell(model.memberTotal.formatMoney()),
-      cell(""),
-    ],
-  );
-
-  Widget cell(
-    String text, {
-    Alignment align = Alignment.center,
-    FontWeight fontWeight = FontWeight.normal,
-  }) {
-    return Container(
-      height: 1.1 * cm,
-      padding: EdgeInsets.symmetric(horizontal: 3 * pt, vertical: 1.5 * pt),
-      alignment: align,
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: TextStyle(fontWeight: fontWeight),
-      ),
-    );
-  }
 
   @override
   Widget build(Context context) {
@@ -274,4 +244,34 @@ class _AdmissionPaymentTable extends StatelessWidget {
       ],
     );
   }
+
+  Widget cell(
+    String text, {
+    Alignment align = Alignment.center,
+    FontWeight fontWeight = FontWeight.normal,
+  }) {
+    return Container(
+      height: 1.1 * cm,
+      padding: EdgeInsets.symmetric(horizontal: 3 * pt, vertical: 1.5 * pt),
+      alignment: align,
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontWeight: fontWeight),
+      ),
+    );
+  }
+
+  TableRow memberRow(int index, TeacherData teacher) => TableRow(
+    children: [
+      cell(index.toString()),
+      cell(teacher.name, align: Alignment.centerLeft),
+      cell("Khoa Toán - Tin"),
+      cell("Ủy viên"),
+      cell(model.memberAllowance.formatMoney()),
+      cell(model.numberOfStudents.toString()),
+      cell(model.memberTotal.formatMoney()),
+      cell(""),
+    ],
+  );
 }

@@ -1,22 +1,8 @@
 // TODO: migrate to drift
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:path/path.dart' as path;
-import 'package:provider/provider.dart' hide FutureProvider;
 
-import '../../business/db_v2_providers.dart';
-import '../../custom_widgets.dart' show DirectoryPicker;
-import '../../services/pdf_builder/index.dart' as _;
-import '../teacher_pages/teacher_pages.dart';
-import '../thesis_pages/thesis_pages.dart';
-import 'index.dart';
-import 'payment_pdf.dart';
-import 'pods.dart';
+// import 'package:fami_tools/utilities/pdf_building.dart';
 
 // Future<Map<Teacher, Payout>> resolvePayouts(List<Thesis> theses) async {
 //   final teachers = <Teacher>{};

@@ -127,7 +127,7 @@ class PhdStudentsMutationNotifier extends Notifier<void> {
     required String thesis,
     required int supervisorId,
     required int? secondarySupervisorId,
-    required String majorSpecialization,
+    required PhdSpecialization majorSpecialization,
   }) async {
     final db = await ref.watch(mainDatabaseProvider.future);
     final companion = PhdStudentCompanion.insert(
@@ -148,7 +148,7 @@ class PhdStudentsMutationNotifier extends Notifier<void> {
       thesis: thesis,
       supervisorId: supervisorId,
       secondarySupervisorId: Value(secondarySupervisorId),
-      majorSpecialization: Value(majorSpecialization),
+      majorSpecialization: majorSpecialization,
     );
 
     final stmt = db.phdStudent.insert();

@@ -176,7 +176,7 @@ create table "phd_student" (
     "personal_email" text not null unique,
     "major_name" text not null default 'toán học',
     "major_id"  text not null default 9460101,
-    "major_specialization"	text not null default 'n/a',
+    "major_specialization"	text not null mapped by `phdSpecializationConverter`,
     "admission_president_id" integer,
     "admission_secretary_id" integer,
     "admission_1st_member_id" integer,

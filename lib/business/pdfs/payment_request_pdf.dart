@@ -1,8 +1,10 @@
 import 'dart:typed_data';
 
+import 'package:fami_tools/business/pdfs/common_widgets.dart';
 import 'package:number_to_vietnamese_words/number_to_vietnamese_words.dart';
 
-import '../../services/pdf_builder/index.dart';
+import 'package:fami_tools/utilities/pdf_building.dart';
+import 'package:fami_tools/utilities/strings.dart';
 
 Future<Uint8List> paymentRequestPdf({
   required String requesterName,
@@ -12,7 +14,7 @@ Future<Uint8List> paymentRequestPdf({
 }) async {
   return await buildSinglePageDocument(
     baseFontSize: 14,
-    pageFormat: IsoPageFormat.horizontalA5,
+    pageFormat: PdfPageFormat.a5.transpose,
     build: (context) => PaymentRequestPdf(
       requesterName: requesterName,
       requesterOrganization: requesterOrganization,
@@ -44,21 +46,7 @@ class PaymentRequestPdf extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Footer(
-          leading: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "BỘ GIÁO DỤC VÀ ĐÀO TẠO",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 3 * pt),
-              Text(
-                "ĐẠI HỌC BÁCH KHOA HÀ NỘI",
-              ),
-            ],
-          ),
-        ), // Footer with leading content
+        Footer(leading: HustTitle()),
 
         Spacer(),
         Column(

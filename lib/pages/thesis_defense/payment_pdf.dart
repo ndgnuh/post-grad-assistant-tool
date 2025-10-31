@@ -1,12 +1,9 @@
 import 'dart:typed_data';
 
-import 'package:intl/intl.dart';
-import 'package:number_to_vietnamese_words/number_to_vietnamese_words.dart';
-import 'package:pdf/pdf.dart';
-import 'package:riverpod/riverpod.dart';
+import 'package:fami_tools/utilities/pdf_building.dart';
+import 'package:fami_tools/utilities/strings.dart';
 
 import '../../business/db_v2_providers.dart';
-import '../../services/pdf_builder/index.dart';
 
 // final doubleCheckPdfProvider = FutureProvider.autoDispose((ref) async {
 //   final model = await ref.watch(thesisPaymentPdfModelProvider.future);
@@ -74,7 +71,7 @@ Future<Uint8List> buildDoubleCheckPdf({
       SizedBox(height: 10), // Space between title and content
       _PaymentListingTable(model: model),
     ],
-    pageFormat: IsoPageFormat.verticalA4,
+    pageFormat: PdfPageFormat.a4,
     baseFontSize: 10.0,
   );
 }
@@ -132,7 +129,7 @@ Future<Uint8List> buildIncomeListing({
         ),
       ),
     ],
-    pageFormat: IsoPageFormat.verticalA4,
+    pageFormat: PdfPageFormat.a4,
     baseFontSize: 10.0,
   );
 }
@@ -224,7 +221,7 @@ Future<Uint8List> buildPaymentListing({
         ),
       ),
     ],
-    pageFormat: IsoPageFormat.verticalA4,
+    pageFormat: PdfPageFormat.a4,
     baseFontSize: 11.0,
   );
 }
@@ -237,7 +234,7 @@ Future<Uint8List> buildPaymentRequestPdf({
 }) async {
   return await buildSinglePageDocument(
     baseFontSize: 14,
-    pageFormat: IsoPageFormat.horizontalA5,
+    pageFormat: PdfPageFormat.a4,
     build: (context) => _PaymentRequestPage(
       requesterName: requesterName,
       requesterDivision: requesterDivision,
@@ -251,7 +248,7 @@ Future<Uint8List> buildPaymentSummaryPdf({
   required ThesisData model,
 }) async {
   return await buildMultiPageDocument(
-    pageFormat: IsoPageFormat.horizontalA4,
+    pageFormat: PdfPageFormat.a4,
     margin: EdgeInsets.all(1.0 * PdfPageFormat.cm),
     baseFontSize: 10,
     build: (context) {

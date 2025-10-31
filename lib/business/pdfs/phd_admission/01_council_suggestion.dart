@@ -1,18 +1,27 @@
-import 'dart:typed_data';
+import 'package:fami_tools/utilities/pdf_building.dart';
+import 'package:fami_tools/utilities/strings.dart';
 
-import '../../services/pdf_builder/index.dart' hide inch, pt;
+import '../../drift_orm.dart';
+import '../common_widgets.dart';
+import '../pdfs.dart';
 
-import '../../services/pdf_widgets.dart';
-import '../drift_orm.dart';
-
-Future<Uint8List> phdAdmissionCouncilSuggestionPdf({
+Future<PdfFile> councilSuggestionPdf({
   required PhdStudentData phdStudent,
   required TeacherData supervisor,
-  required List<TeacherData> councilMembers,
+  required TeacherData president,
+  required TeacherData secretary,
+  required TeacherData firstMember,
+  required TeacherData secondMember,
+  required TeacherData thirdMember,
   TeacherData? secondarySupervisor,
 }) async {
-  return buildSinglePageDocument(
-    pageFormat: IsoPageFormat.verticalA4,
+  final admissionId = phdStudent.admissionId;
+  final pdfName = "DeXuatTieuBan";
+  final name = phdStudent.name.toPascalCase();
+  final fileName = "${admissionId}_${name}_$pdfName.pdf";
+
+  final pdfBytes = await buildSinglePageDocument(
+    pageFormat: PdfPageFormat.a4,
     margin: EdgeInsets.all(1 * inch),
     baseFontSize: 12 * pt,
     build: (context) {
@@ -20,10 +29,18 @@ Future<Uint8List> phdAdmissionCouncilSuggestionPdf({
         phdStudent: phdStudent,
         supervisor: supervisor,
         secondarySupervisor: secondarySupervisor,
-        councilMembers: councilMembers,
+        councilMembers: [
+          president,
+          secretary,
+          firstMember,
+          secondMember,
+          thirdMember,
+        ],
       );
     },
   );
+
+  return PdfFile(fileName: fileName, bytes: pdfBytes);
 }
 
 class PhdAdmissionCouncilSuggestionPdf extends StatelessWidget {
@@ -80,23 +97,9 @@ class PhdAdmissionCouncilSuggestionPdf extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text("ĐẠI HỌC BÁCH KHOA HÀ NỘI", style: bold),
-                Text("KHOA TOÁN - TIN", style: bold),
-                titleRule(),
-              ],
-            ),
+            FamiTitle(),
             Spacer(),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text("CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM", style: bold),
-                Text("Độc lập - Tự do - Hạnh phúc", style: bold),
-                titleRule(),
-              ],
-            ),
+            VietnamTitle(),
           ],
         ),
 

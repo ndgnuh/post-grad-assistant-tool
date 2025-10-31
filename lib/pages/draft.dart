@@ -1,12 +1,42 @@
-import 'package:drift/drift.dart' hide Column;
+import 'package:fami_tools/business/enums/phd_student.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart' as url_launcher;
+import 'package:pdfrx/pdfrx.dart';
 
-import '../business/copy_pasta.dart';
 // import '../business/domain_objects.dart';
 import '../business/db_v2_providers.dart';
+import '../business/pdfs/pdfs.dart';
+import 'phd_student_pages/phd_student_admission_providers.dart';
+
+final pdfProvider = FutureProvider((ref) async {
+  final id = 21;
+  final student = await ref.watch(phdStudentByIdProvider(id).future);
+  final president = await ref.watch(
+    teacherByIdProvider(student.admissionPresidentId!).future,
+  );
+  final secretary = await ref.watch(
+    teacherByIdProvider(student.admissionSecretaryId!).future,
+  );
+  final member1 = await ref.watch(
+    teacherByIdProvider(student.admission1stMemberId!).future,
+  );
+  final member2 = await ref.watch(
+    teacherByIdProvider(student.admission2ndMemberId!).future,
+  );
+  final member3 = await ref.watch(
+    teacherByIdProvider(student.admission3rdMemberId!).future,
+  );
+  final pdfFile = await PdfFile.phdAdmission.paymentTable(
+    student: student,
+    president: president,
+    secretary: secretary,
+    firstMember: member1,
+    secondMember: member2,
+    thirdMember: member3,
+  );
+
+  return pdfFile;
+});
 
 MaterialPageRoute ezRoute(Widget page) {
   return MaterialPageRoute(
@@ -23,151 +53,22 @@ class DraftPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dbAsync = ref.watch(mainDatabaseProvider);
-    switch (dbAsync) {
-      case AsyncLoading():
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Draft Page'),
-          ),
-          body: const Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
-      case AsyncError(:final error):
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Draft Page'),
-          ),
-          body: Center(
-            child: Text('Error: $error'),
-          ),
-        );
-      default:
-    }
-
-    final db = dbAsync.value!;
-    final stream = db.searchTheses(searchText: "Thùy").watch();
-
+    final pdfAsync = ref.watch(pdfProvider);
+    final pdf = switch (pdfAsync) {
+      AsyncData<PdfFile> data => data.value,
+      AsyncLoading() => null,
+      AsyncError() => null,
+    };
     return Scaffold(
       appBar: AppBar(
         title: const Text('Draft Page'),
       ),
       body: Center(
-        child: Column(
-          children: [
-            StreamBuilder(
-              stream: stream,
-              builder: (context, theses) {
-                for (final thesis in theses.data ?? []) {
-                  print(thesis);
-                }
-                return Text("Total theses: ${theses.data?.length ?? 0}");
-              },
-            ),
-            FilledButton(
-              onPressed: () {
-                final email = Email(
-                  subject: "Về chương trình thạc sĩ Toán Tin",
-                  body: """
-
-Mình là Hùng, trợ lý đào tạo sau đại học của khoa Toán - Tin. Chúc mừng các bạn trúng tuyển chương trình Thạc sĩ Toán - Tin. Ban Đào tạo sẽ gửi email nhập học cho các bạn.
-
-Sau khi thực hiện các thủ tục nhập học xong, các bạn phản hồi lại cho mình qua email những thông tin sau để phục vụ cho công tác quản lý:
-
-- Họ tên đầy đủ,
-- Mã học viên,
-- Mã lớp quản lý/tên khóa,
-- Email học viên (email với đuôi sis.hust.edu.vn).
-
-Ngoài ra, các bạn tham gia nhóm Zalo học viên ở dưới để tiện cho việc nhận thông báo và phổ biến công việc. Các bạn nếu gặp vấn đề gì trong quá trình nhập học cũng có thể liên hệ với mình thông qua email này.
-
-Link nhóm Zalo: TBA""",
-                  recipients: {"ndgnuh99@gmail.com"},
-                );
-                final mailto = email.mailtoLink;
-                url_launcher.launchUrl(
-                  mailto,
-                  mode: url_launcher.LaunchMode.externalApplication,
-                );
-
-                Clipboard.setData(ClipboardData(text: mailto.toString()));
-              },
-              child: const Text('Send mailto'),
-            ),
-          ],
-        ),
+        child: switch (pdf) {
+          null => const CircularProgressIndicator(),
+          PdfFile file => PdfViewer.data(file.bytes, sourceName: file.fileName),
+        },
       ),
     );
-  }
-}
-
-class _PageBody extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final dbState = ref.watch(mainDatabaseProvider);
-    switch (dbState) {
-      case AsyncLoading():
-        return CircularProgressIndicator();
-      case AsyncError(:final error):
-        return Text('Error: $error');
-      default:
-    }
-
-    final AppDatabase db = dbState.value!;
-
-    final allTables = db.allTables.toList();
-
-    return ListView.builder(
-      itemCount: db.allTables.length,
-      itemBuilder: (context, index) {
-        final table = allTables[index];
-        return ListTile(
-          title: Text(table.actualTableName),
-          subtitle: Text(table.entityName),
-          onTap: () async {
-            switch (table.actualTableName) {
-              case 'giangvien':
-                Navigator.of(context).push(
-                  ezRoute(_TeacherDataAll()),
-                );
-              default:
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'No handler for table ${table.actualTableName}',
-                    ),
-                  ),
-                );
-            }
-          },
-        );
-      },
-    );
-  }
-}
-
-class _TeacherDataAll extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return SizedBox();
-    // final allTeachers = ref.watch(allTeachersProvider);
-    //
-    // return allTeachers.when(
-    //   data: (teachers) {
-    //     return ListView.builder(
-    //       itemCount: teachers.length,
-    //       itemBuilder: (context, index) {
-    //         final teacher = teachers[index];
-    //         return ListTile(
-    //           title: Text(teacher.name ?? ""),
-    //           subtitle: Text(teacher.gender.toString()),
-    //         );
-    //       },
-    //     );
-    //   },
-    //   loading: () => CircularProgressIndicator(),
-    //   error: (error, stack) => Text('Error: $error'),
-    // );
   }
 }

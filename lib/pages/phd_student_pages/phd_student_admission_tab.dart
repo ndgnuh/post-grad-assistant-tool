@@ -1,20 +1,18 @@
 import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:diacritic/diacritic.dart';
 import 'package:fami_tools/business/copy_pasta.dart';
-import 'package:fami_tools/business/pdfs/phd_admission_council_suggestion_pdf.dart';
+import 'package:fami_tools/business/pdfs/pdfs.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:path/path.dart' as path;
 
 import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
 import '../setting_pages/setting_pages.dart';
 import 'providers.dart';
-import 'widgets.dart';
 import 'phd_student_admission_providers.dart';
 
 class PhdStudentAdmissionTab extends StatelessWidget {
@@ -40,14 +38,6 @@ class PhdStudentAdmissionTab extends StatelessWidget {
               _PhdAdmissionTeacher.member1(studentId: studentId),
               _PhdAdmissionTeacher.member2(studentId: studentId),
               _PhdAdmissionTeacher.member3(studentId: studentId),
-              _CouncilSuggestionPdf.preview(
-                context: context,
-                studentId: studentId,
-              ),
-              _CouncilSuggestionPdf.save(
-                context: context,
-                studentId: studentId,
-              ),
             ],
           ),
 
@@ -55,17 +45,17 @@ class PhdStudentAdmissionTab extends StatelessWidget {
           CardSection(
             title: "Tổ chức xét tuyển",
             children: [
-              ListTile(
-                title: Text("Phiếu điểm"),
-                subtitle: Text("Xem trước phiếu điểm"),
-                leading: Icon(Symbols.file_copy),
-                trailing: Icon(Symbols.preview),
+              _PdfPreviewButton(
+                title: "Phiếu đề xuất tiểu ban",
+                pdfProvider: councilSuggestionPdfProvider(studentId),
               ),
-              ListTile(
-                title: Text("Giấy thanh toán"),
-                subtitle: Text("Xem trước giấy thanh toán"),
-                leading: Icon(Symbols.file_copy),
-                trailing: Icon(Symbols.preview),
+              _PdfPreviewButton(
+                title: "Phiếu điểm",
+                pdfProvider: scoreSheetPdfProvider(studentId),
+              ),
+              _PdfPreviewButton(
+                title: "Phiếu thanh toán",
+                pdfProvider: paymentTablePdfProvider(studentId),
               ),
               ListTile(
                 title: Text("Biên bản"),
@@ -73,16 +63,57 @@ class PhdStudentAdmissionTab extends StatelessWidget {
                 leading: Icon(Symbols.file_copy),
                 trailing: Icon(Symbols.preview),
               ),
-              ListTile(
-                title: Text("Lưu hồ sơ"),
-                subtitle: Text("Lưu hồ sơ ra một thư mc"),
-                leading: Icon(Symbols.download),
-                trailing: Icon(Symbols.chevron_right),
-              ),
+              _SaveAdmissionFilesButton(studentId: studentId),
             ],
           ),
         ],
       ),
+    );
+  }
+}
+
+class _SaveAdmissionFilesButton extends ConsumerWidget {
+  final int studentId;
+  const _SaveAdmissionFilesButton({
+    required this.studentId,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final messenger = ScaffoldMessenger.of(context);
+    return ListTile(
+      title: Text("Lưu hồ sơ"),
+      subtitle: Text("Lưu hồ sơ ra một thư mc"),
+      leading: Icon(Symbols.download),
+      trailing: Icon(Symbols.chevron_right),
+      onTap: () async {
+        final directory = await FilePicker.platform.getDirectoryPath();
+        if (directory == null) return;
+
+        final councilSuggestion = await ref.read(
+          councilSuggestionPdfProvider(studentId).future,
+        );
+        final scoreSheet = await ref.read(
+          scoreSheetPdfProvider(studentId).future,
+        );
+        final paymentTable = await ref.read(
+          paymentTablePdfProvider(studentId).future,
+        );
+
+        final files = [
+          councilSuggestion,
+          scoreSheet,
+          paymentTable,
+        ].whereType<PdfFile>().toList();
+        for (final pdfFile in files) {
+          final savePath = path.join(directory, pdfFile.fileName);
+          final file = File(savePath);
+          await file.writeAsBytes(pdfFile.bytes);
+        }
+        messenger.showSnackBar(
+          SnackBar(content: Text("Đã lưu hồ sơ vào thư mục $directory")),
+        );
+      },
     );
   }
 }
@@ -200,140 +231,6 @@ class _PhdAdmissionTeacher extends ConsumerWidget {
   }
 }
 
-class _CouncilSuggestionPdf extends ConsumerWidget {
-  final int studentId;
-  final String hintText;
-  final Widget icon;
-  final ValueChanged<(Uint8List, PhdStudentData)> pdfCallback;
-
-  const _CouncilSuggestionPdf({
-    required this.studentId,
-    required this.pdfCallback,
-    required this.hintText,
-    required this.icon,
-  });
-
-  factory _CouncilSuggestionPdf.preview({
-    required BuildContext context,
-    required int studentId,
-  }) {
-    final navigator = Navigator.of(context);
-    return _CouncilSuggestionPdf(
-      studentId: studentId,
-      icon: Icon(Symbols.preview),
-      hintText: "Xem trước file PDF đề xuất hội đồng xét tuyển",
-      pdfCallback: (data) {
-        final (pdfData, student) = data;
-        final fileName =
-            "${student.admissionId}_${student.name}_DeXuatTieuBan.pdf";
-        navigator.push(
-          MaterialPageRoute(
-            builder: (context) => PdfDataPreviewPage(
-              sourceName: removeDiacritics(fileName).replaceAll(" ", ""),
-              title: "Đề xuất hội đồng xét tuyển",
-              pdfData: pdfData,
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  factory _CouncilSuggestionPdf.save({
-    required BuildContext context,
-    required int studentId,
-  }) {
-    final messenger = ScaffoldMessenger.of(context);
-    callback(data) async {
-      final (pdfData, student) = data;
-      final fileName =
-          "${student.admissionId}_${student.name}_DeXuatTieuBan.pdf";
-      final savePath = await FilePicker.platform.saveFile(
-        fileName: fileName,
-        bytes: pdfData,
-      );
-
-      switch (savePath) {
-        case String path:
-          if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
-            await File(path).writeAsBytes(pdfData);
-          }
-          messenger.showSnackBar(
-            SnackBar(content: Text("Đã lưu file tại $path")),
-          );
-      }
-    }
-
-    return _CouncilSuggestionPdf(
-      icon: Icon(Symbols.download),
-      hintText: "Lưu file PDF đề xuất hội đồng xét tuyển",
-      studentId: studentId,
-      pdfCallback: callback,
-    );
-  }
-
-  Widget get title => Text("Đề xuất hội đồng");
-
-  Widget get subtitle => Text(hintText);
-
-  Widget get leadingIcon => Icon(Symbols.picture_as_pdf);
-
-  Widget get trailingIcon => icon;
-
-  Widget get disabled => ListTile(
-    title: title,
-    subtitle: subtitle,
-    leading: leadingIcon,
-    trailing: trailingIcon,
-    enabled: false,
-  );
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final membersAsync = ref.watch(councilMembersProvider(studentId));
-    switch (membersAsync) {
-      case AsyncLoading():
-        return disabled;
-      case AsyncError():
-        return disabled;
-      default:
-    }
-
-    final members = membersAsync.value!;
-    for (final member in members) {
-      if (member == null) return disabled;
-    }
-
-    final navigator = Navigator.of(context);
-
-    return ListTile(
-      title: title,
-      subtitle: subtitle,
-      leading: leadingIcon,
-      trailing: trailingIcon,
-      onTap: () async {
-        final student = await ref.watch(
-          phdStudentByIdProvider(studentId).future,
-        );
-        final supervisor = await ref.watch(
-          teacherByIdProvider(student.supervisorId).future,
-        );
-        final secondarySupervisor = switch (student.secondarySupervisorId) {
-          null => null,
-          int id => await ref.watch(teacherByIdProvider(id).future),
-        };
-        final pdfData = await phdAdmissionCouncilSuggestionPdf(
-          phdStudent: student,
-          councilMembers: members.whereType<TeacherData>().toList(),
-          supervisor: supervisor,
-          secondarySupervisor: secondarySupervisor,
-        );
-        pdfCallback((pdfData, student));
-      },
-    );
-  }
-}
-
 class _CouncilArrangementEmailButton extends StatelessWidget {
   final int studentId;
   const _CouncilArrangementEmailButton({required this.studentId});
@@ -359,6 +256,44 @@ class _CouncilArrangementEmailButton extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class _PdfPreviewButton extends ConsumerWidget {
+  final String title;
+  final FutureProvider<PdfFile?> pdfProvider;
+
+  const _PdfPreviewButton({
+    required this.title,
+    required this.pdfProvider,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pdfAsync = ref.watch(pdfProvider);
+    final pdf = pdfAsync.maybeWhen(
+      data: (data) => data,
+      orElse: () => null,
+    );
+
+    return ListTile(
+      title: Text(title),
+      subtitle: Text("Xem trước PDF"),
+      leading: Icon(Symbols.picture_as_pdf),
+      trailing: Icon(Symbols.preview),
+      enabled: pdf != null,
+      onTap: () async {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => PdfDataPreviewPage(
+              sourceName: pdf!.fileName,
+              title: title,
+              pdfData: pdf.bytes,
+            ),
+          ),
+        );
+      },
     );
   }
 }

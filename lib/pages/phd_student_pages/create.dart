@@ -1,4 +1,4 @@
-import 'package:drift/drift.dart' hide Column;
+import 'package:fami_tools/business/selection_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -12,8 +12,11 @@ import './providers.dart';
 
 const _lastCohortKey = '$_pagePreferenceKey/cohort';
 const _pagePreferenceKey = 'phd_student/create';
-
 final _viewModelProvider = NotifierProvider(_ViewModelNotifier.new);
+
+final specializationSelectionProvider = AsyncNotifierProvider(
+  () => PhdSpecializationSelectionModelNotifier('admission'),
+);
 
 Future<String> _getLastCohort() async {
   final prefs = await SharedPreferences.getInstance();
@@ -125,6 +128,33 @@ class _InformationForm extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final model = ref.watch(_viewModelProvider);
+    final specializationSelectionAsync = ref.watch(
+      specializationSelectionProvider,
+    );
+    final specializationSelectionWidget = specializationSelectionAsync
+        .maybeWhen(
+          data: (selectionModel) {
+            return DropdownMenu<PhdSpecialization>(
+              label: Text('Hướng chuyên sâu'),
+              dropdownMenuEntries: [
+                for (final option in selectionModel.options)
+                  DropdownMenuEntry(
+                    value: option,
+                    label: option.label,
+                  ),
+              ],
+              controller: model.specializationController,
+              onSelected: (selection) {
+                final notifier = ref.read(
+                  specializationSelectionProvider.notifier,
+                );
+                notifier.select(selection);
+              },
+            );
+          },
+          orElse: () => const CircularProgressIndicator(),
+        );
+
     final formKey = model.formKey;
     final gutter = context.gutter;
 
@@ -198,11 +228,7 @@ class _InformationForm extends ConsumerWidget {
 
               Divider(),
 
-              // TextFormField(
-              //   controller: model.specializationController,
-              //   decoration: labelText('Hướng chuyên sâu'),
-              //   validator: notEmptyValidator('Không được để trống'),
-              // ),
+              specializationSelectionWidget,
 
               // Thông tin đề tài nghiên cứu
               TextFormField(
@@ -252,11 +278,25 @@ class _SaveButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final model = ref.watch(_viewModelProvider);
+    final messenger = ScaffoldMessenger.of(context);
     final formKey = model.formKey;
+
     return FilledButton(
       onPressed: () async {
         if (formKey.currentState?.validate() ?? false) {
           final mutation = ref.read(phdStudentsMutationProvider.notifier);
+          final specializationSelection = await ref.read(
+            specializationSelectionProvider.future,
+          );
+          if (specializationSelection.selected == null) {
+            messenger.showSnackBar(
+              const SnackBar(
+                content: Text('Vui lòng chọn hướng chuyên sâu'),
+              ),
+            );
+            return;
+          }
+
           mutation.addPhdStudent(
             cohort: model.cohortController.text.trim(),
             admissionId: (model.admissionIdController.text.trim()),
@@ -274,7 +314,7 @@ class _SaveButton extends ConsumerWidget {
             supervisorId: model.supervisorNotifier.value!.id,
             secondarySupervisorId: model.secondarySupervisorNotifier.value?.id,
             thesis: model.thesisController.text.trim(),
-            majorSpecialization: model.specializationController.text.trim(),
+            majorSpecialization: specializationSelection.selected!,
           );
           ref.invalidate(_viewModelProvider);
           Navigator.of(context).pop();

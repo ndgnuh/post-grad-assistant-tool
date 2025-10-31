@@ -128,34 +128,24 @@ class _PhdStudentInfo extends ConsumerWidget {
       StudentStatus.delayedAdmission => "Hoãn xét tuyển",
     };
 
-    final subtitle = Table(
-      defaultColumnWidth: IntrinsicColumnWidth(),
-      columnWidths: {2: FlexColumnWidth()},
+    final subtitle = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TableRow(
-          children: [
-            Icon(Symbols.info),
-            Text(" "),
-            Text("Trạng thái: $studentStatus"),
-          ],
-        ),
-        TableRow(
-          children: [
-            Icon(Symbols.person),
-            Text(" "),
-            Text(
-              "Hướng dẫn: $supervisorNames",
-              softWrap: false,
-              style: TextStyle(overflow: TextOverflow.ellipsis),
-            ),
-          ],
-        ),
+        Text("Trạng thái: $studentStatus"),
+        Text("Hướng dẫn: $supervisorNames"),
       ],
     );
 
     return ListTile(
       title: Text(student.name),
       titleAlignment: ListTileTitleAlignment.titleHeight,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('#${student.managementId}'),
+          Icon(Symbols.chevron_right),
+        ],
+      ),
       leading: CircleAvatar(
         child: Text(student.name.split(" ").last.substring(0, 1)),
       ),

@@ -16,31 +16,23 @@ class GenderSelectionModelNotifier extends _Notifier with _Mixin {
   GenderSelectionModelNotifier(this.name);
 
   @override
+  FutureOr<List<Gender>> get options => Gender.values;
+
+  @override
   String get prefKey => "selection-models/gender/$name";
 
   @override
-  FutureOr<GenderSelectionModel> build() async {
-    final options = Gender.values;
-    final prefs = await SharedPreferences.getInstance();
-    final selectedName = prefs.getString(prefKey);
-    final selected = [
-      for (final gender in Gender.values)
-        if (gender.value == selectedName) gender,
-    ].firstOrNull;
-
-    return GenderSelectionModel(
-      selected: selected,
-      options: options,
-    );
+  Gender? load(SharedPreferences prefs) {
+    final value = prefs.getString(prefKey);
+    return Gender.fromValueOrNull(value);
   }
 
   @override
-  Future<void> saveSelection(Gender? item) async {
-    final prefs = await SharedPreferences.getInstance();
+  void save(SharedPreferences prefs, Gender? item) {
     if (item == null) {
-      await prefs.remove(prefKey);
+      prefs.remove(prefKey);
     } else {
-      await prefs.setString(prefKey, item.name);
+      prefs.setString(prefKey, item.name);
     }
   }
 }

@@ -11,11 +11,11 @@ export './selection_models/common.dart';
 // ============
 export './selection_models/gender.dart';
 export './selection_models/filter_modes.dart';
+export './selection_models/phd_specialization.dart';
 
 // From database
 // =============
 export './selection_models/semesters.dart';
 export './selection_models/cohort.dart';
 export './selection_models/admission_council.dart';
-
 export './selection_models/phd_cohort.dart';

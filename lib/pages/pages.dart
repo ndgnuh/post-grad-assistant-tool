@@ -22,6 +22,8 @@ const intialSettingsRoute = InitialSetupPage.routeName;
 final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
 
+  false => DraftPage.routeName,
+
   // Settings
   // false => InitialSetupPage.routeName,
   // false => SettingsPage.routeName,
@@ -51,7 +53,7 @@ final initialRoute = switch (kReleaseMode) {
   // false => ThesisListPage.routeName,
 
   // PhD students pages
-  // false => PhdStudentListPage.routeName,
+  false => PhdStudentListPage.routeName,
 
   // Teacher pages
   false => TeacherSearchPage.routeName,
