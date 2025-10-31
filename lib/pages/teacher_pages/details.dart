@@ -294,14 +294,14 @@ class _TeacherDetailTab extends ConsumerWidget {
             titleText: "Học hàm",
             leading: const Icon(null),
             initialValue: teacher.academicRank,
-            // onUpdate: (rank) => teacherNotifier.updateAcademicRank(rank: rank),
+            onUpdate: (rank) => teacherNotifier.updateAcademicRank(rank),
           ),
           SingleSelectionTile<AcademicDegree>(
             titleText: "Học vị",
             leading: const Icon(null),
             options: AcademicDegree.values,
             initialValue: teacher.academicDegree,
-            // onUpdate: (deg) => teacherNotifier.updateAcademicDegree(degree: deg),
+            onUpdate: (degree) => teacherNotifier.updateAcademicDegree(degree),
           ),
 
           // Thông tin liên hệ

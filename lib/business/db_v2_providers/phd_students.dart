@@ -49,6 +49,35 @@ class PhdStudentByIdNotifier extends AsyncNotifier<PhdStudentData> {
     assert(student != null, 'PhD Student with ID $studentId not found');
     return student!;
   }
+
+  Future<void> _update(PhdStudentCompanion companion) async {
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final stmt = db.phdStudent.update()
+      ..where((student) => student.id.equals(studentId));
+    final updated = await stmt.writeReturning(companion);
+    state = AsyncData(updated.first);
+  }
+
+  Future<void> setAdmissionCouncil({
+    int? presidentId,
+    int? secretaryId,
+    int? member1Id,
+    int? member2Id,
+    int? member3Id,
+  }) async {
+    absentIfNull(int? value) =>
+        value == null ? Value<int?>.absent() : Value(value);
+
+    _update(
+      PhdStudentCompanion(
+        admissionPresidentId: absentIfNull(presidentId),
+        admissionSecretaryId: absentIfNull(secretaryId),
+        admission1stMemberId: absentIfNull(member1Id),
+        admission2ndMemberId: absentIfNull(member2Id),
+        admission3rdMemberId: absentIfNull(member3Id),
+      ),
+    );
+  }
 }
 
 class PhdStudentIdsNotifier extends AsyncNotifier<List<int>> {

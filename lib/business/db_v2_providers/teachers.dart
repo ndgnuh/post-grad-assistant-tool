@@ -64,6 +64,22 @@ class TeacherByIdNotifier extends AsyncNotifier<TeacherData> {
     final newTeacherData = await stmt.writeReturning(newData);
     state = AsyncData(newTeacherData.first);
   }
+
+  Future<void> updateAcademicRank(AcademicRank? rank) async {
+    updateTeacher(
+      TeacherCompanion(
+        academicRank: Value(rank),
+      ),
+    );
+  }
+
+  Future<void> updateAcademicDegree(AcademicDegree? degree) async {
+    updateTeacher(
+      TeacherCompanion(
+        academicDegree: Value(degree),
+      ),
+    );
+  }
 }
 
 // Future<List<int>> insiderTeacherIds(Ref ref) async {

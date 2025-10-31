@@ -11,11 +11,10 @@ class PhdStudentDetailsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gutter = context.gutter;
-    return Padding(
+    return SingleChildScrollView(
       padding: EdgeInsets.all(context.gutter),
       child: Column(
         spacing: gutter,
-        verticalDirection: context.verticalDirection,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           // Phd's student basic information

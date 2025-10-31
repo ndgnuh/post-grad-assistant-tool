@@ -7,7 +7,6 @@ import 'course_class_pages/course_class_pages.dart';
 import 'course_pages/course_pages.dart';
 import 'draft.dart' show DraftPage;
 import 'home_page/home_page.dart';
-import 'mobile/thesis_assign_list.dart';
 import 'phd_student_pages/phd_student_pages.dart';
 import 'semester_pages/semester_pages.dart';
 import 'setting_pages/setting_pages.dart';

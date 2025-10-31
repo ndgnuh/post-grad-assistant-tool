@@ -266,7 +266,7 @@ class _PdfViewButton extends ConsumerWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PdfDataViewerPage(
+            builder: (context) => PdfDataPreviewPage(
               pdfData: value,
               sourceName: sourceName,
               title: title,

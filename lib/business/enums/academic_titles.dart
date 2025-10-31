@@ -1,9 +1,11 @@
 import 'package:drift/drift.dart';
 
 enum AcademicDegree {
-  bachelor(value: "bachelor", label: "Cử nhân", short: "CN."),
-  master(value: "master", label: "Thạc sĩ", short: "ThS."),
-  doctor(value: "doctor", label: "Tiến sĩ", short: "TS.");
+  bachelor(value: "CN", label: "Cử nhân", short: "CN."),
+  engineer(value: "KS", label: "Kỹ sư", short: "KS."),
+  master(value: "ThS", label: "Thạc sĩ", short: "ThS."),
+  doctorOfScience(value: "TSKH", label: "Tiến sĩ Khoa học", short: "TSKH."),
+  doctor(value: "TS", label: "Tiến sĩ", short: "TS.");
 
   final String value;
   final String label;
