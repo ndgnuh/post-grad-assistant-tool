@@ -16,6 +16,15 @@ extension AnyEmail on TeacherData {
   ];
 }
 
+extension SemesterHelp on SemesterData {
+  DateTime get softGradeSubmissionDeadline {
+    final a = classEndDate;
+    final b = gradeSubmissionDeadline;
+    final diff = b.difference(a).inDays / 2;
+    return a.add(Duration(days: diff.floor()));
+  }
+}
+
 extension TeacherTitles on TeacherData {
   String get nameWithTitle {
     switch ((academicRank, academicDegree)) {

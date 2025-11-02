@@ -71,7 +71,7 @@ extension StringFormatter on String {
 
 extension DateFormatter on DateTime {
   /// Convert a DateTime to dd-mm-yyyy format.
-  String toDmy({String separator = '-'}) {
+  String toDmy({required String separator}) {
     final day = this.day.toString().padLeft(2, '0');
     final month = this.month.toString().padLeft(2, '0');
     final year = this.year.toString();

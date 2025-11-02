@@ -98,6 +98,12 @@ class AppNavigator {
     );
   }
 
+  /// Detail pages
+  /// ============
+  void toSemesterDetailsPage({required String semesterId}) => moveTo(
+    (context) => SemesterDetailsPage(semesterId: semesterId),
+  );
+
   void toPdfPreviewPage({
     required String title,
     required Uint8List pdfData,

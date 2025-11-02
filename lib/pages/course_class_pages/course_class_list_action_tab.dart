@@ -1,4 +1,5 @@
 import 'package:fami_tools/business/copy_pasta.dart';
+import 'package:fami_tools/business/db_v2_providers.dart';
 import 'package:fami_tools/custom_widgets.dart';
 import 'package:fami_tools/pages/course_class_pages/teaching_assignment_providers.dart';
 import 'package:fami_tools/pages/pages.dart';
@@ -20,151 +21,162 @@ class CourseClassActionTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gutter = context.gutter;
+
+    final actionCards = [
+      CardSection(
+        title: "Thông báo & Email",
+        children: [
+          RegistrationNotificationButton(
+            builder: (context, message) => ListTile(
+              leading: const Icon(Symbols.app_registration),
+              title: const Text('Thông báo đăng ký học'),
+              subtitle: const Text('Copy thông báo cho học viên'),
+              trailing: const Icon(Symbols.content_copy),
+              enabled: message != null,
+              onTap: () {
+                if (message == null) return;
+                final data = ClipboardData(text: message);
+                Clipboard.setData(data);
+              },
+            ),
+          ),
+
+          _ClassAccessUrlNotificationButton(),
+
+          EmailNotificationButtonBuilder(
+            provider: teachingAnnouncementProvider,
+            builder: (context, callback) => ListTile(
+              leading: const Icon(Symbols.email),
+              title: const Text('Thông báo giảng dạy'),
+              subtitle: const Text(
+                'Email giảng dạy đầu đợt học cho giảng viên',
+              ),
+              trailing: const Icon(Symbols.send),
+              onTap: callback,
+              enabled: callback != null,
+            ),
+          ),
+
+          EmailNotificationButtonBuilder(
+            provider: gradeSubmissionAnnouncementProvider,
+            builder: (context, callback) => ListTile(
+              leading: const Icon(Symbols.email),
+              title: const Text('Thông báo nộp điểm'),
+              subtitle: const Text(
+                'Email nhắc nhở hạn nộp điểm cho giảng viên',
+              ),
+              trailing: const Icon(Symbols.send),
+              enabled: callback != null,
+              onTap: callback,
+            ),
+          ),
+        ],
+      ),
+
+      CardSection(
+        title: "Phân công giảng dạy",
+        children: [
+          _TeachingAssignmentPdfButton(),
+          _TeachingAssignmentSaveButton(),
+          _TeachingAssignmentEmailButton(),
+        ],
+      ),
+
+      CardSection(
+        title: "Thông tin liên quan",
+        children: [
+          _ToSemesterPageButton(),
+        ],
+      ),
+
+      // Import/add classes
+      CardSection(
+        title: "Thêm lớp mới",
+        children: [
+          ListTile(
+            leading: const Icon(Symbols.upload_file),
+            title: const Text('Nhập danh sách lớp'),
+            subtitle: const Text(
+              'Nhập danh sách lớp từ file số lượng đăng ký của BĐT',
+            ),
+            onTap: () {
+              final tabController = DefaultTabController.maybeOf(
+                context,
+              );
+
+              CourseClassImportPage.pickFileAndNavigateTo(context).then((
+                bool? success,
+              ) {
+                if (success == true) {
+                  tabController?.animateTo(0);
+                }
+              });
+            },
+          ),
+          ListTile(
+            leading: const Icon(Symbols.add_circle),
+            title: const Text('Tạo lớp học'),
+            subtitle: const Text('Tạo lớp học mới thủ công'),
+            onTap: () {
+              Navigator.of(context).pushNamed(
+                CourseClassCreatePage.routeName,
+              );
+            },
+          ),
+        ],
+      ),
+    ];
+
     return Padding(
       padding: EdgeInsets.all(gutter),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        verticalDirection: context.verticalDirection,
         spacing: gutter,
         children: [
+          /// The input section
           SemesterPicker(
             key: Key("semester-picker-1"),
           ),
 
-          Card(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: context.gutterSmall),
-
-                RegistrationNotificationButton(
-                  builder: (context, message) => ListTile(
-                    leading: const Icon(Symbols.app_registration),
-                    title: const Text('Thông báo đăng ký học'),
-                    subtitle: const Text('Copy thông báo cho học viên'),
-                    trailing: const Icon(Symbols.content_copy),
-                    enabled: message != null,
-                    onTap: () {
-                      if (message == null) return;
-                      final data = ClipboardData(text: message);
-                      Clipboard.setData(data);
-                    },
-                  ),
-                ),
-
-                Divider(),
-
-                Consumer(
-                  builder: (context, ref, _) {
-                    final messenger = ScaffoldMessenger.of(context);
-                    final message = ref
-                        .watch(courseClassUrlNotificationProvider)
-                        .value;
-
-                    return ListTile(
-                      leading: const Icon(Symbols.class_),
-                      title: const Text('Thông báo danh sách lớp'),
-                      subtitle: const Text('Thông báo nhóm lớp cho học viên'),
-                      trailing: const Icon(Symbols.content_copy),
-                      onTap: () {
-                        if (message == null) return;
-                        final data = ClipboardData(text: message);
-                        Clipboard.setData(data);
-                        messenger.showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Đã sao chép thông báo vào clipboard',
-                            ),
-                          ),
-                        );
-                      },
-                      enabled: message != null,
-                    );
-                  },
-                ),
-
-                Divider(),
-
-                EmailNotificationButtonBuilder(
-                  provider: teachingAnnouncementProvider,
-                  builder: (context, callback) => ListTile(
-                    leading: const Icon(Symbols.email),
-                    title: const Text('Thông báo giảng dạy'),
-                    subtitle: const Text(
-                      'Email giảng dạy đầu đợt học cho giảng viên',
-                    ),
-                    trailing: const Icon(Symbols.send),
-                    onTap: callback,
-                    enabled: callback != null,
-                  ),
-                ),
-
-                Divider(),
-
-                EmailNotificationButtonBuilder(
-                  provider: gradeSubmissionAnnouncementProvider,
-                  builder: (context, callback) => ListTile(
-                    leading: const Icon(Symbols.email),
-                    title: const Text('Thông báo nộp điểm'),
-                    subtitle: const Text(
-                      'Email nhắc nhở hạn nộp điểm cho giảng viên',
-                    ),
-                    trailing: const Icon(Symbols.send),
-                    enabled: callback != null,
-                    onTap: callback,
-                  ),
-                ),
-                SizedBox(height: context.gutterSmall),
-              ],
+          /// The action sections
+          Expanded(
+            child: ListView.separated(
+              itemCount: actionCards.length,
+              separatorBuilder: (context, index) => SizedBox(height: gutter),
+              itemBuilder: (context, index) => actionCards[index],
             ),
-          ),
-
-          CardSection(
-            title: "Phân công giảng dạy",
-            children: [
-              _TeachingAssignmentPdfButton(),
-              _TeachingAssignmentSaveButton(),
-              _TeachingAssignmentEmailButton(),
-            ],
-          ),
-
-          // Import/add classes
-          CardSection(
-            // title: "Tạo lớp học",
-            children: [
-              ListTile(
-                leading: const Icon(Symbols.upload_file),
-                title: const Text('Nhập danh sách lớp'),
-                subtitle: const Text(
-                  'Nhập danh sách lớp từ file số lượng đăng ký của BĐT',
-                ),
-                onTap: () {
-                  final tabController = DefaultTabController.maybeOf(
-                    context,
-                  );
-
-                  CourseClassImportPage.pickFileAndNavigateTo(context).then((
-                    bool? success,
-                  ) {
-                    if (success == true) {
-                      tabController?.animateTo(0);
-                    }
-                  });
-                },
-              ),
-              ListTile(
-                leading: const Icon(Symbols.add_circle),
-                title: const Text('Tạo lớp học'),
-                subtitle: const Text('Tạo lớp học mới thủ công'),
-                onTap: () {
-                  Navigator.of(context).pushNamed(
-                    CourseClassCreatePage.routeName,
-                  );
-                },
-              ),
-            ],
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ClassAccessUrlNotificationButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final messenger = ScaffoldMessenger.of(context);
+    final message = ref.watch(courseClassUrlNotificationProvider).value;
+
+    return ListTile(
+      leading: const Icon(Symbols.class_),
+      title: const Text('Thông báo danh sách lớp'),
+      subtitle: const Text('Thông báo nhóm lớp cho học viên'),
+      trailing: const Icon(Symbols.content_copy),
+      onTap: () {
+        if (message == null) return;
+        final data = ClipboardData(text: message);
+        Clipboard.setData(data);
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(
+              'Đã sao chép thông báo vào clipboard',
+            ),
+          ),
+        );
+      },
+      enabled: message != null,
     );
   }
 }
@@ -222,6 +234,31 @@ class _TeachingAssignmentSaveButton extends ConsumerWidget {
             ),
           ),
         );
+      },
+    );
+  }
+}
+
+class _ToSemesterPageButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final model = ref.watch(semesterSelectionModelProvider).value;
+    final semester = model?.selected;
+
+    final subtitle = switch (semester) {
+      SemesterData(:final id) => 'Tới trang đợt học $id',
+      _ => '',
+    };
+
+    return ListTile(
+      leading: const Icon(Symbols.info),
+      title: const Text('Xem đợt học'),
+      subtitle: Text(subtitle),
+      trailing: const Icon(Symbols.chevron_forward),
+      enabled: semester != null,
+      onTap: () {
+        final nav = AppNavigator(context);
+        nav.toSemesterDetailsPage(semesterId: semester!.id);
       },
     );
   }

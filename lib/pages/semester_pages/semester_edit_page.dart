@@ -1,8 +1,7 @@
+import 'package:fami_tools/utilities/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:intl/intl.dart';
 
 import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
@@ -43,18 +42,16 @@ class SemesterDetailsPage extends ConsumerWidget {
     // Information, formatted and stored as variables
     final semester = semesterAsync.value!;
     final semesterName = semester.id;
-    final dateFormat = DateFormat('dd/MM/yyyy');
-    final registrationOpenDate = dateFormat.format(
-      semester.registrationBeginDate,
+    final registrationOpenDate = semester.registrationBeginDate.toDmy(
+      separator: '/',
     );
-    final registrationCloseDate = dateFormat.format(
-      semester.registrationEndDate,
+    final registrationCloseDate = semester.registrationEndDate.toDmy(
+      separator: '/',
     );
-    final studyStartDate = dateFormat.format(
-      semester.classBeginDate,
-    );
-    final gradeSubmissionDeadline = dateFormat.format(
-      semester.gradeSubmissionDeadline,
+    final studyEndDate = semester.classEndDate.toDmy(separator: '/');
+    final studyStartDate = semester.classBeginDate.toDmy(separator: '/');
+    final gradeSubmissionDeadline = semester.gradeSubmissionDeadline.toDmy(
+      separator: '/',
     );
 
     return Scaffold(
@@ -159,7 +156,7 @@ class SemesterDetailsPage extends ConsumerWidget {
             Divider(),
             ListTile(
               title: Text("Kết thúc học"),
-              subtitle: Text(studyStartDate),
+              subtitle: Text(studyEndDate),
               trailing: const Icon(Icons.edit),
               onLongPress: () => copyToClipboard(studyStartDate),
               onTap: () async {},

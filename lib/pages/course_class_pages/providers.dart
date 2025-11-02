@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fami_tools/utilities/strings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -187,8 +188,12 @@ sealed class EmailToTeachersNotifier extends AsyncNotifier<Email?> {
       }
     }
 
+    // supervisor
+    final mySupervisor = await ref.watch(mySupervisorProvider.future);
+
     return Email(
       recipients: recipients,
+      ccRecipients: {mySupervisor.email!},
       subject: subject(selectedSemester),
       body: body(selectedSemester),
     );
@@ -202,7 +207,7 @@ class GradeSubmissionAnnouncementNotifier extends EmailToTeachersNotifier {
     final semesterName = selectedSemester.id;
     final studyEndDate = dateFmt.format(selectedSemester.classEndDate);
     final submissionDeadline = dateFmt.format(
-      selectedSemester.classEndDate.add(const Duration(days: 7)),
+      selectedSemester.softGradeSubmissionDeadline,
     );
 
     return """Kính gửi các Thầy, các Cô,
@@ -230,9 +235,8 @@ class TeachingAnnouncementNotifier extends EmailToTeachersNotifier {
     final studyEndDate = dateFmt.format(
       selectedSemester.classEndDate,
     );
-    final submissionDeadline = dateFmt.format(
-      selectedSemester.gradeSubmissionDeadline,
-    );
+    final submissionDeadline = selectedSemester.softGradeSubmissionDeadline
+        .toDmy(separator: '/');
 
     return """Kính gửi các Thầy, các Cô,
 

@@ -419,25 +419,46 @@ class _CandidateTeachersSection extends ConsumerWidget {
     final teachers = model.options;
     final selectedTeacher = model.selected;
 
-    return DropdownMenu<TeacherData>(
-      enableFilter: true,
-      label: Text("Giảng viên"),
-      expandedInsets: EdgeInsets.zero,
-      initialSelection: selectedTeacher,
-      dropdownMenuEntries: [
-        for (final teacher in teachers)
-          DropdownMenuEntry(
-            value: teacher,
-            label: teacher.name,
-          ),
-      ],
-      onSelected: (value) {
+    return RadioGroup(
+      onChanged: (TeacherData? teacher) {
         final notifier = ref.read(
           candidateSelectionProvider(classId).notifier,
         );
-        notifier.selectTeacher(value);
+        notifier.selectTeacher(teacher);
       },
+      groupValue: selectedTeacher,
+      child: CardSection(
+        title: "Giảng viên",
+        children: [
+          for (final teacher in teachers)
+            RadioListTile<TeacherData>(
+              title: Text(teacher.name),
+              subtitle: Text("Giảng lần cuối vào đợt: TODO"),
+              value: teacher,
+            ),
+        ],
+      ),
     );
+
+    // return DropdownMenu<TeacherData>(
+    //   enableFilter: true,
+    //   label: Text("Giảng viên"),
+    //   expandedInsets: EdgeInsets.zero,
+    //   initialSelection: selectedTeacher,
+    //   dropdownMenuEntries: [
+    //     for (final teacher in teachers)
+    //       DropdownMenuEntry(
+    //         value: teacher,
+    //         label: teacher.name,
+    //       ),
+    //   ],
+    //   onSelected: (value) {
+    //     final notifier = ref.read(
+    //       candidateSelectionProvider(classId).notifier,
+    //     );
+    //     notifier.selectTeacher(value);
+    //   },
+    // );
   }
 }
 

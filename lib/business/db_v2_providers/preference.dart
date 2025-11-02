@@ -17,6 +17,12 @@ final mySupervisorIdProvider = AsyncNotifierProvider(
   MySupervisorIdNotifier.new,
 );
 
+final mySupervisorProvider = FutureProvider<TeacherData>((ref) async {
+  final supervisorId = await ref.watch(mySupervisorIdProvider.future);
+  if (supervisorId == null) throw Exception("Supervisor ID is not set");
+  return await ref.watch(teacherByIdProvider(supervisorId).future);
+});
+
 Future<String?> _getPreference<T>(AppDatabase db, String key) async {
   final stmt = db.preference.select();
   stmt.where((p) => p.key.equals(key));
