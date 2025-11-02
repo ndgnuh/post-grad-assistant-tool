@@ -37,7 +37,7 @@ Future<PdfFile> paymentTablePdf({
   final pdfName = "BangThanhToan";
 
   return PdfFile(
-    fileName: "${admissionId}_${name}_$pdfName.pdf",
+    name: "${admissionId}_${name}_$pdfName.pdf",
     bytes: bytes,
   );
 }

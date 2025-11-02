@@ -40,7 +40,7 @@ final paymentListingPdfProvider = FutureProvider<Uint8List>((ref) async {
     final pdfs.PaymentListingEntry entry = (
       amount: _perCouncilPay,
       reason:
-          "Thanh toán tiền cho tiểu ban xét tuyển thạc sĩ theo định hướng nghiên cứu của thí sinh ${student!.name}, theo Quyết định số $estCode ngày $estDateStr",
+          "Thanh toán tiền cho tiểu ban xét tuyển thạc sĩ theo định hướng nghiên cứu của thí sinh ${student.name}, theo Quyết định số $estCode ngày $estDateStr",
     );
     entries.add(entry);
   }
@@ -183,7 +183,7 @@ final paymentRequestPdfProvider = FutureProvider((ref) async {
   final reason = _paymentReason(council.year);
   final pdf = pdfs.paymentRequestPdf(
     requesterName: myName!,
-    requesterOrganization: myOrganization,
+    requesterOrganization: myOrganization!,
     paymentReason: reason,
     paymentAmount: amount,
   );

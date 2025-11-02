@@ -190,6 +190,8 @@ class _TeachingInvitationPanel extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ListTile(title: Text("Mời giảng")),
+
+        ///
         Card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

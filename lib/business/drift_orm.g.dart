@@ -3,6 +3,642 @@
 part of 'drift_orm.dart';
 
 // ignore_for_file: type=lint
+class TeacherFts extends Table
+    with
+        TableInfo<TeacherFts, TeacherFt>,
+        VirtualTableInfo<TeacherFts, TeacherFt> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  TeacherFts(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _universityMeta = const VerificationMeta(
+    'university',
+  );
+  late final GeneratedColumn<String> university = GeneratedColumn<String>(
+    'university',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _falcutyMeta = const VerificationMeta(
+    'falcuty',
+  );
+  late final GeneratedColumn<String> falcuty = GeneratedColumn<String>(
+    'falcuty',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _specializationMeta = const VerificationMeta(
+    'specialization',
+  );
+  late final GeneratedColumn<String> specialization = GeneratedColumn<String>(
+    'specialization',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _phoneNumberMeta = const VerificationMeta(
+    'phoneNumber',
+  );
+  late final GeneratedColumn<String> phoneNumber = GeneratedColumn<String>(
+    'phone_number',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _workEmailMeta = const VerificationMeta(
+    'workEmail',
+  );
+  late final GeneratedColumn<String> workEmail = GeneratedColumn<String>(
+    'work_email',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _personalEmailMeta = const VerificationMeta(
+    'personalEmail',
+  );
+  late final GeneratedColumn<String> personalEmail = GeneratedColumn<String>(
+    'personal_email',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _citizenIdMeta = const VerificationMeta(
+    'citizenId',
+  );
+  late final GeneratedColumn<String> citizenId = GeneratedColumn<String>(
+    'citizen_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _bankAccountMeta = const VerificationMeta(
+    'bankAccount',
+  );
+  late final GeneratedColumn<String> bankAccount = GeneratedColumn<String>(
+    'bank_account',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    university,
+    falcuty,
+    specialization,
+    phoneNumber,
+    workEmail,
+    personalEmail,
+    citizenId,
+    bankAccount,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'teacher_fts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TeacherFt> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('university')) {
+      context.handle(
+        _universityMeta,
+        university.isAcceptableOrUnknown(data['university']!, _universityMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_universityMeta);
+    }
+    if (data.containsKey('falcuty')) {
+      context.handle(
+        _falcutyMeta,
+        falcuty.isAcceptableOrUnknown(data['falcuty']!, _falcutyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_falcutyMeta);
+    }
+    if (data.containsKey('specialization')) {
+      context.handle(
+        _specializationMeta,
+        specialization.isAcceptableOrUnknown(
+          data['specialization']!,
+          _specializationMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_specializationMeta);
+    }
+    if (data.containsKey('phone_number')) {
+      context.handle(
+        _phoneNumberMeta,
+        phoneNumber.isAcceptableOrUnknown(
+          data['phone_number']!,
+          _phoneNumberMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_phoneNumberMeta);
+    }
+    if (data.containsKey('work_email')) {
+      context.handle(
+        _workEmailMeta,
+        workEmail.isAcceptableOrUnknown(data['work_email']!, _workEmailMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_workEmailMeta);
+    }
+    if (data.containsKey('personal_email')) {
+      context.handle(
+        _personalEmailMeta,
+        personalEmail.isAcceptableOrUnknown(
+          data['personal_email']!,
+          _personalEmailMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_personalEmailMeta);
+    }
+    if (data.containsKey('citizen_id')) {
+      context.handle(
+        _citizenIdMeta,
+        citizenId.isAcceptableOrUnknown(data['citizen_id']!, _citizenIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_citizenIdMeta);
+    }
+    if (data.containsKey('bank_account')) {
+      context.handle(
+        _bankAccountMeta,
+        bankAccount.isAcceptableOrUnknown(
+          data['bank_account']!,
+          _bankAccountMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_bankAccountMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  TeacherFt map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TeacherFt(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      university: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}university'],
+      )!,
+      falcuty: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}falcuty'],
+      )!,
+      specialization: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}specialization'],
+      )!,
+      phoneNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone_number'],
+      )!,
+      workEmail: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}work_email'],
+      )!,
+      personalEmail: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}personal_email'],
+      )!,
+      citizenId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}citizen_id'],
+      )!,
+      bankAccount: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bank_account'],
+      )!,
+    );
+  }
+
+  @override
+  TeacherFts createAlias(String alias) {
+    return TeacherFts(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+  @override
+  String get moduleAndArgs =>
+      'fts5(id, name, university, falcuty, specialization, phone_number, work_email, personal_email, citizen_id, bank_account, prefix=\'2 3 5 7\', tokenize="trigram remove_diacritics 1 case_sensitive 0")';
+}
+
+class TeacherFt extends DataClass implements Insertable<TeacherFt> {
+  final String id;
+  final String name;
+  final String university;
+  final String falcuty;
+  final String specialization;
+  final String phoneNumber;
+  final String workEmail;
+  final String personalEmail;
+  final String citizenId;
+  final String bankAccount;
+  const TeacherFt({
+    required this.id,
+    required this.name,
+    required this.university,
+    required this.falcuty,
+    required this.specialization,
+    required this.phoneNumber,
+    required this.workEmail,
+    required this.personalEmail,
+    required this.citizenId,
+    required this.bankAccount,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    map['university'] = Variable<String>(university);
+    map['falcuty'] = Variable<String>(falcuty);
+    map['specialization'] = Variable<String>(specialization);
+    map['phone_number'] = Variable<String>(phoneNumber);
+    map['work_email'] = Variable<String>(workEmail);
+    map['personal_email'] = Variable<String>(personalEmail);
+    map['citizen_id'] = Variable<String>(citizenId);
+    map['bank_account'] = Variable<String>(bankAccount);
+    return map;
+  }
+
+  TeacherFtsCompanion toCompanion(bool nullToAbsent) {
+    return TeacherFtsCompanion(
+      id: Value(id),
+      name: Value(name),
+      university: Value(university),
+      falcuty: Value(falcuty),
+      specialization: Value(specialization),
+      phoneNumber: Value(phoneNumber),
+      workEmail: Value(workEmail),
+      personalEmail: Value(personalEmail),
+      citizenId: Value(citizenId),
+      bankAccount: Value(bankAccount),
+    );
+  }
+
+  factory TeacherFt.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TeacherFt(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      university: serializer.fromJson<String>(json['university']),
+      falcuty: serializer.fromJson<String>(json['falcuty']),
+      specialization: serializer.fromJson<String>(json['specialization']),
+      phoneNumber: serializer.fromJson<String>(json['phone_number']),
+      workEmail: serializer.fromJson<String>(json['work_email']),
+      personalEmail: serializer.fromJson<String>(json['personal_email']),
+      citizenId: serializer.fromJson<String>(json['citizen_id']),
+      bankAccount: serializer.fromJson<String>(json['bank_account']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'university': serializer.toJson<String>(university),
+      'falcuty': serializer.toJson<String>(falcuty),
+      'specialization': serializer.toJson<String>(specialization),
+      'phone_number': serializer.toJson<String>(phoneNumber),
+      'work_email': serializer.toJson<String>(workEmail),
+      'personal_email': serializer.toJson<String>(personalEmail),
+      'citizen_id': serializer.toJson<String>(citizenId),
+      'bank_account': serializer.toJson<String>(bankAccount),
+    };
+  }
+
+  TeacherFt copyWith({
+    String? id,
+    String? name,
+    String? university,
+    String? falcuty,
+    String? specialization,
+    String? phoneNumber,
+    String? workEmail,
+    String? personalEmail,
+    String? citizenId,
+    String? bankAccount,
+  }) => TeacherFt(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    university: university ?? this.university,
+    falcuty: falcuty ?? this.falcuty,
+    specialization: specialization ?? this.specialization,
+    phoneNumber: phoneNumber ?? this.phoneNumber,
+    workEmail: workEmail ?? this.workEmail,
+    personalEmail: personalEmail ?? this.personalEmail,
+    citizenId: citizenId ?? this.citizenId,
+    bankAccount: bankAccount ?? this.bankAccount,
+  );
+  TeacherFt copyWithCompanion(TeacherFtsCompanion data) {
+    return TeacherFt(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      university: data.university.present
+          ? data.university.value
+          : this.university,
+      falcuty: data.falcuty.present ? data.falcuty.value : this.falcuty,
+      specialization: data.specialization.present
+          ? data.specialization.value
+          : this.specialization,
+      phoneNumber: data.phoneNumber.present
+          ? data.phoneNumber.value
+          : this.phoneNumber,
+      workEmail: data.workEmail.present ? data.workEmail.value : this.workEmail,
+      personalEmail: data.personalEmail.present
+          ? data.personalEmail.value
+          : this.personalEmail,
+      citizenId: data.citizenId.present ? data.citizenId.value : this.citizenId,
+      bankAccount: data.bankAccount.present
+          ? data.bankAccount.value
+          : this.bankAccount,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TeacherFt(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('university: $university, ')
+          ..write('falcuty: $falcuty, ')
+          ..write('specialization: $specialization, ')
+          ..write('phoneNumber: $phoneNumber, ')
+          ..write('workEmail: $workEmail, ')
+          ..write('personalEmail: $personalEmail, ')
+          ..write('citizenId: $citizenId, ')
+          ..write('bankAccount: $bankAccount')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    university,
+    falcuty,
+    specialization,
+    phoneNumber,
+    workEmail,
+    personalEmail,
+    citizenId,
+    bankAccount,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TeacherFt &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.university == this.university &&
+          other.falcuty == this.falcuty &&
+          other.specialization == this.specialization &&
+          other.phoneNumber == this.phoneNumber &&
+          other.workEmail == this.workEmail &&
+          other.personalEmail == this.personalEmail &&
+          other.citizenId == this.citizenId &&
+          other.bankAccount == this.bankAccount);
+}
+
+class TeacherFtsCompanion extends UpdateCompanion<TeacherFt> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String> university;
+  final Value<String> falcuty;
+  final Value<String> specialization;
+  final Value<String> phoneNumber;
+  final Value<String> workEmail;
+  final Value<String> personalEmail;
+  final Value<String> citizenId;
+  final Value<String> bankAccount;
+  final Value<int> rowid;
+  const TeacherFtsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.university = const Value.absent(),
+    this.falcuty = const Value.absent(),
+    this.specialization = const Value.absent(),
+    this.phoneNumber = const Value.absent(),
+    this.workEmail = const Value.absent(),
+    this.personalEmail = const Value.absent(),
+    this.citizenId = const Value.absent(),
+    this.bankAccount = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TeacherFtsCompanion.insert({
+    required String id,
+    required String name,
+    required String university,
+    required String falcuty,
+    required String specialization,
+    required String phoneNumber,
+    required String workEmail,
+    required String personalEmail,
+    required String citizenId,
+    required String bankAccount,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       name = Value(name),
+       university = Value(university),
+       falcuty = Value(falcuty),
+       specialization = Value(specialization),
+       phoneNumber = Value(phoneNumber),
+       workEmail = Value(workEmail),
+       personalEmail = Value(personalEmail),
+       citizenId = Value(citizenId),
+       bankAccount = Value(bankAccount);
+  static Insertable<TeacherFt> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? university,
+    Expression<String>? falcuty,
+    Expression<String>? specialization,
+    Expression<String>? phoneNumber,
+    Expression<String>? workEmail,
+    Expression<String>? personalEmail,
+    Expression<String>? citizenId,
+    Expression<String>? bankAccount,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (university != null) 'university': university,
+      if (falcuty != null) 'falcuty': falcuty,
+      if (specialization != null) 'specialization': specialization,
+      if (phoneNumber != null) 'phone_number': phoneNumber,
+      if (workEmail != null) 'work_email': workEmail,
+      if (personalEmail != null) 'personal_email': personalEmail,
+      if (citizenId != null) 'citizen_id': citizenId,
+      if (bankAccount != null) 'bank_account': bankAccount,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TeacherFtsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? name,
+    Value<String>? university,
+    Value<String>? falcuty,
+    Value<String>? specialization,
+    Value<String>? phoneNumber,
+    Value<String>? workEmail,
+    Value<String>? personalEmail,
+    Value<String>? citizenId,
+    Value<String>? bankAccount,
+    Value<int>? rowid,
+  }) {
+    return TeacherFtsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      university: university ?? this.university,
+      falcuty: falcuty ?? this.falcuty,
+      specialization: specialization ?? this.specialization,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      workEmail: workEmail ?? this.workEmail,
+      personalEmail: personalEmail ?? this.personalEmail,
+      citizenId: citizenId ?? this.citizenId,
+      bankAccount: bankAccount ?? this.bankAccount,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (university.present) {
+      map['university'] = Variable<String>(university.value);
+    }
+    if (falcuty.present) {
+      map['falcuty'] = Variable<String>(falcuty.value);
+    }
+    if (specialization.present) {
+      map['specialization'] = Variable<String>(specialization.value);
+    }
+    if (phoneNumber.present) {
+      map['phone_number'] = Variable<String>(phoneNumber.value);
+    }
+    if (workEmail.present) {
+      map['work_email'] = Variable<String>(workEmail.value);
+    }
+    if (personalEmail.present) {
+      map['personal_email'] = Variable<String>(personalEmail.value);
+    }
+    if (citizenId.present) {
+      map['citizen_id'] = Variable<String>(citizenId.value);
+    }
+    if (bankAccount.present) {
+      map['bank_account'] = Variable<String>(bankAccount.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TeacherFtsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('university: $university, ')
+          ..write('falcuty: $falcuty, ')
+          ..write('specialization: $specialization, ')
+          ..write('phoneNumber: $phoneNumber, ')
+          ..write('workEmail: $workEmail, ')
+          ..write('personalEmail: $personalEmail, ')
+          ..write('citizenId: $citizenId, ')
+          ..write('bankAccount: $bankAccount, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class TeacherGroup extends Table
     with TableInfo<TeacherGroup, TeacherGroupData> {
   @override
@@ -1400,4097 +2036,6 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
           ..write('deprecatedTaxCode: $deprecatedTaxCode, ')
           ..write('note: $note, ')
           ..write('teacherGroupId: $teacherGroupId')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class AdmissionCouncil extends Table
-    with TableInfo<AdmissionCouncil, AdmissionCouncilData> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  AdmissionCouncil(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-    'id',
-    aliasedName,
-    false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    $customConstraints: 'PRIMARY KEY AUTOINCREMENT',
-  );
-  static const VerificationMeta _yearMeta = const VerificationMeta('year');
-  late final GeneratedColumn<String> year = GeneratedColumn<String>(
-    'year',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL',
-  );
-  static const VerificationMeta _presidentIdMeta = const VerificationMeta(
-    'presidentId',
-  );
-  late final GeneratedColumn<int> presidentId = GeneratedColumn<int>(
-    'president_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL REFERENCES teacher(id)',
-  );
-  static const VerificationMeta _secretaryIdMeta = const VerificationMeta(
-    'secretaryId',
-  );
-  late final GeneratedColumn<int> secretaryId = GeneratedColumn<int>(
-    'secretary_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL REFERENCES teacher(id)',
-  );
-  static const VerificationMeta _member1IdMeta = const VerificationMeta(
-    'member1Id',
-  );
-  late final GeneratedColumn<int> member1Id = GeneratedColumn<int>(
-    'member_1_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL REFERENCES teacher(id)',
-  );
-  static const VerificationMeta _member2IdMeta = const VerificationMeta(
-    'member2Id',
-  );
-  late final GeneratedColumn<int> member2Id = GeneratedColumn<int>(
-    'member_2_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL REFERENCES teacher(id)',
-  );
-  static const VerificationMeta _member3IdMeta = const VerificationMeta(
-    'member3Id',
-  );
-  late final GeneratedColumn<int> member3Id = GeneratedColumn<int>(
-    'member_3_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL REFERENCES teacher(id)',
-  );
-  static const VerificationMeta _establishmentDecisionIdMeta =
-      const VerificationMeta('establishmentDecisionId');
-  late final GeneratedColumn<String> establishmentDecisionId =
-      GeneratedColumn<String>(
-        'establishment_decision_id',
-        aliasedName,
-        false,
-        type: DriftSqlType.string,
-        requiredDuringInsert: true,
-        $customConstraints: 'NOT NULL',
-      );
-  static const VerificationMeta _establishmentDecisionDateMeta =
-      const VerificationMeta('establishmentDecisionDate');
-  late final GeneratedColumn<DateTime> establishmentDecisionDate =
-      GeneratedColumn<DateTime>(
-        'establishment_decision_date',
-        aliasedName,
-        false,
-        type: DriftSqlType.dateTime,
-        requiredDuringInsert: true,
-        $customConstraints: 'NOT NULL',
-      );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    year,
-    presidentId,
-    secretaryId,
-    member1Id,
-    member2Id,
-    member3Id,
-    establishmentDecisionId,
-    establishmentDecisionDate,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'admission_council';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<AdmissionCouncilData> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('year')) {
-      context.handle(
-        _yearMeta,
-        year.isAcceptableOrUnknown(data['year']!, _yearMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_yearMeta);
-    }
-    if (data.containsKey('president_id')) {
-      context.handle(
-        _presidentIdMeta,
-        presidentId.isAcceptableOrUnknown(
-          data['president_id']!,
-          _presidentIdMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_presidentIdMeta);
-    }
-    if (data.containsKey('secretary_id')) {
-      context.handle(
-        _secretaryIdMeta,
-        secretaryId.isAcceptableOrUnknown(
-          data['secretary_id']!,
-          _secretaryIdMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_secretaryIdMeta);
-    }
-    if (data.containsKey('member_1_id')) {
-      context.handle(
-        _member1IdMeta,
-        member1Id.isAcceptableOrUnknown(data['member_1_id']!, _member1IdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_member1IdMeta);
-    }
-    if (data.containsKey('member_2_id')) {
-      context.handle(
-        _member2IdMeta,
-        member2Id.isAcceptableOrUnknown(data['member_2_id']!, _member2IdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_member2IdMeta);
-    }
-    if (data.containsKey('member_3_id')) {
-      context.handle(
-        _member3IdMeta,
-        member3Id.isAcceptableOrUnknown(data['member_3_id']!, _member3IdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_member3IdMeta);
-    }
-    if (data.containsKey('establishment_decision_id')) {
-      context.handle(
-        _establishmentDecisionIdMeta,
-        establishmentDecisionId.isAcceptableOrUnknown(
-          data['establishment_decision_id']!,
-          _establishmentDecisionIdMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_establishmentDecisionIdMeta);
-    }
-    if (data.containsKey('establishment_decision_date')) {
-      context.handle(
-        _establishmentDecisionDateMeta,
-        establishmentDecisionDate.isAcceptableOrUnknown(
-          data['establishment_decision_date']!,
-          _establishmentDecisionDateMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_establishmentDecisionDateMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  AdmissionCouncilData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return AdmissionCouncilData(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
-      year: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}year'],
-      )!,
-      presidentId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}president_id'],
-      )!,
-      secretaryId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}secretary_id'],
-      )!,
-      member1Id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}member_1_id'],
-      )!,
-      member2Id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}member_2_id'],
-      )!,
-      member3Id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}member_3_id'],
-      )!,
-      establishmentDecisionId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}establishment_decision_id'],
-      )!,
-      establishmentDecisionDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}establishment_decision_date'],
-      )!,
-    );
-  }
-
-  @override
-  AdmissionCouncil createAlias(String alias) {
-    return AdmissionCouncil(attachedDatabase, alias);
-  }
-
-  @override
-  bool get dontWriteConstraints => true;
-}
-
-class AdmissionCouncilData extends DataClass
-    implements Insertable<AdmissionCouncilData> {
-  final int id;
-  final String year;
-  final int presidentId;
-  final int secretaryId;
-  final int member1Id;
-  final int member2Id;
-  final int member3Id;
-  final String establishmentDecisionId;
-  final DateTime establishmentDecisionDate;
-  const AdmissionCouncilData({
-    required this.id,
-    required this.year,
-    required this.presidentId,
-    required this.secretaryId,
-    required this.member1Id,
-    required this.member2Id,
-    required this.member3Id,
-    required this.establishmentDecisionId,
-    required this.establishmentDecisionDate,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['year'] = Variable<String>(year);
-    map['president_id'] = Variable<int>(presidentId);
-    map['secretary_id'] = Variable<int>(secretaryId);
-    map['member_1_id'] = Variable<int>(member1Id);
-    map['member_2_id'] = Variable<int>(member2Id);
-    map['member_3_id'] = Variable<int>(member3Id);
-    map['establishment_decision_id'] = Variable<String>(
-      establishmentDecisionId,
-    );
-    map['establishment_decision_date'] = Variable<DateTime>(
-      establishmentDecisionDate,
-    );
-    return map;
-  }
-
-  AdmissionCouncilCompanion toCompanion(bool nullToAbsent) {
-    return AdmissionCouncilCompanion(
-      id: Value(id),
-      year: Value(year),
-      presidentId: Value(presidentId),
-      secretaryId: Value(secretaryId),
-      member1Id: Value(member1Id),
-      member2Id: Value(member2Id),
-      member3Id: Value(member3Id),
-      establishmentDecisionId: Value(establishmentDecisionId),
-      establishmentDecisionDate: Value(establishmentDecisionDate),
-    );
-  }
-
-  factory AdmissionCouncilData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return AdmissionCouncilData(
-      id: serializer.fromJson<int>(json['id']),
-      year: serializer.fromJson<String>(json['year']),
-      presidentId: serializer.fromJson<int>(json['president_id']),
-      secretaryId: serializer.fromJson<int>(json['secretary_id']),
-      member1Id: serializer.fromJson<int>(json['member_1_id']),
-      member2Id: serializer.fromJson<int>(json['member_2_id']),
-      member3Id: serializer.fromJson<int>(json['member_3_id']),
-      establishmentDecisionId: serializer.fromJson<String>(
-        json['establishment_decision_id'],
-      ),
-      establishmentDecisionDate: serializer.fromJson<DateTime>(
-        json['establishment_decision_date'],
-      ),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'year': serializer.toJson<String>(year),
-      'president_id': serializer.toJson<int>(presidentId),
-      'secretary_id': serializer.toJson<int>(secretaryId),
-      'member_1_id': serializer.toJson<int>(member1Id),
-      'member_2_id': serializer.toJson<int>(member2Id),
-      'member_3_id': serializer.toJson<int>(member3Id),
-      'establishment_decision_id': serializer.toJson<String>(
-        establishmentDecisionId,
-      ),
-      'establishment_decision_date': serializer.toJson<DateTime>(
-        establishmentDecisionDate,
-      ),
-    };
-  }
-
-  AdmissionCouncilData copyWith({
-    int? id,
-    String? year,
-    int? presidentId,
-    int? secretaryId,
-    int? member1Id,
-    int? member2Id,
-    int? member3Id,
-    String? establishmentDecisionId,
-    DateTime? establishmentDecisionDate,
-  }) => AdmissionCouncilData(
-    id: id ?? this.id,
-    year: year ?? this.year,
-    presidentId: presidentId ?? this.presidentId,
-    secretaryId: secretaryId ?? this.secretaryId,
-    member1Id: member1Id ?? this.member1Id,
-    member2Id: member2Id ?? this.member2Id,
-    member3Id: member3Id ?? this.member3Id,
-    establishmentDecisionId:
-        establishmentDecisionId ?? this.establishmentDecisionId,
-    establishmentDecisionDate:
-        establishmentDecisionDate ?? this.establishmentDecisionDate,
-  );
-  AdmissionCouncilData copyWithCompanion(AdmissionCouncilCompanion data) {
-    return AdmissionCouncilData(
-      id: data.id.present ? data.id.value : this.id,
-      year: data.year.present ? data.year.value : this.year,
-      presidentId: data.presidentId.present
-          ? data.presidentId.value
-          : this.presidentId,
-      secretaryId: data.secretaryId.present
-          ? data.secretaryId.value
-          : this.secretaryId,
-      member1Id: data.member1Id.present ? data.member1Id.value : this.member1Id,
-      member2Id: data.member2Id.present ? data.member2Id.value : this.member2Id,
-      member3Id: data.member3Id.present ? data.member3Id.value : this.member3Id,
-      establishmentDecisionId: data.establishmentDecisionId.present
-          ? data.establishmentDecisionId.value
-          : this.establishmentDecisionId,
-      establishmentDecisionDate: data.establishmentDecisionDate.present
-          ? data.establishmentDecisionDate.value
-          : this.establishmentDecisionDate,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('AdmissionCouncilData(')
-          ..write('id: $id, ')
-          ..write('year: $year, ')
-          ..write('presidentId: $presidentId, ')
-          ..write('secretaryId: $secretaryId, ')
-          ..write('member1Id: $member1Id, ')
-          ..write('member2Id: $member2Id, ')
-          ..write('member3Id: $member3Id, ')
-          ..write('establishmentDecisionId: $establishmentDecisionId, ')
-          ..write('establishmentDecisionDate: $establishmentDecisionDate')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    id,
-    year,
-    presidentId,
-    secretaryId,
-    member1Id,
-    member2Id,
-    member3Id,
-    establishmentDecisionId,
-    establishmentDecisionDate,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is AdmissionCouncilData &&
-          other.id == this.id &&
-          other.year == this.year &&
-          other.presidentId == this.presidentId &&
-          other.secretaryId == this.secretaryId &&
-          other.member1Id == this.member1Id &&
-          other.member2Id == this.member2Id &&
-          other.member3Id == this.member3Id &&
-          other.establishmentDecisionId == this.establishmentDecisionId &&
-          other.establishmentDecisionDate == this.establishmentDecisionDate);
-}
-
-class AdmissionCouncilCompanion extends UpdateCompanion<AdmissionCouncilData> {
-  final Value<int> id;
-  final Value<String> year;
-  final Value<int> presidentId;
-  final Value<int> secretaryId;
-  final Value<int> member1Id;
-  final Value<int> member2Id;
-  final Value<int> member3Id;
-  final Value<String> establishmentDecisionId;
-  final Value<DateTime> establishmentDecisionDate;
-  const AdmissionCouncilCompanion({
-    this.id = const Value.absent(),
-    this.year = const Value.absent(),
-    this.presidentId = const Value.absent(),
-    this.secretaryId = const Value.absent(),
-    this.member1Id = const Value.absent(),
-    this.member2Id = const Value.absent(),
-    this.member3Id = const Value.absent(),
-    this.establishmentDecisionId = const Value.absent(),
-    this.establishmentDecisionDate = const Value.absent(),
-  });
-  AdmissionCouncilCompanion.insert({
-    this.id = const Value.absent(),
-    required String year,
-    required int presidentId,
-    required int secretaryId,
-    required int member1Id,
-    required int member2Id,
-    required int member3Id,
-    required String establishmentDecisionId,
-    required DateTime establishmentDecisionDate,
-  }) : year = Value(year),
-       presidentId = Value(presidentId),
-       secretaryId = Value(secretaryId),
-       member1Id = Value(member1Id),
-       member2Id = Value(member2Id),
-       member3Id = Value(member3Id),
-       establishmentDecisionId = Value(establishmentDecisionId),
-       establishmentDecisionDate = Value(establishmentDecisionDate);
-  static Insertable<AdmissionCouncilData> custom({
-    Expression<int>? id,
-    Expression<String>? year,
-    Expression<int>? presidentId,
-    Expression<int>? secretaryId,
-    Expression<int>? member1Id,
-    Expression<int>? member2Id,
-    Expression<int>? member3Id,
-    Expression<String>? establishmentDecisionId,
-    Expression<DateTime>? establishmentDecisionDate,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (year != null) 'year': year,
-      if (presidentId != null) 'president_id': presidentId,
-      if (secretaryId != null) 'secretary_id': secretaryId,
-      if (member1Id != null) 'member_1_id': member1Id,
-      if (member2Id != null) 'member_2_id': member2Id,
-      if (member3Id != null) 'member_3_id': member3Id,
-      if (establishmentDecisionId != null)
-        'establishment_decision_id': establishmentDecisionId,
-      if (establishmentDecisionDate != null)
-        'establishment_decision_date': establishmentDecisionDate,
-    });
-  }
-
-  AdmissionCouncilCompanion copyWith({
-    Value<int>? id,
-    Value<String>? year,
-    Value<int>? presidentId,
-    Value<int>? secretaryId,
-    Value<int>? member1Id,
-    Value<int>? member2Id,
-    Value<int>? member3Id,
-    Value<String>? establishmentDecisionId,
-    Value<DateTime>? establishmentDecisionDate,
-  }) {
-    return AdmissionCouncilCompanion(
-      id: id ?? this.id,
-      year: year ?? this.year,
-      presidentId: presidentId ?? this.presidentId,
-      secretaryId: secretaryId ?? this.secretaryId,
-      member1Id: member1Id ?? this.member1Id,
-      member2Id: member2Id ?? this.member2Id,
-      member3Id: member3Id ?? this.member3Id,
-      establishmentDecisionId:
-          establishmentDecisionId ?? this.establishmentDecisionId,
-      establishmentDecisionDate:
-          establishmentDecisionDate ?? this.establishmentDecisionDate,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (year.present) {
-      map['year'] = Variable<String>(year.value);
-    }
-    if (presidentId.present) {
-      map['president_id'] = Variable<int>(presidentId.value);
-    }
-    if (secretaryId.present) {
-      map['secretary_id'] = Variable<int>(secretaryId.value);
-    }
-    if (member1Id.present) {
-      map['member_1_id'] = Variable<int>(member1Id.value);
-    }
-    if (member2Id.present) {
-      map['member_2_id'] = Variable<int>(member2Id.value);
-    }
-    if (member3Id.present) {
-      map['member_3_id'] = Variable<int>(member3Id.value);
-    }
-    if (establishmentDecisionId.present) {
-      map['establishment_decision_id'] = Variable<String>(
-        establishmentDecisionId.value,
-      );
-    }
-    if (establishmentDecisionDate.present) {
-      map['establishment_decision_date'] = Variable<DateTime>(
-        establishmentDecisionDate.value,
-      );
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('AdmissionCouncilCompanion(')
-          ..write('id: $id, ')
-          ..write('year: $year, ')
-          ..write('presidentId: $presidentId, ')
-          ..write('secretaryId: $secretaryId, ')
-          ..write('member1Id: $member1Id, ')
-          ..write('member2Id: $member2Id, ')
-          ..write('member3Id: $member3Id, ')
-          ..write('establishmentDecisionId: $establishmentDecisionId, ')
-          ..write('establishmentDecisionDate: $establishmentDecisionDate')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class Cohort extends Table with TableInfo<Cohort, CohortData> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  Cohort(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-    'id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL PRIMARY KEY',
-  );
-  static const VerificationMeta _groupUrlMeta = const VerificationMeta(
-    'groupUrl',
-  );
-  late final GeneratedColumn<String> groupUrl = GeneratedColumn<String>(
-    'group_url',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT ()',
-    defaultValue: const CustomExpression(''),
-  );
-  @override
-  List<GeneratedColumn> get $columns => [id, groupUrl];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'cohort';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<CohortData> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('group_url')) {
-      context.handle(
-        _groupUrlMeta,
-        groupUrl.isAcceptableOrUnknown(data['group_url']!, _groupUrlMeta),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  CohortData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return CohortData(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}id'],
-      )!,
-      groupUrl: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}group_url'],
-      )!,
-    );
-  }
-
-  @override
-  Cohort createAlias(String alias) {
-    return Cohort(attachedDatabase, alias);
-  }
-
-  @override
-  bool get dontWriteConstraints => true;
-}
-
-class CohortData extends DataClass implements Insertable<CohortData> {
-  final String id;
-  final String groupUrl;
-  const CohortData({required this.id, required this.groupUrl});
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['group_url'] = Variable<String>(groupUrl);
-    return map;
-  }
-
-  CohortCompanion toCompanion(bool nullToAbsent) {
-    return CohortCompanion(id: Value(id), groupUrl: Value(groupUrl));
-  }
-
-  factory CohortData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return CohortData(
-      id: serializer.fromJson<String>(json['id']),
-      groupUrl: serializer.fromJson<String>(json['group_url']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'group_url': serializer.toJson<String>(groupUrl),
-    };
-  }
-
-  CohortData copyWith({String? id, String? groupUrl}) =>
-      CohortData(id: id ?? this.id, groupUrl: groupUrl ?? this.groupUrl);
-  CohortData copyWithCompanion(CohortCompanion data) {
-    return CohortData(
-      id: data.id.present ? data.id.value : this.id,
-      groupUrl: data.groupUrl.present ? data.groupUrl.value : this.groupUrl,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('CohortData(')
-          ..write('id: $id, ')
-          ..write('groupUrl: $groupUrl')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(id, groupUrl);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is CohortData &&
-          other.id == this.id &&
-          other.groupUrl == this.groupUrl);
-}
-
-class CohortCompanion extends UpdateCompanion<CohortData> {
-  final Value<String> id;
-  final Value<String> groupUrl;
-  final Value<int> rowid;
-  const CohortCompanion({
-    this.id = const Value.absent(),
-    this.groupUrl = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  CohortCompanion.insert({
-    required String id,
-    this.groupUrl = const Value.absent(),
-    this.rowid = const Value.absent(),
-  }) : id = Value(id);
-  static Insertable<CohortData> custom({
-    Expression<String>? id,
-    Expression<String>? groupUrl,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (groupUrl != null) 'group_url': groupUrl,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  CohortCompanion copyWith({
-    Value<String>? id,
-    Value<String>? groupUrl,
-    Value<int>? rowid,
-  }) {
-    return CohortCompanion(
-      id: id ?? this.id,
-      groupUrl: groupUrl ?? this.groupUrl,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (groupUrl.present) {
-      map['group_url'] = Variable<String>(groupUrl.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('CohortCompanion(')
-          ..write('id: $id, ')
-          ..write('groupUrl: $groupUrl, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class Student extends Table with TableInfo<Student, StudentData> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  Student(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-    'id',
-    aliasedName,
-    false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    $customConstraints: 'PRIMARY KEY AUTOINCREMENT',
-  );
-  static const VerificationMeta _admissionIdMeta = const VerificationMeta(
-    'admissionId',
-  );
-  late final GeneratedColumn<String> admissionId = GeneratedColumn<String>(
-    'soHoSo',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _cohortMeta = const VerificationMeta('cohort');
-  late final GeneratedColumn<String> cohort = GeneratedColumn<String>(
-    'nienKhoa',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _studentIdMeta = const VerificationMeta(
-    'studentId',
-  );
-  late final GeneratedColumn<String> studentId = GeneratedColumn<String>(
-    'maHocVien',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _nameMeta = const VerificationMeta('name');
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-    'hoTen',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL',
-  );
-  static const VerificationMeta _dateOfBirthMeta = const VerificationMeta(
-    'dateOfBirth',
-  );
-  late final GeneratedColumn<DateTime> dateOfBirth = GeneratedColumn<DateTime>(
-    'ngaySinh',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  late final GeneratedColumnWithTypeConverter<enums.Gender?, String> gender =
-      GeneratedColumn<String>(
-        'gioiTinh',
-        aliasedName,
-        true,
-        type: DriftSqlType.string,
-        requiredDuringInsert: false,
-        $customConstraints: '',
-      ).withConverter<enums.Gender?>(Student.$convertergendern);
-  static const VerificationMeta _placeOfBirthMeta = const VerificationMeta(
-    'placeOfBirth',
-  );
-  late final GeneratedColumn<String> placeOfBirth = GeneratedColumn<String>(
-    'noiSinh',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
-  late final GeneratedColumn<String> phone = GeneratedColumn<String>(
-    'dienThoai',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _personalEmailMeta = const VerificationMeta(
-    'personalEmail',
-  );
-  late final GeneratedColumn<String> personalEmail = GeneratedColumn<String>(
-    'email',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _schoolEmailMeta = const VerificationMeta(
-    'schoolEmail',
-  );
-  late final GeneratedColumn<String> schoolEmail = GeneratedColumn<String>(
-    'emailHust',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _bachelorUniversityMeta =
-      const VerificationMeta('bachelorUniversity');
-  late final GeneratedColumn<String> bachelorUniversity =
-      GeneratedColumn<String>(
-        'truongTotNghiepDaiHoc',
-        aliasedName,
-        true,
-        type: DriftSqlType.string,
-        requiredDuringInsert: false,
-        $customConstraints: '',
-      );
-  static const VerificationMeta _bachelorMajorMeta = const VerificationMeta(
-    'bachelorMajor',
-  );
-  late final GeneratedColumn<String> bachelorMajor = GeneratedColumn<String>(
-    'nganhTotNghiepDaiHoc',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _bachelorProgramMeta = const VerificationMeta(
-    'bachelorProgram',
-  );
-  late final GeneratedColumn<String> bachelorProgram = GeneratedColumn<String>(
-    'heTotNghiepDaiHoc',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _bachelorGraduationRankMeta =
-      const VerificationMeta('bachelorGraduationRank');
-  late final GeneratedColumn<String> bachelorGraduationRank =
-      GeneratedColumn<String>(
-        'xepLoaiTotNghiepDaiHoc',
-        aliasedName,
-        true,
-        type: DriftSqlType.string,
-        requiredDuringInsert: false,
-        $customConstraints: '',
-      );
-  static const VerificationMeta _bachelorGraduationDateMeta =
-      const VerificationMeta('bachelorGraduationDate');
-  late final GeneratedColumn<DateTime> bachelorGraduationDate =
-      GeneratedColumn<DateTime>(
-        'ngayTotNghiepDaiHoc',
-        aliasedName,
-        true,
-        type: DriftSqlType.dateTime,
-        requiredDuringInsert: false,
-        $customConstraints: '',
-      );
-  static const VerificationMeta _intendedSpecializationMeta =
-      const VerificationMeta('intendedSpecialization');
-  late final GeneratedColumn<String> intendedSpecialization =
-      GeneratedColumn<String>(
-        'dinhHuongChuyenSau',
-        aliasedName,
-        true,
-        type: DriftSqlType.string,
-        requiredDuringInsert: false,
-        $customConstraints: '',
-      );
-  static const VerificationMeta _exemptedCoursesMeta = const VerificationMeta(
-    'exemptedCourses',
-  );
-  late final GeneratedColumn<String> exemptedCourses = GeneratedColumn<String>(
-    'hocPhanDuocMien',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _masterMajorMeta = const VerificationMeta(
-    'masterMajor',
-  );
-  late final GeneratedColumn<String> masterMajor = GeneratedColumn<String>(
-    'nganhDaoTaoThacSi',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  late final GeneratedColumnWithTypeConverter<enums.StudentStatus?, String>
-  status = GeneratedColumn<String>(
-    'maTrangThai',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  ).withConverter<enums.StudentStatus?>(Student.$converterstatusn);
-  static const VerificationMeta _hasHirstExtensionMeta = const VerificationMeta(
-    'hasHirstExtension',
-  );
-  late final GeneratedColumn<bool> hasHirstExtension = GeneratedColumn<bool>(
-    'flag_extend_1',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT FALSE',
-    defaultValue: const CustomExpression('FALSE'),
-  );
-  static const VerificationMeta _hasSecondExtensionMeta =
-      const VerificationMeta('hasSecondExtension');
-  late final GeneratedColumn<bool> hasSecondExtension = GeneratedColumn<bool>(
-    'flag_extend_2',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT FALSE',
-    defaultValue: const CustomExpression('FALSE'),
-  );
-  static const VerificationMeta _admissionCouncilIdMeta =
-      const VerificationMeta('admissionCouncilId');
-  late final GeneratedColumn<int> admissionCouncilId = GeneratedColumn<int>(
-    'idTieuBanXetTuyen',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  late final GeneratedColumnWithTypeConverter<enums.AdmissionType?, String>
-  admissionType = GeneratedColumn<String>(
-    'idDienTuyenSinh',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  ).withConverter<enums.AdmissionType?>(Student.$converteradmissionTypen);
-  static const VerificationMeta _isAdmissionPaidMeta = const VerificationMeta(
-    'isAdmissionPaid',
-  );
-  late final GeneratedColumn<bool> isAdmissionPaid = GeneratedColumn<bool>(
-    'thanhToanXetTuyen',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT FALSE',
-    defaultValue: const CustomExpression('FALSE'),
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    admissionId,
-    cohort,
-    studentId,
-    name,
-    dateOfBirth,
-    gender,
-    placeOfBirth,
-    phone,
-    personalEmail,
-    schoolEmail,
-    bachelorUniversity,
-    bachelorMajor,
-    bachelorProgram,
-    bachelorGraduationRank,
-    bachelorGraduationDate,
-    intendedSpecialization,
-    exemptedCourses,
-    masterMajor,
-    status,
-    hasHirstExtension,
-    hasSecondExtension,
-    admissionCouncilId,
-    admissionType,
-    isAdmissionPaid,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'student';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<StudentData> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('soHoSo')) {
-      context.handle(
-        _admissionIdMeta,
-        admissionId.isAcceptableOrUnknown(data['soHoSo']!, _admissionIdMeta),
-      );
-    }
-    if (data.containsKey('nienKhoa')) {
-      context.handle(
-        _cohortMeta,
-        cohort.isAcceptableOrUnknown(data['nienKhoa']!, _cohortMeta),
-      );
-    }
-    if (data.containsKey('maHocVien')) {
-      context.handle(
-        _studentIdMeta,
-        studentId.isAcceptableOrUnknown(data['maHocVien']!, _studentIdMeta),
-      );
-    }
-    if (data.containsKey('hoTen')) {
-      context.handle(
-        _nameMeta,
-        name.isAcceptableOrUnknown(data['hoTen']!, _nameMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_nameMeta);
-    }
-    if (data.containsKey('ngaySinh')) {
-      context.handle(
-        _dateOfBirthMeta,
-        dateOfBirth.isAcceptableOrUnknown(data['ngaySinh']!, _dateOfBirthMeta),
-      );
-    }
-    if (data.containsKey('noiSinh')) {
-      context.handle(
-        _placeOfBirthMeta,
-        placeOfBirth.isAcceptableOrUnknown(data['noiSinh']!, _placeOfBirthMeta),
-      );
-    }
-    if (data.containsKey('dienThoai')) {
-      context.handle(
-        _phoneMeta,
-        phone.isAcceptableOrUnknown(data['dienThoai']!, _phoneMeta),
-      );
-    }
-    if (data.containsKey('email')) {
-      context.handle(
-        _personalEmailMeta,
-        personalEmail.isAcceptableOrUnknown(data['email']!, _personalEmailMeta),
-      );
-    }
-    if (data.containsKey('emailHust')) {
-      context.handle(
-        _schoolEmailMeta,
-        schoolEmail.isAcceptableOrUnknown(data['emailHust']!, _schoolEmailMeta),
-      );
-    }
-    if (data.containsKey('truongTotNghiepDaiHoc')) {
-      context.handle(
-        _bachelorUniversityMeta,
-        bachelorUniversity.isAcceptableOrUnknown(
-          data['truongTotNghiepDaiHoc']!,
-          _bachelorUniversityMeta,
-        ),
-      );
-    }
-    if (data.containsKey('nganhTotNghiepDaiHoc')) {
-      context.handle(
-        _bachelorMajorMeta,
-        bachelorMajor.isAcceptableOrUnknown(
-          data['nganhTotNghiepDaiHoc']!,
-          _bachelorMajorMeta,
-        ),
-      );
-    }
-    if (data.containsKey('heTotNghiepDaiHoc')) {
-      context.handle(
-        _bachelorProgramMeta,
-        bachelorProgram.isAcceptableOrUnknown(
-          data['heTotNghiepDaiHoc']!,
-          _bachelorProgramMeta,
-        ),
-      );
-    }
-    if (data.containsKey('xepLoaiTotNghiepDaiHoc')) {
-      context.handle(
-        _bachelorGraduationRankMeta,
-        bachelorGraduationRank.isAcceptableOrUnknown(
-          data['xepLoaiTotNghiepDaiHoc']!,
-          _bachelorGraduationRankMeta,
-        ),
-      );
-    }
-    if (data.containsKey('ngayTotNghiepDaiHoc')) {
-      context.handle(
-        _bachelorGraduationDateMeta,
-        bachelorGraduationDate.isAcceptableOrUnknown(
-          data['ngayTotNghiepDaiHoc']!,
-          _bachelorGraduationDateMeta,
-        ),
-      );
-    }
-    if (data.containsKey('dinhHuongChuyenSau')) {
-      context.handle(
-        _intendedSpecializationMeta,
-        intendedSpecialization.isAcceptableOrUnknown(
-          data['dinhHuongChuyenSau']!,
-          _intendedSpecializationMeta,
-        ),
-      );
-    }
-    if (data.containsKey('hocPhanDuocMien')) {
-      context.handle(
-        _exemptedCoursesMeta,
-        exemptedCourses.isAcceptableOrUnknown(
-          data['hocPhanDuocMien']!,
-          _exemptedCoursesMeta,
-        ),
-      );
-    }
-    if (data.containsKey('nganhDaoTaoThacSi')) {
-      context.handle(
-        _masterMajorMeta,
-        masterMajor.isAcceptableOrUnknown(
-          data['nganhDaoTaoThacSi']!,
-          _masterMajorMeta,
-        ),
-      );
-    }
-    if (data.containsKey('flag_extend_1')) {
-      context.handle(
-        _hasHirstExtensionMeta,
-        hasHirstExtension.isAcceptableOrUnknown(
-          data['flag_extend_1']!,
-          _hasHirstExtensionMeta,
-        ),
-      );
-    }
-    if (data.containsKey('flag_extend_2')) {
-      context.handle(
-        _hasSecondExtensionMeta,
-        hasSecondExtension.isAcceptableOrUnknown(
-          data['flag_extend_2']!,
-          _hasSecondExtensionMeta,
-        ),
-      );
-    }
-    if (data.containsKey('idTieuBanXetTuyen')) {
-      context.handle(
-        _admissionCouncilIdMeta,
-        admissionCouncilId.isAcceptableOrUnknown(
-          data['idTieuBanXetTuyen']!,
-          _admissionCouncilIdMeta,
-        ),
-      );
-    }
-    if (data.containsKey('thanhToanXetTuyen')) {
-      context.handle(
-        _isAdmissionPaidMeta,
-        isAdmissionPaid.isAcceptableOrUnknown(
-          data['thanhToanXetTuyen']!,
-          _isAdmissionPaidMeta,
-        ),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  StudentData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return StudentData(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
-      admissionId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}soHoSo'],
-      ),
-      cohort: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}nienKhoa'],
-      ),
-      studentId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}maHocVien'],
-      ),
-      name: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}hoTen'],
-      )!,
-      dateOfBirth: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}ngaySinh'],
-      ),
-      gender: Student.$convertergendern.fromSql(
-        attachedDatabase.typeMapping.read(
-          DriftSqlType.string,
-          data['${effectivePrefix}gioiTinh'],
-        ),
-      ),
-      placeOfBirth: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}noiSinh'],
-      ),
-      phone: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}dienThoai'],
-      ),
-      personalEmail: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}email'],
-      ),
-      schoolEmail: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}emailHust'],
-      ),
-      bachelorUniversity: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}truongTotNghiepDaiHoc'],
-      ),
-      bachelorMajor: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}nganhTotNghiepDaiHoc'],
-      ),
-      bachelorProgram: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}heTotNghiepDaiHoc'],
-      ),
-      bachelorGraduationRank: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}xepLoaiTotNghiepDaiHoc'],
-      ),
-      bachelorGraduationDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}ngayTotNghiepDaiHoc'],
-      ),
-      intendedSpecialization: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}dinhHuongChuyenSau'],
-      ),
-      exemptedCourses: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}hocPhanDuocMien'],
-      ),
-      masterMajor: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}nganhDaoTaoThacSi'],
-      ),
-      status: Student.$converterstatusn.fromSql(
-        attachedDatabase.typeMapping.read(
-          DriftSqlType.string,
-          data['${effectivePrefix}maTrangThai'],
-        ),
-      ),
-      hasHirstExtension: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}flag_extend_1'],
-      )!,
-      hasSecondExtension: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}flag_extend_2'],
-      )!,
-      admissionCouncilId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}idTieuBanXetTuyen'],
-      ),
-      admissionType: Student.$converteradmissionTypen.fromSql(
-        attachedDatabase.typeMapping.read(
-          DriftSqlType.string,
-          data['${effectivePrefix}idDienTuyenSinh'],
-        ),
-      ),
-      isAdmissionPaid: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}thanhToanXetTuyen'],
-      )!,
-    );
-  }
-
-  @override
-  Student createAlias(String alias) {
-    return Student(attachedDatabase, alias);
-  }
-
-  static TypeConverter<enums.Gender, String> $convertergender =
-      const enums.GenderConverter();
-  static TypeConverter<enums.Gender?, String?> $convertergendern =
-      NullAwareTypeConverter.wrap($convertergender);
-  static TypeConverter<enums.StudentStatus, String> $converterstatus =
-      const enums.StudentStatusConverter();
-  static TypeConverter<enums.StudentStatus?, String?> $converterstatusn =
-      NullAwareTypeConverter.wrap($converterstatus);
-  static TypeConverter<enums.AdmissionType, String> $converteradmissionType =
-      const enums.AdmissionTypeConverter();
-  static TypeConverter<enums.AdmissionType?, String?> $converteradmissionTypen =
-      NullAwareTypeConverter.wrap($converteradmissionType);
-  @override
-  List<String> get customConstraints => const [
-    'FOREIGN KEY(idTieuBanXetTuyen)REFERENCES admission_council(id)',
-    'FOREIGN KEY(nienKhoa)REFERENCES cohort(id)ON UPDATE CASCADE',
-  ];
-  @override
-  bool get dontWriteConstraints => true;
-}
-
-class StudentData extends DataClass implements Insertable<StudentData> {
-  final int id;
-  final String? admissionId;
-  final String? cohort;
-  final String? studentId;
-  final String name;
-  final DateTime? dateOfBirth;
-  final enums.Gender? gender;
-  final String? placeOfBirth;
-  final String? phone;
-  final String? personalEmail;
-  final String? schoolEmail;
-  final String? bachelorUniversity;
-  final String? bachelorMajor;
-  final String? bachelorProgram;
-  final String? bachelorGraduationRank;
-  final DateTime? bachelorGraduationDate;
-  final String? intendedSpecialization;
-  final String? exemptedCourses;
-  final String? masterMajor;
-  final enums.StudentStatus? status;
-  final bool hasHirstExtension;
-  final bool hasSecondExtension;
-  final int? admissionCouncilId;
-  final enums.AdmissionType? admissionType;
-  final bool isAdmissionPaid;
-  const StudentData({
-    required this.id,
-    this.admissionId,
-    this.cohort,
-    this.studentId,
-    required this.name,
-    this.dateOfBirth,
-    this.gender,
-    this.placeOfBirth,
-    this.phone,
-    this.personalEmail,
-    this.schoolEmail,
-    this.bachelorUniversity,
-    this.bachelorMajor,
-    this.bachelorProgram,
-    this.bachelorGraduationRank,
-    this.bachelorGraduationDate,
-    this.intendedSpecialization,
-    this.exemptedCourses,
-    this.masterMajor,
-    this.status,
-    required this.hasHirstExtension,
-    required this.hasSecondExtension,
-    this.admissionCouncilId,
-    this.admissionType,
-    required this.isAdmissionPaid,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    if (!nullToAbsent || admissionId != null) {
-      map['soHoSo'] = Variable<String>(admissionId);
-    }
-    if (!nullToAbsent || cohort != null) {
-      map['nienKhoa'] = Variable<String>(cohort);
-    }
-    if (!nullToAbsent || studentId != null) {
-      map['maHocVien'] = Variable<String>(studentId);
-    }
-    map['hoTen'] = Variable<String>(name);
-    if (!nullToAbsent || dateOfBirth != null) {
-      map['ngaySinh'] = Variable<DateTime>(dateOfBirth);
-    }
-    if (!nullToAbsent || gender != null) {
-      map['gioiTinh'] = Variable<String>(
-        Student.$convertergendern.toSql(gender),
-      );
-    }
-    if (!nullToAbsent || placeOfBirth != null) {
-      map['noiSinh'] = Variable<String>(placeOfBirth);
-    }
-    if (!nullToAbsent || phone != null) {
-      map['dienThoai'] = Variable<String>(phone);
-    }
-    if (!nullToAbsent || personalEmail != null) {
-      map['email'] = Variable<String>(personalEmail);
-    }
-    if (!nullToAbsent || schoolEmail != null) {
-      map['emailHust'] = Variable<String>(schoolEmail);
-    }
-    if (!nullToAbsent || bachelorUniversity != null) {
-      map['truongTotNghiepDaiHoc'] = Variable<String>(bachelorUniversity);
-    }
-    if (!nullToAbsent || bachelorMajor != null) {
-      map['nganhTotNghiepDaiHoc'] = Variable<String>(bachelorMajor);
-    }
-    if (!nullToAbsent || bachelorProgram != null) {
-      map['heTotNghiepDaiHoc'] = Variable<String>(bachelorProgram);
-    }
-    if (!nullToAbsent || bachelorGraduationRank != null) {
-      map['xepLoaiTotNghiepDaiHoc'] = Variable<String>(bachelorGraduationRank);
-    }
-    if (!nullToAbsent || bachelorGraduationDate != null) {
-      map['ngayTotNghiepDaiHoc'] = Variable<DateTime>(bachelorGraduationDate);
-    }
-    if (!nullToAbsent || intendedSpecialization != null) {
-      map['dinhHuongChuyenSau'] = Variable<String>(intendedSpecialization);
-    }
-    if (!nullToAbsent || exemptedCourses != null) {
-      map['hocPhanDuocMien'] = Variable<String>(exemptedCourses);
-    }
-    if (!nullToAbsent || masterMajor != null) {
-      map['nganhDaoTaoThacSi'] = Variable<String>(masterMajor);
-    }
-    if (!nullToAbsent || status != null) {
-      map['maTrangThai'] = Variable<String>(
-        Student.$converterstatusn.toSql(status),
-      );
-    }
-    map['flag_extend_1'] = Variable<bool>(hasHirstExtension);
-    map['flag_extend_2'] = Variable<bool>(hasSecondExtension);
-    if (!nullToAbsent || admissionCouncilId != null) {
-      map['idTieuBanXetTuyen'] = Variable<int>(admissionCouncilId);
-    }
-    if (!nullToAbsent || admissionType != null) {
-      map['idDienTuyenSinh'] = Variable<String>(
-        Student.$converteradmissionTypen.toSql(admissionType),
-      );
-    }
-    map['thanhToanXetTuyen'] = Variable<bool>(isAdmissionPaid);
-    return map;
-  }
-
-  StudentCompanion toCompanion(bool nullToAbsent) {
-    return StudentCompanion(
-      id: Value(id),
-      admissionId: admissionId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(admissionId),
-      cohort: cohort == null && nullToAbsent
-          ? const Value.absent()
-          : Value(cohort),
-      studentId: studentId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(studentId),
-      name: Value(name),
-      dateOfBirth: dateOfBirth == null && nullToAbsent
-          ? const Value.absent()
-          : Value(dateOfBirth),
-      gender: gender == null && nullToAbsent
-          ? const Value.absent()
-          : Value(gender),
-      placeOfBirth: placeOfBirth == null && nullToAbsent
-          ? const Value.absent()
-          : Value(placeOfBirth),
-      phone: phone == null && nullToAbsent
-          ? const Value.absent()
-          : Value(phone),
-      personalEmail: personalEmail == null && nullToAbsent
-          ? const Value.absent()
-          : Value(personalEmail),
-      schoolEmail: schoolEmail == null && nullToAbsent
-          ? const Value.absent()
-          : Value(schoolEmail),
-      bachelorUniversity: bachelorUniversity == null && nullToAbsent
-          ? const Value.absent()
-          : Value(bachelorUniversity),
-      bachelorMajor: bachelorMajor == null && nullToAbsent
-          ? const Value.absent()
-          : Value(bachelorMajor),
-      bachelorProgram: bachelorProgram == null && nullToAbsent
-          ? const Value.absent()
-          : Value(bachelorProgram),
-      bachelorGraduationRank: bachelorGraduationRank == null && nullToAbsent
-          ? const Value.absent()
-          : Value(bachelorGraduationRank),
-      bachelorGraduationDate: bachelorGraduationDate == null && nullToAbsent
-          ? const Value.absent()
-          : Value(bachelorGraduationDate),
-      intendedSpecialization: intendedSpecialization == null && nullToAbsent
-          ? const Value.absent()
-          : Value(intendedSpecialization),
-      exemptedCourses: exemptedCourses == null && nullToAbsent
-          ? const Value.absent()
-          : Value(exemptedCourses),
-      masterMajor: masterMajor == null && nullToAbsent
-          ? const Value.absent()
-          : Value(masterMajor),
-      status: status == null && nullToAbsent
-          ? const Value.absent()
-          : Value(status),
-      hasHirstExtension: Value(hasHirstExtension),
-      hasSecondExtension: Value(hasSecondExtension),
-      admissionCouncilId: admissionCouncilId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(admissionCouncilId),
-      admissionType: admissionType == null && nullToAbsent
-          ? const Value.absent()
-          : Value(admissionType),
-      isAdmissionPaid: Value(isAdmissionPaid),
-    );
-  }
-
-  factory StudentData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return StudentData(
-      id: serializer.fromJson<int>(json['id']),
-      admissionId: serializer.fromJson<String?>(json['soHoSo']),
-      cohort: serializer.fromJson<String?>(json['nienKhoa']),
-      studentId: serializer.fromJson<String?>(json['maHocVien']),
-      name: serializer.fromJson<String>(json['hoTen']),
-      dateOfBirth: serializer.fromJson<DateTime?>(json['ngaySinh']),
-      gender: serializer.fromJson<enums.Gender?>(json['gioiTinh']),
-      placeOfBirth: serializer.fromJson<String?>(json['noiSinh']),
-      phone: serializer.fromJson<String?>(json['dienThoai']),
-      personalEmail: serializer.fromJson<String?>(json['email']),
-      schoolEmail: serializer.fromJson<String?>(json['emailHust']),
-      bachelorUniversity: serializer.fromJson<String?>(
-        json['truongTotNghiepDaiHoc'],
-      ),
-      bachelorMajor: serializer.fromJson<String?>(json['nganhTotNghiepDaiHoc']),
-      bachelorProgram: serializer.fromJson<String?>(json['heTotNghiepDaiHoc']),
-      bachelorGraduationRank: serializer.fromJson<String?>(
-        json['xepLoaiTotNghiepDaiHoc'],
-      ),
-      bachelorGraduationDate: serializer.fromJson<DateTime?>(
-        json['ngayTotNghiepDaiHoc'],
-      ),
-      intendedSpecialization: serializer.fromJson<String?>(
-        json['dinhHuongChuyenSau'],
-      ),
-      exemptedCourses: serializer.fromJson<String?>(json['hocPhanDuocMien']),
-      masterMajor: serializer.fromJson<String?>(json['nganhDaoTaoThacSi']),
-      status: serializer.fromJson<enums.StudentStatus?>(json['maTrangThai']),
-      hasHirstExtension: serializer.fromJson<bool>(json['flag_extend_1']),
-      hasSecondExtension: serializer.fromJson<bool>(json['flag_extend_2']),
-      admissionCouncilId: serializer.fromJson<int?>(json['idTieuBanXetTuyen']),
-      admissionType: serializer.fromJson<enums.AdmissionType?>(
-        json['idDienTuyenSinh'],
-      ),
-      isAdmissionPaid: serializer.fromJson<bool>(json['thanhToanXetTuyen']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'soHoSo': serializer.toJson<String?>(admissionId),
-      'nienKhoa': serializer.toJson<String?>(cohort),
-      'maHocVien': serializer.toJson<String?>(studentId),
-      'hoTen': serializer.toJson<String>(name),
-      'ngaySinh': serializer.toJson<DateTime?>(dateOfBirth),
-      'gioiTinh': serializer.toJson<enums.Gender?>(gender),
-      'noiSinh': serializer.toJson<String?>(placeOfBirth),
-      'dienThoai': serializer.toJson<String?>(phone),
-      'email': serializer.toJson<String?>(personalEmail),
-      'emailHust': serializer.toJson<String?>(schoolEmail),
-      'truongTotNghiepDaiHoc': serializer.toJson<String?>(bachelorUniversity),
-      'nganhTotNghiepDaiHoc': serializer.toJson<String?>(bachelorMajor),
-      'heTotNghiepDaiHoc': serializer.toJson<String?>(bachelorProgram),
-      'xepLoaiTotNghiepDaiHoc': serializer.toJson<String?>(
-        bachelorGraduationRank,
-      ),
-      'ngayTotNghiepDaiHoc': serializer.toJson<DateTime?>(
-        bachelorGraduationDate,
-      ),
-      'dinhHuongChuyenSau': serializer.toJson<String?>(intendedSpecialization),
-      'hocPhanDuocMien': serializer.toJson<String?>(exemptedCourses),
-      'nganhDaoTaoThacSi': serializer.toJson<String?>(masterMajor),
-      'maTrangThai': serializer.toJson<enums.StudentStatus?>(status),
-      'flag_extend_1': serializer.toJson<bool>(hasHirstExtension),
-      'flag_extend_2': serializer.toJson<bool>(hasSecondExtension),
-      'idTieuBanXetTuyen': serializer.toJson<int?>(admissionCouncilId),
-      'idDienTuyenSinh': serializer.toJson<enums.AdmissionType?>(admissionType),
-      'thanhToanXetTuyen': serializer.toJson<bool>(isAdmissionPaid),
-    };
-  }
-
-  StudentData copyWith({
-    int? id,
-    Value<String?> admissionId = const Value.absent(),
-    Value<String?> cohort = const Value.absent(),
-    Value<String?> studentId = const Value.absent(),
-    String? name,
-    Value<DateTime?> dateOfBirth = const Value.absent(),
-    Value<enums.Gender?> gender = const Value.absent(),
-    Value<String?> placeOfBirth = const Value.absent(),
-    Value<String?> phone = const Value.absent(),
-    Value<String?> personalEmail = const Value.absent(),
-    Value<String?> schoolEmail = const Value.absent(),
-    Value<String?> bachelorUniversity = const Value.absent(),
-    Value<String?> bachelorMajor = const Value.absent(),
-    Value<String?> bachelorProgram = const Value.absent(),
-    Value<String?> bachelorGraduationRank = const Value.absent(),
-    Value<DateTime?> bachelorGraduationDate = const Value.absent(),
-    Value<String?> intendedSpecialization = const Value.absent(),
-    Value<String?> exemptedCourses = const Value.absent(),
-    Value<String?> masterMajor = const Value.absent(),
-    Value<enums.StudentStatus?> status = const Value.absent(),
-    bool? hasHirstExtension,
-    bool? hasSecondExtension,
-    Value<int?> admissionCouncilId = const Value.absent(),
-    Value<enums.AdmissionType?> admissionType = const Value.absent(),
-    bool? isAdmissionPaid,
-  }) => StudentData(
-    id: id ?? this.id,
-    admissionId: admissionId.present ? admissionId.value : this.admissionId,
-    cohort: cohort.present ? cohort.value : this.cohort,
-    studentId: studentId.present ? studentId.value : this.studentId,
-    name: name ?? this.name,
-    dateOfBirth: dateOfBirth.present ? dateOfBirth.value : this.dateOfBirth,
-    gender: gender.present ? gender.value : this.gender,
-    placeOfBirth: placeOfBirth.present ? placeOfBirth.value : this.placeOfBirth,
-    phone: phone.present ? phone.value : this.phone,
-    personalEmail: personalEmail.present
-        ? personalEmail.value
-        : this.personalEmail,
-    schoolEmail: schoolEmail.present ? schoolEmail.value : this.schoolEmail,
-    bachelorUniversity: bachelorUniversity.present
-        ? bachelorUniversity.value
-        : this.bachelorUniversity,
-    bachelorMajor: bachelorMajor.present
-        ? bachelorMajor.value
-        : this.bachelorMajor,
-    bachelorProgram: bachelorProgram.present
-        ? bachelorProgram.value
-        : this.bachelorProgram,
-    bachelorGraduationRank: bachelorGraduationRank.present
-        ? bachelorGraduationRank.value
-        : this.bachelorGraduationRank,
-    bachelorGraduationDate: bachelorGraduationDate.present
-        ? bachelorGraduationDate.value
-        : this.bachelorGraduationDate,
-    intendedSpecialization: intendedSpecialization.present
-        ? intendedSpecialization.value
-        : this.intendedSpecialization,
-    exemptedCourses: exemptedCourses.present
-        ? exemptedCourses.value
-        : this.exemptedCourses,
-    masterMajor: masterMajor.present ? masterMajor.value : this.masterMajor,
-    status: status.present ? status.value : this.status,
-    hasHirstExtension: hasHirstExtension ?? this.hasHirstExtension,
-    hasSecondExtension: hasSecondExtension ?? this.hasSecondExtension,
-    admissionCouncilId: admissionCouncilId.present
-        ? admissionCouncilId.value
-        : this.admissionCouncilId,
-    admissionType: admissionType.present
-        ? admissionType.value
-        : this.admissionType,
-    isAdmissionPaid: isAdmissionPaid ?? this.isAdmissionPaid,
-  );
-  StudentData copyWithCompanion(StudentCompanion data) {
-    return StudentData(
-      id: data.id.present ? data.id.value : this.id,
-      admissionId: data.admissionId.present
-          ? data.admissionId.value
-          : this.admissionId,
-      cohort: data.cohort.present ? data.cohort.value : this.cohort,
-      studentId: data.studentId.present ? data.studentId.value : this.studentId,
-      name: data.name.present ? data.name.value : this.name,
-      dateOfBirth: data.dateOfBirth.present
-          ? data.dateOfBirth.value
-          : this.dateOfBirth,
-      gender: data.gender.present ? data.gender.value : this.gender,
-      placeOfBirth: data.placeOfBirth.present
-          ? data.placeOfBirth.value
-          : this.placeOfBirth,
-      phone: data.phone.present ? data.phone.value : this.phone,
-      personalEmail: data.personalEmail.present
-          ? data.personalEmail.value
-          : this.personalEmail,
-      schoolEmail: data.schoolEmail.present
-          ? data.schoolEmail.value
-          : this.schoolEmail,
-      bachelorUniversity: data.bachelorUniversity.present
-          ? data.bachelorUniversity.value
-          : this.bachelorUniversity,
-      bachelorMajor: data.bachelorMajor.present
-          ? data.bachelorMajor.value
-          : this.bachelorMajor,
-      bachelorProgram: data.bachelorProgram.present
-          ? data.bachelorProgram.value
-          : this.bachelorProgram,
-      bachelorGraduationRank: data.bachelorGraduationRank.present
-          ? data.bachelorGraduationRank.value
-          : this.bachelorGraduationRank,
-      bachelorGraduationDate: data.bachelorGraduationDate.present
-          ? data.bachelorGraduationDate.value
-          : this.bachelorGraduationDate,
-      intendedSpecialization: data.intendedSpecialization.present
-          ? data.intendedSpecialization.value
-          : this.intendedSpecialization,
-      exemptedCourses: data.exemptedCourses.present
-          ? data.exemptedCourses.value
-          : this.exemptedCourses,
-      masterMajor: data.masterMajor.present
-          ? data.masterMajor.value
-          : this.masterMajor,
-      status: data.status.present ? data.status.value : this.status,
-      hasHirstExtension: data.hasHirstExtension.present
-          ? data.hasHirstExtension.value
-          : this.hasHirstExtension,
-      hasSecondExtension: data.hasSecondExtension.present
-          ? data.hasSecondExtension.value
-          : this.hasSecondExtension,
-      admissionCouncilId: data.admissionCouncilId.present
-          ? data.admissionCouncilId.value
-          : this.admissionCouncilId,
-      admissionType: data.admissionType.present
-          ? data.admissionType.value
-          : this.admissionType,
-      isAdmissionPaid: data.isAdmissionPaid.present
-          ? data.isAdmissionPaid.value
-          : this.isAdmissionPaid,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('StudentData(')
-          ..write('id: $id, ')
-          ..write('admissionId: $admissionId, ')
-          ..write('cohort: $cohort, ')
-          ..write('studentId: $studentId, ')
-          ..write('name: $name, ')
-          ..write('dateOfBirth: $dateOfBirth, ')
-          ..write('gender: $gender, ')
-          ..write('placeOfBirth: $placeOfBirth, ')
-          ..write('phone: $phone, ')
-          ..write('personalEmail: $personalEmail, ')
-          ..write('schoolEmail: $schoolEmail, ')
-          ..write('bachelorUniversity: $bachelorUniversity, ')
-          ..write('bachelorMajor: $bachelorMajor, ')
-          ..write('bachelorProgram: $bachelorProgram, ')
-          ..write('bachelorGraduationRank: $bachelorGraduationRank, ')
-          ..write('bachelorGraduationDate: $bachelorGraduationDate, ')
-          ..write('intendedSpecialization: $intendedSpecialization, ')
-          ..write('exemptedCourses: $exemptedCourses, ')
-          ..write('masterMajor: $masterMajor, ')
-          ..write('status: $status, ')
-          ..write('hasHirstExtension: $hasHirstExtension, ')
-          ..write('hasSecondExtension: $hasSecondExtension, ')
-          ..write('admissionCouncilId: $admissionCouncilId, ')
-          ..write('admissionType: $admissionType, ')
-          ..write('isAdmissionPaid: $isAdmissionPaid')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hashAll([
-    id,
-    admissionId,
-    cohort,
-    studentId,
-    name,
-    dateOfBirth,
-    gender,
-    placeOfBirth,
-    phone,
-    personalEmail,
-    schoolEmail,
-    bachelorUniversity,
-    bachelorMajor,
-    bachelorProgram,
-    bachelorGraduationRank,
-    bachelorGraduationDate,
-    intendedSpecialization,
-    exemptedCourses,
-    masterMajor,
-    status,
-    hasHirstExtension,
-    hasSecondExtension,
-    admissionCouncilId,
-    admissionType,
-    isAdmissionPaid,
-  ]);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is StudentData &&
-          other.id == this.id &&
-          other.admissionId == this.admissionId &&
-          other.cohort == this.cohort &&
-          other.studentId == this.studentId &&
-          other.name == this.name &&
-          other.dateOfBirth == this.dateOfBirth &&
-          other.gender == this.gender &&
-          other.placeOfBirth == this.placeOfBirth &&
-          other.phone == this.phone &&
-          other.personalEmail == this.personalEmail &&
-          other.schoolEmail == this.schoolEmail &&
-          other.bachelorUniversity == this.bachelorUniversity &&
-          other.bachelorMajor == this.bachelorMajor &&
-          other.bachelorProgram == this.bachelorProgram &&
-          other.bachelorGraduationRank == this.bachelorGraduationRank &&
-          other.bachelorGraduationDate == this.bachelorGraduationDate &&
-          other.intendedSpecialization == this.intendedSpecialization &&
-          other.exemptedCourses == this.exemptedCourses &&
-          other.masterMajor == this.masterMajor &&
-          other.status == this.status &&
-          other.hasHirstExtension == this.hasHirstExtension &&
-          other.hasSecondExtension == this.hasSecondExtension &&
-          other.admissionCouncilId == this.admissionCouncilId &&
-          other.admissionType == this.admissionType &&
-          other.isAdmissionPaid == this.isAdmissionPaid);
-}
-
-class StudentCompanion extends UpdateCompanion<StudentData> {
-  final Value<int> id;
-  final Value<String?> admissionId;
-  final Value<String?> cohort;
-  final Value<String?> studentId;
-  final Value<String> name;
-  final Value<DateTime?> dateOfBirth;
-  final Value<enums.Gender?> gender;
-  final Value<String?> placeOfBirth;
-  final Value<String?> phone;
-  final Value<String?> personalEmail;
-  final Value<String?> schoolEmail;
-  final Value<String?> bachelorUniversity;
-  final Value<String?> bachelorMajor;
-  final Value<String?> bachelorProgram;
-  final Value<String?> bachelorGraduationRank;
-  final Value<DateTime?> bachelorGraduationDate;
-  final Value<String?> intendedSpecialization;
-  final Value<String?> exemptedCourses;
-  final Value<String?> masterMajor;
-  final Value<enums.StudentStatus?> status;
-  final Value<bool> hasHirstExtension;
-  final Value<bool> hasSecondExtension;
-  final Value<int?> admissionCouncilId;
-  final Value<enums.AdmissionType?> admissionType;
-  final Value<bool> isAdmissionPaid;
-  const StudentCompanion({
-    this.id = const Value.absent(),
-    this.admissionId = const Value.absent(),
-    this.cohort = const Value.absent(),
-    this.studentId = const Value.absent(),
-    this.name = const Value.absent(),
-    this.dateOfBirth = const Value.absent(),
-    this.gender = const Value.absent(),
-    this.placeOfBirth = const Value.absent(),
-    this.phone = const Value.absent(),
-    this.personalEmail = const Value.absent(),
-    this.schoolEmail = const Value.absent(),
-    this.bachelorUniversity = const Value.absent(),
-    this.bachelorMajor = const Value.absent(),
-    this.bachelorProgram = const Value.absent(),
-    this.bachelorGraduationRank = const Value.absent(),
-    this.bachelorGraduationDate = const Value.absent(),
-    this.intendedSpecialization = const Value.absent(),
-    this.exemptedCourses = const Value.absent(),
-    this.masterMajor = const Value.absent(),
-    this.status = const Value.absent(),
-    this.hasHirstExtension = const Value.absent(),
-    this.hasSecondExtension = const Value.absent(),
-    this.admissionCouncilId = const Value.absent(),
-    this.admissionType = const Value.absent(),
-    this.isAdmissionPaid = const Value.absent(),
-  });
-  StudentCompanion.insert({
-    this.id = const Value.absent(),
-    this.admissionId = const Value.absent(),
-    this.cohort = const Value.absent(),
-    this.studentId = const Value.absent(),
-    required String name,
-    this.dateOfBirth = const Value.absent(),
-    this.gender = const Value.absent(),
-    this.placeOfBirth = const Value.absent(),
-    this.phone = const Value.absent(),
-    this.personalEmail = const Value.absent(),
-    this.schoolEmail = const Value.absent(),
-    this.bachelorUniversity = const Value.absent(),
-    this.bachelorMajor = const Value.absent(),
-    this.bachelorProgram = const Value.absent(),
-    this.bachelorGraduationRank = const Value.absent(),
-    this.bachelorGraduationDate = const Value.absent(),
-    this.intendedSpecialization = const Value.absent(),
-    this.exemptedCourses = const Value.absent(),
-    this.masterMajor = const Value.absent(),
-    this.status = const Value.absent(),
-    this.hasHirstExtension = const Value.absent(),
-    this.hasSecondExtension = const Value.absent(),
-    this.admissionCouncilId = const Value.absent(),
-    this.admissionType = const Value.absent(),
-    this.isAdmissionPaid = const Value.absent(),
-  }) : name = Value(name);
-  static Insertable<StudentData> custom({
-    Expression<int>? id,
-    Expression<String>? admissionId,
-    Expression<String>? cohort,
-    Expression<String>? studentId,
-    Expression<String>? name,
-    Expression<DateTime>? dateOfBirth,
-    Expression<String>? gender,
-    Expression<String>? placeOfBirth,
-    Expression<String>? phone,
-    Expression<String>? personalEmail,
-    Expression<String>? schoolEmail,
-    Expression<String>? bachelorUniversity,
-    Expression<String>? bachelorMajor,
-    Expression<String>? bachelorProgram,
-    Expression<String>? bachelorGraduationRank,
-    Expression<DateTime>? bachelorGraduationDate,
-    Expression<String>? intendedSpecialization,
-    Expression<String>? exemptedCourses,
-    Expression<String>? masterMajor,
-    Expression<String>? status,
-    Expression<bool>? hasHirstExtension,
-    Expression<bool>? hasSecondExtension,
-    Expression<int>? admissionCouncilId,
-    Expression<String>? admissionType,
-    Expression<bool>? isAdmissionPaid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (admissionId != null) 'soHoSo': admissionId,
-      if (cohort != null) 'nienKhoa': cohort,
-      if (studentId != null) 'maHocVien': studentId,
-      if (name != null) 'hoTen': name,
-      if (dateOfBirth != null) 'ngaySinh': dateOfBirth,
-      if (gender != null) 'gioiTinh': gender,
-      if (placeOfBirth != null) 'noiSinh': placeOfBirth,
-      if (phone != null) 'dienThoai': phone,
-      if (personalEmail != null) 'email': personalEmail,
-      if (schoolEmail != null) 'emailHust': schoolEmail,
-      if (bachelorUniversity != null)
-        'truongTotNghiepDaiHoc': bachelorUniversity,
-      if (bachelorMajor != null) 'nganhTotNghiepDaiHoc': bachelorMajor,
-      if (bachelorProgram != null) 'heTotNghiepDaiHoc': bachelorProgram,
-      if (bachelorGraduationRank != null)
-        'xepLoaiTotNghiepDaiHoc': bachelorGraduationRank,
-      if (bachelorGraduationDate != null)
-        'ngayTotNghiepDaiHoc': bachelorGraduationDate,
-      if (intendedSpecialization != null)
-        'dinhHuongChuyenSau': intendedSpecialization,
-      if (exemptedCourses != null) 'hocPhanDuocMien': exemptedCourses,
-      if (masterMajor != null) 'nganhDaoTaoThacSi': masterMajor,
-      if (status != null) 'maTrangThai': status,
-      if (hasHirstExtension != null) 'flag_extend_1': hasHirstExtension,
-      if (hasSecondExtension != null) 'flag_extend_2': hasSecondExtension,
-      if (admissionCouncilId != null) 'idTieuBanXetTuyen': admissionCouncilId,
-      if (admissionType != null) 'idDienTuyenSinh': admissionType,
-      if (isAdmissionPaid != null) 'thanhToanXetTuyen': isAdmissionPaid,
-    });
-  }
-
-  StudentCompanion copyWith({
-    Value<int>? id,
-    Value<String?>? admissionId,
-    Value<String?>? cohort,
-    Value<String?>? studentId,
-    Value<String>? name,
-    Value<DateTime?>? dateOfBirth,
-    Value<enums.Gender?>? gender,
-    Value<String?>? placeOfBirth,
-    Value<String?>? phone,
-    Value<String?>? personalEmail,
-    Value<String?>? schoolEmail,
-    Value<String?>? bachelorUniversity,
-    Value<String?>? bachelorMajor,
-    Value<String?>? bachelorProgram,
-    Value<String?>? bachelorGraduationRank,
-    Value<DateTime?>? bachelorGraduationDate,
-    Value<String?>? intendedSpecialization,
-    Value<String?>? exemptedCourses,
-    Value<String?>? masterMajor,
-    Value<enums.StudentStatus?>? status,
-    Value<bool>? hasHirstExtension,
-    Value<bool>? hasSecondExtension,
-    Value<int?>? admissionCouncilId,
-    Value<enums.AdmissionType?>? admissionType,
-    Value<bool>? isAdmissionPaid,
-  }) {
-    return StudentCompanion(
-      id: id ?? this.id,
-      admissionId: admissionId ?? this.admissionId,
-      cohort: cohort ?? this.cohort,
-      studentId: studentId ?? this.studentId,
-      name: name ?? this.name,
-      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
-      gender: gender ?? this.gender,
-      placeOfBirth: placeOfBirth ?? this.placeOfBirth,
-      phone: phone ?? this.phone,
-      personalEmail: personalEmail ?? this.personalEmail,
-      schoolEmail: schoolEmail ?? this.schoolEmail,
-      bachelorUniversity: bachelorUniversity ?? this.bachelorUniversity,
-      bachelorMajor: bachelorMajor ?? this.bachelorMajor,
-      bachelorProgram: bachelorProgram ?? this.bachelorProgram,
-      bachelorGraduationRank:
-          bachelorGraduationRank ?? this.bachelorGraduationRank,
-      bachelorGraduationDate:
-          bachelorGraduationDate ?? this.bachelorGraduationDate,
-      intendedSpecialization:
-          intendedSpecialization ?? this.intendedSpecialization,
-      exemptedCourses: exemptedCourses ?? this.exemptedCourses,
-      masterMajor: masterMajor ?? this.masterMajor,
-      status: status ?? this.status,
-      hasHirstExtension: hasHirstExtension ?? this.hasHirstExtension,
-      hasSecondExtension: hasSecondExtension ?? this.hasSecondExtension,
-      admissionCouncilId: admissionCouncilId ?? this.admissionCouncilId,
-      admissionType: admissionType ?? this.admissionType,
-      isAdmissionPaid: isAdmissionPaid ?? this.isAdmissionPaid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (admissionId.present) {
-      map['soHoSo'] = Variable<String>(admissionId.value);
-    }
-    if (cohort.present) {
-      map['nienKhoa'] = Variable<String>(cohort.value);
-    }
-    if (studentId.present) {
-      map['maHocVien'] = Variable<String>(studentId.value);
-    }
-    if (name.present) {
-      map['hoTen'] = Variable<String>(name.value);
-    }
-    if (dateOfBirth.present) {
-      map['ngaySinh'] = Variable<DateTime>(dateOfBirth.value);
-    }
-    if (gender.present) {
-      map['gioiTinh'] = Variable<String>(
-        Student.$convertergendern.toSql(gender.value),
-      );
-    }
-    if (placeOfBirth.present) {
-      map['noiSinh'] = Variable<String>(placeOfBirth.value);
-    }
-    if (phone.present) {
-      map['dienThoai'] = Variable<String>(phone.value);
-    }
-    if (personalEmail.present) {
-      map['email'] = Variable<String>(personalEmail.value);
-    }
-    if (schoolEmail.present) {
-      map['emailHust'] = Variable<String>(schoolEmail.value);
-    }
-    if (bachelorUniversity.present) {
-      map['truongTotNghiepDaiHoc'] = Variable<String>(bachelorUniversity.value);
-    }
-    if (bachelorMajor.present) {
-      map['nganhTotNghiepDaiHoc'] = Variable<String>(bachelorMajor.value);
-    }
-    if (bachelorProgram.present) {
-      map['heTotNghiepDaiHoc'] = Variable<String>(bachelorProgram.value);
-    }
-    if (bachelorGraduationRank.present) {
-      map['xepLoaiTotNghiepDaiHoc'] = Variable<String>(
-        bachelorGraduationRank.value,
-      );
-    }
-    if (bachelorGraduationDate.present) {
-      map['ngayTotNghiepDaiHoc'] = Variable<DateTime>(
-        bachelorGraduationDate.value,
-      );
-    }
-    if (intendedSpecialization.present) {
-      map['dinhHuongChuyenSau'] = Variable<String>(
-        intendedSpecialization.value,
-      );
-    }
-    if (exemptedCourses.present) {
-      map['hocPhanDuocMien'] = Variable<String>(exemptedCourses.value);
-    }
-    if (masterMajor.present) {
-      map['nganhDaoTaoThacSi'] = Variable<String>(masterMajor.value);
-    }
-    if (status.present) {
-      map['maTrangThai'] = Variable<String>(
-        Student.$converterstatusn.toSql(status.value),
-      );
-    }
-    if (hasHirstExtension.present) {
-      map['flag_extend_1'] = Variable<bool>(hasHirstExtension.value);
-    }
-    if (hasSecondExtension.present) {
-      map['flag_extend_2'] = Variable<bool>(hasSecondExtension.value);
-    }
-    if (admissionCouncilId.present) {
-      map['idTieuBanXetTuyen'] = Variable<int>(admissionCouncilId.value);
-    }
-    if (admissionType.present) {
-      map['idDienTuyenSinh'] = Variable<String>(
-        Student.$converteradmissionTypen.toSql(admissionType.value),
-      );
-    }
-    if (isAdmissionPaid.present) {
-      map['thanhToanXetTuyen'] = Variable<bool>(isAdmissionPaid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('StudentCompanion(')
-          ..write('id: $id, ')
-          ..write('admissionId: $admissionId, ')
-          ..write('cohort: $cohort, ')
-          ..write('studentId: $studentId, ')
-          ..write('name: $name, ')
-          ..write('dateOfBirth: $dateOfBirth, ')
-          ..write('gender: $gender, ')
-          ..write('placeOfBirth: $placeOfBirth, ')
-          ..write('phone: $phone, ')
-          ..write('personalEmail: $personalEmail, ')
-          ..write('schoolEmail: $schoolEmail, ')
-          ..write('bachelorUniversity: $bachelorUniversity, ')
-          ..write('bachelorMajor: $bachelorMajor, ')
-          ..write('bachelorProgram: $bachelorProgram, ')
-          ..write('bachelorGraduationRank: $bachelorGraduationRank, ')
-          ..write('bachelorGraduationDate: $bachelorGraduationDate, ')
-          ..write('intendedSpecialization: $intendedSpecialization, ')
-          ..write('exemptedCourses: $exemptedCourses, ')
-          ..write('masterMajor: $masterMajor, ')
-          ..write('status: $status, ')
-          ..write('hasHirstExtension: $hasHirstExtension, ')
-          ..write('hasSecondExtension: $hasSecondExtension, ')
-          ..write('admissionCouncilId: $admissionCouncilId, ')
-          ..write('admissionType: $admissionType, ')
-          ..write('isAdmissionPaid: $isAdmissionPaid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class Thesis extends Table with TableInfo<Thesis, ThesisData> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  Thesis(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-    'id',
-    aliasedName,
-    false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    $customConstraints: 'PRIMARY KEY AUTOINCREMENT',
-  );
-  static const VerificationMeta _supervisorIdMeta = const VerificationMeta(
-    'supervisorId',
-  );
-  late final GeneratedColumn<int> supervisorId = GeneratedColumn<int>(
-    'supervisor_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL REFERENCES teacher(id)',
-  );
-  static const VerificationMeta _presidentIdMeta = const VerificationMeta(
-    'presidentId',
-  );
-  late final GeneratedColumn<int> presidentId = GeneratedColumn<int>(
-    'president_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    $customConstraints: 'REFERENCES teacher(id)',
-  );
-  static const VerificationMeta _firstReviewerIdMeta = const VerificationMeta(
-    'firstReviewerId',
-  );
-  late final GeneratedColumn<int> firstReviewerId = GeneratedColumn<int>(
-    'first_reviewer_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    $customConstraints: 'REFERENCES teacher(id)',
-  );
-  static const VerificationMeta _secondReviewerIdMeta = const VerificationMeta(
-    'secondReviewerId',
-  );
-  late final GeneratedColumn<int> secondReviewerId = GeneratedColumn<int>(
-    'second_reviewer_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    $customConstraints: 'REFERENCES teacher(id)',
-  );
-  static const VerificationMeta _secretaryIdMeta = const VerificationMeta(
-    'secretaryId',
-  );
-  late final GeneratedColumn<int> secretaryId = GeneratedColumn<int>(
-    'secretary_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    $customConstraints: 'REFERENCES teacher(id)',
-  );
-  static const VerificationMeta _memberIdMeta = const VerificationMeta(
-    'memberId',
-  );
-  late final GeneratedColumn<int> memberId = GeneratedColumn<int>(
-    'member_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    $customConstraints: 'REFERENCES teacher(id)',
-  );
-  static const VerificationMeta _studentIdMeta = const VerificationMeta(
-    'studentId',
-  );
-  late final GeneratedColumn<int> studentId = GeneratedColumn<int>(
-    'student_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    $customConstraints: 'REFERENCES student(id)',
-  );
-  static const VerificationMeta _vietnameseTitleMeta = const VerificationMeta(
-    'vietnameseTitle',
-  );
-  late final GeneratedColumn<String> vietnameseTitle = GeneratedColumn<String>(
-    'vietnamese_title',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL',
-  );
-  static const VerificationMeta _englishTitleMeta = const VerificationMeta(
-    'englishTitle',
-  );
-  late final GeneratedColumn<String> englishTitle = GeneratedColumn<String>(
-    'english_title',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL',
-  );
-  static const VerificationMeta _noteMeta = const VerificationMeta('note');
-  late final GeneratedColumn<String> note = GeneratedColumn<String>(
-    'note',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT ()',
-    defaultValue: const CustomExpression(''),
-  );
-  static const VerificationMeta _defenseDeadlineMeta = const VerificationMeta(
-    'defenseDeadline',
-  );
-  late final GeneratedColumn<DateTime> defenseDeadline =
-      GeneratedColumn<DateTime>(
-        'defense_deadline',
-        aliasedName,
-        true,
-        type: DriftSqlType.dateTime,
-        requiredDuringInsert: false,
-        $customConstraints: '',
-      );
-  static const VerificationMeta _defenseDateMeta = const VerificationMeta(
-    'defenseDate',
-  );
-  late final GeneratedColumn<DateTime> defenseDate = GeneratedColumn<DateTime>(
-    'defense_date',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _flagTrackingMeta = const VerificationMeta(
-    'flagTracking',
-  );
-  late final GeneratedColumn<bool> flagTracking = GeneratedColumn<bool>(
-    'flag_tracking',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT FALSE',
-    defaultValue: const CustomExpression('FALSE'),
-  );
-  static const VerificationMeta _flagPaidMeta = const VerificationMeta(
-    'flagPaid',
-  );
-  late final GeneratedColumn<bool> flagPaid = GeneratedColumn<bool>(
-    'flag_paid',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT FALSE',
-    defaultValue: const CustomExpression('FALSE'),
-  );
-  static const VerificationMeta _flagIgnoreMeta = const VerificationMeta(
-    'flagIgnore',
-  );
-  late final GeneratedColumn<bool> flagIgnore = GeneratedColumn<bool>(
-    'flag_ignore',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT FALSE',
-    defaultValue: const CustomExpression('FALSE'),
-  );
-  static const VerificationMeta _groupMeta = const VerificationMeta('group');
-  late final GeneratedColumn<String> group = GeneratedColumn<String>(
-    'group',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _yearMeta = const VerificationMeta('year');
-  late final GeneratedColumn<String> year = GeneratedColumn<String>(
-    'nam',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _assignedDateMeta = const VerificationMeta(
-    'assignedDate',
-  );
-  late final GeneratedColumn<DateTime> assignedDate = GeneratedColumn<DateTime>(
-    'ngayGiao',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _assignedDecisionNumberMeta =
-      const VerificationMeta('assignedDecisionNumber');
-  late final GeneratedColumn<String> assignedDecisionNumber =
-      GeneratedColumn<String>(
-        'soQdGiao',
-        aliasedName,
-        true,
-        type: DriftSqlType.string,
-        requiredDuringInsert: false,
-        $customConstraints: '',
-      );
-  static const VerificationMeta _defenseDecisionNumberMeta =
-      const VerificationMeta('defenseDecisionNumber');
-  late final GeneratedColumn<String> defenseDecisionNumber =
-      GeneratedColumn<String>(
-        'soQdBaoVe',
-        aliasedName,
-        true,
-        type: DriftSqlType.string,
-        requiredDuringInsert: false,
-        $customConstraints: '',
-      );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    supervisorId,
-    presidentId,
-    firstReviewerId,
-    secondReviewerId,
-    secretaryId,
-    memberId,
-    studentId,
-    vietnameseTitle,
-    englishTitle,
-    note,
-    defenseDeadline,
-    defenseDate,
-    flagTracking,
-    flagPaid,
-    flagIgnore,
-    group,
-    year,
-    assignedDate,
-    assignedDecisionNumber,
-    defenseDecisionNumber,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'thesis';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<ThesisData> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('supervisor_id')) {
-      context.handle(
-        _supervisorIdMeta,
-        supervisorId.isAcceptableOrUnknown(
-          data['supervisor_id']!,
-          _supervisorIdMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_supervisorIdMeta);
-    }
-    if (data.containsKey('president_id')) {
-      context.handle(
-        _presidentIdMeta,
-        presidentId.isAcceptableOrUnknown(
-          data['president_id']!,
-          _presidentIdMeta,
-        ),
-      );
-    }
-    if (data.containsKey('first_reviewer_id')) {
-      context.handle(
-        _firstReviewerIdMeta,
-        firstReviewerId.isAcceptableOrUnknown(
-          data['first_reviewer_id']!,
-          _firstReviewerIdMeta,
-        ),
-      );
-    }
-    if (data.containsKey('second_reviewer_id')) {
-      context.handle(
-        _secondReviewerIdMeta,
-        secondReviewerId.isAcceptableOrUnknown(
-          data['second_reviewer_id']!,
-          _secondReviewerIdMeta,
-        ),
-      );
-    }
-    if (data.containsKey('secretary_id')) {
-      context.handle(
-        _secretaryIdMeta,
-        secretaryId.isAcceptableOrUnknown(
-          data['secretary_id']!,
-          _secretaryIdMeta,
-        ),
-      );
-    }
-    if (data.containsKey('member_id')) {
-      context.handle(
-        _memberIdMeta,
-        memberId.isAcceptableOrUnknown(data['member_id']!, _memberIdMeta),
-      );
-    }
-    if (data.containsKey('student_id')) {
-      context.handle(
-        _studentIdMeta,
-        studentId.isAcceptableOrUnknown(data['student_id']!, _studentIdMeta),
-      );
-    }
-    if (data.containsKey('vietnamese_title')) {
-      context.handle(
-        _vietnameseTitleMeta,
-        vietnameseTitle.isAcceptableOrUnknown(
-          data['vietnamese_title']!,
-          _vietnameseTitleMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_vietnameseTitleMeta);
-    }
-    if (data.containsKey('english_title')) {
-      context.handle(
-        _englishTitleMeta,
-        englishTitle.isAcceptableOrUnknown(
-          data['english_title']!,
-          _englishTitleMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_englishTitleMeta);
-    }
-    if (data.containsKey('note')) {
-      context.handle(
-        _noteMeta,
-        note.isAcceptableOrUnknown(data['note']!, _noteMeta),
-      );
-    }
-    if (data.containsKey('defense_deadline')) {
-      context.handle(
-        _defenseDeadlineMeta,
-        defenseDeadline.isAcceptableOrUnknown(
-          data['defense_deadline']!,
-          _defenseDeadlineMeta,
-        ),
-      );
-    }
-    if (data.containsKey('defense_date')) {
-      context.handle(
-        _defenseDateMeta,
-        defenseDate.isAcceptableOrUnknown(
-          data['defense_date']!,
-          _defenseDateMeta,
-        ),
-      );
-    }
-    if (data.containsKey('flag_tracking')) {
-      context.handle(
-        _flagTrackingMeta,
-        flagTracking.isAcceptableOrUnknown(
-          data['flag_tracking']!,
-          _flagTrackingMeta,
-        ),
-      );
-    }
-    if (data.containsKey('flag_paid')) {
-      context.handle(
-        _flagPaidMeta,
-        flagPaid.isAcceptableOrUnknown(data['flag_paid']!, _flagPaidMeta),
-      );
-    }
-    if (data.containsKey('flag_ignore')) {
-      context.handle(
-        _flagIgnoreMeta,
-        flagIgnore.isAcceptableOrUnknown(data['flag_ignore']!, _flagIgnoreMeta),
-      );
-    }
-    if (data.containsKey('group')) {
-      context.handle(
-        _groupMeta,
-        group.isAcceptableOrUnknown(data['group']!, _groupMeta),
-      );
-    }
-    if (data.containsKey('nam')) {
-      context.handle(
-        _yearMeta,
-        year.isAcceptableOrUnknown(data['nam']!, _yearMeta),
-      );
-    }
-    if (data.containsKey('ngayGiao')) {
-      context.handle(
-        _assignedDateMeta,
-        assignedDate.isAcceptableOrUnknown(
-          data['ngayGiao']!,
-          _assignedDateMeta,
-        ),
-      );
-    }
-    if (data.containsKey('soQdGiao')) {
-      context.handle(
-        _assignedDecisionNumberMeta,
-        assignedDecisionNumber.isAcceptableOrUnknown(
-          data['soQdGiao']!,
-          _assignedDecisionNumberMeta,
-        ),
-      );
-    }
-    if (data.containsKey('soQdBaoVe')) {
-      context.handle(
-        _defenseDecisionNumberMeta,
-        defenseDecisionNumber.isAcceptableOrUnknown(
-          data['soQdBaoVe']!,
-          _defenseDecisionNumberMeta,
-        ),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  ThesisData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ThesisData(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
-      supervisorId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}supervisor_id'],
-      )!,
-      presidentId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}president_id'],
-      ),
-      firstReviewerId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}first_reviewer_id'],
-      ),
-      secondReviewerId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}second_reviewer_id'],
-      ),
-      secretaryId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}secretary_id'],
-      ),
-      memberId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}member_id'],
-      ),
-      studentId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}student_id'],
-      ),
-      vietnameseTitle: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}vietnamese_title'],
-      )!,
-      englishTitle: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}english_title'],
-      )!,
-      note: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}note'],
-      )!,
-      defenseDeadline: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}defense_deadline'],
-      ),
-      defenseDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}defense_date'],
-      ),
-      flagTracking: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}flag_tracking'],
-      )!,
-      flagPaid: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}flag_paid'],
-      )!,
-      flagIgnore: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}flag_ignore'],
-      )!,
-      group: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}group'],
-      ),
-      year: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}nam'],
-      ),
-      assignedDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}ngayGiao'],
-      ),
-      assignedDecisionNumber: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}soQdGiao'],
-      ),
-      defenseDecisionNumber: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}soQdBaoVe'],
-      ),
-    );
-  }
-
-  @override
-  Thesis createAlias(String alias) {
-    return Thesis(attachedDatabase, alias);
-  }
-
-  @override
-  bool get dontWriteConstraints => true;
-}
-
-class ThesisData extends DataClass implements Insertable<ThesisData> {
-  final int id;
-  final int supervisorId;
-  final int? presidentId;
-  final int? firstReviewerId;
-  final int? secondReviewerId;
-  final int? secretaryId;
-  final int? memberId;
-  final int? studentId;
-  final String vietnameseTitle;
-  final String englishTitle;
-  final String note;
-  final DateTime? defenseDeadline;
-  final DateTime? defenseDate;
-  final bool flagTracking;
-  final bool flagPaid;
-  final bool flagIgnore;
-  final String? group;
-  final String? year;
-
-  /// Deprecated fields, probably to be removed later
-  final DateTime? assignedDate;
-  final String? assignedDecisionNumber;
-  final String? defenseDecisionNumber;
-  const ThesisData({
-    required this.id,
-    required this.supervisorId,
-    this.presidentId,
-    this.firstReviewerId,
-    this.secondReviewerId,
-    this.secretaryId,
-    this.memberId,
-    this.studentId,
-    required this.vietnameseTitle,
-    required this.englishTitle,
-    required this.note,
-    this.defenseDeadline,
-    this.defenseDate,
-    required this.flagTracking,
-    required this.flagPaid,
-    required this.flagIgnore,
-    this.group,
-    this.year,
-    this.assignedDate,
-    this.assignedDecisionNumber,
-    this.defenseDecisionNumber,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['supervisor_id'] = Variable<int>(supervisorId);
-    if (!nullToAbsent || presidentId != null) {
-      map['president_id'] = Variable<int>(presidentId);
-    }
-    if (!nullToAbsent || firstReviewerId != null) {
-      map['first_reviewer_id'] = Variable<int>(firstReviewerId);
-    }
-    if (!nullToAbsent || secondReviewerId != null) {
-      map['second_reviewer_id'] = Variable<int>(secondReviewerId);
-    }
-    if (!nullToAbsent || secretaryId != null) {
-      map['secretary_id'] = Variable<int>(secretaryId);
-    }
-    if (!nullToAbsent || memberId != null) {
-      map['member_id'] = Variable<int>(memberId);
-    }
-    if (!nullToAbsent || studentId != null) {
-      map['student_id'] = Variable<int>(studentId);
-    }
-    map['vietnamese_title'] = Variable<String>(vietnameseTitle);
-    map['english_title'] = Variable<String>(englishTitle);
-    map['note'] = Variable<String>(note);
-    if (!nullToAbsent || defenseDeadline != null) {
-      map['defense_deadline'] = Variable<DateTime>(defenseDeadline);
-    }
-    if (!nullToAbsent || defenseDate != null) {
-      map['defense_date'] = Variable<DateTime>(defenseDate);
-    }
-    map['flag_tracking'] = Variable<bool>(flagTracking);
-    map['flag_paid'] = Variable<bool>(flagPaid);
-    map['flag_ignore'] = Variable<bool>(flagIgnore);
-    if (!nullToAbsent || group != null) {
-      map['group'] = Variable<String>(group);
-    }
-    if (!nullToAbsent || year != null) {
-      map['nam'] = Variable<String>(year);
-    }
-    if (!nullToAbsent || assignedDate != null) {
-      map['ngayGiao'] = Variable<DateTime>(assignedDate);
-    }
-    if (!nullToAbsent || assignedDecisionNumber != null) {
-      map['soQdGiao'] = Variable<String>(assignedDecisionNumber);
-    }
-    if (!nullToAbsent || defenseDecisionNumber != null) {
-      map['soQdBaoVe'] = Variable<String>(defenseDecisionNumber);
-    }
-    return map;
-  }
-
-  ThesisCompanion toCompanion(bool nullToAbsent) {
-    return ThesisCompanion(
-      id: Value(id),
-      supervisorId: Value(supervisorId),
-      presidentId: presidentId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(presidentId),
-      firstReviewerId: firstReviewerId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(firstReviewerId),
-      secondReviewerId: secondReviewerId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(secondReviewerId),
-      secretaryId: secretaryId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(secretaryId),
-      memberId: memberId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(memberId),
-      studentId: studentId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(studentId),
-      vietnameseTitle: Value(vietnameseTitle),
-      englishTitle: Value(englishTitle),
-      note: Value(note),
-      defenseDeadline: defenseDeadline == null && nullToAbsent
-          ? const Value.absent()
-          : Value(defenseDeadline),
-      defenseDate: defenseDate == null && nullToAbsent
-          ? const Value.absent()
-          : Value(defenseDate),
-      flagTracking: Value(flagTracking),
-      flagPaid: Value(flagPaid),
-      flagIgnore: Value(flagIgnore),
-      group: group == null && nullToAbsent
-          ? const Value.absent()
-          : Value(group),
-      year: year == null && nullToAbsent ? const Value.absent() : Value(year),
-      assignedDate: assignedDate == null && nullToAbsent
-          ? const Value.absent()
-          : Value(assignedDate),
-      assignedDecisionNumber: assignedDecisionNumber == null && nullToAbsent
-          ? const Value.absent()
-          : Value(assignedDecisionNumber),
-      defenseDecisionNumber: defenseDecisionNumber == null && nullToAbsent
-          ? const Value.absent()
-          : Value(defenseDecisionNumber),
-    );
-  }
-
-  factory ThesisData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return ThesisData(
-      id: serializer.fromJson<int>(json['id']),
-      supervisorId: serializer.fromJson<int>(json['supervisor_id']),
-      presidentId: serializer.fromJson<int?>(json['president_id']),
-      firstReviewerId: serializer.fromJson<int?>(json['first_reviewer_id']),
-      secondReviewerId: serializer.fromJson<int?>(json['second_reviewer_id']),
-      secretaryId: serializer.fromJson<int?>(json['secretary_id']),
-      memberId: serializer.fromJson<int?>(json['member_id']),
-      studentId: serializer.fromJson<int?>(json['student_id']),
-      vietnameseTitle: serializer.fromJson<String>(json['vietnamese_title']),
-      englishTitle: serializer.fromJson<String>(json['english_title']),
-      note: serializer.fromJson<String>(json['note']),
-      defenseDeadline: serializer.fromJson<DateTime?>(json['defense_deadline']),
-      defenseDate: serializer.fromJson<DateTime?>(json['defense_date']),
-      flagTracking: serializer.fromJson<bool>(json['flag_tracking']),
-      flagPaid: serializer.fromJson<bool>(json['flag_paid']),
-      flagIgnore: serializer.fromJson<bool>(json['flag_ignore']),
-      group: serializer.fromJson<String?>(json['group']),
-      year: serializer.fromJson<String?>(json['nam']),
-      assignedDate: serializer.fromJson<DateTime?>(json['ngayGiao']),
-      assignedDecisionNumber: serializer.fromJson<String?>(json['soQdGiao']),
-      defenseDecisionNumber: serializer.fromJson<String?>(json['soQdBaoVe']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'supervisor_id': serializer.toJson<int>(supervisorId),
-      'president_id': serializer.toJson<int?>(presidentId),
-      'first_reviewer_id': serializer.toJson<int?>(firstReviewerId),
-      'second_reviewer_id': serializer.toJson<int?>(secondReviewerId),
-      'secretary_id': serializer.toJson<int?>(secretaryId),
-      'member_id': serializer.toJson<int?>(memberId),
-      'student_id': serializer.toJson<int?>(studentId),
-      'vietnamese_title': serializer.toJson<String>(vietnameseTitle),
-      'english_title': serializer.toJson<String>(englishTitle),
-      'note': serializer.toJson<String>(note),
-      'defense_deadline': serializer.toJson<DateTime?>(defenseDeadline),
-      'defense_date': serializer.toJson<DateTime?>(defenseDate),
-      'flag_tracking': serializer.toJson<bool>(flagTracking),
-      'flag_paid': serializer.toJson<bool>(flagPaid),
-      'flag_ignore': serializer.toJson<bool>(flagIgnore),
-      'group': serializer.toJson<String?>(group),
-      'nam': serializer.toJson<String?>(year),
-      'ngayGiao': serializer.toJson<DateTime?>(assignedDate),
-      'soQdGiao': serializer.toJson<String?>(assignedDecisionNumber),
-      'soQdBaoVe': serializer.toJson<String?>(defenseDecisionNumber),
-    };
-  }
-
-  ThesisData copyWith({
-    int? id,
-    int? supervisorId,
-    Value<int?> presidentId = const Value.absent(),
-    Value<int?> firstReviewerId = const Value.absent(),
-    Value<int?> secondReviewerId = const Value.absent(),
-    Value<int?> secretaryId = const Value.absent(),
-    Value<int?> memberId = const Value.absent(),
-    Value<int?> studentId = const Value.absent(),
-    String? vietnameseTitle,
-    String? englishTitle,
-    String? note,
-    Value<DateTime?> defenseDeadline = const Value.absent(),
-    Value<DateTime?> defenseDate = const Value.absent(),
-    bool? flagTracking,
-    bool? flagPaid,
-    bool? flagIgnore,
-    Value<String?> group = const Value.absent(),
-    Value<String?> year = const Value.absent(),
-    Value<DateTime?> assignedDate = const Value.absent(),
-    Value<String?> assignedDecisionNumber = const Value.absent(),
-    Value<String?> defenseDecisionNumber = const Value.absent(),
-  }) => ThesisData(
-    id: id ?? this.id,
-    supervisorId: supervisorId ?? this.supervisorId,
-    presidentId: presidentId.present ? presidentId.value : this.presidentId,
-    firstReviewerId: firstReviewerId.present
-        ? firstReviewerId.value
-        : this.firstReviewerId,
-    secondReviewerId: secondReviewerId.present
-        ? secondReviewerId.value
-        : this.secondReviewerId,
-    secretaryId: secretaryId.present ? secretaryId.value : this.secretaryId,
-    memberId: memberId.present ? memberId.value : this.memberId,
-    studentId: studentId.present ? studentId.value : this.studentId,
-    vietnameseTitle: vietnameseTitle ?? this.vietnameseTitle,
-    englishTitle: englishTitle ?? this.englishTitle,
-    note: note ?? this.note,
-    defenseDeadline: defenseDeadline.present
-        ? defenseDeadline.value
-        : this.defenseDeadline,
-    defenseDate: defenseDate.present ? defenseDate.value : this.defenseDate,
-    flagTracking: flagTracking ?? this.flagTracking,
-    flagPaid: flagPaid ?? this.flagPaid,
-    flagIgnore: flagIgnore ?? this.flagIgnore,
-    group: group.present ? group.value : this.group,
-    year: year.present ? year.value : this.year,
-    assignedDate: assignedDate.present ? assignedDate.value : this.assignedDate,
-    assignedDecisionNumber: assignedDecisionNumber.present
-        ? assignedDecisionNumber.value
-        : this.assignedDecisionNumber,
-    defenseDecisionNumber: defenseDecisionNumber.present
-        ? defenseDecisionNumber.value
-        : this.defenseDecisionNumber,
-  );
-  ThesisData copyWithCompanion(ThesisCompanion data) {
-    return ThesisData(
-      id: data.id.present ? data.id.value : this.id,
-      supervisorId: data.supervisorId.present
-          ? data.supervisorId.value
-          : this.supervisorId,
-      presidentId: data.presidentId.present
-          ? data.presidentId.value
-          : this.presidentId,
-      firstReviewerId: data.firstReviewerId.present
-          ? data.firstReviewerId.value
-          : this.firstReviewerId,
-      secondReviewerId: data.secondReviewerId.present
-          ? data.secondReviewerId.value
-          : this.secondReviewerId,
-      secretaryId: data.secretaryId.present
-          ? data.secretaryId.value
-          : this.secretaryId,
-      memberId: data.memberId.present ? data.memberId.value : this.memberId,
-      studentId: data.studentId.present ? data.studentId.value : this.studentId,
-      vietnameseTitle: data.vietnameseTitle.present
-          ? data.vietnameseTitle.value
-          : this.vietnameseTitle,
-      englishTitle: data.englishTitle.present
-          ? data.englishTitle.value
-          : this.englishTitle,
-      note: data.note.present ? data.note.value : this.note,
-      defenseDeadline: data.defenseDeadline.present
-          ? data.defenseDeadline.value
-          : this.defenseDeadline,
-      defenseDate: data.defenseDate.present
-          ? data.defenseDate.value
-          : this.defenseDate,
-      flagTracking: data.flagTracking.present
-          ? data.flagTracking.value
-          : this.flagTracking,
-      flagPaid: data.flagPaid.present ? data.flagPaid.value : this.flagPaid,
-      flagIgnore: data.flagIgnore.present
-          ? data.flagIgnore.value
-          : this.flagIgnore,
-      group: data.group.present ? data.group.value : this.group,
-      year: data.year.present ? data.year.value : this.year,
-      assignedDate: data.assignedDate.present
-          ? data.assignedDate.value
-          : this.assignedDate,
-      assignedDecisionNumber: data.assignedDecisionNumber.present
-          ? data.assignedDecisionNumber.value
-          : this.assignedDecisionNumber,
-      defenseDecisionNumber: data.defenseDecisionNumber.present
-          ? data.defenseDecisionNumber.value
-          : this.defenseDecisionNumber,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ThesisData(')
-          ..write('id: $id, ')
-          ..write('supervisorId: $supervisorId, ')
-          ..write('presidentId: $presidentId, ')
-          ..write('firstReviewerId: $firstReviewerId, ')
-          ..write('secondReviewerId: $secondReviewerId, ')
-          ..write('secretaryId: $secretaryId, ')
-          ..write('memberId: $memberId, ')
-          ..write('studentId: $studentId, ')
-          ..write('vietnameseTitle: $vietnameseTitle, ')
-          ..write('englishTitle: $englishTitle, ')
-          ..write('note: $note, ')
-          ..write('defenseDeadline: $defenseDeadline, ')
-          ..write('defenseDate: $defenseDate, ')
-          ..write('flagTracking: $flagTracking, ')
-          ..write('flagPaid: $flagPaid, ')
-          ..write('flagIgnore: $flagIgnore, ')
-          ..write('group: $group, ')
-          ..write('year: $year, ')
-          ..write('assignedDate: $assignedDate, ')
-          ..write('assignedDecisionNumber: $assignedDecisionNumber, ')
-          ..write('defenseDecisionNumber: $defenseDecisionNumber')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hashAll([
-    id,
-    supervisorId,
-    presidentId,
-    firstReviewerId,
-    secondReviewerId,
-    secretaryId,
-    memberId,
-    studentId,
-    vietnameseTitle,
-    englishTitle,
-    note,
-    defenseDeadline,
-    defenseDate,
-    flagTracking,
-    flagPaid,
-    flagIgnore,
-    group,
-    year,
-    assignedDate,
-    assignedDecisionNumber,
-    defenseDecisionNumber,
-  ]);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is ThesisData &&
-          other.id == this.id &&
-          other.supervisorId == this.supervisorId &&
-          other.presidentId == this.presidentId &&
-          other.firstReviewerId == this.firstReviewerId &&
-          other.secondReviewerId == this.secondReviewerId &&
-          other.secretaryId == this.secretaryId &&
-          other.memberId == this.memberId &&
-          other.studentId == this.studentId &&
-          other.vietnameseTitle == this.vietnameseTitle &&
-          other.englishTitle == this.englishTitle &&
-          other.note == this.note &&
-          other.defenseDeadline == this.defenseDeadline &&
-          other.defenseDate == this.defenseDate &&
-          other.flagTracking == this.flagTracking &&
-          other.flagPaid == this.flagPaid &&
-          other.flagIgnore == this.flagIgnore &&
-          other.group == this.group &&
-          other.year == this.year &&
-          other.assignedDate == this.assignedDate &&
-          other.assignedDecisionNumber == this.assignedDecisionNumber &&
-          other.defenseDecisionNumber == this.defenseDecisionNumber);
-}
-
-class ThesisCompanion extends UpdateCompanion<ThesisData> {
-  final Value<int> id;
-  final Value<int> supervisorId;
-  final Value<int?> presidentId;
-  final Value<int?> firstReviewerId;
-  final Value<int?> secondReviewerId;
-  final Value<int?> secretaryId;
-  final Value<int?> memberId;
-  final Value<int?> studentId;
-  final Value<String> vietnameseTitle;
-  final Value<String> englishTitle;
-  final Value<String> note;
-  final Value<DateTime?> defenseDeadline;
-  final Value<DateTime?> defenseDate;
-  final Value<bool> flagTracking;
-  final Value<bool> flagPaid;
-  final Value<bool> flagIgnore;
-  final Value<String?> group;
-  final Value<String?> year;
-  final Value<DateTime?> assignedDate;
-  final Value<String?> assignedDecisionNumber;
-  final Value<String?> defenseDecisionNumber;
-  const ThesisCompanion({
-    this.id = const Value.absent(),
-    this.supervisorId = const Value.absent(),
-    this.presidentId = const Value.absent(),
-    this.firstReviewerId = const Value.absent(),
-    this.secondReviewerId = const Value.absent(),
-    this.secretaryId = const Value.absent(),
-    this.memberId = const Value.absent(),
-    this.studentId = const Value.absent(),
-    this.vietnameseTitle = const Value.absent(),
-    this.englishTitle = const Value.absent(),
-    this.note = const Value.absent(),
-    this.defenseDeadline = const Value.absent(),
-    this.defenseDate = const Value.absent(),
-    this.flagTracking = const Value.absent(),
-    this.flagPaid = const Value.absent(),
-    this.flagIgnore = const Value.absent(),
-    this.group = const Value.absent(),
-    this.year = const Value.absent(),
-    this.assignedDate = const Value.absent(),
-    this.assignedDecisionNumber = const Value.absent(),
-    this.defenseDecisionNumber = const Value.absent(),
-  });
-  ThesisCompanion.insert({
-    this.id = const Value.absent(),
-    required int supervisorId,
-    this.presidentId = const Value.absent(),
-    this.firstReviewerId = const Value.absent(),
-    this.secondReviewerId = const Value.absent(),
-    this.secretaryId = const Value.absent(),
-    this.memberId = const Value.absent(),
-    this.studentId = const Value.absent(),
-    required String vietnameseTitle,
-    required String englishTitle,
-    this.note = const Value.absent(),
-    this.defenseDeadline = const Value.absent(),
-    this.defenseDate = const Value.absent(),
-    this.flagTracking = const Value.absent(),
-    this.flagPaid = const Value.absent(),
-    this.flagIgnore = const Value.absent(),
-    this.group = const Value.absent(),
-    this.year = const Value.absent(),
-    this.assignedDate = const Value.absent(),
-    this.assignedDecisionNumber = const Value.absent(),
-    this.defenseDecisionNumber = const Value.absent(),
-  }) : supervisorId = Value(supervisorId),
-       vietnameseTitle = Value(vietnameseTitle),
-       englishTitle = Value(englishTitle);
-  static Insertable<ThesisData> custom({
-    Expression<int>? id,
-    Expression<int>? supervisorId,
-    Expression<int>? presidentId,
-    Expression<int>? firstReviewerId,
-    Expression<int>? secondReviewerId,
-    Expression<int>? secretaryId,
-    Expression<int>? memberId,
-    Expression<int>? studentId,
-    Expression<String>? vietnameseTitle,
-    Expression<String>? englishTitle,
-    Expression<String>? note,
-    Expression<DateTime>? defenseDeadline,
-    Expression<DateTime>? defenseDate,
-    Expression<bool>? flagTracking,
-    Expression<bool>? flagPaid,
-    Expression<bool>? flagIgnore,
-    Expression<String>? group,
-    Expression<String>? year,
-    Expression<DateTime>? assignedDate,
-    Expression<String>? assignedDecisionNumber,
-    Expression<String>? defenseDecisionNumber,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (supervisorId != null) 'supervisor_id': supervisorId,
-      if (presidentId != null) 'president_id': presidentId,
-      if (firstReviewerId != null) 'first_reviewer_id': firstReviewerId,
-      if (secondReviewerId != null) 'second_reviewer_id': secondReviewerId,
-      if (secretaryId != null) 'secretary_id': secretaryId,
-      if (memberId != null) 'member_id': memberId,
-      if (studentId != null) 'student_id': studentId,
-      if (vietnameseTitle != null) 'vietnamese_title': vietnameseTitle,
-      if (englishTitle != null) 'english_title': englishTitle,
-      if (note != null) 'note': note,
-      if (defenseDeadline != null) 'defense_deadline': defenseDeadline,
-      if (defenseDate != null) 'defense_date': defenseDate,
-      if (flagTracking != null) 'flag_tracking': flagTracking,
-      if (flagPaid != null) 'flag_paid': flagPaid,
-      if (flagIgnore != null) 'flag_ignore': flagIgnore,
-      if (group != null) 'group': group,
-      if (year != null) 'nam': year,
-      if (assignedDate != null) 'ngayGiao': assignedDate,
-      if (assignedDecisionNumber != null) 'soQdGiao': assignedDecisionNumber,
-      if (defenseDecisionNumber != null) 'soQdBaoVe': defenseDecisionNumber,
-    });
-  }
-
-  ThesisCompanion copyWith({
-    Value<int>? id,
-    Value<int>? supervisorId,
-    Value<int?>? presidentId,
-    Value<int?>? firstReviewerId,
-    Value<int?>? secondReviewerId,
-    Value<int?>? secretaryId,
-    Value<int?>? memberId,
-    Value<int?>? studentId,
-    Value<String>? vietnameseTitle,
-    Value<String>? englishTitle,
-    Value<String>? note,
-    Value<DateTime?>? defenseDeadline,
-    Value<DateTime?>? defenseDate,
-    Value<bool>? flagTracking,
-    Value<bool>? flagPaid,
-    Value<bool>? flagIgnore,
-    Value<String?>? group,
-    Value<String?>? year,
-    Value<DateTime?>? assignedDate,
-    Value<String?>? assignedDecisionNumber,
-    Value<String?>? defenseDecisionNumber,
-  }) {
-    return ThesisCompanion(
-      id: id ?? this.id,
-      supervisorId: supervisorId ?? this.supervisorId,
-      presidentId: presidentId ?? this.presidentId,
-      firstReviewerId: firstReviewerId ?? this.firstReviewerId,
-      secondReviewerId: secondReviewerId ?? this.secondReviewerId,
-      secretaryId: secretaryId ?? this.secretaryId,
-      memberId: memberId ?? this.memberId,
-      studentId: studentId ?? this.studentId,
-      vietnameseTitle: vietnameseTitle ?? this.vietnameseTitle,
-      englishTitle: englishTitle ?? this.englishTitle,
-      note: note ?? this.note,
-      defenseDeadline: defenseDeadline ?? this.defenseDeadline,
-      defenseDate: defenseDate ?? this.defenseDate,
-      flagTracking: flagTracking ?? this.flagTracking,
-      flagPaid: flagPaid ?? this.flagPaid,
-      flagIgnore: flagIgnore ?? this.flagIgnore,
-      group: group ?? this.group,
-      year: year ?? this.year,
-      assignedDate: assignedDate ?? this.assignedDate,
-      assignedDecisionNumber:
-          assignedDecisionNumber ?? this.assignedDecisionNumber,
-      defenseDecisionNumber:
-          defenseDecisionNumber ?? this.defenseDecisionNumber,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (supervisorId.present) {
-      map['supervisor_id'] = Variable<int>(supervisorId.value);
-    }
-    if (presidentId.present) {
-      map['president_id'] = Variable<int>(presidentId.value);
-    }
-    if (firstReviewerId.present) {
-      map['first_reviewer_id'] = Variable<int>(firstReviewerId.value);
-    }
-    if (secondReviewerId.present) {
-      map['second_reviewer_id'] = Variable<int>(secondReviewerId.value);
-    }
-    if (secretaryId.present) {
-      map['secretary_id'] = Variable<int>(secretaryId.value);
-    }
-    if (memberId.present) {
-      map['member_id'] = Variable<int>(memberId.value);
-    }
-    if (studentId.present) {
-      map['student_id'] = Variable<int>(studentId.value);
-    }
-    if (vietnameseTitle.present) {
-      map['vietnamese_title'] = Variable<String>(vietnameseTitle.value);
-    }
-    if (englishTitle.present) {
-      map['english_title'] = Variable<String>(englishTitle.value);
-    }
-    if (note.present) {
-      map['note'] = Variable<String>(note.value);
-    }
-    if (defenseDeadline.present) {
-      map['defense_deadline'] = Variable<DateTime>(defenseDeadline.value);
-    }
-    if (defenseDate.present) {
-      map['defense_date'] = Variable<DateTime>(defenseDate.value);
-    }
-    if (flagTracking.present) {
-      map['flag_tracking'] = Variable<bool>(flagTracking.value);
-    }
-    if (flagPaid.present) {
-      map['flag_paid'] = Variable<bool>(flagPaid.value);
-    }
-    if (flagIgnore.present) {
-      map['flag_ignore'] = Variable<bool>(flagIgnore.value);
-    }
-    if (group.present) {
-      map['group'] = Variable<String>(group.value);
-    }
-    if (year.present) {
-      map['nam'] = Variable<String>(year.value);
-    }
-    if (assignedDate.present) {
-      map['ngayGiao'] = Variable<DateTime>(assignedDate.value);
-    }
-    if (assignedDecisionNumber.present) {
-      map['soQdGiao'] = Variable<String>(assignedDecisionNumber.value);
-    }
-    if (defenseDecisionNumber.present) {
-      map['soQdBaoVe'] = Variable<String>(defenseDecisionNumber.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ThesisCompanion(')
-          ..write('id: $id, ')
-          ..write('supervisorId: $supervisorId, ')
-          ..write('presidentId: $presidentId, ')
-          ..write('firstReviewerId: $firstReviewerId, ')
-          ..write('secondReviewerId: $secondReviewerId, ')
-          ..write('secretaryId: $secretaryId, ')
-          ..write('memberId: $memberId, ')
-          ..write('studentId: $studentId, ')
-          ..write('vietnameseTitle: $vietnameseTitle, ')
-          ..write('englishTitle: $englishTitle, ')
-          ..write('note: $note, ')
-          ..write('defenseDeadline: $defenseDeadline, ')
-          ..write('defenseDate: $defenseDate, ')
-          ..write('flagTracking: $flagTracking, ')
-          ..write('flagPaid: $flagPaid, ')
-          ..write('flagIgnore: $flagIgnore, ')
-          ..write('group: $group, ')
-          ..write('year: $year, ')
-          ..write('assignedDate: $assignedDate, ')
-          ..write('assignedDecisionNumber: $assignedDecisionNumber, ')
-          ..write('defenseDecisionNumber: $defenseDecisionNumber')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class TeacherFts extends Table
-    with
-        TableInfo<TeacherFts, TeacherFt>,
-        VirtualTableInfo<TeacherFts, TeacherFt> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  TeacherFts(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-    'id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _nameMeta = const VerificationMeta('name');
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-    'name',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _universityMeta = const VerificationMeta(
-    'university',
-  );
-  late final GeneratedColumn<String> university = GeneratedColumn<String>(
-    'university',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _falcutyMeta = const VerificationMeta(
-    'falcuty',
-  );
-  late final GeneratedColumn<String> falcuty = GeneratedColumn<String>(
-    'falcuty',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _specializationMeta = const VerificationMeta(
-    'specialization',
-  );
-  late final GeneratedColumn<String> specialization = GeneratedColumn<String>(
-    'specialization',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _phoneNumberMeta = const VerificationMeta(
-    'phoneNumber',
-  );
-  late final GeneratedColumn<String> phoneNumber = GeneratedColumn<String>(
-    'phone_number',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _workEmailMeta = const VerificationMeta(
-    'workEmail',
-  );
-  late final GeneratedColumn<String> workEmail = GeneratedColumn<String>(
-    'work_email',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _personalEmailMeta = const VerificationMeta(
-    'personalEmail',
-  );
-  late final GeneratedColumn<String> personalEmail = GeneratedColumn<String>(
-    'personal_email',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _citizenIdMeta = const VerificationMeta(
-    'citizenId',
-  );
-  late final GeneratedColumn<String> citizenId = GeneratedColumn<String>(
-    'citizen_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _bankAccountMeta = const VerificationMeta(
-    'bankAccount',
-  );
-  late final GeneratedColumn<String> bankAccount = GeneratedColumn<String>(
-    'bank_account',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: '',
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    name,
-    university,
-    falcuty,
-    specialization,
-    phoneNumber,
-    workEmail,
-    personalEmail,
-    citizenId,
-    bankAccount,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'teacher_fts';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<TeacherFt> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('name')) {
-      context.handle(
-        _nameMeta,
-        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_nameMeta);
-    }
-    if (data.containsKey('university')) {
-      context.handle(
-        _universityMeta,
-        university.isAcceptableOrUnknown(data['university']!, _universityMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_universityMeta);
-    }
-    if (data.containsKey('falcuty')) {
-      context.handle(
-        _falcutyMeta,
-        falcuty.isAcceptableOrUnknown(data['falcuty']!, _falcutyMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_falcutyMeta);
-    }
-    if (data.containsKey('specialization')) {
-      context.handle(
-        _specializationMeta,
-        specialization.isAcceptableOrUnknown(
-          data['specialization']!,
-          _specializationMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_specializationMeta);
-    }
-    if (data.containsKey('phone_number')) {
-      context.handle(
-        _phoneNumberMeta,
-        phoneNumber.isAcceptableOrUnknown(
-          data['phone_number']!,
-          _phoneNumberMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_phoneNumberMeta);
-    }
-    if (data.containsKey('work_email')) {
-      context.handle(
-        _workEmailMeta,
-        workEmail.isAcceptableOrUnknown(data['work_email']!, _workEmailMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_workEmailMeta);
-    }
-    if (data.containsKey('personal_email')) {
-      context.handle(
-        _personalEmailMeta,
-        personalEmail.isAcceptableOrUnknown(
-          data['personal_email']!,
-          _personalEmailMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_personalEmailMeta);
-    }
-    if (data.containsKey('citizen_id')) {
-      context.handle(
-        _citizenIdMeta,
-        citizenId.isAcceptableOrUnknown(data['citizen_id']!, _citizenIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_citizenIdMeta);
-    }
-    if (data.containsKey('bank_account')) {
-      context.handle(
-        _bankAccountMeta,
-        bankAccount.isAcceptableOrUnknown(
-          data['bank_account']!,
-          _bankAccountMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_bankAccountMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => const {};
-  @override
-  TeacherFt map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return TeacherFt(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}id'],
-      )!,
-      name: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}name'],
-      )!,
-      university: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}university'],
-      )!,
-      falcuty: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}falcuty'],
-      )!,
-      specialization: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}specialization'],
-      )!,
-      phoneNumber: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}phone_number'],
-      )!,
-      workEmail: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}work_email'],
-      )!,
-      personalEmail: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}personal_email'],
-      )!,
-      citizenId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}citizen_id'],
-      )!,
-      bankAccount: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}bank_account'],
-      )!,
-    );
-  }
-
-  @override
-  TeacherFts createAlias(String alias) {
-    return TeacherFts(attachedDatabase, alias);
-  }
-
-  @override
-  bool get dontWriteConstraints => true;
-  @override
-  String get moduleAndArgs =>
-      'fts5(id, name, university, falcuty, specialization, phone_number, work_email, personal_email, citizen_id, bank_account, prefix=\'2 3 5 7\', tokenize="trigram remove_diacritics 1 case_sensitive 0")';
-}
-
-class TeacherFt extends DataClass implements Insertable<TeacherFt> {
-  final String id;
-  final String name;
-  final String university;
-  final String falcuty;
-  final String specialization;
-  final String phoneNumber;
-  final String workEmail;
-  final String personalEmail;
-  final String citizenId;
-  final String bankAccount;
-  const TeacherFt({
-    required this.id,
-    required this.name,
-    required this.university,
-    required this.falcuty,
-    required this.specialization,
-    required this.phoneNumber,
-    required this.workEmail,
-    required this.personalEmail,
-    required this.citizenId,
-    required this.bankAccount,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['name'] = Variable<String>(name);
-    map['university'] = Variable<String>(university);
-    map['falcuty'] = Variable<String>(falcuty);
-    map['specialization'] = Variable<String>(specialization);
-    map['phone_number'] = Variable<String>(phoneNumber);
-    map['work_email'] = Variable<String>(workEmail);
-    map['personal_email'] = Variable<String>(personalEmail);
-    map['citizen_id'] = Variable<String>(citizenId);
-    map['bank_account'] = Variable<String>(bankAccount);
-    return map;
-  }
-
-  TeacherFtsCompanion toCompanion(bool nullToAbsent) {
-    return TeacherFtsCompanion(
-      id: Value(id),
-      name: Value(name),
-      university: Value(university),
-      falcuty: Value(falcuty),
-      specialization: Value(specialization),
-      phoneNumber: Value(phoneNumber),
-      workEmail: Value(workEmail),
-      personalEmail: Value(personalEmail),
-      citizenId: Value(citizenId),
-      bankAccount: Value(bankAccount),
-    );
-  }
-
-  factory TeacherFt.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return TeacherFt(
-      id: serializer.fromJson<String>(json['id']),
-      name: serializer.fromJson<String>(json['name']),
-      university: serializer.fromJson<String>(json['university']),
-      falcuty: serializer.fromJson<String>(json['falcuty']),
-      specialization: serializer.fromJson<String>(json['specialization']),
-      phoneNumber: serializer.fromJson<String>(json['phone_number']),
-      workEmail: serializer.fromJson<String>(json['work_email']),
-      personalEmail: serializer.fromJson<String>(json['personal_email']),
-      citizenId: serializer.fromJson<String>(json['citizen_id']),
-      bankAccount: serializer.fromJson<String>(json['bank_account']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'name': serializer.toJson<String>(name),
-      'university': serializer.toJson<String>(university),
-      'falcuty': serializer.toJson<String>(falcuty),
-      'specialization': serializer.toJson<String>(specialization),
-      'phone_number': serializer.toJson<String>(phoneNumber),
-      'work_email': serializer.toJson<String>(workEmail),
-      'personal_email': serializer.toJson<String>(personalEmail),
-      'citizen_id': serializer.toJson<String>(citizenId),
-      'bank_account': serializer.toJson<String>(bankAccount),
-    };
-  }
-
-  TeacherFt copyWith({
-    String? id,
-    String? name,
-    String? university,
-    String? falcuty,
-    String? specialization,
-    String? phoneNumber,
-    String? workEmail,
-    String? personalEmail,
-    String? citizenId,
-    String? bankAccount,
-  }) => TeacherFt(
-    id: id ?? this.id,
-    name: name ?? this.name,
-    university: university ?? this.university,
-    falcuty: falcuty ?? this.falcuty,
-    specialization: specialization ?? this.specialization,
-    phoneNumber: phoneNumber ?? this.phoneNumber,
-    workEmail: workEmail ?? this.workEmail,
-    personalEmail: personalEmail ?? this.personalEmail,
-    citizenId: citizenId ?? this.citizenId,
-    bankAccount: bankAccount ?? this.bankAccount,
-  );
-  TeacherFt copyWithCompanion(TeacherFtsCompanion data) {
-    return TeacherFt(
-      id: data.id.present ? data.id.value : this.id,
-      name: data.name.present ? data.name.value : this.name,
-      university: data.university.present
-          ? data.university.value
-          : this.university,
-      falcuty: data.falcuty.present ? data.falcuty.value : this.falcuty,
-      specialization: data.specialization.present
-          ? data.specialization.value
-          : this.specialization,
-      phoneNumber: data.phoneNumber.present
-          ? data.phoneNumber.value
-          : this.phoneNumber,
-      workEmail: data.workEmail.present ? data.workEmail.value : this.workEmail,
-      personalEmail: data.personalEmail.present
-          ? data.personalEmail.value
-          : this.personalEmail,
-      citizenId: data.citizenId.present ? data.citizenId.value : this.citizenId,
-      bankAccount: data.bankAccount.present
-          ? data.bankAccount.value
-          : this.bankAccount,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('TeacherFt(')
-          ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('university: $university, ')
-          ..write('falcuty: $falcuty, ')
-          ..write('specialization: $specialization, ')
-          ..write('phoneNumber: $phoneNumber, ')
-          ..write('workEmail: $workEmail, ')
-          ..write('personalEmail: $personalEmail, ')
-          ..write('citizenId: $citizenId, ')
-          ..write('bankAccount: $bankAccount')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    id,
-    name,
-    university,
-    falcuty,
-    specialization,
-    phoneNumber,
-    workEmail,
-    personalEmail,
-    citizenId,
-    bankAccount,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is TeacherFt &&
-          other.id == this.id &&
-          other.name == this.name &&
-          other.university == this.university &&
-          other.falcuty == this.falcuty &&
-          other.specialization == this.specialization &&
-          other.phoneNumber == this.phoneNumber &&
-          other.workEmail == this.workEmail &&
-          other.personalEmail == this.personalEmail &&
-          other.citizenId == this.citizenId &&
-          other.bankAccount == this.bankAccount);
-}
-
-class TeacherFtsCompanion extends UpdateCompanion<TeacherFt> {
-  final Value<String> id;
-  final Value<String> name;
-  final Value<String> university;
-  final Value<String> falcuty;
-  final Value<String> specialization;
-  final Value<String> phoneNumber;
-  final Value<String> workEmail;
-  final Value<String> personalEmail;
-  final Value<String> citizenId;
-  final Value<String> bankAccount;
-  final Value<int> rowid;
-  const TeacherFtsCompanion({
-    this.id = const Value.absent(),
-    this.name = const Value.absent(),
-    this.university = const Value.absent(),
-    this.falcuty = const Value.absent(),
-    this.specialization = const Value.absent(),
-    this.phoneNumber = const Value.absent(),
-    this.workEmail = const Value.absent(),
-    this.personalEmail = const Value.absent(),
-    this.citizenId = const Value.absent(),
-    this.bankAccount = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  TeacherFtsCompanion.insert({
-    required String id,
-    required String name,
-    required String university,
-    required String falcuty,
-    required String specialization,
-    required String phoneNumber,
-    required String workEmail,
-    required String personalEmail,
-    required String citizenId,
-    required String bankAccount,
-    this.rowid = const Value.absent(),
-  }) : id = Value(id),
-       name = Value(name),
-       university = Value(university),
-       falcuty = Value(falcuty),
-       specialization = Value(specialization),
-       phoneNumber = Value(phoneNumber),
-       workEmail = Value(workEmail),
-       personalEmail = Value(personalEmail),
-       citizenId = Value(citizenId),
-       bankAccount = Value(bankAccount);
-  static Insertable<TeacherFt> custom({
-    Expression<String>? id,
-    Expression<String>? name,
-    Expression<String>? university,
-    Expression<String>? falcuty,
-    Expression<String>? specialization,
-    Expression<String>? phoneNumber,
-    Expression<String>? workEmail,
-    Expression<String>? personalEmail,
-    Expression<String>? citizenId,
-    Expression<String>? bankAccount,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (name != null) 'name': name,
-      if (university != null) 'university': university,
-      if (falcuty != null) 'falcuty': falcuty,
-      if (specialization != null) 'specialization': specialization,
-      if (phoneNumber != null) 'phone_number': phoneNumber,
-      if (workEmail != null) 'work_email': workEmail,
-      if (personalEmail != null) 'personal_email': personalEmail,
-      if (citizenId != null) 'citizen_id': citizenId,
-      if (bankAccount != null) 'bank_account': bankAccount,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  TeacherFtsCompanion copyWith({
-    Value<String>? id,
-    Value<String>? name,
-    Value<String>? university,
-    Value<String>? falcuty,
-    Value<String>? specialization,
-    Value<String>? phoneNumber,
-    Value<String>? workEmail,
-    Value<String>? personalEmail,
-    Value<String>? citizenId,
-    Value<String>? bankAccount,
-    Value<int>? rowid,
-  }) {
-    return TeacherFtsCompanion(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      university: university ?? this.university,
-      falcuty: falcuty ?? this.falcuty,
-      specialization: specialization ?? this.specialization,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      workEmail: workEmail ?? this.workEmail,
-      personalEmail: personalEmail ?? this.personalEmail,
-      citizenId: citizenId ?? this.citizenId,
-      bankAccount: bankAccount ?? this.bankAccount,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (name.present) {
-      map['name'] = Variable<String>(name.value);
-    }
-    if (university.present) {
-      map['university'] = Variable<String>(university.value);
-    }
-    if (falcuty.present) {
-      map['falcuty'] = Variable<String>(falcuty.value);
-    }
-    if (specialization.present) {
-      map['specialization'] = Variable<String>(specialization.value);
-    }
-    if (phoneNumber.present) {
-      map['phone_number'] = Variable<String>(phoneNumber.value);
-    }
-    if (workEmail.present) {
-      map['work_email'] = Variable<String>(workEmail.value);
-    }
-    if (personalEmail.present) {
-      map['personal_email'] = Variable<String>(personalEmail.value);
-    }
-    if (citizenId.present) {
-      map['citizen_id'] = Variable<String>(citizenId.value);
-    }
-    if (bankAccount.present) {
-      map['bank_account'] = Variable<String>(bankAccount.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('TeacherFtsCompanion(')
-          ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('university: $university, ')
-          ..write('falcuty: $falcuty, ')
-          ..write('specialization: $specialization, ')
-          ..write('phoneNumber: $phoneNumber, ')
-          ..write('workEmail: $workEmail, ')
-          ..write('personalEmail: $personalEmail, ')
-          ..write('citizenId: $citizenId, ')
-          ..write('bankAccount: $bankAccount, ')
-          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -7935,6 +4480,2257 @@ class DocumentCompanion extends UpdateCompanion<DocumentData> {
   }
 }
 
+class Cohort extends Table with TableInfo<Cohort, CohortData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  Cohort(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL PRIMARY KEY',
+  );
+  static const VerificationMeta _groupUrlMeta = const VerificationMeta(
+    'groupUrl',
+  );
+  late final GeneratedColumn<String> groupUrl = GeneratedColumn<String>(
+    'group_url',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT ()',
+    defaultValue: const CustomExpression(''),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, groupUrl];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cohort';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CohortData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('group_url')) {
+      context.handle(
+        _groupUrlMeta,
+        groupUrl.isAcceptableOrUnknown(data['group_url']!, _groupUrlMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CohortData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CohortData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      groupUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}group_url'],
+      )!,
+    );
+  }
+
+  @override
+  Cohort createAlias(String alias) {
+    return Cohort(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class CohortData extends DataClass implements Insertable<CohortData> {
+  final String id;
+  final String groupUrl;
+  const CohortData({required this.id, required this.groupUrl});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['group_url'] = Variable<String>(groupUrl);
+    return map;
+  }
+
+  CohortCompanion toCompanion(bool nullToAbsent) {
+    return CohortCompanion(id: Value(id), groupUrl: Value(groupUrl));
+  }
+
+  factory CohortData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CohortData(
+      id: serializer.fromJson<String>(json['id']),
+      groupUrl: serializer.fromJson<String>(json['group_url']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'group_url': serializer.toJson<String>(groupUrl),
+    };
+  }
+
+  CohortData copyWith({String? id, String? groupUrl}) =>
+      CohortData(id: id ?? this.id, groupUrl: groupUrl ?? this.groupUrl);
+  CohortData copyWithCompanion(CohortCompanion data) {
+    return CohortData(
+      id: data.id.present ? data.id.value : this.id,
+      groupUrl: data.groupUrl.present ? data.groupUrl.value : this.groupUrl,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CohortData(')
+          ..write('id: $id, ')
+          ..write('groupUrl: $groupUrl')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, groupUrl);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CohortData &&
+          other.id == this.id &&
+          other.groupUrl == this.groupUrl);
+}
+
+class CohortCompanion extends UpdateCompanion<CohortData> {
+  final Value<String> id;
+  final Value<String> groupUrl;
+  final Value<int> rowid;
+  const CohortCompanion({
+    this.id = const Value.absent(),
+    this.groupUrl = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CohortCompanion.insert({
+    required String id,
+    this.groupUrl = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id);
+  static Insertable<CohortData> custom({
+    Expression<String>? id,
+    Expression<String>? groupUrl,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (groupUrl != null) 'group_url': groupUrl,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CohortCompanion copyWith({
+    Value<String>? id,
+    Value<String>? groupUrl,
+    Value<int>? rowid,
+  }) {
+    return CohortCompanion(
+      id: id ?? this.id,
+      groupUrl: groupUrl ?? this.groupUrl,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (groupUrl.present) {
+      map['group_url'] = Variable<String>(groupUrl.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CohortCompanion(')
+          ..write('id: $id, ')
+          ..write('groupUrl: $groupUrl, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class AdmissionCouncil extends Table
+    with TableInfo<AdmissionCouncil, AdmissionCouncilData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  AdmissionCouncil(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'PRIMARY KEY AUTOINCREMENT',
+  );
+  static const VerificationMeta _yearMeta = const VerificationMeta('year');
+  late final GeneratedColumn<String> year = GeneratedColumn<String>(
+    'year',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _presidentIdMeta = const VerificationMeta(
+    'presidentId',
+  );
+  late final GeneratedColumn<int> presidentId = GeneratedColumn<int>(
+    'president_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES teacher(id)',
+  );
+  static const VerificationMeta _secretaryIdMeta = const VerificationMeta(
+    'secretaryId',
+  );
+  late final GeneratedColumn<int> secretaryId = GeneratedColumn<int>(
+    'secretary_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES teacher(id)',
+  );
+  static const VerificationMeta _member1IdMeta = const VerificationMeta(
+    'member1Id',
+  );
+  late final GeneratedColumn<int> member1Id = GeneratedColumn<int>(
+    'member_1_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES teacher(id)',
+  );
+  static const VerificationMeta _member2IdMeta = const VerificationMeta(
+    'member2Id',
+  );
+  late final GeneratedColumn<int> member2Id = GeneratedColumn<int>(
+    'member_2_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES teacher(id)',
+  );
+  static const VerificationMeta _member3IdMeta = const VerificationMeta(
+    'member3Id',
+  );
+  late final GeneratedColumn<int> member3Id = GeneratedColumn<int>(
+    'member_3_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES teacher(id)',
+  );
+  static const VerificationMeta _establishmentDecisionIdMeta =
+      const VerificationMeta('establishmentDecisionId');
+  late final GeneratedColumn<String> establishmentDecisionId =
+      GeneratedColumn<String>(
+        'establishment_decision_id',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
+      );
+  static const VerificationMeta _establishmentDecisionDateMeta =
+      const VerificationMeta('establishmentDecisionDate');
+  late final GeneratedColumn<DateTime> establishmentDecisionDate =
+      GeneratedColumn<DateTime>(
+        'establishment_decision_date',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    year,
+    presidentId,
+    secretaryId,
+    member1Id,
+    member2Id,
+    member3Id,
+    establishmentDecisionId,
+    establishmentDecisionDate,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'admission_council';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AdmissionCouncilData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('year')) {
+      context.handle(
+        _yearMeta,
+        year.isAcceptableOrUnknown(data['year']!, _yearMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_yearMeta);
+    }
+    if (data.containsKey('president_id')) {
+      context.handle(
+        _presidentIdMeta,
+        presidentId.isAcceptableOrUnknown(
+          data['president_id']!,
+          _presidentIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_presidentIdMeta);
+    }
+    if (data.containsKey('secretary_id')) {
+      context.handle(
+        _secretaryIdMeta,
+        secretaryId.isAcceptableOrUnknown(
+          data['secretary_id']!,
+          _secretaryIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_secretaryIdMeta);
+    }
+    if (data.containsKey('member_1_id')) {
+      context.handle(
+        _member1IdMeta,
+        member1Id.isAcceptableOrUnknown(data['member_1_id']!, _member1IdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_member1IdMeta);
+    }
+    if (data.containsKey('member_2_id')) {
+      context.handle(
+        _member2IdMeta,
+        member2Id.isAcceptableOrUnknown(data['member_2_id']!, _member2IdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_member2IdMeta);
+    }
+    if (data.containsKey('member_3_id')) {
+      context.handle(
+        _member3IdMeta,
+        member3Id.isAcceptableOrUnknown(data['member_3_id']!, _member3IdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_member3IdMeta);
+    }
+    if (data.containsKey('establishment_decision_id')) {
+      context.handle(
+        _establishmentDecisionIdMeta,
+        establishmentDecisionId.isAcceptableOrUnknown(
+          data['establishment_decision_id']!,
+          _establishmentDecisionIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_establishmentDecisionIdMeta);
+    }
+    if (data.containsKey('establishment_decision_date')) {
+      context.handle(
+        _establishmentDecisionDateMeta,
+        establishmentDecisionDate.isAcceptableOrUnknown(
+          data['establishment_decision_date']!,
+          _establishmentDecisionDateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_establishmentDecisionDateMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AdmissionCouncilData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AdmissionCouncilData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      year: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}year'],
+      )!,
+      presidentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}president_id'],
+      )!,
+      secretaryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}secretary_id'],
+      )!,
+      member1Id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}member_1_id'],
+      )!,
+      member2Id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}member_2_id'],
+      )!,
+      member3Id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}member_3_id'],
+      )!,
+      establishmentDecisionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}establishment_decision_id'],
+      )!,
+      establishmentDecisionDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}establishment_decision_date'],
+      )!,
+    );
+  }
+
+  @override
+  AdmissionCouncil createAlias(String alias) {
+    return AdmissionCouncil(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class AdmissionCouncilData extends DataClass
+    implements Insertable<AdmissionCouncilData> {
+  final int id;
+  final String year;
+  final int presidentId;
+  final int secretaryId;
+  final int member1Id;
+  final int member2Id;
+  final int member3Id;
+  final String establishmentDecisionId;
+  final DateTime establishmentDecisionDate;
+  const AdmissionCouncilData({
+    required this.id,
+    required this.year,
+    required this.presidentId,
+    required this.secretaryId,
+    required this.member1Id,
+    required this.member2Id,
+    required this.member3Id,
+    required this.establishmentDecisionId,
+    required this.establishmentDecisionDate,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['year'] = Variable<String>(year);
+    map['president_id'] = Variable<int>(presidentId);
+    map['secretary_id'] = Variable<int>(secretaryId);
+    map['member_1_id'] = Variable<int>(member1Id);
+    map['member_2_id'] = Variable<int>(member2Id);
+    map['member_3_id'] = Variable<int>(member3Id);
+    map['establishment_decision_id'] = Variable<String>(
+      establishmentDecisionId,
+    );
+    map['establishment_decision_date'] = Variable<DateTime>(
+      establishmentDecisionDate,
+    );
+    return map;
+  }
+
+  AdmissionCouncilCompanion toCompanion(bool nullToAbsent) {
+    return AdmissionCouncilCompanion(
+      id: Value(id),
+      year: Value(year),
+      presidentId: Value(presidentId),
+      secretaryId: Value(secretaryId),
+      member1Id: Value(member1Id),
+      member2Id: Value(member2Id),
+      member3Id: Value(member3Id),
+      establishmentDecisionId: Value(establishmentDecisionId),
+      establishmentDecisionDate: Value(establishmentDecisionDate),
+    );
+  }
+
+  factory AdmissionCouncilData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AdmissionCouncilData(
+      id: serializer.fromJson<int>(json['id']),
+      year: serializer.fromJson<String>(json['year']),
+      presidentId: serializer.fromJson<int>(json['president_id']),
+      secretaryId: serializer.fromJson<int>(json['secretary_id']),
+      member1Id: serializer.fromJson<int>(json['member_1_id']),
+      member2Id: serializer.fromJson<int>(json['member_2_id']),
+      member3Id: serializer.fromJson<int>(json['member_3_id']),
+      establishmentDecisionId: serializer.fromJson<String>(
+        json['establishment_decision_id'],
+      ),
+      establishmentDecisionDate: serializer.fromJson<DateTime>(
+        json['establishment_decision_date'],
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'year': serializer.toJson<String>(year),
+      'president_id': serializer.toJson<int>(presidentId),
+      'secretary_id': serializer.toJson<int>(secretaryId),
+      'member_1_id': serializer.toJson<int>(member1Id),
+      'member_2_id': serializer.toJson<int>(member2Id),
+      'member_3_id': serializer.toJson<int>(member3Id),
+      'establishment_decision_id': serializer.toJson<String>(
+        establishmentDecisionId,
+      ),
+      'establishment_decision_date': serializer.toJson<DateTime>(
+        establishmentDecisionDate,
+      ),
+    };
+  }
+
+  AdmissionCouncilData copyWith({
+    int? id,
+    String? year,
+    int? presidentId,
+    int? secretaryId,
+    int? member1Id,
+    int? member2Id,
+    int? member3Id,
+    String? establishmentDecisionId,
+    DateTime? establishmentDecisionDate,
+  }) => AdmissionCouncilData(
+    id: id ?? this.id,
+    year: year ?? this.year,
+    presidentId: presidentId ?? this.presidentId,
+    secretaryId: secretaryId ?? this.secretaryId,
+    member1Id: member1Id ?? this.member1Id,
+    member2Id: member2Id ?? this.member2Id,
+    member3Id: member3Id ?? this.member3Id,
+    establishmentDecisionId:
+        establishmentDecisionId ?? this.establishmentDecisionId,
+    establishmentDecisionDate:
+        establishmentDecisionDate ?? this.establishmentDecisionDate,
+  );
+  AdmissionCouncilData copyWithCompanion(AdmissionCouncilCompanion data) {
+    return AdmissionCouncilData(
+      id: data.id.present ? data.id.value : this.id,
+      year: data.year.present ? data.year.value : this.year,
+      presidentId: data.presidentId.present
+          ? data.presidentId.value
+          : this.presidentId,
+      secretaryId: data.secretaryId.present
+          ? data.secretaryId.value
+          : this.secretaryId,
+      member1Id: data.member1Id.present ? data.member1Id.value : this.member1Id,
+      member2Id: data.member2Id.present ? data.member2Id.value : this.member2Id,
+      member3Id: data.member3Id.present ? data.member3Id.value : this.member3Id,
+      establishmentDecisionId: data.establishmentDecisionId.present
+          ? data.establishmentDecisionId.value
+          : this.establishmentDecisionId,
+      establishmentDecisionDate: data.establishmentDecisionDate.present
+          ? data.establishmentDecisionDate.value
+          : this.establishmentDecisionDate,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AdmissionCouncilData(')
+          ..write('id: $id, ')
+          ..write('year: $year, ')
+          ..write('presidentId: $presidentId, ')
+          ..write('secretaryId: $secretaryId, ')
+          ..write('member1Id: $member1Id, ')
+          ..write('member2Id: $member2Id, ')
+          ..write('member3Id: $member3Id, ')
+          ..write('establishmentDecisionId: $establishmentDecisionId, ')
+          ..write('establishmentDecisionDate: $establishmentDecisionDate')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    year,
+    presidentId,
+    secretaryId,
+    member1Id,
+    member2Id,
+    member3Id,
+    establishmentDecisionId,
+    establishmentDecisionDate,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AdmissionCouncilData &&
+          other.id == this.id &&
+          other.year == this.year &&
+          other.presidentId == this.presidentId &&
+          other.secretaryId == this.secretaryId &&
+          other.member1Id == this.member1Id &&
+          other.member2Id == this.member2Id &&
+          other.member3Id == this.member3Id &&
+          other.establishmentDecisionId == this.establishmentDecisionId &&
+          other.establishmentDecisionDate == this.establishmentDecisionDate);
+}
+
+class AdmissionCouncilCompanion extends UpdateCompanion<AdmissionCouncilData> {
+  final Value<int> id;
+  final Value<String> year;
+  final Value<int> presidentId;
+  final Value<int> secretaryId;
+  final Value<int> member1Id;
+  final Value<int> member2Id;
+  final Value<int> member3Id;
+  final Value<String> establishmentDecisionId;
+  final Value<DateTime> establishmentDecisionDate;
+  const AdmissionCouncilCompanion({
+    this.id = const Value.absent(),
+    this.year = const Value.absent(),
+    this.presidentId = const Value.absent(),
+    this.secretaryId = const Value.absent(),
+    this.member1Id = const Value.absent(),
+    this.member2Id = const Value.absent(),
+    this.member3Id = const Value.absent(),
+    this.establishmentDecisionId = const Value.absent(),
+    this.establishmentDecisionDate = const Value.absent(),
+  });
+  AdmissionCouncilCompanion.insert({
+    this.id = const Value.absent(),
+    required String year,
+    required int presidentId,
+    required int secretaryId,
+    required int member1Id,
+    required int member2Id,
+    required int member3Id,
+    required String establishmentDecisionId,
+    required DateTime establishmentDecisionDate,
+  }) : year = Value(year),
+       presidentId = Value(presidentId),
+       secretaryId = Value(secretaryId),
+       member1Id = Value(member1Id),
+       member2Id = Value(member2Id),
+       member3Id = Value(member3Id),
+       establishmentDecisionId = Value(establishmentDecisionId),
+       establishmentDecisionDate = Value(establishmentDecisionDate);
+  static Insertable<AdmissionCouncilData> custom({
+    Expression<int>? id,
+    Expression<String>? year,
+    Expression<int>? presidentId,
+    Expression<int>? secretaryId,
+    Expression<int>? member1Id,
+    Expression<int>? member2Id,
+    Expression<int>? member3Id,
+    Expression<String>? establishmentDecisionId,
+    Expression<DateTime>? establishmentDecisionDate,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (year != null) 'year': year,
+      if (presidentId != null) 'president_id': presidentId,
+      if (secretaryId != null) 'secretary_id': secretaryId,
+      if (member1Id != null) 'member_1_id': member1Id,
+      if (member2Id != null) 'member_2_id': member2Id,
+      if (member3Id != null) 'member_3_id': member3Id,
+      if (establishmentDecisionId != null)
+        'establishment_decision_id': establishmentDecisionId,
+      if (establishmentDecisionDate != null)
+        'establishment_decision_date': establishmentDecisionDate,
+    });
+  }
+
+  AdmissionCouncilCompanion copyWith({
+    Value<int>? id,
+    Value<String>? year,
+    Value<int>? presidentId,
+    Value<int>? secretaryId,
+    Value<int>? member1Id,
+    Value<int>? member2Id,
+    Value<int>? member3Id,
+    Value<String>? establishmentDecisionId,
+    Value<DateTime>? establishmentDecisionDate,
+  }) {
+    return AdmissionCouncilCompanion(
+      id: id ?? this.id,
+      year: year ?? this.year,
+      presidentId: presidentId ?? this.presidentId,
+      secretaryId: secretaryId ?? this.secretaryId,
+      member1Id: member1Id ?? this.member1Id,
+      member2Id: member2Id ?? this.member2Id,
+      member3Id: member3Id ?? this.member3Id,
+      establishmentDecisionId:
+          establishmentDecisionId ?? this.establishmentDecisionId,
+      establishmentDecisionDate:
+          establishmentDecisionDate ?? this.establishmentDecisionDate,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (year.present) {
+      map['year'] = Variable<String>(year.value);
+    }
+    if (presidentId.present) {
+      map['president_id'] = Variable<int>(presidentId.value);
+    }
+    if (secretaryId.present) {
+      map['secretary_id'] = Variable<int>(secretaryId.value);
+    }
+    if (member1Id.present) {
+      map['member_1_id'] = Variable<int>(member1Id.value);
+    }
+    if (member2Id.present) {
+      map['member_2_id'] = Variable<int>(member2Id.value);
+    }
+    if (member3Id.present) {
+      map['member_3_id'] = Variable<int>(member3Id.value);
+    }
+    if (establishmentDecisionId.present) {
+      map['establishment_decision_id'] = Variable<String>(
+        establishmentDecisionId.value,
+      );
+    }
+    if (establishmentDecisionDate.present) {
+      map['establishment_decision_date'] = Variable<DateTime>(
+        establishmentDecisionDate.value,
+      );
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AdmissionCouncilCompanion(')
+          ..write('id: $id, ')
+          ..write('year: $year, ')
+          ..write('presidentId: $presidentId, ')
+          ..write('secretaryId: $secretaryId, ')
+          ..write('member1Id: $member1Id, ')
+          ..write('member2Id: $member2Id, ')
+          ..write('member3Id: $member3Id, ')
+          ..write('establishmentDecisionId: $establishmentDecisionId, ')
+          ..write('establishmentDecisionDate: $establishmentDecisionDate')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Student extends Table with TableInfo<Student, StudentData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  Student(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'PRIMARY KEY AUTOINCREMENT',
+  );
+  static const VerificationMeta _admissionIdMeta = const VerificationMeta(
+    'admissionId',
+  );
+  late final GeneratedColumn<String> admissionId = GeneratedColumn<String>(
+    'soHoSo',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _cohortMeta = const VerificationMeta('cohort');
+  late final GeneratedColumn<String> cohort = GeneratedColumn<String>(
+    'nienKhoa',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _studentIdMeta = const VerificationMeta(
+    'studentId',
+  );
+  late final GeneratedColumn<String> studentId = GeneratedColumn<String>(
+    'maHocVien',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'hoTen',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _dateOfBirthMeta = const VerificationMeta(
+    'dateOfBirth',
+  );
+  late final GeneratedColumn<DateTime> dateOfBirth = GeneratedColumn<DateTime>(
+    'ngaySinh',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  late final GeneratedColumnWithTypeConverter<enums.Gender?, String> gender =
+      GeneratedColumn<String>(
+        'gioiTinh',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      ).withConverter<enums.Gender?>(Student.$convertergendern);
+  static const VerificationMeta _placeOfBirthMeta = const VerificationMeta(
+    'placeOfBirth',
+  );
+  late final GeneratedColumn<String> placeOfBirth = GeneratedColumn<String>(
+    'noiSinh',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
+  late final GeneratedColumn<String> phone = GeneratedColumn<String>(
+    'dienThoai',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _personalEmailMeta = const VerificationMeta(
+    'personalEmail',
+  );
+  late final GeneratedColumn<String> personalEmail = GeneratedColumn<String>(
+    'email',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _schoolEmailMeta = const VerificationMeta(
+    'schoolEmail',
+  );
+  late final GeneratedColumn<String> schoolEmail = GeneratedColumn<String>(
+    'emailHust',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _bachelorUniversityMeta =
+      const VerificationMeta('bachelorUniversity');
+  late final GeneratedColumn<String> bachelorUniversity =
+      GeneratedColumn<String>(
+        'truongTotNghiepDaiHoc',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      );
+  static const VerificationMeta _bachelorMajorMeta = const VerificationMeta(
+    'bachelorMajor',
+  );
+  late final GeneratedColumn<String> bachelorMajor = GeneratedColumn<String>(
+    'nganhTotNghiepDaiHoc',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _bachelorProgramMeta = const VerificationMeta(
+    'bachelorProgram',
+  );
+  late final GeneratedColumn<String> bachelorProgram = GeneratedColumn<String>(
+    'heTotNghiepDaiHoc',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _bachelorGraduationRankMeta =
+      const VerificationMeta('bachelorGraduationRank');
+  late final GeneratedColumn<String> bachelorGraduationRank =
+      GeneratedColumn<String>(
+        'xepLoaiTotNghiepDaiHoc',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      );
+  static const VerificationMeta _bachelorGraduationDateMeta =
+      const VerificationMeta('bachelorGraduationDate');
+  late final GeneratedColumn<DateTime> bachelorGraduationDate =
+      GeneratedColumn<DateTime>(
+        'ngayTotNghiepDaiHoc',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      );
+  static const VerificationMeta _intendedSpecializationMeta =
+      const VerificationMeta('intendedSpecialization');
+  late final GeneratedColumn<String> intendedSpecialization =
+      GeneratedColumn<String>(
+        'dinhHuongChuyenSau',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      );
+  static const VerificationMeta _exemptedCoursesMeta = const VerificationMeta(
+    'exemptedCourses',
+  );
+  late final GeneratedColumn<String> exemptedCourses = GeneratedColumn<String>(
+    'hocPhanDuocMien',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _masterMajorMeta = const VerificationMeta(
+    'masterMajor',
+  );
+  late final GeneratedColumn<String> masterMajor = GeneratedColumn<String>(
+    'nganhDaoTaoThacSi',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  late final GeneratedColumnWithTypeConverter<enums.StudentStatus?, String>
+  status = GeneratedColumn<String>(
+    'maTrangThai',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  ).withConverter<enums.StudentStatus?>(Student.$converterstatusn);
+  static const VerificationMeta _hasHirstExtensionMeta = const VerificationMeta(
+    'hasHirstExtension',
+  );
+  late final GeneratedColumn<bool> hasHirstExtension = GeneratedColumn<bool>(
+    'flag_extend_1',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT FALSE',
+    defaultValue: const CustomExpression('FALSE'),
+  );
+  static const VerificationMeta _hasSecondExtensionMeta =
+      const VerificationMeta('hasSecondExtension');
+  late final GeneratedColumn<bool> hasSecondExtension = GeneratedColumn<bool>(
+    'flag_extend_2',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT FALSE',
+    defaultValue: const CustomExpression('FALSE'),
+  );
+  static const VerificationMeta _admissionCouncilIdMeta =
+      const VerificationMeta('admissionCouncilId');
+  late final GeneratedColumn<int> admissionCouncilId = GeneratedColumn<int>(
+    'idTieuBanXetTuyen',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  late final GeneratedColumnWithTypeConverter<enums.AdmissionType?, String>
+  admissionType = GeneratedColumn<String>(
+    'idDienTuyenSinh',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  ).withConverter<enums.AdmissionType?>(Student.$converteradmissionTypen);
+  static const VerificationMeta _isAdmissionPaidMeta = const VerificationMeta(
+    'isAdmissionPaid',
+  );
+  late final GeneratedColumn<bool> isAdmissionPaid = GeneratedColumn<bool>(
+    'thanhToanXetTuyen',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT FALSE',
+    defaultValue: const CustomExpression('FALSE'),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    admissionId,
+    cohort,
+    studentId,
+    name,
+    dateOfBirth,
+    gender,
+    placeOfBirth,
+    phone,
+    personalEmail,
+    schoolEmail,
+    bachelorUniversity,
+    bachelorMajor,
+    bachelorProgram,
+    bachelorGraduationRank,
+    bachelorGraduationDate,
+    intendedSpecialization,
+    exemptedCourses,
+    masterMajor,
+    status,
+    hasHirstExtension,
+    hasSecondExtension,
+    admissionCouncilId,
+    admissionType,
+    isAdmissionPaid,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'student';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<StudentData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('soHoSo')) {
+      context.handle(
+        _admissionIdMeta,
+        admissionId.isAcceptableOrUnknown(data['soHoSo']!, _admissionIdMeta),
+      );
+    }
+    if (data.containsKey('nienKhoa')) {
+      context.handle(
+        _cohortMeta,
+        cohort.isAcceptableOrUnknown(data['nienKhoa']!, _cohortMeta),
+      );
+    }
+    if (data.containsKey('maHocVien')) {
+      context.handle(
+        _studentIdMeta,
+        studentId.isAcceptableOrUnknown(data['maHocVien']!, _studentIdMeta),
+      );
+    }
+    if (data.containsKey('hoTen')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['hoTen']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('ngaySinh')) {
+      context.handle(
+        _dateOfBirthMeta,
+        dateOfBirth.isAcceptableOrUnknown(data['ngaySinh']!, _dateOfBirthMeta),
+      );
+    }
+    if (data.containsKey('noiSinh')) {
+      context.handle(
+        _placeOfBirthMeta,
+        placeOfBirth.isAcceptableOrUnknown(data['noiSinh']!, _placeOfBirthMeta),
+      );
+    }
+    if (data.containsKey('dienThoai')) {
+      context.handle(
+        _phoneMeta,
+        phone.isAcceptableOrUnknown(data['dienThoai']!, _phoneMeta),
+      );
+    }
+    if (data.containsKey('email')) {
+      context.handle(
+        _personalEmailMeta,
+        personalEmail.isAcceptableOrUnknown(data['email']!, _personalEmailMeta),
+      );
+    }
+    if (data.containsKey('emailHust')) {
+      context.handle(
+        _schoolEmailMeta,
+        schoolEmail.isAcceptableOrUnknown(data['emailHust']!, _schoolEmailMeta),
+      );
+    }
+    if (data.containsKey('truongTotNghiepDaiHoc')) {
+      context.handle(
+        _bachelorUniversityMeta,
+        bachelorUniversity.isAcceptableOrUnknown(
+          data['truongTotNghiepDaiHoc']!,
+          _bachelorUniversityMeta,
+        ),
+      );
+    }
+    if (data.containsKey('nganhTotNghiepDaiHoc')) {
+      context.handle(
+        _bachelorMajorMeta,
+        bachelorMajor.isAcceptableOrUnknown(
+          data['nganhTotNghiepDaiHoc']!,
+          _bachelorMajorMeta,
+        ),
+      );
+    }
+    if (data.containsKey('heTotNghiepDaiHoc')) {
+      context.handle(
+        _bachelorProgramMeta,
+        bachelorProgram.isAcceptableOrUnknown(
+          data['heTotNghiepDaiHoc']!,
+          _bachelorProgramMeta,
+        ),
+      );
+    }
+    if (data.containsKey('xepLoaiTotNghiepDaiHoc')) {
+      context.handle(
+        _bachelorGraduationRankMeta,
+        bachelorGraduationRank.isAcceptableOrUnknown(
+          data['xepLoaiTotNghiepDaiHoc']!,
+          _bachelorGraduationRankMeta,
+        ),
+      );
+    }
+    if (data.containsKey('ngayTotNghiepDaiHoc')) {
+      context.handle(
+        _bachelorGraduationDateMeta,
+        bachelorGraduationDate.isAcceptableOrUnknown(
+          data['ngayTotNghiepDaiHoc']!,
+          _bachelorGraduationDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('dinhHuongChuyenSau')) {
+      context.handle(
+        _intendedSpecializationMeta,
+        intendedSpecialization.isAcceptableOrUnknown(
+          data['dinhHuongChuyenSau']!,
+          _intendedSpecializationMeta,
+        ),
+      );
+    }
+    if (data.containsKey('hocPhanDuocMien')) {
+      context.handle(
+        _exemptedCoursesMeta,
+        exemptedCourses.isAcceptableOrUnknown(
+          data['hocPhanDuocMien']!,
+          _exemptedCoursesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('nganhDaoTaoThacSi')) {
+      context.handle(
+        _masterMajorMeta,
+        masterMajor.isAcceptableOrUnknown(
+          data['nganhDaoTaoThacSi']!,
+          _masterMajorMeta,
+        ),
+      );
+    }
+    if (data.containsKey('flag_extend_1')) {
+      context.handle(
+        _hasHirstExtensionMeta,
+        hasHirstExtension.isAcceptableOrUnknown(
+          data['flag_extend_1']!,
+          _hasHirstExtensionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('flag_extend_2')) {
+      context.handle(
+        _hasSecondExtensionMeta,
+        hasSecondExtension.isAcceptableOrUnknown(
+          data['flag_extend_2']!,
+          _hasSecondExtensionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('idTieuBanXetTuyen')) {
+      context.handle(
+        _admissionCouncilIdMeta,
+        admissionCouncilId.isAcceptableOrUnknown(
+          data['idTieuBanXetTuyen']!,
+          _admissionCouncilIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('thanhToanXetTuyen')) {
+      context.handle(
+        _isAdmissionPaidMeta,
+        isAdmissionPaid.isAcceptableOrUnknown(
+          data['thanhToanXetTuyen']!,
+          _isAdmissionPaidMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  StudentData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return StudentData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      admissionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}soHoSo'],
+      ),
+      cohort: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}nienKhoa'],
+      ),
+      studentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}maHocVien'],
+      ),
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}hoTen'],
+      )!,
+      dateOfBirth: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}ngaySinh'],
+      ),
+      gender: Student.$convertergendern.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}gioiTinh'],
+        ),
+      ),
+      placeOfBirth: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}noiSinh'],
+      ),
+      phone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}dienThoai'],
+      ),
+      personalEmail: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}email'],
+      ),
+      schoolEmail: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}emailHust'],
+      ),
+      bachelorUniversity: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}truongTotNghiepDaiHoc'],
+      ),
+      bachelorMajor: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}nganhTotNghiepDaiHoc'],
+      ),
+      bachelorProgram: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}heTotNghiepDaiHoc'],
+      ),
+      bachelorGraduationRank: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}xepLoaiTotNghiepDaiHoc'],
+      ),
+      bachelorGraduationDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}ngayTotNghiepDaiHoc'],
+      ),
+      intendedSpecialization: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}dinhHuongChuyenSau'],
+      ),
+      exemptedCourses: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}hocPhanDuocMien'],
+      ),
+      masterMajor: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}nganhDaoTaoThacSi'],
+      ),
+      status: Student.$converterstatusn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}maTrangThai'],
+        ),
+      ),
+      hasHirstExtension: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}flag_extend_1'],
+      )!,
+      hasSecondExtension: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}flag_extend_2'],
+      )!,
+      admissionCouncilId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}idTieuBanXetTuyen'],
+      ),
+      admissionType: Student.$converteradmissionTypen.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}idDienTuyenSinh'],
+        ),
+      ),
+      isAdmissionPaid: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}thanhToanXetTuyen'],
+      )!,
+    );
+  }
+
+  @override
+  Student createAlias(String alias) {
+    return Student(attachedDatabase, alias);
+  }
+
+  static TypeConverter<enums.Gender, String> $convertergender =
+      const enums.GenderConverter();
+  static TypeConverter<enums.Gender?, String?> $convertergendern =
+      NullAwareTypeConverter.wrap($convertergender);
+  static TypeConverter<enums.StudentStatus, String> $converterstatus =
+      const enums.StudentStatusConverter();
+  static TypeConverter<enums.StudentStatus?, String?> $converterstatusn =
+      NullAwareTypeConverter.wrap($converterstatus);
+  static TypeConverter<enums.AdmissionType, String> $converteradmissionType =
+      const enums.AdmissionTypeConverter();
+  static TypeConverter<enums.AdmissionType?, String?> $converteradmissionTypen =
+      NullAwareTypeConverter.wrap($converteradmissionType);
+  @override
+  List<String> get customConstraints => const [
+    'FOREIGN KEY(idTieuBanXetTuyen)REFERENCES admission_council(id)',
+    'FOREIGN KEY(nienKhoa)REFERENCES cohort(id)ON UPDATE CASCADE',
+  ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class StudentData extends DataClass implements Insertable<StudentData> {
+  final int id;
+  final String? admissionId;
+  final String? cohort;
+  final String? studentId;
+  final String name;
+  final DateTime? dateOfBirth;
+  final enums.Gender? gender;
+  final String? placeOfBirth;
+  final String? phone;
+  final String? personalEmail;
+  final String? schoolEmail;
+  final String? bachelorUniversity;
+  final String? bachelorMajor;
+  final String? bachelorProgram;
+  final String? bachelorGraduationRank;
+  final DateTime? bachelorGraduationDate;
+  final String? intendedSpecialization;
+  final String? exemptedCourses;
+  final String? masterMajor;
+  final enums.StudentStatus? status;
+  final bool hasHirstExtension;
+  final bool hasSecondExtension;
+  final int? admissionCouncilId;
+  final enums.AdmissionType? admissionType;
+  final bool isAdmissionPaid;
+  const StudentData({
+    required this.id,
+    this.admissionId,
+    this.cohort,
+    this.studentId,
+    required this.name,
+    this.dateOfBirth,
+    this.gender,
+    this.placeOfBirth,
+    this.phone,
+    this.personalEmail,
+    this.schoolEmail,
+    this.bachelorUniversity,
+    this.bachelorMajor,
+    this.bachelorProgram,
+    this.bachelorGraduationRank,
+    this.bachelorGraduationDate,
+    this.intendedSpecialization,
+    this.exemptedCourses,
+    this.masterMajor,
+    this.status,
+    required this.hasHirstExtension,
+    required this.hasSecondExtension,
+    this.admissionCouncilId,
+    this.admissionType,
+    required this.isAdmissionPaid,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || admissionId != null) {
+      map['soHoSo'] = Variable<String>(admissionId);
+    }
+    if (!nullToAbsent || cohort != null) {
+      map['nienKhoa'] = Variable<String>(cohort);
+    }
+    if (!nullToAbsent || studentId != null) {
+      map['maHocVien'] = Variable<String>(studentId);
+    }
+    map['hoTen'] = Variable<String>(name);
+    if (!nullToAbsent || dateOfBirth != null) {
+      map['ngaySinh'] = Variable<DateTime>(dateOfBirth);
+    }
+    if (!nullToAbsent || gender != null) {
+      map['gioiTinh'] = Variable<String>(
+        Student.$convertergendern.toSql(gender),
+      );
+    }
+    if (!nullToAbsent || placeOfBirth != null) {
+      map['noiSinh'] = Variable<String>(placeOfBirth);
+    }
+    if (!nullToAbsent || phone != null) {
+      map['dienThoai'] = Variable<String>(phone);
+    }
+    if (!nullToAbsent || personalEmail != null) {
+      map['email'] = Variable<String>(personalEmail);
+    }
+    if (!nullToAbsent || schoolEmail != null) {
+      map['emailHust'] = Variable<String>(schoolEmail);
+    }
+    if (!nullToAbsent || bachelorUniversity != null) {
+      map['truongTotNghiepDaiHoc'] = Variable<String>(bachelorUniversity);
+    }
+    if (!nullToAbsent || bachelorMajor != null) {
+      map['nganhTotNghiepDaiHoc'] = Variable<String>(bachelorMajor);
+    }
+    if (!nullToAbsent || bachelorProgram != null) {
+      map['heTotNghiepDaiHoc'] = Variable<String>(bachelorProgram);
+    }
+    if (!nullToAbsent || bachelorGraduationRank != null) {
+      map['xepLoaiTotNghiepDaiHoc'] = Variable<String>(bachelorGraduationRank);
+    }
+    if (!nullToAbsent || bachelorGraduationDate != null) {
+      map['ngayTotNghiepDaiHoc'] = Variable<DateTime>(bachelorGraduationDate);
+    }
+    if (!nullToAbsent || intendedSpecialization != null) {
+      map['dinhHuongChuyenSau'] = Variable<String>(intendedSpecialization);
+    }
+    if (!nullToAbsent || exemptedCourses != null) {
+      map['hocPhanDuocMien'] = Variable<String>(exemptedCourses);
+    }
+    if (!nullToAbsent || masterMajor != null) {
+      map['nganhDaoTaoThacSi'] = Variable<String>(masterMajor);
+    }
+    if (!nullToAbsent || status != null) {
+      map['maTrangThai'] = Variable<String>(
+        Student.$converterstatusn.toSql(status),
+      );
+    }
+    map['flag_extend_1'] = Variable<bool>(hasHirstExtension);
+    map['flag_extend_2'] = Variable<bool>(hasSecondExtension);
+    if (!nullToAbsent || admissionCouncilId != null) {
+      map['idTieuBanXetTuyen'] = Variable<int>(admissionCouncilId);
+    }
+    if (!nullToAbsent || admissionType != null) {
+      map['idDienTuyenSinh'] = Variable<String>(
+        Student.$converteradmissionTypen.toSql(admissionType),
+      );
+    }
+    map['thanhToanXetTuyen'] = Variable<bool>(isAdmissionPaid);
+    return map;
+  }
+
+  StudentCompanion toCompanion(bool nullToAbsent) {
+    return StudentCompanion(
+      id: Value(id),
+      admissionId: admissionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(admissionId),
+      cohort: cohort == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cohort),
+      studentId: studentId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(studentId),
+      name: Value(name),
+      dateOfBirth: dateOfBirth == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dateOfBirth),
+      gender: gender == null && nullToAbsent
+          ? const Value.absent()
+          : Value(gender),
+      placeOfBirth: placeOfBirth == null && nullToAbsent
+          ? const Value.absent()
+          : Value(placeOfBirth),
+      phone: phone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(phone),
+      personalEmail: personalEmail == null && nullToAbsent
+          ? const Value.absent()
+          : Value(personalEmail),
+      schoolEmail: schoolEmail == null && nullToAbsent
+          ? const Value.absent()
+          : Value(schoolEmail),
+      bachelorUniversity: bachelorUniversity == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bachelorUniversity),
+      bachelorMajor: bachelorMajor == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bachelorMajor),
+      bachelorProgram: bachelorProgram == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bachelorProgram),
+      bachelorGraduationRank: bachelorGraduationRank == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bachelorGraduationRank),
+      bachelorGraduationDate: bachelorGraduationDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bachelorGraduationDate),
+      intendedSpecialization: intendedSpecialization == null && nullToAbsent
+          ? const Value.absent()
+          : Value(intendedSpecialization),
+      exemptedCourses: exemptedCourses == null && nullToAbsent
+          ? const Value.absent()
+          : Value(exemptedCourses),
+      masterMajor: masterMajor == null && nullToAbsent
+          ? const Value.absent()
+          : Value(masterMajor),
+      status: status == null && nullToAbsent
+          ? const Value.absent()
+          : Value(status),
+      hasHirstExtension: Value(hasHirstExtension),
+      hasSecondExtension: Value(hasSecondExtension),
+      admissionCouncilId: admissionCouncilId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(admissionCouncilId),
+      admissionType: admissionType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(admissionType),
+      isAdmissionPaid: Value(isAdmissionPaid),
+    );
+  }
+
+  factory StudentData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return StudentData(
+      id: serializer.fromJson<int>(json['id']),
+      admissionId: serializer.fromJson<String?>(json['soHoSo']),
+      cohort: serializer.fromJson<String?>(json['nienKhoa']),
+      studentId: serializer.fromJson<String?>(json['maHocVien']),
+      name: serializer.fromJson<String>(json['hoTen']),
+      dateOfBirth: serializer.fromJson<DateTime?>(json['ngaySinh']),
+      gender: serializer.fromJson<enums.Gender?>(json['gioiTinh']),
+      placeOfBirth: serializer.fromJson<String?>(json['noiSinh']),
+      phone: serializer.fromJson<String?>(json['dienThoai']),
+      personalEmail: serializer.fromJson<String?>(json['email']),
+      schoolEmail: serializer.fromJson<String?>(json['emailHust']),
+      bachelorUniversity: serializer.fromJson<String?>(
+        json['truongTotNghiepDaiHoc'],
+      ),
+      bachelorMajor: serializer.fromJson<String?>(json['nganhTotNghiepDaiHoc']),
+      bachelorProgram: serializer.fromJson<String?>(json['heTotNghiepDaiHoc']),
+      bachelorGraduationRank: serializer.fromJson<String?>(
+        json['xepLoaiTotNghiepDaiHoc'],
+      ),
+      bachelorGraduationDate: serializer.fromJson<DateTime?>(
+        json['ngayTotNghiepDaiHoc'],
+      ),
+      intendedSpecialization: serializer.fromJson<String?>(
+        json['dinhHuongChuyenSau'],
+      ),
+      exemptedCourses: serializer.fromJson<String?>(json['hocPhanDuocMien']),
+      masterMajor: serializer.fromJson<String?>(json['nganhDaoTaoThacSi']),
+      status: serializer.fromJson<enums.StudentStatus?>(json['maTrangThai']),
+      hasHirstExtension: serializer.fromJson<bool>(json['flag_extend_1']),
+      hasSecondExtension: serializer.fromJson<bool>(json['flag_extend_2']),
+      admissionCouncilId: serializer.fromJson<int?>(json['idTieuBanXetTuyen']),
+      admissionType: serializer.fromJson<enums.AdmissionType?>(
+        json['idDienTuyenSinh'],
+      ),
+      isAdmissionPaid: serializer.fromJson<bool>(json['thanhToanXetTuyen']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'soHoSo': serializer.toJson<String?>(admissionId),
+      'nienKhoa': serializer.toJson<String?>(cohort),
+      'maHocVien': serializer.toJson<String?>(studentId),
+      'hoTen': serializer.toJson<String>(name),
+      'ngaySinh': serializer.toJson<DateTime?>(dateOfBirth),
+      'gioiTinh': serializer.toJson<enums.Gender?>(gender),
+      'noiSinh': serializer.toJson<String?>(placeOfBirth),
+      'dienThoai': serializer.toJson<String?>(phone),
+      'email': serializer.toJson<String?>(personalEmail),
+      'emailHust': serializer.toJson<String?>(schoolEmail),
+      'truongTotNghiepDaiHoc': serializer.toJson<String?>(bachelorUniversity),
+      'nganhTotNghiepDaiHoc': serializer.toJson<String?>(bachelorMajor),
+      'heTotNghiepDaiHoc': serializer.toJson<String?>(bachelorProgram),
+      'xepLoaiTotNghiepDaiHoc': serializer.toJson<String?>(
+        bachelorGraduationRank,
+      ),
+      'ngayTotNghiepDaiHoc': serializer.toJson<DateTime?>(
+        bachelorGraduationDate,
+      ),
+      'dinhHuongChuyenSau': serializer.toJson<String?>(intendedSpecialization),
+      'hocPhanDuocMien': serializer.toJson<String?>(exemptedCourses),
+      'nganhDaoTaoThacSi': serializer.toJson<String?>(masterMajor),
+      'maTrangThai': serializer.toJson<enums.StudentStatus?>(status),
+      'flag_extend_1': serializer.toJson<bool>(hasHirstExtension),
+      'flag_extend_2': serializer.toJson<bool>(hasSecondExtension),
+      'idTieuBanXetTuyen': serializer.toJson<int?>(admissionCouncilId),
+      'idDienTuyenSinh': serializer.toJson<enums.AdmissionType?>(admissionType),
+      'thanhToanXetTuyen': serializer.toJson<bool>(isAdmissionPaid),
+    };
+  }
+
+  StudentData copyWith({
+    int? id,
+    Value<String?> admissionId = const Value.absent(),
+    Value<String?> cohort = const Value.absent(),
+    Value<String?> studentId = const Value.absent(),
+    String? name,
+    Value<DateTime?> dateOfBirth = const Value.absent(),
+    Value<enums.Gender?> gender = const Value.absent(),
+    Value<String?> placeOfBirth = const Value.absent(),
+    Value<String?> phone = const Value.absent(),
+    Value<String?> personalEmail = const Value.absent(),
+    Value<String?> schoolEmail = const Value.absent(),
+    Value<String?> bachelorUniversity = const Value.absent(),
+    Value<String?> bachelorMajor = const Value.absent(),
+    Value<String?> bachelorProgram = const Value.absent(),
+    Value<String?> bachelorGraduationRank = const Value.absent(),
+    Value<DateTime?> bachelorGraduationDate = const Value.absent(),
+    Value<String?> intendedSpecialization = const Value.absent(),
+    Value<String?> exemptedCourses = const Value.absent(),
+    Value<String?> masterMajor = const Value.absent(),
+    Value<enums.StudentStatus?> status = const Value.absent(),
+    bool? hasHirstExtension,
+    bool? hasSecondExtension,
+    Value<int?> admissionCouncilId = const Value.absent(),
+    Value<enums.AdmissionType?> admissionType = const Value.absent(),
+    bool? isAdmissionPaid,
+  }) => StudentData(
+    id: id ?? this.id,
+    admissionId: admissionId.present ? admissionId.value : this.admissionId,
+    cohort: cohort.present ? cohort.value : this.cohort,
+    studentId: studentId.present ? studentId.value : this.studentId,
+    name: name ?? this.name,
+    dateOfBirth: dateOfBirth.present ? dateOfBirth.value : this.dateOfBirth,
+    gender: gender.present ? gender.value : this.gender,
+    placeOfBirth: placeOfBirth.present ? placeOfBirth.value : this.placeOfBirth,
+    phone: phone.present ? phone.value : this.phone,
+    personalEmail: personalEmail.present
+        ? personalEmail.value
+        : this.personalEmail,
+    schoolEmail: schoolEmail.present ? schoolEmail.value : this.schoolEmail,
+    bachelorUniversity: bachelorUniversity.present
+        ? bachelorUniversity.value
+        : this.bachelorUniversity,
+    bachelorMajor: bachelorMajor.present
+        ? bachelorMajor.value
+        : this.bachelorMajor,
+    bachelorProgram: bachelorProgram.present
+        ? bachelorProgram.value
+        : this.bachelorProgram,
+    bachelorGraduationRank: bachelorGraduationRank.present
+        ? bachelorGraduationRank.value
+        : this.bachelorGraduationRank,
+    bachelorGraduationDate: bachelorGraduationDate.present
+        ? bachelorGraduationDate.value
+        : this.bachelorGraduationDate,
+    intendedSpecialization: intendedSpecialization.present
+        ? intendedSpecialization.value
+        : this.intendedSpecialization,
+    exemptedCourses: exemptedCourses.present
+        ? exemptedCourses.value
+        : this.exemptedCourses,
+    masterMajor: masterMajor.present ? masterMajor.value : this.masterMajor,
+    status: status.present ? status.value : this.status,
+    hasHirstExtension: hasHirstExtension ?? this.hasHirstExtension,
+    hasSecondExtension: hasSecondExtension ?? this.hasSecondExtension,
+    admissionCouncilId: admissionCouncilId.present
+        ? admissionCouncilId.value
+        : this.admissionCouncilId,
+    admissionType: admissionType.present
+        ? admissionType.value
+        : this.admissionType,
+    isAdmissionPaid: isAdmissionPaid ?? this.isAdmissionPaid,
+  );
+  StudentData copyWithCompanion(StudentCompanion data) {
+    return StudentData(
+      id: data.id.present ? data.id.value : this.id,
+      admissionId: data.admissionId.present
+          ? data.admissionId.value
+          : this.admissionId,
+      cohort: data.cohort.present ? data.cohort.value : this.cohort,
+      studentId: data.studentId.present ? data.studentId.value : this.studentId,
+      name: data.name.present ? data.name.value : this.name,
+      dateOfBirth: data.dateOfBirth.present
+          ? data.dateOfBirth.value
+          : this.dateOfBirth,
+      gender: data.gender.present ? data.gender.value : this.gender,
+      placeOfBirth: data.placeOfBirth.present
+          ? data.placeOfBirth.value
+          : this.placeOfBirth,
+      phone: data.phone.present ? data.phone.value : this.phone,
+      personalEmail: data.personalEmail.present
+          ? data.personalEmail.value
+          : this.personalEmail,
+      schoolEmail: data.schoolEmail.present
+          ? data.schoolEmail.value
+          : this.schoolEmail,
+      bachelorUniversity: data.bachelorUniversity.present
+          ? data.bachelorUniversity.value
+          : this.bachelorUniversity,
+      bachelorMajor: data.bachelorMajor.present
+          ? data.bachelorMajor.value
+          : this.bachelorMajor,
+      bachelorProgram: data.bachelorProgram.present
+          ? data.bachelorProgram.value
+          : this.bachelorProgram,
+      bachelorGraduationRank: data.bachelorGraduationRank.present
+          ? data.bachelorGraduationRank.value
+          : this.bachelorGraduationRank,
+      bachelorGraduationDate: data.bachelorGraduationDate.present
+          ? data.bachelorGraduationDate.value
+          : this.bachelorGraduationDate,
+      intendedSpecialization: data.intendedSpecialization.present
+          ? data.intendedSpecialization.value
+          : this.intendedSpecialization,
+      exemptedCourses: data.exemptedCourses.present
+          ? data.exemptedCourses.value
+          : this.exemptedCourses,
+      masterMajor: data.masterMajor.present
+          ? data.masterMajor.value
+          : this.masterMajor,
+      status: data.status.present ? data.status.value : this.status,
+      hasHirstExtension: data.hasHirstExtension.present
+          ? data.hasHirstExtension.value
+          : this.hasHirstExtension,
+      hasSecondExtension: data.hasSecondExtension.present
+          ? data.hasSecondExtension.value
+          : this.hasSecondExtension,
+      admissionCouncilId: data.admissionCouncilId.present
+          ? data.admissionCouncilId.value
+          : this.admissionCouncilId,
+      admissionType: data.admissionType.present
+          ? data.admissionType.value
+          : this.admissionType,
+      isAdmissionPaid: data.isAdmissionPaid.present
+          ? data.isAdmissionPaid.value
+          : this.isAdmissionPaid,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('StudentData(')
+          ..write('id: $id, ')
+          ..write('admissionId: $admissionId, ')
+          ..write('cohort: $cohort, ')
+          ..write('studentId: $studentId, ')
+          ..write('name: $name, ')
+          ..write('dateOfBirth: $dateOfBirth, ')
+          ..write('gender: $gender, ')
+          ..write('placeOfBirth: $placeOfBirth, ')
+          ..write('phone: $phone, ')
+          ..write('personalEmail: $personalEmail, ')
+          ..write('schoolEmail: $schoolEmail, ')
+          ..write('bachelorUniversity: $bachelorUniversity, ')
+          ..write('bachelorMajor: $bachelorMajor, ')
+          ..write('bachelorProgram: $bachelorProgram, ')
+          ..write('bachelorGraduationRank: $bachelorGraduationRank, ')
+          ..write('bachelorGraduationDate: $bachelorGraduationDate, ')
+          ..write('intendedSpecialization: $intendedSpecialization, ')
+          ..write('exemptedCourses: $exemptedCourses, ')
+          ..write('masterMajor: $masterMajor, ')
+          ..write('status: $status, ')
+          ..write('hasHirstExtension: $hasHirstExtension, ')
+          ..write('hasSecondExtension: $hasSecondExtension, ')
+          ..write('admissionCouncilId: $admissionCouncilId, ')
+          ..write('admissionType: $admissionType, ')
+          ..write('isAdmissionPaid: $isAdmissionPaid')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    admissionId,
+    cohort,
+    studentId,
+    name,
+    dateOfBirth,
+    gender,
+    placeOfBirth,
+    phone,
+    personalEmail,
+    schoolEmail,
+    bachelorUniversity,
+    bachelorMajor,
+    bachelorProgram,
+    bachelorGraduationRank,
+    bachelorGraduationDate,
+    intendedSpecialization,
+    exemptedCourses,
+    masterMajor,
+    status,
+    hasHirstExtension,
+    hasSecondExtension,
+    admissionCouncilId,
+    admissionType,
+    isAdmissionPaid,
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is StudentData &&
+          other.id == this.id &&
+          other.admissionId == this.admissionId &&
+          other.cohort == this.cohort &&
+          other.studentId == this.studentId &&
+          other.name == this.name &&
+          other.dateOfBirth == this.dateOfBirth &&
+          other.gender == this.gender &&
+          other.placeOfBirth == this.placeOfBirth &&
+          other.phone == this.phone &&
+          other.personalEmail == this.personalEmail &&
+          other.schoolEmail == this.schoolEmail &&
+          other.bachelorUniversity == this.bachelorUniversity &&
+          other.bachelorMajor == this.bachelorMajor &&
+          other.bachelorProgram == this.bachelorProgram &&
+          other.bachelorGraduationRank == this.bachelorGraduationRank &&
+          other.bachelorGraduationDate == this.bachelorGraduationDate &&
+          other.intendedSpecialization == this.intendedSpecialization &&
+          other.exemptedCourses == this.exemptedCourses &&
+          other.masterMajor == this.masterMajor &&
+          other.status == this.status &&
+          other.hasHirstExtension == this.hasHirstExtension &&
+          other.hasSecondExtension == this.hasSecondExtension &&
+          other.admissionCouncilId == this.admissionCouncilId &&
+          other.admissionType == this.admissionType &&
+          other.isAdmissionPaid == this.isAdmissionPaid);
+}
+
+class StudentCompanion extends UpdateCompanion<StudentData> {
+  final Value<int> id;
+  final Value<String?> admissionId;
+  final Value<String?> cohort;
+  final Value<String?> studentId;
+  final Value<String> name;
+  final Value<DateTime?> dateOfBirth;
+  final Value<enums.Gender?> gender;
+  final Value<String?> placeOfBirth;
+  final Value<String?> phone;
+  final Value<String?> personalEmail;
+  final Value<String?> schoolEmail;
+  final Value<String?> bachelorUniversity;
+  final Value<String?> bachelorMajor;
+  final Value<String?> bachelorProgram;
+  final Value<String?> bachelorGraduationRank;
+  final Value<DateTime?> bachelorGraduationDate;
+  final Value<String?> intendedSpecialization;
+  final Value<String?> exemptedCourses;
+  final Value<String?> masterMajor;
+  final Value<enums.StudentStatus?> status;
+  final Value<bool> hasHirstExtension;
+  final Value<bool> hasSecondExtension;
+  final Value<int?> admissionCouncilId;
+  final Value<enums.AdmissionType?> admissionType;
+  final Value<bool> isAdmissionPaid;
+  const StudentCompanion({
+    this.id = const Value.absent(),
+    this.admissionId = const Value.absent(),
+    this.cohort = const Value.absent(),
+    this.studentId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.dateOfBirth = const Value.absent(),
+    this.gender = const Value.absent(),
+    this.placeOfBirth = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.personalEmail = const Value.absent(),
+    this.schoolEmail = const Value.absent(),
+    this.bachelorUniversity = const Value.absent(),
+    this.bachelorMajor = const Value.absent(),
+    this.bachelorProgram = const Value.absent(),
+    this.bachelorGraduationRank = const Value.absent(),
+    this.bachelorGraduationDate = const Value.absent(),
+    this.intendedSpecialization = const Value.absent(),
+    this.exemptedCourses = const Value.absent(),
+    this.masterMajor = const Value.absent(),
+    this.status = const Value.absent(),
+    this.hasHirstExtension = const Value.absent(),
+    this.hasSecondExtension = const Value.absent(),
+    this.admissionCouncilId = const Value.absent(),
+    this.admissionType = const Value.absent(),
+    this.isAdmissionPaid = const Value.absent(),
+  });
+  StudentCompanion.insert({
+    this.id = const Value.absent(),
+    this.admissionId = const Value.absent(),
+    this.cohort = const Value.absent(),
+    this.studentId = const Value.absent(),
+    required String name,
+    this.dateOfBirth = const Value.absent(),
+    this.gender = const Value.absent(),
+    this.placeOfBirth = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.personalEmail = const Value.absent(),
+    this.schoolEmail = const Value.absent(),
+    this.bachelorUniversity = const Value.absent(),
+    this.bachelorMajor = const Value.absent(),
+    this.bachelorProgram = const Value.absent(),
+    this.bachelorGraduationRank = const Value.absent(),
+    this.bachelorGraduationDate = const Value.absent(),
+    this.intendedSpecialization = const Value.absent(),
+    this.exemptedCourses = const Value.absent(),
+    this.masterMajor = const Value.absent(),
+    this.status = const Value.absent(),
+    this.hasHirstExtension = const Value.absent(),
+    this.hasSecondExtension = const Value.absent(),
+    this.admissionCouncilId = const Value.absent(),
+    this.admissionType = const Value.absent(),
+    this.isAdmissionPaid = const Value.absent(),
+  }) : name = Value(name);
+  static Insertable<StudentData> custom({
+    Expression<int>? id,
+    Expression<String>? admissionId,
+    Expression<String>? cohort,
+    Expression<String>? studentId,
+    Expression<String>? name,
+    Expression<DateTime>? dateOfBirth,
+    Expression<String>? gender,
+    Expression<String>? placeOfBirth,
+    Expression<String>? phone,
+    Expression<String>? personalEmail,
+    Expression<String>? schoolEmail,
+    Expression<String>? bachelorUniversity,
+    Expression<String>? bachelorMajor,
+    Expression<String>? bachelorProgram,
+    Expression<String>? bachelorGraduationRank,
+    Expression<DateTime>? bachelorGraduationDate,
+    Expression<String>? intendedSpecialization,
+    Expression<String>? exemptedCourses,
+    Expression<String>? masterMajor,
+    Expression<String>? status,
+    Expression<bool>? hasHirstExtension,
+    Expression<bool>? hasSecondExtension,
+    Expression<int>? admissionCouncilId,
+    Expression<String>? admissionType,
+    Expression<bool>? isAdmissionPaid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (admissionId != null) 'soHoSo': admissionId,
+      if (cohort != null) 'nienKhoa': cohort,
+      if (studentId != null) 'maHocVien': studentId,
+      if (name != null) 'hoTen': name,
+      if (dateOfBirth != null) 'ngaySinh': dateOfBirth,
+      if (gender != null) 'gioiTinh': gender,
+      if (placeOfBirth != null) 'noiSinh': placeOfBirth,
+      if (phone != null) 'dienThoai': phone,
+      if (personalEmail != null) 'email': personalEmail,
+      if (schoolEmail != null) 'emailHust': schoolEmail,
+      if (bachelorUniversity != null)
+        'truongTotNghiepDaiHoc': bachelorUniversity,
+      if (bachelorMajor != null) 'nganhTotNghiepDaiHoc': bachelorMajor,
+      if (bachelorProgram != null) 'heTotNghiepDaiHoc': bachelorProgram,
+      if (bachelorGraduationRank != null)
+        'xepLoaiTotNghiepDaiHoc': bachelorGraduationRank,
+      if (bachelorGraduationDate != null)
+        'ngayTotNghiepDaiHoc': bachelorGraduationDate,
+      if (intendedSpecialization != null)
+        'dinhHuongChuyenSau': intendedSpecialization,
+      if (exemptedCourses != null) 'hocPhanDuocMien': exemptedCourses,
+      if (masterMajor != null) 'nganhDaoTaoThacSi': masterMajor,
+      if (status != null) 'maTrangThai': status,
+      if (hasHirstExtension != null) 'flag_extend_1': hasHirstExtension,
+      if (hasSecondExtension != null) 'flag_extend_2': hasSecondExtension,
+      if (admissionCouncilId != null) 'idTieuBanXetTuyen': admissionCouncilId,
+      if (admissionType != null) 'idDienTuyenSinh': admissionType,
+      if (isAdmissionPaid != null) 'thanhToanXetTuyen': isAdmissionPaid,
+    });
+  }
+
+  StudentCompanion copyWith({
+    Value<int>? id,
+    Value<String?>? admissionId,
+    Value<String?>? cohort,
+    Value<String?>? studentId,
+    Value<String>? name,
+    Value<DateTime?>? dateOfBirth,
+    Value<enums.Gender?>? gender,
+    Value<String?>? placeOfBirth,
+    Value<String?>? phone,
+    Value<String?>? personalEmail,
+    Value<String?>? schoolEmail,
+    Value<String?>? bachelorUniversity,
+    Value<String?>? bachelorMajor,
+    Value<String?>? bachelorProgram,
+    Value<String?>? bachelorGraduationRank,
+    Value<DateTime?>? bachelorGraduationDate,
+    Value<String?>? intendedSpecialization,
+    Value<String?>? exemptedCourses,
+    Value<String?>? masterMajor,
+    Value<enums.StudentStatus?>? status,
+    Value<bool>? hasHirstExtension,
+    Value<bool>? hasSecondExtension,
+    Value<int?>? admissionCouncilId,
+    Value<enums.AdmissionType?>? admissionType,
+    Value<bool>? isAdmissionPaid,
+  }) {
+    return StudentCompanion(
+      id: id ?? this.id,
+      admissionId: admissionId ?? this.admissionId,
+      cohort: cohort ?? this.cohort,
+      studentId: studentId ?? this.studentId,
+      name: name ?? this.name,
+      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
+      gender: gender ?? this.gender,
+      placeOfBirth: placeOfBirth ?? this.placeOfBirth,
+      phone: phone ?? this.phone,
+      personalEmail: personalEmail ?? this.personalEmail,
+      schoolEmail: schoolEmail ?? this.schoolEmail,
+      bachelorUniversity: bachelorUniversity ?? this.bachelorUniversity,
+      bachelorMajor: bachelorMajor ?? this.bachelorMajor,
+      bachelorProgram: bachelorProgram ?? this.bachelorProgram,
+      bachelorGraduationRank:
+          bachelorGraduationRank ?? this.bachelorGraduationRank,
+      bachelorGraduationDate:
+          bachelorGraduationDate ?? this.bachelorGraduationDate,
+      intendedSpecialization:
+          intendedSpecialization ?? this.intendedSpecialization,
+      exemptedCourses: exemptedCourses ?? this.exemptedCourses,
+      masterMajor: masterMajor ?? this.masterMajor,
+      status: status ?? this.status,
+      hasHirstExtension: hasHirstExtension ?? this.hasHirstExtension,
+      hasSecondExtension: hasSecondExtension ?? this.hasSecondExtension,
+      admissionCouncilId: admissionCouncilId ?? this.admissionCouncilId,
+      admissionType: admissionType ?? this.admissionType,
+      isAdmissionPaid: isAdmissionPaid ?? this.isAdmissionPaid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (admissionId.present) {
+      map['soHoSo'] = Variable<String>(admissionId.value);
+    }
+    if (cohort.present) {
+      map['nienKhoa'] = Variable<String>(cohort.value);
+    }
+    if (studentId.present) {
+      map['maHocVien'] = Variable<String>(studentId.value);
+    }
+    if (name.present) {
+      map['hoTen'] = Variable<String>(name.value);
+    }
+    if (dateOfBirth.present) {
+      map['ngaySinh'] = Variable<DateTime>(dateOfBirth.value);
+    }
+    if (gender.present) {
+      map['gioiTinh'] = Variable<String>(
+        Student.$convertergendern.toSql(gender.value),
+      );
+    }
+    if (placeOfBirth.present) {
+      map['noiSinh'] = Variable<String>(placeOfBirth.value);
+    }
+    if (phone.present) {
+      map['dienThoai'] = Variable<String>(phone.value);
+    }
+    if (personalEmail.present) {
+      map['email'] = Variable<String>(personalEmail.value);
+    }
+    if (schoolEmail.present) {
+      map['emailHust'] = Variable<String>(schoolEmail.value);
+    }
+    if (bachelorUniversity.present) {
+      map['truongTotNghiepDaiHoc'] = Variable<String>(bachelorUniversity.value);
+    }
+    if (bachelorMajor.present) {
+      map['nganhTotNghiepDaiHoc'] = Variable<String>(bachelorMajor.value);
+    }
+    if (bachelorProgram.present) {
+      map['heTotNghiepDaiHoc'] = Variable<String>(bachelorProgram.value);
+    }
+    if (bachelorGraduationRank.present) {
+      map['xepLoaiTotNghiepDaiHoc'] = Variable<String>(
+        bachelorGraduationRank.value,
+      );
+    }
+    if (bachelorGraduationDate.present) {
+      map['ngayTotNghiepDaiHoc'] = Variable<DateTime>(
+        bachelorGraduationDate.value,
+      );
+    }
+    if (intendedSpecialization.present) {
+      map['dinhHuongChuyenSau'] = Variable<String>(
+        intendedSpecialization.value,
+      );
+    }
+    if (exemptedCourses.present) {
+      map['hocPhanDuocMien'] = Variable<String>(exemptedCourses.value);
+    }
+    if (masterMajor.present) {
+      map['nganhDaoTaoThacSi'] = Variable<String>(masterMajor.value);
+    }
+    if (status.present) {
+      map['maTrangThai'] = Variable<String>(
+        Student.$converterstatusn.toSql(status.value),
+      );
+    }
+    if (hasHirstExtension.present) {
+      map['flag_extend_1'] = Variable<bool>(hasHirstExtension.value);
+    }
+    if (hasSecondExtension.present) {
+      map['flag_extend_2'] = Variable<bool>(hasSecondExtension.value);
+    }
+    if (admissionCouncilId.present) {
+      map['idTieuBanXetTuyen'] = Variable<int>(admissionCouncilId.value);
+    }
+    if (admissionType.present) {
+      map['idDienTuyenSinh'] = Variable<String>(
+        Student.$converteradmissionTypen.toSql(admissionType.value),
+      );
+    }
+    if (isAdmissionPaid.present) {
+      map['thanhToanXetTuyen'] = Variable<bool>(isAdmissionPaid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('StudentCompanion(')
+          ..write('id: $id, ')
+          ..write('admissionId: $admissionId, ')
+          ..write('cohort: $cohort, ')
+          ..write('studentId: $studentId, ')
+          ..write('name: $name, ')
+          ..write('dateOfBirth: $dateOfBirth, ')
+          ..write('gender: $gender, ')
+          ..write('placeOfBirth: $placeOfBirth, ')
+          ..write('phone: $phone, ')
+          ..write('personalEmail: $personalEmail, ')
+          ..write('schoolEmail: $schoolEmail, ')
+          ..write('bachelorUniversity: $bachelorUniversity, ')
+          ..write('bachelorMajor: $bachelorMajor, ')
+          ..write('bachelorProgram: $bachelorProgram, ')
+          ..write('bachelorGraduationRank: $bachelorGraduationRank, ')
+          ..write('bachelorGraduationDate: $bachelorGraduationDate, ')
+          ..write('intendedSpecialization: $intendedSpecialization, ')
+          ..write('exemptedCourses: $exemptedCourses, ')
+          ..write('masterMajor: $masterMajor, ')
+          ..write('status: $status, ')
+          ..write('hasHirstExtension: $hasHirstExtension, ')
+          ..write('hasSecondExtension: $hasSecondExtension, ')
+          ..write('admissionCouncilId: $admissionCouncilId, ')
+          ..write('admissionType: $admissionType, ')
+          ..write('isAdmissionPaid: $isAdmissionPaid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class Semester extends Table with TableInfo<Semester, SemesterData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -8398,6 +7194,1094 @@ class SemesterCompanion extends UpdateCompanion<SemesterData> {
           ..write('classEndDate: $classEndDate, ')
           ..write('gradeSubmissionDeadline: $gradeSubmissionDeadline, ')
           ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Thesis extends Table with TableInfo<Thesis, ThesisData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  Thesis(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'PRIMARY KEY AUTOINCREMENT',
+  );
+  static const VerificationMeta _supervisorIdMeta = const VerificationMeta(
+    'supervisorId',
+  );
+  late final GeneratedColumn<int> supervisorId = GeneratedColumn<int>(
+    'supervisor_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES teacher(id)',
+  );
+  static const VerificationMeta _presidentIdMeta = const VerificationMeta(
+    'presidentId',
+  );
+  late final GeneratedColumn<int> presidentId = GeneratedColumn<int>(
+    'president_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES teacher(id)',
+  );
+  static const VerificationMeta _firstReviewerIdMeta = const VerificationMeta(
+    'firstReviewerId',
+  );
+  late final GeneratedColumn<int> firstReviewerId = GeneratedColumn<int>(
+    'first_reviewer_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES teacher(id)',
+  );
+  static const VerificationMeta _secondReviewerIdMeta = const VerificationMeta(
+    'secondReviewerId',
+  );
+  late final GeneratedColumn<int> secondReviewerId = GeneratedColumn<int>(
+    'second_reviewer_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES teacher(id)',
+  );
+  static const VerificationMeta _secretaryIdMeta = const VerificationMeta(
+    'secretaryId',
+  );
+  late final GeneratedColumn<int> secretaryId = GeneratedColumn<int>(
+    'secretary_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES teacher(id)',
+  );
+  static const VerificationMeta _memberIdMeta = const VerificationMeta(
+    'memberId',
+  );
+  late final GeneratedColumn<int> memberId = GeneratedColumn<int>(
+    'member_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES teacher(id)',
+  );
+  static const VerificationMeta _studentIdMeta = const VerificationMeta(
+    'studentId',
+  );
+  late final GeneratedColumn<int> studentId = GeneratedColumn<int>(
+    'student_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES student(id)',
+  );
+  static const VerificationMeta _vietnameseTitleMeta = const VerificationMeta(
+    'vietnameseTitle',
+  );
+  late final GeneratedColumn<String> vietnameseTitle = GeneratedColumn<String>(
+    'vietnamese_title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _englishTitleMeta = const VerificationMeta(
+    'englishTitle',
+  );
+  late final GeneratedColumn<String> englishTitle = GeneratedColumn<String>(
+    'english_title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _noteMeta = const VerificationMeta('note');
+  late final GeneratedColumn<String> note = GeneratedColumn<String>(
+    'note',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT ()',
+    defaultValue: const CustomExpression(''),
+  );
+  static const VerificationMeta _defenseDeadlineMeta = const VerificationMeta(
+    'defenseDeadline',
+  );
+  late final GeneratedColumn<DateTime> defenseDeadline =
+      GeneratedColumn<DateTime>(
+        'defense_deadline',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      );
+  static const VerificationMeta _defenseDateMeta = const VerificationMeta(
+    'defenseDate',
+  );
+  late final GeneratedColumn<DateTime> defenseDate = GeneratedColumn<DateTime>(
+    'defense_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _flagTrackingMeta = const VerificationMeta(
+    'flagTracking',
+  );
+  late final GeneratedColumn<bool> flagTracking = GeneratedColumn<bool>(
+    'flag_tracking',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT FALSE',
+    defaultValue: const CustomExpression('FALSE'),
+  );
+  static const VerificationMeta _flagPaidMeta = const VerificationMeta(
+    'flagPaid',
+  );
+  late final GeneratedColumn<bool> flagPaid = GeneratedColumn<bool>(
+    'flag_paid',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT FALSE',
+    defaultValue: const CustomExpression('FALSE'),
+  );
+  static const VerificationMeta _flagIgnoreMeta = const VerificationMeta(
+    'flagIgnore',
+  );
+  late final GeneratedColumn<bool> flagIgnore = GeneratedColumn<bool>(
+    'flag_ignore',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT FALSE',
+    defaultValue: const CustomExpression('FALSE'),
+  );
+  static const VerificationMeta _groupMeta = const VerificationMeta('group');
+  late final GeneratedColumn<String> group = GeneratedColumn<String>(
+    'group',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _yearMeta = const VerificationMeta('year');
+  late final GeneratedColumn<String> year = GeneratedColumn<String>(
+    'nam',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  late final GeneratedColumnWithTypeConverter<enums.MscDefenseStatus, String>
+  defenseStatus = GeneratedColumn<String>(
+    'defense_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  ).withConverter<enums.MscDefenseStatus>(Thesis.$converterdefenseStatus);
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    supervisorId,
+    presidentId,
+    firstReviewerId,
+    secondReviewerId,
+    secretaryId,
+    memberId,
+    studentId,
+    vietnameseTitle,
+    englishTitle,
+    note,
+    defenseDeadline,
+    defenseDate,
+    flagTracking,
+    flagPaid,
+    flagIgnore,
+    group,
+    year,
+    defenseStatus,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'thesis';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ThesisData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('supervisor_id')) {
+      context.handle(
+        _supervisorIdMeta,
+        supervisorId.isAcceptableOrUnknown(
+          data['supervisor_id']!,
+          _supervisorIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_supervisorIdMeta);
+    }
+    if (data.containsKey('president_id')) {
+      context.handle(
+        _presidentIdMeta,
+        presidentId.isAcceptableOrUnknown(
+          data['president_id']!,
+          _presidentIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('first_reviewer_id')) {
+      context.handle(
+        _firstReviewerIdMeta,
+        firstReviewerId.isAcceptableOrUnknown(
+          data['first_reviewer_id']!,
+          _firstReviewerIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('second_reviewer_id')) {
+      context.handle(
+        _secondReviewerIdMeta,
+        secondReviewerId.isAcceptableOrUnknown(
+          data['second_reviewer_id']!,
+          _secondReviewerIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('secretary_id')) {
+      context.handle(
+        _secretaryIdMeta,
+        secretaryId.isAcceptableOrUnknown(
+          data['secretary_id']!,
+          _secretaryIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('member_id')) {
+      context.handle(
+        _memberIdMeta,
+        memberId.isAcceptableOrUnknown(data['member_id']!, _memberIdMeta),
+      );
+    }
+    if (data.containsKey('student_id')) {
+      context.handle(
+        _studentIdMeta,
+        studentId.isAcceptableOrUnknown(data['student_id']!, _studentIdMeta),
+      );
+    }
+    if (data.containsKey('vietnamese_title')) {
+      context.handle(
+        _vietnameseTitleMeta,
+        vietnameseTitle.isAcceptableOrUnknown(
+          data['vietnamese_title']!,
+          _vietnameseTitleMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_vietnameseTitleMeta);
+    }
+    if (data.containsKey('english_title')) {
+      context.handle(
+        _englishTitleMeta,
+        englishTitle.isAcceptableOrUnknown(
+          data['english_title']!,
+          _englishTitleMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_englishTitleMeta);
+    }
+    if (data.containsKey('note')) {
+      context.handle(
+        _noteMeta,
+        note.isAcceptableOrUnknown(data['note']!, _noteMeta),
+      );
+    }
+    if (data.containsKey('defense_deadline')) {
+      context.handle(
+        _defenseDeadlineMeta,
+        defenseDeadline.isAcceptableOrUnknown(
+          data['defense_deadline']!,
+          _defenseDeadlineMeta,
+        ),
+      );
+    }
+    if (data.containsKey('defense_date')) {
+      context.handle(
+        _defenseDateMeta,
+        defenseDate.isAcceptableOrUnknown(
+          data['defense_date']!,
+          _defenseDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('flag_tracking')) {
+      context.handle(
+        _flagTrackingMeta,
+        flagTracking.isAcceptableOrUnknown(
+          data['flag_tracking']!,
+          _flagTrackingMeta,
+        ),
+      );
+    }
+    if (data.containsKey('flag_paid')) {
+      context.handle(
+        _flagPaidMeta,
+        flagPaid.isAcceptableOrUnknown(data['flag_paid']!, _flagPaidMeta),
+      );
+    }
+    if (data.containsKey('flag_ignore')) {
+      context.handle(
+        _flagIgnoreMeta,
+        flagIgnore.isAcceptableOrUnknown(data['flag_ignore']!, _flagIgnoreMeta),
+      );
+    }
+    if (data.containsKey('group')) {
+      context.handle(
+        _groupMeta,
+        group.isAcceptableOrUnknown(data['group']!, _groupMeta),
+      );
+    }
+    if (data.containsKey('nam')) {
+      context.handle(
+        _yearMeta,
+        year.isAcceptableOrUnknown(data['nam']!, _yearMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ThesisData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ThesisData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      supervisorId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}supervisor_id'],
+      )!,
+      presidentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}president_id'],
+      ),
+      firstReviewerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}first_reviewer_id'],
+      ),
+      secondReviewerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}second_reviewer_id'],
+      ),
+      secretaryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}secretary_id'],
+      ),
+      memberId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}member_id'],
+      ),
+      studentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}student_id'],
+      ),
+      vietnameseTitle: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vietnamese_title'],
+      )!,
+      englishTitle: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}english_title'],
+      )!,
+      note: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}note'],
+      )!,
+      defenseDeadline: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}defense_deadline'],
+      ),
+      defenseDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}defense_date'],
+      ),
+      flagTracking: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}flag_tracking'],
+      )!,
+      flagPaid: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}flag_paid'],
+      )!,
+      flagIgnore: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}flag_ignore'],
+      )!,
+      group: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}group'],
+      ),
+      year: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}nam'],
+      ),
+      defenseStatus: Thesis.$converterdefenseStatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}defense_status'],
+        )!,
+      ),
+    );
+  }
+
+  @override
+  Thesis createAlias(String alias) {
+    return Thesis(attachedDatabase, alias);
+  }
+
+  static TypeConverter<enums.MscDefenseStatus, String> $converterdefenseStatus =
+      enums.mscDefenseStatusConverter;
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class ThesisData extends DataClass implements Insertable<ThesisData> {
+  final int id;
+  final int supervisorId;
+  final int? presidentId;
+  final int? firstReviewerId;
+  final int? secondReviewerId;
+  final int? secretaryId;
+  final int? memberId;
+  final int? studentId;
+  final String vietnameseTitle;
+  final String englishTitle;
+  final String note;
+  final DateTime? defenseDeadline;
+  final DateTime? defenseDate;
+  final bool flagTracking;
+  final bool flagPaid;
+  final bool flagIgnore;
+  final String? group;
+  final String? year;
+  final enums.MscDefenseStatus defenseStatus;
+  const ThesisData({
+    required this.id,
+    required this.supervisorId,
+    this.presidentId,
+    this.firstReviewerId,
+    this.secondReviewerId,
+    this.secretaryId,
+    this.memberId,
+    this.studentId,
+    required this.vietnameseTitle,
+    required this.englishTitle,
+    required this.note,
+    this.defenseDeadline,
+    this.defenseDate,
+    required this.flagTracking,
+    required this.flagPaid,
+    required this.flagIgnore,
+    this.group,
+    this.year,
+    required this.defenseStatus,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['supervisor_id'] = Variable<int>(supervisorId);
+    if (!nullToAbsent || presidentId != null) {
+      map['president_id'] = Variable<int>(presidentId);
+    }
+    if (!nullToAbsent || firstReviewerId != null) {
+      map['first_reviewer_id'] = Variable<int>(firstReviewerId);
+    }
+    if (!nullToAbsent || secondReviewerId != null) {
+      map['second_reviewer_id'] = Variable<int>(secondReviewerId);
+    }
+    if (!nullToAbsent || secretaryId != null) {
+      map['secretary_id'] = Variable<int>(secretaryId);
+    }
+    if (!nullToAbsent || memberId != null) {
+      map['member_id'] = Variable<int>(memberId);
+    }
+    if (!nullToAbsent || studentId != null) {
+      map['student_id'] = Variable<int>(studentId);
+    }
+    map['vietnamese_title'] = Variable<String>(vietnameseTitle);
+    map['english_title'] = Variable<String>(englishTitle);
+    map['note'] = Variable<String>(note);
+    if (!nullToAbsent || defenseDeadline != null) {
+      map['defense_deadline'] = Variable<DateTime>(defenseDeadline);
+    }
+    if (!nullToAbsent || defenseDate != null) {
+      map['defense_date'] = Variable<DateTime>(defenseDate);
+    }
+    map['flag_tracking'] = Variable<bool>(flagTracking);
+    map['flag_paid'] = Variable<bool>(flagPaid);
+    map['flag_ignore'] = Variable<bool>(flagIgnore);
+    if (!nullToAbsent || group != null) {
+      map['group'] = Variable<String>(group);
+    }
+    if (!nullToAbsent || year != null) {
+      map['nam'] = Variable<String>(year);
+    }
+    {
+      map['defense_status'] = Variable<String>(
+        Thesis.$converterdefenseStatus.toSql(defenseStatus),
+      );
+    }
+    return map;
+  }
+
+  ThesisCompanion toCompanion(bool nullToAbsent) {
+    return ThesisCompanion(
+      id: Value(id),
+      supervisorId: Value(supervisorId),
+      presidentId: presidentId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(presidentId),
+      firstReviewerId: firstReviewerId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(firstReviewerId),
+      secondReviewerId: secondReviewerId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(secondReviewerId),
+      secretaryId: secretaryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(secretaryId),
+      memberId: memberId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(memberId),
+      studentId: studentId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(studentId),
+      vietnameseTitle: Value(vietnameseTitle),
+      englishTitle: Value(englishTitle),
+      note: Value(note),
+      defenseDeadline: defenseDeadline == null && nullToAbsent
+          ? const Value.absent()
+          : Value(defenseDeadline),
+      defenseDate: defenseDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(defenseDate),
+      flagTracking: Value(flagTracking),
+      flagPaid: Value(flagPaid),
+      flagIgnore: Value(flagIgnore),
+      group: group == null && nullToAbsent
+          ? const Value.absent()
+          : Value(group),
+      year: year == null && nullToAbsent ? const Value.absent() : Value(year),
+      defenseStatus: Value(defenseStatus),
+    );
+  }
+
+  factory ThesisData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ThesisData(
+      id: serializer.fromJson<int>(json['id']),
+      supervisorId: serializer.fromJson<int>(json['supervisor_id']),
+      presidentId: serializer.fromJson<int?>(json['president_id']),
+      firstReviewerId: serializer.fromJson<int?>(json['first_reviewer_id']),
+      secondReviewerId: serializer.fromJson<int?>(json['second_reviewer_id']),
+      secretaryId: serializer.fromJson<int?>(json['secretary_id']),
+      memberId: serializer.fromJson<int?>(json['member_id']),
+      studentId: serializer.fromJson<int?>(json['student_id']),
+      vietnameseTitle: serializer.fromJson<String>(json['vietnamese_title']),
+      englishTitle: serializer.fromJson<String>(json['english_title']),
+      note: serializer.fromJson<String>(json['note']),
+      defenseDeadline: serializer.fromJson<DateTime?>(json['defense_deadline']),
+      defenseDate: serializer.fromJson<DateTime?>(json['defense_date']),
+      flagTracking: serializer.fromJson<bool>(json['flag_tracking']),
+      flagPaid: serializer.fromJson<bool>(json['flag_paid']),
+      flagIgnore: serializer.fromJson<bool>(json['flag_ignore']),
+      group: serializer.fromJson<String?>(json['group']),
+      year: serializer.fromJson<String?>(json['nam']),
+      defenseStatus: serializer.fromJson<enums.MscDefenseStatus>(
+        json['defense_status'],
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'supervisor_id': serializer.toJson<int>(supervisorId),
+      'president_id': serializer.toJson<int?>(presidentId),
+      'first_reviewer_id': serializer.toJson<int?>(firstReviewerId),
+      'second_reviewer_id': serializer.toJson<int?>(secondReviewerId),
+      'secretary_id': serializer.toJson<int?>(secretaryId),
+      'member_id': serializer.toJson<int?>(memberId),
+      'student_id': serializer.toJson<int?>(studentId),
+      'vietnamese_title': serializer.toJson<String>(vietnameseTitle),
+      'english_title': serializer.toJson<String>(englishTitle),
+      'note': serializer.toJson<String>(note),
+      'defense_deadline': serializer.toJson<DateTime?>(defenseDeadline),
+      'defense_date': serializer.toJson<DateTime?>(defenseDate),
+      'flag_tracking': serializer.toJson<bool>(flagTracking),
+      'flag_paid': serializer.toJson<bool>(flagPaid),
+      'flag_ignore': serializer.toJson<bool>(flagIgnore),
+      'group': serializer.toJson<String?>(group),
+      'nam': serializer.toJson<String?>(year),
+      'defense_status': serializer.toJson<enums.MscDefenseStatus>(
+        defenseStatus,
+      ),
+    };
+  }
+
+  ThesisData copyWith({
+    int? id,
+    int? supervisorId,
+    Value<int?> presidentId = const Value.absent(),
+    Value<int?> firstReviewerId = const Value.absent(),
+    Value<int?> secondReviewerId = const Value.absent(),
+    Value<int?> secretaryId = const Value.absent(),
+    Value<int?> memberId = const Value.absent(),
+    Value<int?> studentId = const Value.absent(),
+    String? vietnameseTitle,
+    String? englishTitle,
+    String? note,
+    Value<DateTime?> defenseDeadline = const Value.absent(),
+    Value<DateTime?> defenseDate = const Value.absent(),
+    bool? flagTracking,
+    bool? flagPaid,
+    bool? flagIgnore,
+    Value<String?> group = const Value.absent(),
+    Value<String?> year = const Value.absent(),
+    enums.MscDefenseStatus? defenseStatus,
+  }) => ThesisData(
+    id: id ?? this.id,
+    supervisorId: supervisorId ?? this.supervisorId,
+    presidentId: presidentId.present ? presidentId.value : this.presidentId,
+    firstReviewerId: firstReviewerId.present
+        ? firstReviewerId.value
+        : this.firstReviewerId,
+    secondReviewerId: secondReviewerId.present
+        ? secondReviewerId.value
+        : this.secondReviewerId,
+    secretaryId: secretaryId.present ? secretaryId.value : this.secretaryId,
+    memberId: memberId.present ? memberId.value : this.memberId,
+    studentId: studentId.present ? studentId.value : this.studentId,
+    vietnameseTitle: vietnameseTitle ?? this.vietnameseTitle,
+    englishTitle: englishTitle ?? this.englishTitle,
+    note: note ?? this.note,
+    defenseDeadline: defenseDeadline.present
+        ? defenseDeadline.value
+        : this.defenseDeadline,
+    defenseDate: defenseDate.present ? defenseDate.value : this.defenseDate,
+    flagTracking: flagTracking ?? this.flagTracking,
+    flagPaid: flagPaid ?? this.flagPaid,
+    flagIgnore: flagIgnore ?? this.flagIgnore,
+    group: group.present ? group.value : this.group,
+    year: year.present ? year.value : this.year,
+    defenseStatus: defenseStatus ?? this.defenseStatus,
+  );
+  ThesisData copyWithCompanion(ThesisCompanion data) {
+    return ThesisData(
+      id: data.id.present ? data.id.value : this.id,
+      supervisorId: data.supervisorId.present
+          ? data.supervisorId.value
+          : this.supervisorId,
+      presidentId: data.presidentId.present
+          ? data.presidentId.value
+          : this.presidentId,
+      firstReviewerId: data.firstReviewerId.present
+          ? data.firstReviewerId.value
+          : this.firstReviewerId,
+      secondReviewerId: data.secondReviewerId.present
+          ? data.secondReviewerId.value
+          : this.secondReviewerId,
+      secretaryId: data.secretaryId.present
+          ? data.secretaryId.value
+          : this.secretaryId,
+      memberId: data.memberId.present ? data.memberId.value : this.memberId,
+      studentId: data.studentId.present ? data.studentId.value : this.studentId,
+      vietnameseTitle: data.vietnameseTitle.present
+          ? data.vietnameseTitle.value
+          : this.vietnameseTitle,
+      englishTitle: data.englishTitle.present
+          ? data.englishTitle.value
+          : this.englishTitle,
+      note: data.note.present ? data.note.value : this.note,
+      defenseDeadline: data.defenseDeadline.present
+          ? data.defenseDeadline.value
+          : this.defenseDeadline,
+      defenseDate: data.defenseDate.present
+          ? data.defenseDate.value
+          : this.defenseDate,
+      flagTracking: data.flagTracking.present
+          ? data.flagTracking.value
+          : this.flagTracking,
+      flagPaid: data.flagPaid.present ? data.flagPaid.value : this.flagPaid,
+      flagIgnore: data.flagIgnore.present
+          ? data.flagIgnore.value
+          : this.flagIgnore,
+      group: data.group.present ? data.group.value : this.group,
+      year: data.year.present ? data.year.value : this.year,
+      defenseStatus: data.defenseStatus.present
+          ? data.defenseStatus.value
+          : this.defenseStatus,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ThesisData(')
+          ..write('id: $id, ')
+          ..write('supervisorId: $supervisorId, ')
+          ..write('presidentId: $presidentId, ')
+          ..write('firstReviewerId: $firstReviewerId, ')
+          ..write('secondReviewerId: $secondReviewerId, ')
+          ..write('secretaryId: $secretaryId, ')
+          ..write('memberId: $memberId, ')
+          ..write('studentId: $studentId, ')
+          ..write('vietnameseTitle: $vietnameseTitle, ')
+          ..write('englishTitle: $englishTitle, ')
+          ..write('note: $note, ')
+          ..write('defenseDeadline: $defenseDeadline, ')
+          ..write('defenseDate: $defenseDate, ')
+          ..write('flagTracking: $flagTracking, ')
+          ..write('flagPaid: $flagPaid, ')
+          ..write('flagIgnore: $flagIgnore, ')
+          ..write('group: $group, ')
+          ..write('year: $year, ')
+          ..write('defenseStatus: $defenseStatus')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    supervisorId,
+    presidentId,
+    firstReviewerId,
+    secondReviewerId,
+    secretaryId,
+    memberId,
+    studentId,
+    vietnameseTitle,
+    englishTitle,
+    note,
+    defenseDeadline,
+    defenseDate,
+    flagTracking,
+    flagPaid,
+    flagIgnore,
+    group,
+    year,
+    defenseStatus,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ThesisData &&
+          other.id == this.id &&
+          other.supervisorId == this.supervisorId &&
+          other.presidentId == this.presidentId &&
+          other.firstReviewerId == this.firstReviewerId &&
+          other.secondReviewerId == this.secondReviewerId &&
+          other.secretaryId == this.secretaryId &&
+          other.memberId == this.memberId &&
+          other.studentId == this.studentId &&
+          other.vietnameseTitle == this.vietnameseTitle &&
+          other.englishTitle == this.englishTitle &&
+          other.note == this.note &&
+          other.defenseDeadline == this.defenseDeadline &&
+          other.defenseDate == this.defenseDate &&
+          other.flagTracking == this.flagTracking &&
+          other.flagPaid == this.flagPaid &&
+          other.flagIgnore == this.flagIgnore &&
+          other.group == this.group &&
+          other.year == this.year &&
+          other.defenseStatus == this.defenseStatus);
+}
+
+class ThesisCompanion extends UpdateCompanion<ThesisData> {
+  final Value<int> id;
+  final Value<int> supervisorId;
+  final Value<int?> presidentId;
+  final Value<int?> firstReviewerId;
+  final Value<int?> secondReviewerId;
+  final Value<int?> secretaryId;
+  final Value<int?> memberId;
+  final Value<int?> studentId;
+  final Value<String> vietnameseTitle;
+  final Value<String> englishTitle;
+  final Value<String> note;
+  final Value<DateTime?> defenseDeadline;
+  final Value<DateTime?> defenseDate;
+  final Value<bool> flagTracking;
+  final Value<bool> flagPaid;
+  final Value<bool> flagIgnore;
+  final Value<String?> group;
+  final Value<String?> year;
+  final Value<enums.MscDefenseStatus> defenseStatus;
+  const ThesisCompanion({
+    this.id = const Value.absent(),
+    this.supervisorId = const Value.absent(),
+    this.presidentId = const Value.absent(),
+    this.firstReviewerId = const Value.absent(),
+    this.secondReviewerId = const Value.absent(),
+    this.secretaryId = const Value.absent(),
+    this.memberId = const Value.absent(),
+    this.studentId = const Value.absent(),
+    this.vietnameseTitle = const Value.absent(),
+    this.englishTitle = const Value.absent(),
+    this.note = const Value.absent(),
+    this.defenseDeadline = const Value.absent(),
+    this.defenseDate = const Value.absent(),
+    this.flagTracking = const Value.absent(),
+    this.flagPaid = const Value.absent(),
+    this.flagIgnore = const Value.absent(),
+    this.group = const Value.absent(),
+    this.year = const Value.absent(),
+    this.defenseStatus = const Value.absent(),
+  });
+  ThesisCompanion.insert({
+    this.id = const Value.absent(),
+    required int supervisorId,
+    this.presidentId = const Value.absent(),
+    this.firstReviewerId = const Value.absent(),
+    this.secondReviewerId = const Value.absent(),
+    this.secretaryId = const Value.absent(),
+    this.memberId = const Value.absent(),
+    this.studentId = const Value.absent(),
+    required String vietnameseTitle,
+    required String englishTitle,
+    this.note = const Value.absent(),
+    this.defenseDeadline = const Value.absent(),
+    this.defenseDate = const Value.absent(),
+    this.flagTracking = const Value.absent(),
+    this.flagPaid = const Value.absent(),
+    this.flagIgnore = const Value.absent(),
+    this.group = const Value.absent(),
+    this.year = const Value.absent(),
+    required enums.MscDefenseStatus defenseStatus,
+  }) : supervisorId = Value(supervisorId),
+       vietnameseTitle = Value(vietnameseTitle),
+       englishTitle = Value(englishTitle),
+       defenseStatus = Value(defenseStatus);
+  static Insertable<ThesisData> custom({
+    Expression<int>? id,
+    Expression<int>? supervisorId,
+    Expression<int>? presidentId,
+    Expression<int>? firstReviewerId,
+    Expression<int>? secondReviewerId,
+    Expression<int>? secretaryId,
+    Expression<int>? memberId,
+    Expression<int>? studentId,
+    Expression<String>? vietnameseTitle,
+    Expression<String>? englishTitle,
+    Expression<String>? note,
+    Expression<DateTime>? defenseDeadline,
+    Expression<DateTime>? defenseDate,
+    Expression<bool>? flagTracking,
+    Expression<bool>? flagPaid,
+    Expression<bool>? flagIgnore,
+    Expression<String>? group,
+    Expression<String>? year,
+    Expression<String>? defenseStatus,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (supervisorId != null) 'supervisor_id': supervisorId,
+      if (presidentId != null) 'president_id': presidentId,
+      if (firstReviewerId != null) 'first_reviewer_id': firstReviewerId,
+      if (secondReviewerId != null) 'second_reviewer_id': secondReviewerId,
+      if (secretaryId != null) 'secretary_id': secretaryId,
+      if (memberId != null) 'member_id': memberId,
+      if (studentId != null) 'student_id': studentId,
+      if (vietnameseTitle != null) 'vietnamese_title': vietnameseTitle,
+      if (englishTitle != null) 'english_title': englishTitle,
+      if (note != null) 'note': note,
+      if (defenseDeadline != null) 'defense_deadline': defenseDeadline,
+      if (defenseDate != null) 'defense_date': defenseDate,
+      if (flagTracking != null) 'flag_tracking': flagTracking,
+      if (flagPaid != null) 'flag_paid': flagPaid,
+      if (flagIgnore != null) 'flag_ignore': flagIgnore,
+      if (group != null) 'group': group,
+      if (year != null) 'nam': year,
+      if (defenseStatus != null) 'defense_status': defenseStatus,
+    });
+  }
+
+  ThesisCompanion copyWith({
+    Value<int>? id,
+    Value<int>? supervisorId,
+    Value<int?>? presidentId,
+    Value<int?>? firstReviewerId,
+    Value<int?>? secondReviewerId,
+    Value<int?>? secretaryId,
+    Value<int?>? memberId,
+    Value<int?>? studentId,
+    Value<String>? vietnameseTitle,
+    Value<String>? englishTitle,
+    Value<String>? note,
+    Value<DateTime?>? defenseDeadline,
+    Value<DateTime?>? defenseDate,
+    Value<bool>? flagTracking,
+    Value<bool>? flagPaid,
+    Value<bool>? flagIgnore,
+    Value<String?>? group,
+    Value<String?>? year,
+    Value<enums.MscDefenseStatus>? defenseStatus,
+  }) {
+    return ThesisCompanion(
+      id: id ?? this.id,
+      supervisorId: supervisorId ?? this.supervisorId,
+      presidentId: presidentId ?? this.presidentId,
+      firstReviewerId: firstReviewerId ?? this.firstReviewerId,
+      secondReviewerId: secondReviewerId ?? this.secondReviewerId,
+      secretaryId: secretaryId ?? this.secretaryId,
+      memberId: memberId ?? this.memberId,
+      studentId: studentId ?? this.studentId,
+      vietnameseTitle: vietnameseTitle ?? this.vietnameseTitle,
+      englishTitle: englishTitle ?? this.englishTitle,
+      note: note ?? this.note,
+      defenseDeadline: defenseDeadline ?? this.defenseDeadline,
+      defenseDate: defenseDate ?? this.defenseDate,
+      flagTracking: flagTracking ?? this.flagTracking,
+      flagPaid: flagPaid ?? this.flagPaid,
+      flagIgnore: flagIgnore ?? this.flagIgnore,
+      group: group ?? this.group,
+      year: year ?? this.year,
+      defenseStatus: defenseStatus ?? this.defenseStatus,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (supervisorId.present) {
+      map['supervisor_id'] = Variable<int>(supervisorId.value);
+    }
+    if (presidentId.present) {
+      map['president_id'] = Variable<int>(presidentId.value);
+    }
+    if (firstReviewerId.present) {
+      map['first_reviewer_id'] = Variable<int>(firstReviewerId.value);
+    }
+    if (secondReviewerId.present) {
+      map['second_reviewer_id'] = Variable<int>(secondReviewerId.value);
+    }
+    if (secretaryId.present) {
+      map['secretary_id'] = Variable<int>(secretaryId.value);
+    }
+    if (memberId.present) {
+      map['member_id'] = Variable<int>(memberId.value);
+    }
+    if (studentId.present) {
+      map['student_id'] = Variable<int>(studentId.value);
+    }
+    if (vietnameseTitle.present) {
+      map['vietnamese_title'] = Variable<String>(vietnameseTitle.value);
+    }
+    if (englishTitle.present) {
+      map['english_title'] = Variable<String>(englishTitle.value);
+    }
+    if (note.present) {
+      map['note'] = Variable<String>(note.value);
+    }
+    if (defenseDeadline.present) {
+      map['defense_deadline'] = Variable<DateTime>(defenseDeadline.value);
+    }
+    if (defenseDate.present) {
+      map['defense_date'] = Variable<DateTime>(defenseDate.value);
+    }
+    if (flagTracking.present) {
+      map['flag_tracking'] = Variable<bool>(flagTracking.value);
+    }
+    if (flagPaid.present) {
+      map['flag_paid'] = Variable<bool>(flagPaid.value);
+    }
+    if (flagIgnore.present) {
+      map['flag_ignore'] = Variable<bool>(flagIgnore.value);
+    }
+    if (group.present) {
+      map['group'] = Variable<String>(group.value);
+    }
+    if (year.present) {
+      map['nam'] = Variable<String>(year.value);
+    }
+    if (defenseStatus.present) {
+      map['defense_status'] = Variable<String>(
+        Thesis.$converterdefenseStatus.toSql(defenseStatus.value),
+      );
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ThesisCompanion(')
+          ..write('id: $id, ')
+          ..write('supervisorId: $supervisorId, ')
+          ..write('presidentId: $presidentId, ')
+          ..write('firstReviewerId: $firstReviewerId, ')
+          ..write('secondReviewerId: $secondReviewerId, ')
+          ..write('secretaryId: $secretaryId, ')
+          ..write('memberId: $memberId, ')
+          ..write('studentId: $studentId, ')
+          ..write('vietnameseTitle: $vietnameseTitle, ')
+          ..write('englishTitle: $englishTitle, ')
+          ..write('note: $note, ')
+          ..write('defenseDeadline: $defenseDeadline, ')
+          ..write('defenseDate: $defenseDate, ')
+          ..write('flagTracking: $flagTracking, ')
+          ..write('flagPaid: $flagPaid, ')
+          ..write('flagIgnore: $flagIgnore, ')
+          ..write('group: $group, ')
+          ..write('year: $year, ')
+          ..write('defenseStatus: $defenseStatus')
           ..write(')'))
         .toString();
   }
@@ -10652,6 +10536,234 @@ class TeachingRegistrationCompanion
   }
 }
 
+class CourseLimiting extends Table
+    with TableInfo<CourseLimiting, CourseLimitingData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  CourseLimiting(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _courseIdMeta = const VerificationMeta(
+    'courseId',
+  );
+  late final GeneratedColumn<int> courseId = GeneratedColumn<int>(
+    'course_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES course(id)',
+  );
+  static const VerificationMeta _semesterIdMeta = const VerificationMeta(
+    'semesterId',
+  );
+  late final GeneratedColumn<String> semesterId = GeneratedColumn<String>(
+    'semester_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES semester(id)',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [courseId, semesterId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'course_limiting';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CourseLimitingData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('course_id')) {
+      context.handle(
+        _courseIdMeta,
+        courseId.isAcceptableOrUnknown(data['course_id']!, _courseIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_courseIdMeta);
+    }
+    if (data.containsKey('semester_id')) {
+      context.handle(
+        _semesterIdMeta,
+        semesterId.isAcceptableOrUnknown(data['semester_id']!, _semesterIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_semesterIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {courseId, semesterId};
+  @override
+  CourseLimitingData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CourseLimitingData(
+      courseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}course_id'],
+      )!,
+      semesterId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}semester_id'],
+      )!,
+    );
+  }
+
+  @override
+  CourseLimiting createAlias(String alias) {
+    return CourseLimiting(attachedDatabase, alias);
+  }
+
+  @override
+  List<String> get customConstraints => const [
+    'PRIMARY KEY(course_id, semester_id)',
+  ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class CourseLimitingData extends DataClass
+    implements Insertable<CourseLimitingData> {
+  final int courseId;
+  final String semesterId;
+  const CourseLimitingData({required this.courseId, required this.semesterId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['course_id'] = Variable<int>(courseId);
+    map['semester_id'] = Variable<String>(semesterId);
+    return map;
+  }
+
+  CourseLimitingCompanion toCompanion(bool nullToAbsent) {
+    return CourseLimitingCompanion(
+      courseId: Value(courseId),
+      semesterId: Value(semesterId),
+    );
+  }
+
+  factory CourseLimitingData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CourseLimitingData(
+      courseId: serializer.fromJson<int>(json['course_id']),
+      semesterId: serializer.fromJson<String>(json['semester_id']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'course_id': serializer.toJson<int>(courseId),
+      'semester_id': serializer.toJson<String>(semesterId),
+    };
+  }
+
+  CourseLimitingData copyWith({int? courseId, String? semesterId}) =>
+      CourseLimitingData(
+        courseId: courseId ?? this.courseId,
+        semesterId: semesterId ?? this.semesterId,
+      );
+  CourseLimitingData copyWithCompanion(CourseLimitingCompanion data) {
+    return CourseLimitingData(
+      courseId: data.courseId.present ? data.courseId.value : this.courseId,
+      semesterId: data.semesterId.present
+          ? data.semesterId.value
+          : this.semesterId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CourseLimitingData(')
+          ..write('courseId: $courseId, ')
+          ..write('semesterId: $semesterId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(courseId, semesterId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CourseLimitingData &&
+          other.courseId == this.courseId &&
+          other.semesterId == this.semesterId);
+}
+
+class CourseLimitingCompanion extends UpdateCompanion<CourseLimitingData> {
+  final Value<int> courseId;
+  final Value<String> semesterId;
+  final Value<int> rowid;
+  const CourseLimitingCompanion({
+    this.courseId = const Value.absent(),
+    this.semesterId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CourseLimitingCompanion.insert({
+    required int courseId,
+    required String semesterId,
+    this.rowid = const Value.absent(),
+  }) : courseId = Value(courseId),
+       semesterId = Value(semesterId);
+  static Insertable<CourseLimitingData> custom({
+    Expression<int>? courseId,
+    Expression<String>? semesterId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (courseId != null) 'course_id': courseId,
+      if (semesterId != null) 'semester_id': semesterId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CourseLimitingCompanion copyWith({
+    Value<int>? courseId,
+    Value<String>? semesterId,
+    Value<int>? rowid,
+  }) {
+    return CourseLimitingCompanion(
+      courseId: courseId ?? this.courseId,
+      semesterId: semesterId ?? this.semesterId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (courseId.present) {
+      map['course_id'] = Variable<int>(courseId.value);
+    }
+    if (semesterId.present) {
+      map['semester_id'] = Variable<String>(semesterId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CourseLimitingCompanion(')
+          ..write('courseId: $courseId, ')
+          ..write('semesterId: $semesterId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class CourseClass extends Table with TableInfo<CourseClass, CourseClassData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -12143,13 +12255,9 @@ class StudyRegistrationCompanion
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
+  late final TeacherFts teacherFts = TeacherFts(this);
   late final TeacherGroup teacherGroup = TeacherGroup(this);
   late final Teacher teacher = Teacher(this);
-  late final AdmissionCouncil admissionCouncil = AdmissionCouncil(this);
-  late final Cohort cohort = Cohort(this);
-  late final Student student = Student(this);
-  late final Thesis thesis = Thesis(this);
-  late final TeacherFts teacherFts = TeacherFts(this);
   late final Trigger teacherFtsDelete = Trigger(
     'CREATE TRIGGER teacher_fts_delete AFTER DELETE ON teacher BEGIN DELETE FROM teacher_fts WHERE id = old.id;END',
     'teacher_fts_delete',
@@ -12180,13 +12288,18 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final Preference preference = Preference(this);
   late final DocumentRole documentRole = DocumentRole(this);
   late final Document document = Document(this);
+  late final Cohort cohort = Cohort(this);
+  late final AdmissionCouncil admissionCouncil = AdmissionCouncil(this);
+  late final Student student = Student(this);
   late final Semester semester = Semester(this);
+  late final Thesis thesis = Thesis(this);
   late final AcademicGroup academicGroup = AcademicGroup(this);
   late final PhdCohort phdCohort = PhdCohort(this);
   late final PhdStudent phdStudent = PhdStudent(this);
   late final TeachingRegistration teachingRegistration = TeachingRegistration(
     this,
   );
+  late final CourseLimiting courseLimiting = CourseLimiting(this);
   late final CourseClass courseClass = CourseClass(this);
   late final TeachingAssignment teachingAssignment = TeachingAssignment(this);
   late final StudyRegistration studyRegistration = StudyRegistration(this);
@@ -12198,44 +12311,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     ).map((QueryRow row) => row.read<String>('id'));
   }
 
-  Selectable<int> getTrackingThesisIds() {
-    return customSelect(
-      'SELECT id FROM thesis WHERE flag_tracking = 1 ORDER BY soQdBaoVe',
-      variables: [],
-      readsFrom: {thesis},
-    ).map((QueryRow row) => row.read<int>('id'));
-  }
-
-  Future<int> trackThesis({required int thesisId}) {
-    return customUpdate(
-      'UPDATE thesis SET flag_tracking = 1 WHERE id = ?1',
-      variables: [Variable<int>(thesisId)],
-      updates: {thesis},
-      updateKind: UpdateKind.update,
-    );
-  }
-
-  Future<int> untrackThesis({required int thesisId}) {
-    return customUpdate(
-      'UPDATE thesis SET flag_tracking = 0 WHERE id = ?1',
-      variables: [Variable<int>(thesisId)],
-      updates: {thesis},
-      updateKind: UpdateKind.update,
-    );
-  }
-
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+    teacherFts,
     teacherGroup,
     teacher,
-    admissionCouncil,
-    cohort,
-    student,
-    thesis,
-    teacherFts,
     teacherFtsDelete,
     teacherFtsInsert,
     teacherFtsUpdate,
@@ -12248,24 +12331,22 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     preference,
     documentRole,
     document,
+    cohort,
+    admissionCouncil,
+    student,
     semester,
+    thesis,
     academicGroup,
     phdCohort,
     phdStudent,
     teachingRegistration,
+    courseLimiting,
     courseClass,
     teachingAssignment,
     studyRegistration,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
-    WritePropagation(
-      on: TableUpdateQuery.onTableName(
-        'cohort',
-        limitUpdateKind: UpdateKind.update,
-      ),
-      result: [TableUpdate('student', kind: UpdateKind.update)],
-    ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
         'teacher',
@@ -12311,12 +12392,316 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         TableUpdate('course_fts', kind: UpdateKind.insert),
       ],
     ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'cohort',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [TableUpdate('student', kind: UpdateKind.update)],
+    ),
   ]);
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);
 }
 
+typedef $TeacherFtsCreateCompanionBuilder =
+    TeacherFtsCompanion Function({
+      required String id,
+      required String name,
+      required String university,
+      required String falcuty,
+      required String specialization,
+      required String phoneNumber,
+      required String workEmail,
+      required String personalEmail,
+      required String citizenId,
+      required String bankAccount,
+      Value<int> rowid,
+    });
+typedef $TeacherFtsUpdateCompanionBuilder =
+    TeacherFtsCompanion Function({
+      Value<String> id,
+      Value<String> name,
+      Value<String> university,
+      Value<String> falcuty,
+      Value<String> specialization,
+      Value<String> phoneNumber,
+      Value<String> workEmail,
+      Value<String> personalEmail,
+      Value<String> citizenId,
+      Value<String> bankAccount,
+      Value<int> rowid,
+    });
+
+class $TeacherFtsFilterComposer extends Composer<_$AppDatabase, TeacherFts> {
+  $TeacherFtsFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get university => $composableBuilder(
+    column: $table.university,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get falcuty => $composableBuilder(
+    column: $table.falcuty,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get specialization => $composableBuilder(
+    column: $table.specialization,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get phoneNumber => $composableBuilder(
+    column: $table.phoneNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get workEmail => $composableBuilder(
+    column: $table.workEmail,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get personalEmail => $composableBuilder(
+    column: $table.personalEmail,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get citizenId => $composableBuilder(
+    column: $table.citizenId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bankAccount => $composableBuilder(
+    column: $table.bankAccount,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $TeacherFtsOrderingComposer extends Composer<_$AppDatabase, TeacherFts> {
+  $TeacherFtsOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get university => $composableBuilder(
+    column: $table.university,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get falcuty => $composableBuilder(
+    column: $table.falcuty,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get specialization => $composableBuilder(
+    column: $table.specialization,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get phoneNumber => $composableBuilder(
+    column: $table.phoneNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get workEmail => $composableBuilder(
+    column: $table.workEmail,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get personalEmail => $composableBuilder(
+    column: $table.personalEmail,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get citizenId => $composableBuilder(
+    column: $table.citizenId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bankAccount => $composableBuilder(
+    column: $table.bankAccount,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $TeacherFtsAnnotationComposer
+    extends Composer<_$AppDatabase, TeacherFts> {
+  $TeacherFtsAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get university => $composableBuilder(
+    column: $table.university,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get falcuty =>
+      $composableBuilder(column: $table.falcuty, builder: (column) => column);
+
+  GeneratedColumn<String> get specialization => $composableBuilder(
+    column: $table.specialization,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get phoneNumber => $composableBuilder(
+    column: $table.phoneNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get workEmail =>
+      $composableBuilder(column: $table.workEmail, builder: (column) => column);
+
+  GeneratedColumn<String> get personalEmail => $composableBuilder(
+    column: $table.personalEmail,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get citizenId =>
+      $composableBuilder(column: $table.citizenId, builder: (column) => column);
+
+  GeneratedColumn<String> get bankAccount => $composableBuilder(
+    column: $table.bankAccount,
+    builder: (column) => column,
+  );
+}
+
+class $TeacherFtsTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          TeacherFts,
+          TeacherFt,
+          $TeacherFtsFilterComposer,
+          $TeacherFtsOrderingComposer,
+          $TeacherFtsAnnotationComposer,
+          $TeacherFtsCreateCompanionBuilder,
+          $TeacherFtsUpdateCompanionBuilder,
+          (TeacherFt, BaseReferences<_$AppDatabase, TeacherFts, TeacherFt>),
+          TeacherFt,
+          PrefetchHooks Function()
+        > {
+  $TeacherFtsTableManager(_$AppDatabase db, TeacherFts table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $TeacherFtsFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $TeacherFtsOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $TeacherFtsAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> university = const Value.absent(),
+                Value<String> falcuty = const Value.absent(),
+                Value<String> specialization = const Value.absent(),
+                Value<String> phoneNumber = const Value.absent(),
+                Value<String> workEmail = const Value.absent(),
+                Value<String> personalEmail = const Value.absent(),
+                Value<String> citizenId = const Value.absent(),
+                Value<String> bankAccount = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TeacherFtsCompanion(
+                id: id,
+                name: name,
+                university: university,
+                falcuty: falcuty,
+                specialization: specialization,
+                phoneNumber: phoneNumber,
+                workEmail: workEmail,
+                personalEmail: personalEmail,
+                citizenId: citizenId,
+                bankAccount: bankAccount,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String name,
+                required String university,
+                required String falcuty,
+                required String specialization,
+                required String phoneNumber,
+                required String workEmail,
+                required String personalEmail,
+                required String citizenId,
+                required String bankAccount,
+                Value<int> rowid = const Value.absent(),
+              }) => TeacherFtsCompanion.insert(
+                id: id,
+                name: name,
+                university: university,
+                falcuty: falcuty,
+                specialization: specialization,
+                phoneNumber: phoneNumber,
+                workEmail: workEmail,
+                personalEmail: personalEmail,
+                citizenId: citizenId,
+                bankAccount: bankAccount,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $TeacherFtsProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      TeacherFts,
+      TeacherFt,
+      $TeacherFtsFilterComposer,
+      $TeacherFtsOrderingComposer,
+      $TeacherFtsAnnotationComposer,
+      $TeacherFtsCreateCompanionBuilder,
+      $TeacherFtsUpdateCompanionBuilder,
+      (TeacherFt, BaseReferences<_$AppDatabase, TeacherFts, TeacherFt>),
+      TeacherFt,
+      PrefetchHooks Function()
+    >;
 typedef $TeacherGroupCreateCompanionBuilder =
     TeacherGroupCompanion Function({Value<int> id, required String name});
 typedef $TeacherGroupUpdateCompanionBuilder =
@@ -13398,3191 +13783,6 @@ typedef $TeacherProcessedTableManager =
         bool teachingRegistrationRefs,
         bool teachingAssignmentRefs,
       })
-    >;
-typedef $AdmissionCouncilCreateCompanionBuilder =
-    AdmissionCouncilCompanion Function({
-      Value<int> id,
-      required String year,
-      required int presidentId,
-      required int secretaryId,
-      required int member1Id,
-      required int member2Id,
-      required int member3Id,
-      required String establishmentDecisionId,
-      required DateTime establishmentDecisionDate,
-    });
-typedef $AdmissionCouncilUpdateCompanionBuilder =
-    AdmissionCouncilCompanion Function({
-      Value<int> id,
-      Value<String> year,
-      Value<int> presidentId,
-      Value<int> secretaryId,
-      Value<int> member1Id,
-      Value<int> member2Id,
-      Value<int> member3Id,
-      Value<String> establishmentDecisionId,
-      Value<DateTime> establishmentDecisionDate,
-    });
-
-final class $AdmissionCouncilReferences
-    extends
-        BaseReferences<_$AppDatabase, AdmissionCouncil, AdmissionCouncilData> {
-  $AdmissionCouncilReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static Teacher _presidentIdTable(_$AppDatabase db) => db.teacher.createAlias(
-    $_aliasNameGenerator(db.admissionCouncil.presidentId, db.teacher.id),
-  );
-
-  $TeacherProcessedTableManager get presidentId {
-    final $_column = $_itemColumn<int>('president_id')!;
-
-    final manager = $TeacherTableManager(
-      $_db,
-      $_db.teacher,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_presidentIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-
-  static Teacher _secretaryIdTable(_$AppDatabase db) => db.teacher.createAlias(
-    $_aliasNameGenerator(db.admissionCouncil.secretaryId, db.teacher.id),
-  );
-
-  $TeacherProcessedTableManager get secretaryId {
-    final $_column = $_itemColumn<int>('secretary_id')!;
-
-    final manager = $TeacherTableManager(
-      $_db,
-      $_db.teacher,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_secretaryIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-
-  static Teacher _member1IdTable(_$AppDatabase db) => db.teacher.createAlias(
-    $_aliasNameGenerator(db.admissionCouncil.member1Id, db.teacher.id),
-  );
-
-  $TeacherProcessedTableManager get member1Id {
-    final $_column = $_itemColumn<int>('member_1_id')!;
-
-    final manager = $TeacherTableManager(
-      $_db,
-      $_db.teacher,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_member1IdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-
-  static Teacher _member2IdTable(_$AppDatabase db) => db.teacher.createAlias(
-    $_aliasNameGenerator(db.admissionCouncil.member2Id, db.teacher.id),
-  );
-
-  $TeacherProcessedTableManager get member2Id {
-    final $_column = $_itemColumn<int>('member_2_id')!;
-
-    final manager = $TeacherTableManager(
-      $_db,
-      $_db.teacher,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_member2IdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-
-  static Teacher _member3IdTable(_$AppDatabase db) => db.teacher.createAlias(
-    $_aliasNameGenerator(db.admissionCouncil.member3Id, db.teacher.id),
-  );
-
-  $TeacherProcessedTableManager get member3Id {
-    final $_column = $_itemColumn<int>('member_3_id')!;
-
-    final manager = $TeacherTableManager(
-      $_db,
-      $_db.teacher,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_member3IdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-}
-
-class $AdmissionCouncilFilterComposer
-    extends Composer<_$AppDatabase, AdmissionCouncil> {
-  $AdmissionCouncilFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get year => $composableBuilder(
-    column: $table.year,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get establishmentDecisionId => $composableBuilder(
-    column: $table.establishmentDecisionId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get establishmentDecisionDate => $composableBuilder(
-    column: $table.establishmentDecisionDate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  $TeacherFilterComposer get presidentId {
-    final $TeacherFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.presidentId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherFilterComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherFilterComposer get secretaryId {
-    final $TeacherFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.secretaryId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherFilterComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherFilterComposer get member1Id {
-    final $TeacherFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.member1Id,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherFilterComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherFilterComposer get member2Id {
-    final $TeacherFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.member2Id,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherFilterComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherFilterComposer get member3Id {
-    final $TeacherFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.member3Id,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherFilterComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-}
-
-class $AdmissionCouncilOrderingComposer
-    extends Composer<_$AppDatabase, AdmissionCouncil> {
-  $AdmissionCouncilOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get year => $composableBuilder(
-    column: $table.year,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get establishmentDecisionId => $composableBuilder(
-    column: $table.establishmentDecisionId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get establishmentDecisionDate => $composableBuilder(
-    column: $table.establishmentDecisionDate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  $TeacherOrderingComposer get presidentId {
-    final $TeacherOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.presidentId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherOrderingComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherOrderingComposer get secretaryId {
-    final $TeacherOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.secretaryId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherOrderingComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherOrderingComposer get member1Id {
-    final $TeacherOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.member1Id,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherOrderingComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherOrderingComposer get member2Id {
-    final $TeacherOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.member2Id,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherOrderingComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherOrderingComposer get member3Id {
-    final $TeacherOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.member3Id,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherOrderingComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-}
-
-class $AdmissionCouncilAnnotationComposer
-    extends Composer<_$AppDatabase, AdmissionCouncil> {
-  $AdmissionCouncilAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get year =>
-      $composableBuilder(column: $table.year, builder: (column) => column);
-
-  GeneratedColumn<String> get establishmentDecisionId => $composableBuilder(
-    column: $table.establishmentDecisionId,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<DateTime> get establishmentDecisionDate => $composableBuilder(
-    column: $table.establishmentDecisionDate,
-    builder: (column) => column,
-  );
-
-  $TeacherAnnotationComposer get presidentId {
-    final $TeacherAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.presidentId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherAnnotationComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherAnnotationComposer get secretaryId {
-    final $TeacherAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.secretaryId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherAnnotationComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherAnnotationComposer get member1Id {
-    final $TeacherAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.member1Id,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherAnnotationComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherAnnotationComposer get member2Id {
-    final $TeacherAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.member2Id,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherAnnotationComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherAnnotationComposer get member3Id {
-    final $TeacherAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.member3Id,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherAnnotationComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-}
-
-class $AdmissionCouncilTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          AdmissionCouncil,
-          AdmissionCouncilData,
-          $AdmissionCouncilFilterComposer,
-          $AdmissionCouncilOrderingComposer,
-          $AdmissionCouncilAnnotationComposer,
-          $AdmissionCouncilCreateCompanionBuilder,
-          $AdmissionCouncilUpdateCompanionBuilder,
-          (AdmissionCouncilData, $AdmissionCouncilReferences),
-          AdmissionCouncilData,
-          PrefetchHooks Function({
-            bool presidentId,
-            bool secretaryId,
-            bool member1Id,
-            bool member2Id,
-            bool member3Id,
-          })
-        > {
-  $AdmissionCouncilTableManager(_$AppDatabase db, AdmissionCouncil table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $AdmissionCouncilFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $AdmissionCouncilOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $AdmissionCouncilAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                Value<String> year = const Value.absent(),
-                Value<int> presidentId = const Value.absent(),
-                Value<int> secretaryId = const Value.absent(),
-                Value<int> member1Id = const Value.absent(),
-                Value<int> member2Id = const Value.absent(),
-                Value<int> member3Id = const Value.absent(),
-                Value<String> establishmentDecisionId = const Value.absent(),
-                Value<DateTime> establishmentDecisionDate =
-                    const Value.absent(),
-              }) => AdmissionCouncilCompanion(
-                id: id,
-                year: year,
-                presidentId: presidentId,
-                secretaryId: secretaryId,
-                member1Id: member1Id,
-                member2Id: member2Id,
-                member3Id: member3Id,
-                establishmentDecisionId: establishmentDecisionId,
-                establishmentDecisionDate: establishmentDecisionDate,
-              ),
-          createCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                required String year,
-                required int presidentId,
-                required int secretaryId,
-                required int member1Id,
-                required int member2Id,
-                required int member3Id,
-                required String establishmentDecisionId,
-                required DateTime establishmentDecisionDate,
-              }) => AdmissionCouncilCompanion.insert(
-                id: id,
-                year: year,
-                presidentId: presidentId,
-                secretaryId: secretaryId,
-                member1Id: member1Id,
-                member2Id: member2Id,
-                member3Id: member3Id,
-                establishmentDecisionId: establishmentDecisionId,
-                establishmentDecisionDate: establishmentDecisionDate,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map(
-                (e) => (
-                  e.readTable(table),
-                  $AdmissionCouncilReferences(db, table, e),
-                ),
-              )
-              .toList(),
-          prefetchHooksCallback:
-              ({
-                presidentId = false,
-                secretaryId = false,
-                member1Id = false,
-                member2Id = false,
-                member3Id = false,
-              }) {
-                return PrefetchHooks(
-                  db: db,
-                  explicitlyWatchedTables: [],
-                  addJoins:
-                      <
-                        T extends TableManagerState<
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic
-                        >
-                      >(state) {
-                        if (presidentId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.presidentId,
-                                    referencedTable: $AdmissionCouncilReferences
-                                        ._presidentIdTable(db),
-                                    referencedColumn:
-                                        $AdmissionCouncilReferences
-                                            ._presidentIdTable(db)
-                                            .id,
-                                  )
-                                  as T;
-                        }
-                        if (secretaryId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.secretaryId,
-                                    referencedTable: $AdmissionCouncilReferences
-                                        ._secretaryIdTable(db),
-                                    referencedColumn:
-                                        $AdmissionCouncilReferences
-                                            ._secretaryIdTable(db)
-                                            .id,
-                                  )
-                                  as T;
-                        }
-                        if (member1Id) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.member1Id,
-                                    referencedTable: $AdmissionCouncilReferences
-                                        ._member1IdTable(db),
-                                    referencedColumn:
-                                        $AdmissionCouncilReferences
-                                            ._member1IdTable(db)
-                                            .id,
-                                  )
-                                  as T;
-                        }
-                        if (member2Id) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.member2Id,
-                                    referencedTable: $AdmissionCouncilReferences
-                                        ._member2IdTable(db),
-                                    referencedColumn:
-                                        $AdmissionCouncilReferences
-                                            ._member2IdTable(db)
-                                            .id,
-                                  )
-                                  as T;
-                        }
-                        if (member3Id) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.member3Id,
-                                    referencedTable: $AdmissionCouncilReferences
-                                        ._member3IdTable(db),
-                                    referencedColumn:
-                                        $AdmissionCouncilReferences
-                                            ._member3IdTable(db)
-                                            .id,
-                                  )
-                                  as T;
-                        }
-
-                        return state;
-                      },
-                  getPrefetchedDataCallback: (items) async {
-                    return [];
-                  },
-                );
-              },
-        ),
-      );
-}
-
-typedef $AdmissionCouncilProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      AdmissionCouncil,
-      AdmissionCouncilData,
-      $AdmissionCouncilFilterComposer,
-      $AdmissionCouncilOrderingComposer,
-      $AdmissionCouncilAnnotationComposer,
-      $AdmissionCouncilCreateCompanionBuilder,
-      $AdmissionCouncilUpdateCompanionBuilder,
-      (AdmissionCouncilData, $AdmissionCouncilReferences),
-      AdmissionCouncilData,
-      PrefetchHooks Function({
-        bool presidentId,
-        bool secretaryId,
-        bool member1Id,
-        bool member2Id,
-        bool member3Id,
-      })
-    >;
-typedef $CohortCreateCompanionBuilder =
-    CohortCompanion Function({
-      required String id,
-      Value<String> groupUrl,
-      Value<int> rowid,
-    });
-typedef $CohortUpdateCompanionBuilder =
-    CohortCompanion Function({
-      Value<String> id,
-      Value<String> groupUrl,
-      Value<int> rowid,
-    });
-
-class $CohortFilterComposer extends Composer<_$AppDatabase, Cohort> {
-  $CohortFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get groupUrl => $composableBuilder(
-    column: $table.groupUrl,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $CohortOrderingComposer extends Composer<_$AppDatabase, Cohort> {
-  $CohortOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get groupUrl => $composableBuilder(
-    column: $table.groupUrl,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $CohortAnnotationComposer extends Composer<_$AppDatabase, Cohort> {
-  $CohortAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get groupUrl =>
-      $composableBuilder(column: $table.groupUrl, builder: (column) => column);
-}
-
-class $CohortTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          Cohort,
-          CohortData,
-          $CohortFilterComposer,
-          $CohortOrderingComposer,
-          $CohortAnnotationComposer,
-          $CohortCreateCompanionBuilder,
-          $CohortUpdateCompanionBuilder,
-          (CohortData, BaseReferences<_$AppDatabase, Cohort, CohortData>),
-          CohortData,
-          PrefetchHooks Function()
-        > {
-  $CohortTableManager(_$AppDatabase db, Cohort table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $CohortFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $CohortOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $CohortAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<String> id = const Value.absent(),
-                Value<String> groupUrl = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => CohortCompanion(id: id, groupUrl: groupUrl, rowid: rowid),
-          createCompanionCallback:
-              ({
-                required String id,
-                Value<String> groupUrl = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => CohortCompanion.insert(
-                id: id,
-                groupUrl: groupUrl,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $CohortProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      Cohort,
-      CohortData,
-      $CohortFilterComposer,
-      $CohortOrderingComposer,
-      $CohortAnnotationComposer,
-      $CohortCreateCompanionBuilder,
-      $CohortUpdateCompanionBuilder,
-      (CohortData, BaseReferences<_$AppDatabase, Cohort, CohortData>),
-      CohortData,
-      PrefetchHooks Function()
-    >;
-typedef $StudentCreateCompanionBuilder =
-    StudentCompanion Function({
-      Value<int> id,
-      Value<String?> admissionId,
-      Value<String?> cohort,
-      Value<String?> studentId,
-      required String name,
-      Value<DateTime?> dateOfBirth,
-      Value<enums.Gender?> gender,
-      Value<String?> placeOfBirth,
-      Value<String?> phone,
-      Value<String?> personalEmail,
-      Value<String?> schoolEmail,
-      Value<String?> bachelorUniversity,
-      Value<String?> bachelorMajor,
-      Value<String?> bachelorProgram,
-      Value<String?> bachelorGraduationRank,
-      Value<DateTime?> bachelorGraduationDate,
-      Value<String?> intendedSpecialization,
-      Value<String?> exemptedCourses,
-      Value<String?> masterMajor,
-      Value<enums.StudentStatus?> status,
-      Value<bool> hasHirstExtension,
-      Value<bool> hasSecondExtension,
-      Value<int?> admissionCouncilId,
-      Value<enums.AdmissionType?> admissionType,
-      Value<bool> isAdmissionPaid,
-    });
-typedef $StudentUpdateCompanionBuilder =
-    StudentCompanion Function({
-      Value<int> id,
-      Value<String?> admissionId,
-      Value<String?> cohort,
-      Value<String?> studentId,
-      Value<String> name,
-      Value<DateTime?> dateOfBirth,
-      Value<enums.Gender?> gender,
-      Value<String?> placeOfBirth,
-      Value<String?> phone,
-      Value<String?> personalEmail,
-      Value<String?> schoolEmail,
-      Value<String?> bachelorUniversity,
-      Value<String?> bachelorMajor,
-      Value<String?> bachelorProgram,
-      Value<String?> bachelorGraduationRank,
-      Value<DateTime?> bachelorGraduationDate,
-      Value<String?> intendedSpecialization,
-      Value<String?> exemptedCourses,
-      Value<String?> masterMajor,
-      Value<enums.StudentStatus?> status,
-      Value<bool> hasHirstExtension,
-      Value<bool> hasSecondExtension,
-      Value<int?> admissionCouncilId,
-      Value<enums.AdmissionType?> admissionType,
-      Value<bool> isAdmissionPaid,
-    });
-
-final class $StudentReferences
-    extends BaseReferences<_$AppDatabase, Student, StudentData> {
-  $StudentReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static MultiTypedResultKey<Thesis, List<ThesisData>> _thesisRefsTable(
-    _$AppDatabase db,
-  ) => MultiTypedResultKey.fromTable(
-    db.thesis,
-    aliasName: $_aliasNameGenerator(db.student.id, db.thesis.studentId),
-  );
-
-  $ThesisProcessedTableManager get thesisRefs {
-    final manager = $ThesisTableManager(
-      $_db,
-      $_db.thesis,
-    ).filter((f) => f.studentId.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_thesisRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-
-  static MultiTypedResultKey<StudyRegistration, List<StudyRegistrationData>>
-  _studyRegistrationRefsTable(_$AppDatabase db) =>
-      MultiTypedResultKey.fromTable(
-        db.studyRegistration,
-        aliasName: $_aliasNameGenerator(
-          db.student.id,
-          db.studyRegistration.studentId,
-        ),
-      );
-
-  $StudyRegistrationProcessedTableManager get studyRegistrationRefs {
-    final manager = $StudyRegistrationTableManager(
-      $_db,
-      $_db.studyRegistration,
-    ).filter((f) => f.studentId.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(
-      _studyRegistrationRefsTable($_db),
-    );
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-}
-
-class $StudentFilterComposer extends Composer<_$AppDatabase, Student> {
-  $StudentFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get admissionId => $composableBuilder(
-    column: $table.admissionId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get cohort => $composableBuilder(
-    column: $table.cohort,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get studentId => $composableBuilder(
-    column: $table.studentId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get name => $composableBuilder(
-    column: $table.name,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get dateOfBirth => $composableBuilder(
-    column: $table.dateOfBirth,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnWithTypeConverterFilters<enums.Gender?, enums.Gender, String>
-  get gender => $composableBuilder(
-    column: $table.gender,
-    builder: (column) => ColumnWithTypeConverterFilters(column),
-  );
-
-  ColumnFilters<String> get placeOfBirth => $composableBuilder(
-    column: $table.placeOfBirth,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get phone => $composableBuilder(
-    column: $table.phone,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get personalEmail => $composableBuilder(
-    column: $table.personalEmail,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get schoolEmail => $composableBuilder(
-    column: $table.schoolEmail,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get bachelorUniversity => $composableBuilder(
-    column: $table.bachelorUniversity,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get bachelorMajor => $composableBuilder(
-    column: $table.bachelorMajor,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get bachelorProgram => $composableBuilder(
-    column: $table.bachelorProgram,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get bachelorGraduationRank => $composableBuilder(
-    column: $table.bachelorGraduationRank,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get bachelorGraduationDate => $composableBuilder(
-    column: $table.bachelorGraduationDate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get intendedSpecialization => $composableBuilder(
-    column: $table.intendedSpecialization,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get exemptedCourses => $composableBuilder(
-    column: $table.exemptedCourses,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get masterMajor => $composableBuilder(
-    column: $table.masterMajor,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnWithTypeConverterFilters<
-    enums.StudentStatus?,
-    enums.StudentStatus,
-    String
-  >
-  get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnWithTypeConverterFilters(column),
-  );
-
-  ColumnFilters<bool> get hasHirstExtension => $composableBuilder(
-    column: $table.hasHirstExtension,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get hasSecondExtension => $composableBuilder(
-    column: $table.hasSecondExtension,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get admissionCouncilId => $composableBuilder(
-    column: $table.admissionCouncilId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnWithTypeConverterFilters<
-    enums.AdmissionType?,
-    enums.AdmissionType,
-    String
-  >
-  get admissionType => $composableBuilder(
-    column: $table.admissionType,
-    builder: (column) => ColumnWithTypeConverterFilters(column),
-  );
-
-  ColumnFilters<bool> get isAdmissionPaid => $composableBuilder(
-    column: $table.isAdmissionPaid,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  Expression<bool> thesisRefs(
-    Expression<bool> Function($ThesisFilterComposer f) f,
-  ) {
-    final $ThesisFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.thesis,
-      getReferencedColumn: (t) => t.studentId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $ThesisFilterComposer(
-            $db: $db,
-            $table: $db.thesis,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<bool> studyRegistrationRefs(
-    Expression<bool> Function($StudyRegistrationFilterComposer f) f,
-  ) {
-    final $StudyRegistrationFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.studyRegistration,
-      getReferencedColumn: (t) => t.studentId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $StudyRegistrationFilterComposer(
-            $db: $db,
-            $table: $db.studyRegistration,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-}
-
-class $StudentOrderingComposer extends Composer<_$AppDatabase, Student> {
-  $StudentOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get admissionId => $composableBuilder(
-    column: $table.admissionId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get cohort => $composableBuilder(
-    column: $table.cohort,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get studentId => $composableBuilder(
-    column: $table.studentId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get name => $composableBuilder(
-    column: $table.name,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get dateOfBirth => $composableBuilder(
-    column: $table.dateOfBirth,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get gender => $composableBuilder(
-    column: $table.gender,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get placeOfBirth => $composableBuilder(
-    column: $table.placeOfBirth,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get phone => $composableBuilder(
-    column: $table.phone,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get personalEmail => $composableBuilder(
-    column: $table.personalEmail,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get schoolEmail => $composableBuilder(
-    column: $table.schoolEmail,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get bachelorUniversity => $composableBuilder(
-    column: $table.bachelorUniversity,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get bachelorMajor => $composableBuilder(
-    column: $table.bachelorMajor,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get bachelorProgram => $composableBuilder(
-    column: $table.bachelorProgram,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get bachelorGraduationRank => $composableBuilder(
-    column: $table.bachelorGraduationRank,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get bachelorGraduationDate => $composableBuilder(
-    column: $table.bachelorGraduationDate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get intendedSpecialization => $composableBuilder(
-    column: $table.intendedSpecialization,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get exemptedCourses => $composableBuilder(
-    column: $table.exemptedCourses,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get masterMajor => $composableBuilder(
-    column: $table.masterMajor,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get hasHirstExtension => $composableBuilder(
-    column: $table.hasHirstExtension,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get hasSecondExtension => $composableBuilder(
-    column: $table.hasSecondExtension,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get admissionCouncilId => $composableBuilder(
-    column: $table.admissionCouncilId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get admissionType => $composableBuilder(
-    column: $table.admissionType,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get isAdmissionPaid => $composableBuilder(
-    column: $table.isAdmissionPaid,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $StudentAnnotationComposer extends Composer<_$AppDatabase, Student> {
-  $StudentAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get admissionId => $composableBuilder(
-    column: $table.admissionId,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get cohort =>
-      $composableBuilder(column: $table.cohort, builder: (column) => column);
-
-  GeneratedColumn<String> get studentId =>
-      $composableBuilder(column: $table.studentId, builder: (column) => column);
-
-  GeneratedColumn<String> get name =>
-      $composableBuilder(column: $table.name, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get dateOfBirth => $composableBuilder(
-    column: $table.dateOfBirth,
-    builder: (column) => column,
-  );
-
-  GeneratedColumnWithTypeConverter<enums.Gender?, String> get gender =>
-      $composableBuilder(column: $table.gender, builder: (column) => column);
-
-  GeneratedColumn<String> get placeOfBirth => $composableBuilder(
-    column: $table.placeOfBirth,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get phone =>
-      $composableBuilder(column: $table.phone, builder: (column) => column);
-
-  GeneratedColumn<String> get personalEmail => $composableBuilder(
-    column: $table.personalEmail,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get schoolEmail => $composableBuilder(
-    column: $table.schoolEmail,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get bachelorUniversity => $composableBuilder(
-    column: $table.bachelorUniversity,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get bachelorMajor => $composableBuilder(
-    column: $table.bachelorMajor,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get bachelorProgram => $composableBuilder(
-    column: $table.bachelorProgram,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get bachelorGraduationRank => $composableBuilder(
-    column: $table.bachelorGraduationRank,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<DateTime> get bachelorGraduationDate => $composableBuilder(
-    column: $table.bachelorGraduationDate,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get intendedSpecialization => $composableBuilder(
-    column: $table.intendedSpecialization,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get exemptedCourses => $composableBuilder(
-    column: $table.exemptedCourses,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get masterMajor => $composableBuilder(
-    column: $table.masterMajor,
-    builder: (column) => column,
-  );
-
-  GeneratedColumnWithTypeConverter<enums.StudentStatus?, String> get status =>
-      $composableBuilder(column: $table.status, builder: (column) => column);
-
-  GeneratedColumn<bool> get hasHirstExtension => $composableBuilder(
-    column: $table.hasHirstExtension,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<bool> get hasSecondExtension => $composableBuilder(
-    column: $table.hasSecondExtension,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get admissionCouncilId => $composableBuilder(
-    column: $table.admissionCouncilId,
-    builder: (column) => column,
-  );
-
-  GeneratedColumnWithTypeConverter<enums.AdmissionType?, String>
-  get admissionType => $composableBuilder(
-    column: $table.admissionType,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<bool> get isAdmissionPaid => $composableBuilder(
-    column: $table.isAdmissionPaid,
-    builder: (column) => column,
-  );
-
-  Expression<T> thesisRefs<T extends Object>(
-    Expression<T> Function($ThesisAnnotationComposer a) f,
-  ) {
-    final $ThesisAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.thesis,
-      getReferencedColumn: (t) => t.studentId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $ThesisAnnotationComposer(
-            $db: $db,
-            $table: $db.thesis,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<T> studyRegistrationRefs<T extends Object>(
-    Expression<T> Function($StudyRegistrationAnnotationComposer a) f,
-  ) {
-    final $StudyRegistrationAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.studyRegistration,
-      getReferencedColumn: (t) => t.studentId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $StudyRegistrationAnnotationComposer(
-            $db: $db,
-            $table: $db.studyRegistration,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-}
-
-class $StudentTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          Student,
-          StudentData,
-          $StudentFilterComposer,
-          $StudentOrderingComposer,
-          $StudentAnnotationComposer,
-          $StudentCreateCompanionBuilder,
-          $StudentUpdateCompanionBuilder,
-          (StudentData, $StudentReferences),
-          StudentData,
-          PrefetchHooks Function({bool thesisRefs, bool studyRegistrationRefs})
-        > {
-  $StudentTableManager(_$AppDatabase db, Student table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $StudentFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $StudentOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $StudentAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                Value<String?> admissionId = const Value.absent(),
-                Value<String?> cohort = const Value.absent(),
-                Value<String?> studentId = const Value.absent(),
-                Value<String> name = const Value.absent(),
-                Value<DateTime?> dateOfBirth = const Value.absent(),
-                Value<enums.Gender?> gender = const Value.absent(),
-                Value<String?> placeOfBirth = const Value.absent(),
-                Value<String?> phone = const Value.absent(),
-                Value<String?> personalEmail = const Value.absent(),
-                Value<String?> schoolEmail = const Value.absent(),
-                Value<String?> bachelorUniversity = const Value.absent(),
-                Value<String?> bachelorMajor = const Value.absent(),
-                Value<String?> bachelorProgram = const Value.absent(),
-                Value<String?> bachelorGraduationRank = const Value.absent(),
-                Value<DateTime?> bachelorGraduationDate = const Value.absent(),
-                Value<String?> intendedSpecialization = const Value.absent(),
-                Value<String?> exemptedCourses = const Value.absent(),
-                Value<String?> masterMajor = const Value.absent(),
-                Value<enums.StudentStatus?> status = const Value.absent(),
-                Value<bool> hasHirstExtension = const Value.absent(),
-                Value<bool> hasSecondExtension = const Value.absent(),
-                Value<int?> admissionCouncilId = const Value.absent(),
-                Value<enums.AdmissionType?> admissionType =
-                    const Value.absent(),
-                Value<bool> isAdmissionPaid = const Value.absent(),
-              }) => StudentCompanion(
-                id: id,
-                admissionId: admissionId,
-                cohort: cohort,
-                studentId: studentId,
-                name: name,
-                dateOfBirth: dateOfBirth,
-                gender: gender,
-                placeOfBirth: placeOfBirth,
-                phone: phone,
-                personalEmail: personalEmail,
-                schoolEmail: schoolEmail,
-                bachelorUniversity: bachelorUniversity,
-                bachelorMajor: bachelorMajor,
-                bachelorProgram: bachelorProgram,
-                bachelorGraduationRank: bachelorGraduationRank,
-                bachelorGraduationDate: bachelorGraduationDate,
-                intendedSpecialization: intendedSpecialization,
-                exemptedCourses: exemptedCourses,
-                masterMajor: masterMajor,
-                status: status,
-                hasHirstExtension: hasHirstExtension,
-                hasSecondExtension: hasSecondExtension,
-                admissionCouncilId: admissionCouncilId,
-                admissionType: admissionType,
-                isAdmissionPaid: isAdmissionPaid,
-              ),
-          createCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                Value<String?> admissionId = const Value.absent(),
-                Value<String?> cohort = const Value.absent(),
-                Value<String?> studentId = const Value.absent(),
-                required String name,
-                Value<DateTime?> dateOfBirth = const Value.absent(),
-                Value<enums.Gender?> gender = const Value.absent(),
-                Value<String?> placeOfBirth = const Value.absent(),
-                Value<String?> phone = const Value.absent(),
-                Value<String?> personalEmail = const Value.absent(),
-                Value<String?> schoolEmail = const Value.absent(),
-                Value<String?> bachelorUniversity = const Value.absent(),
-                Value<String?> bachelorMajor = const Value.absent(),
-                Value<String?> bachelorProgram = const Value.absent(),
-                Value<String?> bachelorGraduationRank = const Value.absent(),
-                Value<DateTime?> bachelorGraduationDate = const Value.absent(),
-                Value<String?> intendedSpecialization = const Value.absent(),
-                Value<String?> exemptedCourses = const Value.absent(),
-                Value<String?> masterMajor = const Value.absent(),
-                Value<enums.StudentStatus?> status = const Value.absent(),
-                Value<bool> hasHirstExtension = const Value.absent(),
-                Value<bool> hasSecondExtension = const Value.absent(),
-                Value<int?> admissionCouncilId = const Value.absent(),
-                Value<enums.AdmissionType?> admissionType =
-                    const Value.absent(),
-                Value<bool> isAdmissionPaid = const Value.absent(),
-              }) => StudentCompanion.insert(
-                id: id,
-                admissionId: admissionId,
-                cohort: cohort,
-                studentId: studentId,
-                name: name,
-                dateOfBirth: dateOfBirth,
-                gender: gender,
-                placeOfBirth: placeOfBirth,
-                phone: phone,
-                personalEmail: personalEmail,
-                schoolEmail: schoolEmail,
-                bachelorUniversity: bachelorUniversity,
-                bachelorMajor: bachelorMajor,
-                bachelorProgram: bachelorProgram,
-                bachelorGraduationRank: bachelorGraduationRank,
-                bachelorGraduationDate: bachelorGraduationDate,
-                intendedSpecialization: intendedSpecialization,
-                exemptedCourses: exemptedCourses,
-                masterMajor: masterMajor,
-                status: status,
-                hasHirstExtension: hasHirstExtension,
-                hasSecondExtension: hasSecondExtension,
-                admissionCouncilId: admissionCouncilId,
-                admissionType: admissionType,
-                isAdmissionPaid: isAdmissionPaid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map(
-                (e) => (e.readTable(table), $StudentReferences(db, table, e)),
-              )
-              .toList(),
-          prefetchHooksCallback:
-              ({thesisRefs = false, studyRegistrationRefs = false}) {
-                return PrefetchHooks(
-                  db: db,
-                  explicitlyWatchedTables: [
-                    if (thesisRefs) db.thesis,
-                    if (studyRegistrationRefs) db.studyRegistration,
-                  ],
-                  addJoins: null,
-                  getPrefetchedDataCallback: (items) async {
-                    return [
-                      if (thesisRefs)
-                        await $_getPrefetchedData<
-                          StudentData,
-                          Student,
-                          ThesisData
-                        >(
-                          currentTable: table,
-                          referencedTable: $StudentReferences._thesisRefsTable(
-                            db,
-                          ),
-                          managerFromTypedResult: (p0) =>
-                              $StudentReferences(db, table, p0).thesisRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.studentId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                      if (studyRegistrationRefs)
-                        await $_getPrefetchedData<
-                          StudentData,
-                          Student,
-                          StudyRegistrationData
-                        >(
-                          currentTable: table,
-                          referencedTable: $StudentReferences
-                              ._studyRegistrationRefsTable(db),
-                          managerFromTypedResult: (p0) => $StudentReferences(
-                            db,
-                            table,
-                            p0,
-                          ).studyRegistrationRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.studentId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                    ];
-                  },
-                );
-              },
-        ),
-      );
-}
-
-typedef $StudentProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      Student,
-      StudentData,
-      $StudentFilterComposer,
-      $StudentOrderingComposer,
-      $StudentAnnotationComposer,
-      $StudentCreateCompanionBuilder,
-      $StudentUpdateCompanionBuilder,
-      (StudentData, $StudentReferences),
-      StudentData,
-      PrefetchHooks Function({bool thesisRefs, bool studyRegistrationRefs})
-    >;
-typedef $ThesisCreateCompanionBuilder =
-    ThesisCompanion Function({
-      Value<int> id,
-      required int supervisorId,
-      Value<int?> presidentId,
-      Value<int?> firstReviewerId,
-      Value<int?> secondReviewerId,
-      Value<int?> secretaryId,
-      Value<int?> memberId,
-      Value<int?> studentId,
-      required String vietnameseTitle,
-      required String englishTitle,
-      Value<String> note,
-      Value<DateTime?> defenseDeadline,
-      Value<DateTime?> defenseDate,
-      Value<bool> flagTracking,
-      Value<bool> flagPaid,
-      Value<bool> flagIgnore,
-      Value<String?> group,
-      Value<String?> year,
-      Value<DateTime?> assignedDate,
-      Value<String?> assignedDecisionNumber,
-      Value<String?> defenseDecisionNumber,
-    });
-typedef $ThesisUpdateCompanionBuilder =
-    ThesisCompanion Function({
-      Value<int> id,
-      Value<int> supervisorId,
-      Value<int?> presidentId,
-      Value<int?> firstReviewerId,
-      Value<int?> secondReviewerId,
-      Value<int?> secretaryId,
-      Value<int?> memberId,
-      Value<int?> studentId,
-      Value<String> vietnameseTitle,
-      Value<String> englishTitle,
-      Value<String> note,
-      Value<DateTime?> defenseDeadline,
-      Value<DateTime?> defenseDate,
-      Value<bool> flagTracking,
-      Value<bool> flagPaid,
-      Value<bool> flagIgnore,
-      Value<String?> group,
-      Value<String?> year,
-      Value<DateTime?> assignedDate,
-      Value<String?> assignedDecisionNumber,
-      Value<String?> defenseDecisionNumber,
-    });
-
-final class $ThesisReferences
-    extends BaseReferences<_$AppDatabase, Thesis, ThesisData> {
-  $ThesisReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static Teacher _supervisorIdTable(_$AppDatabase db) => db.teacher.createAlias(
-    $_aliasNameGenerator(db.thesis.supervisorId, db.teacher.id),
-  );
-
-  $TeacherProcessedTableManager get supervisorId {
-    final $_column = $_itemColumn<int>('supervisor_id')!;
-
-    final manager = $TeacherTableManager(
-      $_db,
-      $_db.teacher,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_supervisorIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-
-  static Teacher _presidentIdTable(_$AppDatabase db) => db.teacher.createAlias(
-    $_aliasNameGenerator(db.thesis.presidentId, db.teacher.id),
-  );
-
-  $TeacherProcessedTableManager? get presidentId {
-    final $_column = $_itemColumn<int>('president_id');
-    if ($_column == null) return null;
-    final manager = $TeacherTableManager(
-      $_db,
-      $_db.teacher,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_presidentIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-
-  static Teacher _firstReviewerIdTable(_$AppDatabase db) =>
-      db.teacher.createAlias(
-        $_aliasNameGenerator(db.thesis.firstReviewerId, db.teacher.id),
-      );
-
-  $TeacherProcessedTableManager? get firstReviewerId {
-    final $_column = $_itemColumn<int>('first_reviewer_id');
-    if ($_column == null) return null;
-    final manager = $TeacherTableManager(
-      $_db,
-      $_db.teacher,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_firstReviewerIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-
-  static Teacher _secondReviewerIdTable(_$AppDatabase db) =>
-      db.teacher.createAlias(
-        $_aliasNameGenerator(db.thesis.secondReviewerId, db.teacher.id),
-      );
-
-  $TeacherProcessedTableManager? get secondReviewerId {
-    final $_column = $_itemColumn<int>('second_reviewer_id');
-    if ($_column == null) return null;
-    final manager = $TeacherTableManager(
-      $_db,
-      $_db.teacher,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_secondReviewerIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-
-  static Teacher _secretaryIdTable(_$AppDatabase db) => db.teacher.createAlias(
-    $_aliasNameGenerator(db.thesis.secretaryId, db.teacher.id),
-  );
-
-  $TeacherProcessedTableManager? get secretaryId {
-    final $_column = $_itemColumn<int>('secretary_id');
-    if ($_column == null) return null;
-    final manager = $TeacherTableManager(
-      $_db,
-      $_db.teacher,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_secretaryIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-
-  static Teacher _memberIdTable(_$AppDatabase db) => db.teacher.createAlias(
-    $_aliasNameGenerator(db.thesis.memberId, db.teacher.id),
-  );
-
-  $TeacherProcessedTableManager? get memberId {
-    final $_column = $_itemColumn<int>('member_id');
-    if ($_column == null) return null;
-    final manager = $TeacherTableManager(
-      $_db,
-      $_db.teacher,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_memberIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-
-  static Student _studentIdTable(_$AppDatabase db) => db.student.createAlias(
-    $_aliasNameGenerator(db.thesis.studentId, db.student.id),
-  );
-
-  $StudentProcessedTableManager? get studentId {
-    final $_column = $_itemColumn<int>('student_id');
-    if ($_column == null) return null;
-    final manager = $StudentTableManager(
-      $_db,
-      $_db.student,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_studentIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-}
-
-class $ThesisFilterComposer extends Composer<_$AppDatabase, Thesis> {
-  $ThesisFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get vietnameseTitle => $composableBuilder(
-    column: $table.vietnameseTitle,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get englishTitle => $composableBuilder(
-    column: $table.englishTitle,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get note => $composableBuilder(
-    column: $table.note,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get defenseDeadline => $composableBuilder(
-    column: $table.defenseDeadline,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get defenseDate => $composableBuilder(
-    column: $table.defenseDate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get flagTracking => $composableBuilder(
-    column: $table.flagTracking,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get flagPaid => $composableBuilder(
-    column: $table.flagPaid,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get flagIgnore => $composableBuilder(
-    column: $table.flagIgnore,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get group => $composableBuilder(
-    column: $table.group,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get year => $composableBuilder(
-    column: $table.year,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get assignedDate => $composableBuilder(
-    column: $table.assignedDate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get assignedDecisionNumber => $composableBuilder(
-    column: $table.assignedDecisionNumber,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get defenseDecisionNumber => $composableBuilder(
-    column: $table.defenseDecisionNumber,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  $TeacherFilterComposer get supervisorId {
-    final $TeacherFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.supervisorId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherFilterComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherFilterComposer get presidentId {
-    final $TeacherFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.presidentId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherFilterComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherFilterComposer get firstReviewerId {
-    final $TeacherFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.firstReviewerId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherFilterComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherFilterComposer get secondReviewerId {
-    final $TeacherFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.secondReviewerId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherFilterComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherFilterComposer get secretaryId {
-    final $TeacherFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.secretaryId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherFilterComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherFilterComposer get memberId {
-    final $TeacherFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.memberId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherFilterComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $StudentFilterComposer get studentId {
-    final $StudentFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.studentId,
-      referencedTable: $db.student,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $StudentFilterComposer(
-            $db: $db,
-            $table: $db.student,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-}
-
-class $ThesisOrderingComposer extends Composer<_$AppDatabase, Thesis> {
-  $ThesisOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get vietnameseTitle => $composableBuilder(
-    column: $table.vietnameseTitle,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get englishTitle => $composableBuilder(
-    column: $table.englishTitle,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get note => $composableBuilder(
-    column: $table.note,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get defenseDeadline => $composableBuilder(
-    column: $table.defenseDeadline,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get defenseDate => $composableBuilder(
-    column: $table.defenseDate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get flagTracking => $composableBuilder(
-    column: $table.flagTracking,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get flagPaid => $composableBuilder(
-    column: $table.flagPaid,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get flagIgnore => $composableBuilder(
-    column: $table.flagIgnore,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get group => $composableBuilder(
-    column: $table.group,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get year => $composableBuilder(
-    column: $table.year,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get assignedDate => $composableBuilder(
-    column: $table.assignedDate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get assignedDecisionNumber => $composableBuilder(
-    column: $table.assignedDecisionNumber,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get defenseDecisionNumber => $composableBuilder(
-    column: $table.defenseDecisionNumber,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  $TeacherOrderingComposer get supervisorId {
-    final $TeacherOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.supervisorId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherOrderingComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherOrderingComposer get presidentId {
-    final $TeacherOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.presidentId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherOrderingComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherOrderingComposer get firstReviewerId {
-    final $TeacherOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.firstReviewerId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherOrderingComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherOrderingComposer get secondReviewerId {
-    final $TeacherOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.secondReviewerId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherOrderingComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherOrderingComposer get secretaryId {
-    final $TeacherOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.secretaryId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherOrderingComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherOrderingComposer get memberId {
-    final $TeacherOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.memberId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherOrderingComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $StudentOrderingComposer get studentId {
-    final $StudentOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.studentId,
-      referencedTable: $db.student,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $StudentOrderingComposer(
-            $db: $db,
-            $table: $db.student,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-}
-
-class $ThesisAnnotationComposer extends Composer<_$AppDatabase, Thesis> {
-  $ThesisAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get vietnameseTitle => $composableBuilder(
-    column: $table.vietnameseTitle,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get englishTitle => $composableBuilder(
-    column: $table.englishTitle,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get note =>
-      $composableBuilder(column: $table.note, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get defenseDeadline => $composableBuilder(
-    column: $table.defenseDeadline,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<DateTime> get defenseDate => $composableBuilder(
-    column: $table.defenseDate,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<bool> get flagTracking => $composableBuilder(
-    column: $table.flagTracking,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<bool> get flagPaid =>
-      $composableBuilder(column: $table.flagPaid, builder: (column) => column);
-
-  GeneratedColumn<bool> get flagIgnore => $composableBuilder(
-    column: $table.flagIgnore,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get group =>
-      $composableBuilder(column: $table.group, builder: (column) => column);
-
-  GeneratedColumn<String> get year =>
-      $composableBuilder(column: $table.year, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get assignedDate => $composableBuilder(
-    column: $table.assignedDate,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get assignedDecisionNumber => $composableBuilder(
-    column: $table.assignedDecisionNumber,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get defenseDecisionNumber => $composableBuilder(
-    column: $table.defenseDecisionNumber,
-    builder: (column) => column,
-  );
-
-  $TeacherAnnotationComposer get supervisorId {
-    final $TeacherAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.supervisorId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherAnnotationComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherAnnotationComposer get presidentId {
-    final $TeacherAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.presidentId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherAnnotationComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherAnnotationComposer get firstReviewerId {
-    final $TeacherAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.firstReviewerId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherAnnotationComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherAnnotationComposer get secondReviewerId {
-    final $TeacherAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.secondReviewerId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherAnnotationComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherAnnotationComposer get secretaryId {
-    final $TeacherAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.secretaryId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherAnnotationComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $TeacherAnnotationComposer get memberId {
-    final $TeacherAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.memberId,
-      referencedTable: $db.teacher,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $TeacherAnnotationComposer(
-            $db: $db,
-            $table: $db.teacher,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $StudentAnnotationComposer get studentId {
-    final $StudentAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.studentId,
-      referencedTable: $db.student,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $StudentAnnotationComposer(
-            $db: $db,
-            $table: $db.student,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-}
-
-class $ThesisTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          Thesis,
-          ThesisData,
-          $ThesisFilterComposer,
-          $ThesisOrderingComposer,
-          $ThesisAnnotationComposer,
-          $ThesisCreateCompanionBuilder,
-          $ThesisUpdateCompanionBuilder,
-          (ThesisData, $ThesisReferences),
-          ThesisData,
-          PrefetchHooks Function({
-            bool supervisorId,
-            bool presidentId,
-            bool firstReviewerId,
-            bool secondReviewerId,
-            bool secretaryId,
-            bool memberId,
-            bool studentId,
-          })
-        > {
-  $ThesisTableManager(_$AppDatabase db, Thesis table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $ThesisFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $ThesisOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $ThesisAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                Value<int> supervisorId = const Value.absent(),
-                Value<int?> presidentId = const Value.absent(),
-                Value<int?> firstReviewerId = const Value.absent(),
-                Value<int?> secondReviewerId = const Value.absent(),
-                Value<int?> secretaryId = const Value.absent(),
-                Value<int?> memberId = const Value.absent(),
-                Value<int?> studentId = const Value.absent(),
-                Value<String> vietnameseTitle = const Value.absent(),
-                Value<String> englishTitle = const Value.absent(),
-                Value<String> note = const Value.absent(),
-                Value<DateTime?> defenseDeadline = const Value.absent(),
-                Value<DateTime?> defenseDate = const Value.absent(),
-                Value<bool> flagTracking = const Value.absent(),
-                Value<bool> flagPaid = const Value.absent(),
-                Value<bool> flagIgnore = const Value.absent(),
-                Value<String?> group = const Value.absent(),
-                Value<String?> year = const Value.absent(),
-                Value<DateTime?> assignedDate = const Value.absent(),
-                Value<String?> assignedDecisionNumber = const Value.absent(),
-                Value<String?> defenseDecisionNumber = const Value.absent(),
-              }) => ThesisCompanion(
-                id: id,
-                supervisorId: supervisorId,
-                presidentId: presidentId,
-                firstReviewerId: firstReviewerId,
-                secondReviewerId: secondReviewerId,
-                secretaryId: secretaryId,
-                memberId: memberId,
-                studentId: studentId,
-                vietnameseTitle: vietnameseTitle,
-                englishTitle: englishTitle,
-                note: note,
-                defenseDeadline: defenseDeadline,
-                defenseDate: defenseDate,
-                flagTracking: flagTracking,
-                flagPaid: flagPaid,
-                flagIgnore: flagIgnore,
-                group: group,
-                year: year,
-                assignedDate: assignedDate,
-                assignedDecisionNumber: assignedDecisionNumber,
-                defenseDecisionNumber: defenseDecisionNumber,
-              ),
-          createCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                required int supervisorId,
-                Value<int?> presidentId = const Value.absent(),
-                Value<int?> firstReviewerId = const Value.absent(),
-                Value<int?> secondReviewerId = const Value.absent(),
-                Value<int?> secretaryId = const Value.absent(),
-                Value<int?> memberId = const Value.absent(),
-                Value<int?> studentId = const Value.absent(),
-                required String vietnameseTitle,
-                required String englishTitle,
-                Value<String> note = const Value.absent(),
-                Value<DateTime?> defenseDeadline = const Value.absent(),
-                Value<DateTime?> defenseDate = const Value.absent(),
-                Value<bool> flagTracking = const Value.absent(),
-                Value<bool> flagPaid = const Value.absent(),
-                Value<bool> flagIgnore = const Value.absent(),
-                Value<String?> group = const Value.absent(),
-                Value<String?> year = const Value.absent(),
-                Value<DateTime?> assignedDate = const Value.absent(),
-                Value<String?> assignedDecisionNumber = const Value.absent(),
-                Value<String?> defenseDecisionNumber = const Value.absent(),
-              }) => ThesisCompanion.insert(
-                id: id,
-                supervisorId: supervisorId,
-                presidentId: presidentId,
-                firstReviewerId: firstReviewerId,
-                secondReviewerId: secondReviewerId,
-                secretaryId: secretaryId,
-                memberId: memberId,
-                studentId: studentId,
-                vietnameseTitle: vietnameseTitle,
-                englishTitle: englishTitle,
-                note: note,
-                defenseDeadline: defenseDeadline,
-                defenseDate: defenseDate,
-                flagTracking: flagTracking,
-                flagPaid: flagPaid,
-                flagIgnore: flagIgnore,
-                group: group,
-                year: year,
-                assignedDate: assignedDate,
-                assignedDecisionNumber: assignedDecisionNumber,
-                defenseDecisionNumber: defenseDecisionNumber,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), $ThesisReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback:
-              ({
-                supervisorId = false,
-                presidentId = false,
-                firstReviewerId = false,
-                secondReviewerId = false,
-                secretaryId = false,
-                memberId = false,
-                studentId = false,
-              }) {
-                return PrefetchHooks(
-                  db: db,
-                  explicitlyWatchedTables: [],
-                  addJoins:
-                      <
-                        T extends TableManagerState<
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic
-                        >
-                      >(state) {
-                        if (supervisorId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.supervisorId,
-                                    referencedTable: $ThesisReferences
-                                        ._supervisorIdTable(db),
-                                    referencedColumn: $ThesisReferences
-                                        ._supervisorIdTable(db)
-                                        .id,
-                                  )
-                                  as T;
-                        }
-                        if (presidentId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.presidentId,
-                                    referencedTable: $ThesisReferences
-                                        ._presidentIdTable(db),
-                                    referencedColumn: $ThesisReferences
-                                        ._presidentIdTable(db)
-                                        .id,
-                                  )
-                                  as T;
-                        }
-                        if (firstReviewerId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.firstReviewerId,
-                                    referencedTable: $ThesisReferences
-                                        ._firstReviewerIdTable(db),
-                                    referencedColumn: $ThesisReferences
-                                        ._firstReviewerIdTable(db)
-                                        .id,
-                                  )
-                                  as T;
-                        }
-                        if (secondReviewerId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.secondReviewerId,
-                                    referencedTable: $ThesisReferences
-                                        ._secondReviewerIdTable(db),
-                                    referencedColumn: $ThesisReferences
-                                        ._secondReviewerIdTable(db)
-                                        .id,
-                                  )
-                                  as T;
-                        }
-                        if (secretaryId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.secretaryId,
-                                    referencedTable: $ThesisReferences
-                                        ._secretaryIdTable(db),
-                                    referencedColumn: $ThesisReferences
-                                        ._secretaryIdTable(db)
-                                        .id,
-                                  )
-                                  as T;
-                        }
-                        if (memberId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.memberId,
-                                    referencedTable: $ThesisReferences
-                                        ._memberIdTable(db),
-                                    referencedColumn: $ThesisReferences
-                                        ._memberIdTable(db)
-                                        .id,
-                                  )
-                                  as T;
-                        }
-                        if (studentId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.studentId,
-                                    referencedTable: $ThesisReferences
-                                        ._studentIdTable(db),
-                                    referencedColumn: $ThesisReferences
-                                        ._studentIdTable(db)
-                                        .id,
-                                  )
-                                  as T;
-                        }
-
-                        return state;
-                      },
-                  getPrefetchedDataCallback: (items) async {
-                    return [];
-                  },
-                );
-              },
-        ),
-      );
-}
-
-typedef $ThesisProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      Thesis,
-      ThesisData,
-      $ThesisFilterComposer,
-      $ThesisOrderingComposer,
-      $ThesisAnnotationComposer,
-      $ThesisCreateCompanionBuilder,
-      $ThesisUpdateCompanionBuilder,
-      (ThesisData, $ThesisReferences),
-      ThesisData,
-      PrefetchHooks Function({
-        bool supervisorId,
-        bool presidentId,
-        bool firstReviewerId,
-        bool secondReviewerId,
-        bool secretaryId,
-        bool memberId,
-        bool studentId,
-      })
-    >;
-typedef $TeacherFtsCreateCompanionBuilder =
-    TeacherFtsCompanion Function({
-      required String id,
-      required String name,
-      required String university,
-      required String falcuty,
-      required String specialization,
-      required String phoneNumber,
-      required String workEmail,
-      required String personalEmail,
-      required String citizenId,
-      required String bankAccount,
-      Value<int> rowid,
-    });
-typedef $TeacherFtsUpdateCompanionBuilder =
-    TeacherFtsCompanion Function({
-      Value<String> id,
-      Value<String> name,
-      Value<String> university,
-      Value<String> falcuty,
-      Value<String> specialization,
-      Value<String> phoneNumber,
-      Value<String> workEmail,
-      Value<String> personalEmail,
-      Value<String> citizenId,
-      Value<String> bankAccount,
-      Value<int> rowid,
-    });
-
-class $TeacherFtsFilterComposer extends Composer<_$AppDatabase, TeacherFts> {
-  $TeacherFtsFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get name => $composableBuilder(
-    column: $table.name,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get university => $composableBuilder(
-    column: $table.university,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get falcuty => $composableBuilder(
-    column: $table.falcuty,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get specialization => $composableBuilder(
-    column: $table.specialization,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get phoneNumber => $composableBuilder(
-    column: $table.phoneNumber,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get workEmail => $composableBuilder(
-    column: $table.workEmail,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get personalEmail => $composableBuilder(
-    column: $table.personalEmail,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get citizenId => $composableBuilder(
-    column: $table.citizenId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get bankAccount => $composableBuilder(
-    column: $table.bankAccount,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $TeacherFtsOrderingComposer extends Composer<_$AppDatabase, TeacherFts> {
-  $TeacherFtsOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get name => $composableBuilder(
-    column: $table.name,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get university => $composableBuilder(
-    column: $table.university,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get falcuty => $composableBuilder(
-    column: $table.falcuty,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get specialization => $composableBuilder(
-    column: $table.specialization,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get phoneNumber => $composableBuilder(
-    column: $table.phoneNumber,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get workEmail => $composableBuilder(
-    column: $table.workEmail,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get personalEmail => $composableBuilder(
-    column: $table.personalEmail,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get citizenId => $composableBuilder(
-    column: $table.citizenId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get bankAccount => $composableBuilder(
-    column: $table.bankAccount,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $TeacherFtsAnnotationComposer
-    extends Composer<_$AppDatabase, TeacherFts> {
-  $TeacherFtsAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get name =>
-      $composableBuilder(column: $table.name, builder: (column) => column);
-
-  GeneratedColumn<String> get university => $composableBuilder(
-    column: $table.university,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get falcuty =>
-      $composableBuilder(column: $table.falcuty, builder: (column) => column);
-
-  GeneratedColumn<String> get specialization => $composableBuilder(
-    column: $table.specialization,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get phoneNumber => $composableBuilder(
-    column: $table.phoneNumber,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get workEmail =>
-      $composableBuilder(column: $table.workEmail, builder: (column) => column);
-
-  GeneratedColumn<String> get personalEmail => $composableBuilder(
-    column: $table.personalEmail,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get citizenId =>
-      $composableBuilder(column: $table.citizenId, builder: (column) => column);
-
-  GeneratedColumn<String> get bankAccount => $composableBuilder(
-    column: $table.bankAccount,
-    builder: (column) => column,
-  );
-}
-
-class $TeacherFtsTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          TeacherFts,
-          TeacherFt,
-          $TeacherFtsFilterComposer,
-          $TeacherFtsOrderingComposer,
-          $TeacherFtsAnnotationComposer,
-          $TeacherFtsCreateCompanionBuilder,
-          $TeacherFtsUpdateCompanionBuilder,
-          (TeacherFt, BaseReferences<_$AppDatabase, TeacherFts, TeacherFt>),
-          TeacherFt,
-          PrefetchHooks Function()
-        > {
-  $TeacherFtsTableManager(_$AppDatabase db, TeacherFts table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $TeacherFtsFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $TeacherFtsOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $TeacherFtsAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<String> id = const Value.absent(),
-                Value<String> name = const Value.absent(),
-                Value<String> university = const Value.absent(),
-                Value<String> falcuty = const Value.absent(),
-                Value<String> specialization = const Value.absent(),
-                Value<String> phoneNumber = const Value.absent(),
-                Value<String> workEmail = const Value.absent(),
-                Value<String> personalEmail = const Value.absent(),
-                Value<String> citizenId = const Value.absent(),
-                Value<String> bankAccount = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => TeacherFtsCompanion(
-                id: id,
-                name: name,
-                university: university,
-                falcuty: falcuty,
-                specialization: specialization,
-                phoneNumber: phoneNumber,
-                workEmail: workEmail,
-                personalEmail: personalEmail,
-                citizenId: citizenId,
-                bankAccount: bankAccount,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                required String id,
-                required String name,
-                required String university,
-                required String falcuty,
-                required String specialization,
-                required String phoneNumber,
-                required String workEmail,
-                required String personalEmail,
-                required String citizenId,
-                required String bankAccount,
-                Value<int> rowid = const Value.absent(),
-              }) => TeacherFtsCompanion.insert(
-                id: id,
-                name: name,
-                university: university,
-                falcuty: falcuty,
-                specialization: specialization,
-                phoneNumber: phoneNumber,
-                workEmail: workEmail,
-                personalEmail: personalEmail,
-                citizenId: citizenId,
-                bankAccount: bankAccount,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $TeacherFtsProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      TeacherFts,
-      TeacherFt,
-      $TeacherFtsFilterComposer,
-      $TeacherFtsOrderingComposer,
-      $TeacherFtsAnnotationComposer,
-      $TeacherFtsCreateCompanionBuilder,
-      $TeacherFtsUpdateCompanionBuilder,
-      (TeacherFt, BaseReferences<_$AppDatabase, TeacherFts, TeacherFt>),
-      TeacherFt,
-      PrefetchHooks Function()
     >;
 typedef $CourseFtsCreateCompanionBuilder =
     CourseFtsCompanion Function({
@@ -18173,6 +15373,1719 @@ typedef $DocumentProcessedTableManager =
       DocumentData,
       PrefetchHooks Function({bool roleId})
     >;
+typedef $CohortCreateCompanionBuilder =
+    CohortCompanion Function({
+      required String id,
+      Value<String> groupUrl,
+      Value<int> rowid,
+    });
+typedef $CohortUpdateCompanionBuilder =
+    CohortCompanion Function({
+      Value<String> id,
+      Value<String> groupUrl,
+      Value<int> rowid,
+    });
+
+class $CohortFilterComposer extends Composer<_$AppDatabase, Cohort> {
+  $CohortFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get groupUrl => $composableBuilder(
+    column: $table.groupUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $CohortOrderingComposer extends Composer<_$AppDatabase, Cohort> {
+  $CohortOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get groupUrl => $composableBuilder(
+    column: $table.groupUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $CohortAnnotationComposer extends Composer<_$AppDatabase, Cohort> {
+  $CohortAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get groupUrl =>
+      $composableBuilder(column: $table.groupUrl, builder: (column) => column);
+}
+
+class $CohortTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          Cohort,
+          CohortData,
+          $CohortFilterComposer,
+          $CohortOrderingComposer,
+          $CohortAnnotationComposer,
+          $CohortCreateCompanionBuilder,
+          $CohortUpdateCompanionBuilder,
+          (CohortData, BaseReferences<_$AppDatabase, Cohort, CohortData>),
+          CohortData,
+          PrefetchHooks Function()
+        > {
+  $CohortTableManager(_$AppDatabase db, Cohort table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $CohortFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $CohortOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $CohortAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> groupUrl = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CohortCompanion(id: id, groupUrl: groupUrl, rowid: rowid),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<String> groupUrl = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CohortCompanion.insert(
+                id: id,
+                groupUrl: groupUrl,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $CohortProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      Cohort,
+      CohortData,
+      $CohortFilterComposer,
+      $CohortOrderingComposer,
+      $CohortAnnotationComposer,
+      $CohortCreateCompanionBuilder,
+      $CohortUpdateCompanionBuilder,
+      (CohortData, BaseReferences<_$AppDatabase, Cohort, CohortData>),
+      CohortData,
+      PrefetchHooks Function()
+    >;
+typedef $AdmissionCouncilCreateCompanionBuilder =
+    AdmissionCouncilCompanion Function({
+      Value<int> id,
+      required String year,
+      required int presidentId,
+      required int secretaryId,
+      required int member1Id,
+      required int member2Id,
+      required int member3Id,
+      required String establishmentDecisionId,
+      required DateTime establishmentDecisionDate,
+    });
+typedef $AdmissionCouncilUpdateCompanionBuilder =
+    AdmissionCouncilCompanion Function({
+      Value<int> id,
+      Value<String> year,
+      Value<int> presidentId,
+      Value<int> secretaryId,
+      Value<int> member1Id,
+      Value<int> member2Id,
+      Value<int> member3Id,
+      Value<String> establishmentDecisionId,
+      Value<DateTime> establishmentDecisionDate,
+    });
+
+final class $AdmissionCouncilReferences
+    extends
+        BaseReferences<_$AppDatabase, AdmissionCouncil, AdmissionCouncilData> {
+  $AdmissionCouncilReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static Teacher _presidentIdTable(_$AppDatabase db) => db.teacher.createAlias(
+    $_aliasNameGenerator(db.admissionCouncil.presidentId, db.teacher.id),
+  );
+
+  $TeacherProcessedTableManager get presidentId {
+    final $_column = $_itemColumn<int>('president_id')!;
+
+    final manager = $TeacherTableManager(
+      $_db,
+      $_db.teacher,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_presidentIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static Teacher _secretaryIdTable(_$AppDatabase db) => db.teacher.createAlias(
+    $_aliasNameGenerator(db.admissionCouncil.secretaryId, db.teacher.id),
+  );
+
+  $TeacherProcessedTableManager get secretaryId {
+    final $_column = $_itemColumn<int>('secretary_id')!;
+
+    final manager = $TeacherTableManager(
+      $_db,
+      $_db.teacher,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_secretaryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static Teacher _member1IdTable(_$AppDatabase db) => db.teacher.createAlias(
+    $_aliasNameGenerator(db.admissionCouncil.member1Id, db.teacher.id),
+  );
+
+  $TeacherProcessedTableManager get member1Id {
+    final $_column = $_itemColumn<int>('member_1_id')!;
+
+    final manager = $TeacherTableManager(
+      $_db,
+      $_db.teacher,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_member1IdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static Teacher _member2IdTable(_$AppDatabase db) => db.teacher.createAlias(
+    $_aliasNameGenerator(db.admissionCouncil.member2Id, db.teacher.id),
+  );
+
+  $TeacherProcessedTableManager get member2Id {
+    final $_column = $_itemColumn<int>('member_2_id')!;
+
+    final manager = $TeacherTableManager(
+      $_db,
+      $_db.teacher,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_member2IdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static Teacher _member3IdTable(_$AppDatabase db) => db.teacher.createAlias(
+    $_aliasNameGenerator(db.admissionCouncil.member3Id, db.teacher.id),
+  );
+
+  $TeacherProcessedTableManager get member3Id {
+    final $_column = $_itemColumn<int>('member_3_id')!;
+
+    final manager = $TeacherTableManager(
+      $_db,
+      $_db.teacher,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_member3IdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $AdmissionCouncilFilterComposer
+    extends Composer<_$AppDatabase, AdmissionCouncil> {
+  $AdmissionCouncilFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get establishmentDecisionId => $composableBuilder(
+    column: $table.establishmentDecisionId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get establishmentDecisionDate => $composableBuilder(
+    column: $table.establishmentDecisionDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $TeacherFilterComposer get presidentId {
+    final $TeacherFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.presidentId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherFilterComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherFilterComposer get secretaryId {
+    final $TeacherFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.secretaryId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherFilterComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherFilterComposer get member1Id {
+    final $TeacherFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.member1Id,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherFilterComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherFilterComposer get member2Id {
+    final $TeacherFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.member2Id,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherFilterComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherFilterComposer get member3Id {
+    final $TeacherFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.member3Id,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherFilterComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $AdmissionCouncilOrderingComposer
+    extends Composer<_$AppDatabase, AdmissionCouncil> {
+  $AdmissionCouncilOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get establishmentDecisionId => $composableBuilder(
+    column: $table.establishmentDecisionId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get establishmentDecisionDate => $composableBuilder(
+    column: $table.establishmentDecisionDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $TeacherOrderingComposer get presidentId {
+    final $TeacherOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.presidentId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherOrderingComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherOrderingComposer get secretaryId {
+    final $TeacherOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.secretaryId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherOrderingComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherOrderingComposer get member1Id {
+    final $TeacherOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.member1Id,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherOrderingComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherOrderingComposer get member2Id {
+    final $TeacherOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.member2Id,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherOrderingComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherOrderingComposer get member3Id {
+    final $TeacherOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.member3Id,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherOrderingComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $AdmissionCouncilAnnotationComposer
+    extends Composer<_$AppDatabase, AdmissionCouncil> {
+  $AdmissionCouncilAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get year =>
+      $composableBuilder(column: $table.year, builder: (column) => column);
+
+  GeneratedColumn<String> get establishmentDecisionId => $composableBuilder(
+    column: $table.establishmentDecisionId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get establishmentDecisionDate => $composableBuilder(
+    column: $table.establishmentDecisionDate,
+    builder: (column) => column,
+  );
+
+  $TeacherAnnotationComposer get presidentId {
+    final $TeacherAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.presidentId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherAnnotationComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherAnnotationComposer get secretaryId {
+    final $TeacherAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.secretaryId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherAnnotationComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherAnnotationComposer get member1Id {
+    final $TeacherAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.member1Id,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherAnnotationComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherAnnotationComposer get member2Id {
+    final $TeacherAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.member2Id,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherAnnotationComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherAnnotationComposer get member3Id {
+    final $TeacherAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.member3Id,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherAnnotationComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $AdmissionCouncilTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          AdmissionCouncil,
+          AdmissionCouncilData,
+          $AdmissionCouncilFilterComposer,
+          $AdmissionCouncilOrderingComposer,
+          $AdmissionCouncilAnnotationComposer,
+          $AdmissionCouncilCreateCompanionBuilder,
+          $AdmissionCouncilUpdateCompanionBuilder,
+          (AdmissionCouncilData, $AdmissionCouncilReferences),
+          AdmissionCouncilData,
+          PrefetchHooks Function({
+            bool presidentId,
+            bool secretaryId,
+            bool member1Id,
+            bool member2Id,
+            bool member3Id,
+          })
+        > {
+  $AdmissionCouncilTableManager(_$AppDatabase db, AdmissionCouncil table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $AdmissionCouncilFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $AdmissionCouncilOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $AdmissionCouncilAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> year = const Value.absent(),
+                Value<int> presidentId = const Value.absent(),
+                Value<int> secretaryId = const Value.absent(),
+                Value<int> member1Id = const Value.absent(),
+                Value<int> member2Id = const Value.absent(),
+                Value<int> member3Id = const Value.absent(),
+                Value<String> establishmentDecisionId = const Value.absent(),
+                Value<DateTime> establishmentDecisionDate =
+                    const Value.absent(),
+              }) => AdmissionCouncilCompanion(
+                id: id,
+                year: year,
+                presidentId: presidentId,
+                secretaryId: secretaryId,
+                member1Id: member1Id,
+                member2Id: member2Id,
+                member3Id: member3Id,
+                establishmentDecisionId: establishmentDecisionId,
+                establishmentDecisionDate: establishmentDecisionDate,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String year,
+                required int presidentId,
+                required int secretaryId,
+                required int member1Id,
+                required int member2Id,
+                required int member3Id,
+                required String establishmentDecisionId,
+                required DateTime establishmentDecisionDate,
+              }) => AdmissionCouncilCompanion.insert(
+                id: id,
+                year: year,
+                presidentId: presidentId,
+                secretaryId: secretaryId,
+                member1Id: member1Id,
+                member2Id: member2Id,
+                member3Id: member3Id,
+                establishmentDecisionId: establishmentDecisionId,
+                establishmentDecisionDate: establishmentDecisionDate,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $AdmissionCouncilReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                presidentId = false,
+                secretaryId = false,
+                member1Id = false,
+                member2Id = false,
+                member3Id = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (presidentId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.presidentId,
+                                    referencedTable: $AdmissionCouncilReferences
+                                        ._presidentIdTable(db),
+                                    referencedColumn:
+                                        $AdmissionCouncilReferences
+                                            ._presidentIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (secretaryId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.secretaryId,
+                                    referencedTable: $AdmissionCouncilReferences
+                                        ._secretaryIdTable(db),
+                                    referencedColumn:
+                                        $AdmissionCouncilReferences
+                                            ._secretaryIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (member1Id) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.member1Id,
+                                    referencedTable: $AdmissionCouncilReferences
+                                        ._member1IdTable(db),
+                                    referencedColumn:
+                                        $AdmissionCouncilReferences
+                                            ._member1IdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (member2Id) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.member2Id,
+                                    referencedTable: $AdmissionCouncilReferences
+                                        ._member2IdTable(db),
+                                    referencedColumn:
+                                        $AdmissionCouncilReferences
+                                            ._member2IdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (member3Id) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.member3Id,
+                                    referencedTable: $AdmissionCouncilReferences
+                                        ._member3IdTable(db),
+                                    referencedColumn:
+                                        $AdmissionCouncilReferences
+                                            ._member3IdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $AdmissionCouncilProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      AdmissionCouncil,
+      AdmissionCouncilData,
+      $AdmissionCouncilFilterComposer,
+      $AdmissionCouncilOrderingComposer,
+      $AdmissionCouncilAnnotationComposer,
+      $AdmissionCouncilCreateCompanionBuilder,
+      $AdmissionCouncilUpdateCompanionBuilder,
+      (AdmissionCouncilData, $AdmissionCouncilReferences),
+      AdmissionCouncilData,
+      PrefetchHooks Function({
+        bool presidentId,
+        bool secretaryId,
+        bool member1Id,
+        bool member2Id,
+        bool member3Id,
+      })
+    >;
+typedef $StudentCreateCompanionBuilder =
+    StudentCompanion Function({
+      Value<int> id,
+      Value<String?> admissionId,
+      Value<String?> cohort,
+      Value<String?> studentId,
+      required String name,
+      Value<DateTime?> dateOfBirth,
+      Value<enums.Gender?> gender,
+      Value<String?> placeOfBirth,
+      Value<String?> phone,
+      Value<String?> personalEmail,
+      Value<String?> schoolEmail,
+      Value<String?> bachelorUniversity,
+      Value<String?> bachelorMajor,
+      Value<String?> bachelorProgram,
+      Value<String?> bachelorGraduationRank,
+      Value<DateTime?> bachelorGraduationDate,
+      Value<String?> intendedSpecialization,
+      Value<String?> exemptedCourses,
+      Value<String?> masterMajor,
+      Value<enums.StudentStatus?> status,
+      Value<bool> hasHirstExtension,
+      Value<bool> hasSecondExtension,
+      Value<int?> admissionCouncilId,
+      Value<enums.AdmissionType?> admissionType,
+      Value<bool> isAdmissionPaid,
+    });
+typedef $StudentUpdateCompanionBuilder =
+    StudentCompanion Function({
+      Value<int> id,
+      Value<String?> admissionId,
+      Value<String?> cohort,
+      Value<String?> studentId,
+      Value<String> name,
+      Value<DateTime?> dateOfBirth,
+      Value<enums.Gender?> gender,
+      Value<String?> placeOfBirth,
+      Value<String?> phone,
+      Value<String?> personalEmail,
+      Value<String?> schoolEmail,
+      Value<String?> bachelorUniversity,
+      Value<String?> bachelorMajor,
+      Value<String?> bachelorProgram,
+      Value<String?> bachelorGraduationRank,
+      Value<DateTime?> bachelorGraduationDate,
+      Value<String?> intendedSpecialization,
+      Value<String?> exemptedCourses,
+      Value<String?> masterMajor,
+      Value<enums.StudentStatus?> status,
+      Value<bool> hasHirstExtension,
+      Value<bool> hasSecondExtension,
+      Value<int?> admissionCouncilId,
+      Value<enums.AdmissionType?> admissionType,
+      Value<bool> isAdmissionPaid,
+    });
+
+final class $StudentReferences
+    extends BaseReferences<_$AppDatabase, Student, StudentData> {
+  $StudentReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<Thesis, List<ThesisData>> _thesisRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.thesis,
+    aliasName: $_aliasNameGenerator(db.student.id, db.thesis.studentId),
+  );
+
+  $ThesisProcessedTableManager get thesisRefs {
+    final manager = $ThesisTableManager(
+      $_db,
+      $_db.thesis,
+    ).filter((f) => f.studentId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_thesisRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<StudyRegistration, List<StudyRegistrationData>>
+  _studyRegistrationRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.studyRegistration,
+        aliasName: $_aliasNameGenerator(
+          db.student.id,
+          db.studyRegistration.studentId,
+        ),
+      );
+
+  $StudyRegistrationProcessedTableManager get studyRegistrationRefs {
+    final manager = $StudyRegistrationTableManager(
+      $_db,
+      $_db.studyRegistration,
+    ).filter((f) => f.studentId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _studyRegistrationRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $StudentFilterComposer extends Composer<_$AppDatabase, Student> {
+  $StudentFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get admissionId => $composableBuilder(
+    column: $table.admissionId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get cohort => $composableBuilder(
+    column: $table.cohort,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get studentId => $composableBuilder(
+    column: $table.studentId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get dateOfBirth => $composableBuilder(
+    column: $table.dateOfBirth,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<enums.Gender?, enums.Gender, String>
+  get gender => $composableBuilder(
+    column: $table.gender,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<String> get placeOfBirth => $composableBuilder(
+    column: $table.placeOfBirth,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get personalEmail => $composableBuilder(
+    column: $table.personalEmail,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get schoolEmail => $composableBuilder(
+    column: $table.schoolEmail,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bachelorUniversity => $composableBuilder(
+    column: $table.bachelorUniversity,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bachelorMajor => $composableBuilder(
+    column: $table.bachelorMajor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bachelorProgram => $composableBuilder(
+    column: $table.bachelorProgram,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bachelorGraduationRank => $composableBuilder(
+    column: $table.bachelorGraduationRank,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get bachelorGraduationDate => $composableBuilder(
+    column: $table.bachelorGraduationDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get intendedSpecialization => $composableBuilder(
+    column: $table.intendedSpecialization,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get exemptedCourses => $composableBuilder(
+    column: $table.exemptedCourses,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get masterMajor => $composableBuilder(
+    column: $table.masterMajor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<
+    enums.StudentStatus?,
+    enums.StudentStatus,
+    String
+  >
+  get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<bool> get hasHirstExtension => $composableBuilder(
+    column: $table.hasHirstExtension,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get hasSecondExtension => $composableBuilder(
+    column: $table.hasSecondExtension,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get admissionCouncilId => $composableBuilder(
+    column: $table.admissionCouncilId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<
+    enums.AdmissionType?,
+    enums.AdmissionType,
+    String
+  >
+  get admissionType => $composableBuilder(
+    column: $table.admissionType,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<bool> get isAdmissionPaid => $composableBuilder(
+    column: $table.isAdmissionPaid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> thesisRefs(
+    Expression<bool> Function($ThesisFilterComposer f) f,
+  ) {
+    final $ThesisFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.thesis,
+      getReferencedColumn: (t) => t.studentId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $ThesisFilterComposer(
+            $db: $db,
+            $table: $db.thesis,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> studyRegistrationRefs(
+    Expression<bool> Function($StudyRegistrationFilterComposer f) f,
+  ) {
+    final $StudyRegistrationFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.studyRegistration,
+      getReferencedColumn: (t) => t.studentId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $StudyRegistrationFilterComposer(
+            $db: $db,
+            $table: $db.studyRegistration,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $StudentOrderingComposer extends Composer<_$AppDatabase, Student> {
+  $StudentOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get admissionId => $composableBuilder(
+    column: $table.admissionId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get cohort => $composableBuilder(
+    column: $table.cohort,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get studentId => $composableBuilder(
+    column: $table.studentId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get dateOfBirth => $composableBuilder(
+    column: $table.dateOfBirth,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get gender => $composableBuilder(
+    column: $table.gender,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get placeOfBirth => $composableBuilder(
+    column: $table.placeOfBirth,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get personalEmail => $composableBuilder(
+    column: $table.personalEmail,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get schoolEmail => $composableBuilder(
+    column: $table.schoolEmail,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bachelorUniversity => $composableBuilder(
+    column: $table.bachelorUniversity,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bachelorMajor => $composableBuilder(
+    column: $table.bachelorMajor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bachelorProgram => $composableBuilder(
+    column: $table.bachelorProgram,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bachelorGraduationRank => $composableBuilder(
+    column: $table.bachelorGraduationRank,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get bachelorGraduationDate => $composableBuilder(
+    column: $table.bachelorGraduationDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get intendedSpecialization => $composableBuilder(
+    column: $table.intendedSpecialization,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get exemptedCourses => $composableBuilder(
+    column: $table.exemptedCourses,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get masterMajor => $composableBuilder(
+    column: $table.masterMajor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get hasHirstExtension => $composableBuilder(
+    column: $table.hasHirstExtension,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get hasSecondExtension => $composableBuilder(
+    column: $table.hasSecondExtension,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get admissionCouncilId => $composableBuilder(
+    column: $table.admissionCouncilId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get admissionType => $composableBuilder(
+    column: $table.admissionType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isAdmissionPaid => $composableBuilder(
+    column: $table.isAdmissionPaid,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $StudentAnnotationComposer extends Composer<_$AppDatabase, Student> {
+  $StudentAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get admissionId => $composableBuilder(
+    column: $table.admissionId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get cohort =>
+      $composableBuilder(column: $table.cohort, builder: (column) => column);
+
+  GeneratedColumn<String> get studentId =>
+      $composableBuilder(column: $table.studentId, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get dateOfBirth => $composableBuilder(
+    column: $table.dateOfBirth,
+    builder: (column) => column,
+  );
+
+  GeneratedColumnWithTypeConverter<enums.Gender?, String> get gender =>
+      $composableBuilder(column: $table.gender, builder: (column) => column);
+
+  GeneratedColumn<String> get placeOfBirth => $composableBuilder(
+    column: $table.placeOfBirth,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get phone =>
+      $composableBuilder(column: $table.phone, builder: (column) => column);
+
+  GeneratedColumn<String> get personalEmail => $composableBuilder(
+    column: $table.personalEmail,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get schoolEmail => $composableBuilder(
+    column: $table.schoolEmail,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get bachelorUniversity => $composableBuilder(
+    column: $table.bachelorUniversity,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get bachelorMajor => $composableBuilder(
+    column: $table.bachelorMajor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get bachelorProgram => $composableBuilder(
+    column: $table.bachelorProgram,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get bachelorGraduationRank => $composableBuilder(
+    column: $table.bachelorGraduationRank,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get bachelorGraduationDate => $composableBuilder(
+    column: $table.bachelorGraduationDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get intendedSpecialization => $composableBuilder(
+    column: $table.intendedSpecialization,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get exemptedCourses => $composableBuilder(
+    column: $table.exemptedCourses,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get masterMajor => $composableBuilder(
+    column: $table.masterMajor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumnWithTypeConverter<enums.StudentStatus?, String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<bool> get hasHirstExtension => $composableBuilder(
+    column: $table.hasHirstExtension,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get hasSecondExtension => $composableBuilder(
+    column: $table.hasSecondExtension,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get admissionCouncilId => $composableBuilder(
+    column: $table.admissionCouncilId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumnWithTypeConverter<enums.AdmissionType?, String>
+  get admissionType => $composableBuilder(
+    column: $table.admissionType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isAdmissionPaid => $composableBuilder(
+    column: $table.isAdmissionPaid,
+    builder: (column) => column,
+  );
+
+  Expression<T> thesisRefs<T extends Object>(
+    Expression<T> Function($ThesisAnnotationComposer a) f,
+  ) {
+    final $ThesisAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.thesis,
+      getReferencedColumn: (t) => t.studentId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $ThesisAnnotationComposer(
+            $db: $db,
+            $table: $db.thesis,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> studyRegistrationRefs<T extends Object>(
+    Expression<T> Function($StudyRegistrationAnnotationComposer a) f,
+  ) {
+    final $StudyRegistrationAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.studyRegistration,
+      getReferencedColumn: (t) => t.studentId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $StudyRegistrationAnnotationComposer(
+            $db: $db,
+            $table: $db.studyRegistration,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $StudentTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          Student,
+          StudentData,
+          $StudentFilterComposer,
+          $StudentOrderingComposer,
+          $StudentAnnotationComposer,
+          $StudentCreateCompanionBuilder,
+          $StudentUpdateCompanionBuilder,
+          (StudentData, $StudentReferences),
+          StudentData,
+          PrefetchHooks Function({bool thesisRefs, bool studyRegistrationRefs})
+        > {
+  $StudentTableManager(_$AppDatabase db, Student table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $StudentFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $StudentOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $StudentAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String?> admissionId = const Value.absent(),
+                Value<String?> cohort = const Value.absent(),
+                Value<String?> studentId = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<DateTime?> dateOfBirth = const Value.absent(),
+                Value<enums.Gender?> gender = const Value.absent(),
+                Value<String?> placeOfBirth = const Value.absent(),
+                Value<String?> phone = const Value.absent(),
+                Value<String?> personalEmail = const Value.absent(),
+                Value<String?> schoolEmail = const Value.absent(),
+                Value<String?> bachelorUniversity = const Value.absent(),
+                Value<String?> bachelorMajor = const Value.absent(),
+                Value<String?> bachelorProgram = const Value.absent(),
+                Value<String?> bachelorGraduationRank = const Value.absent(),
+                Value<DateTime?> bachelorGraduationDate = const Value.absent(),
+                Value<String?> intendedSpecialization = const Value.absent(),
+                Value<String?> exemptedCourses = const Value.absent(),
+                Value<String?> masterMajor = const Value.absent(),
+                Value<enums.StudentStatus?> status = const Value.absent(),
+                Value<bool> hasHirstExtension = const Value.absent(),
+                Value<bool> hasSecondExtension = const Value.absent(),
+                Value<int?> admissionCouncilId = const Value.absent(),
+                Value<enums.AdmissionType?> admissionType =
+                    const Value.absent(),
+                Value<bool> isAdmissionPaid = const Value.absent(),
+              }) => StudentCompanion(
+                id: id,
+                admissionId: admissionId,
+                cohort: cohort,
+                studentId: studentId,
+                name: name,
+                dateOfBirth: dateOfBirth,
+                gender: gender,
+                placeOfBirth: placeOfBirth,
+                phone: phone,
+                personalEmail: personalEmail,
+                schoolEmail: schoolEmail,
+                bachelorUniversity: bachelorUniversity,
+                bachelorMajor: bachelorMajor,
+                bachelorProgram: bachelorProgram,
+                bachelorGraduationRank: bachelorGraduationRank,
+                bachelorGraduationDate: bachelorGraduationDate,
+                intendedSpecialization: intendedSpecialization,
+                exemptedCourses: exemptedCourses,
+                masterMajor: masterMajor,
+                status: status,
+                hasHirstExtension: hasHirstExtension,
+                hasSecondExtension: hasSecondExtension,
+                admissionCouncilId: admissionCouncilId,
+                admissionType: admissionType,
+                isAdmissionPaid: isAdmissionPaid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String?> admissionId = const Value.absent(),
+                Value<String?> cohort = const Value.absent(),
+                Value<String?> studentId = const Value.absent(),
+                required String name,
+                Value<DateTime?> dateOfBirth = const Value.absent(),
+                Value<enums.Gender?> gender = const Value.absent(),
+                Value<String?> placeOfBirth = const Value.absent(),
+                Value<String?> phone = const Value.absent(),
+                Value<String?> personalEmail = const Value.absent(),
+                Value<String?> schoolEmail = const Value.absent(),
+                Value<String?> bachelorUniversity = const Value.absent(),
+                Value<String?> bachelorMajor = const Value.absent(),
+                Value<String?> bachelorProgram = const Value.absent(),
+                Value<String?> bachelorGraduationRank = const Value.absent(),
+                Value<DateTime?> bachelorGraduationDate = const Value.absent(),
+                Value<String?> intendedSpecialization = const Value.absent(),
+                Value<String?> exemptedCourses = const Value.absent(),
+                Value<String?> masterMajor = const Value.absent(),
+                Value<enums.StudentStatus?> status = const Value.absent(),
+                Value<bool> hasHirstExtension = const Value.absent(),
+                Value<bool> hasSecondExtension = const Value.absent(),
+                Value<int?> admissionCouncilId = const Value.absent(),
+                Value<enums.AdmissionType?> admissionType =
+                    const Value.absent(),
+                Value<bool> isAdmissionPaid = const Value.absent(),
+              }) => StudentCompanion.insert(
+                id: id,
+                admissionId: admissionId,
+                cohort: cohort,
+                studentId: studentId,
+                name: name,
+                dateOfBirth: dateOfBirth,
+                gender: gender,
+                placeOfBirth: placeOfBirth,
+                phone: phone,
+                personalEmail: personalEmail,
+                schoolEmail: schoolEmail,
+                bachelorUniversity: bachelorUniversity,
+                bachelorMajor: bachelorMajor,
+                bachelorProgram: bachelorProgram,
+                bachelorGraduationRank: bachelorGraduationRank,
+                bachelorGraduationDate: bachelorGraduationDate,
+                intendedSpecialization: intendedSpecialization,
+                exemptedCourses: exemptedCourses,
+                masterMajor: masterMajor,
+                status: status,
+                hasHirstExtension: hasHirstExtension,
+                hasSecondExtension: hasSecondExtension,
+                admissionCouncilId: admissionCouncilId,
+                admissionType: admissionType,
+                isAdmissionPaid: isAdmissionPaid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (e.readTable(table), $StudentReferences(db, table, e)),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({thesisRefs = false, studyRegistrationRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (thesisRefs) db.thesis,
+                    if (studyRegistrationRefs) db.studyRegistration,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (thesisRefs)
+                        await $_getPrefetchedData<
+                          StudentData,
+                          Student,
+                          ThesisData
+                        >(
+                          currentTable: table,
+                          referencedTable: $StudentReferences._thesisRefsTable(
+                            db,
+                          ),
+                          managerFromTypedResult: (p0) =>
+                              $StudentReferences(db, table, p0).thesisRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.studentId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (studyRegistrationRefs)
+                        await $_getPrefetchedData<
+                          StudentData,
+                          Student,
+                          StudyRegistrationData
+                        >(
+                          currentTable: table,
+                          referencedTable: $StudentReferences
+                              ._studyRegistrationRefsTable(db),
+                          managerFromTypedResult: (p0) => $StudentReferences(
+                            db,
+                            table,
+                            p0,
+                          ).studyRegistrationRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.studentId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $StudentProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      Student,
+      StudentData,
+      $StudentFilterComposer,
+      $StudentOrderingComposer,
+      $StudentAnnotationComposer,
+      $StudentCreateCompanionBuilder,
+      $StudentUpdateCompanionBuilder,
+      (StudentData, $StudentReferences),
+      StudentData,
+      PrefetchHooks Function({bool thesisRefs, bool studyRegistrationRefs})
+    >;
 typedef $SemesterCreateCompanionBuilder =
     SemesterCompanion Function({
       required String id,
@@ -18193,6 +17106,32 @@ typedef $SemesterUpdateCompanionBuilder =
       Value<DateTime> gradeSubmissionDeadline,
       Value<int> rowid,
     });
+
+final class $SemesterReferences
+    extends BaseReferences<_$AppDatabase, Semester, SemesterData> {
+  $SemesterReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<CourseLimiting, List<CourseLimitingData>>
+  _courseLimitingRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.courseLimiting,
+    aliasName: $_aliasNameGenerator(
+      db.semester.id,
+      db.courseLimiting.semesterId,
+    ),
+  );
+
+  $CourseLimitingProcessedTableManager get courseLimitingRefs {
+    final manager = $CourseLimitingTableManager(
+      $_db,
+      $_db.courseLimiting,
+    ).filter((f) => f.semesterId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_courseLimitingRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
 
 class $SemesterFilterComposer extends Composer<_$AppDatabase, Semester> {
   $SemesterFilterComposer({
@@ -18231,6 +17170,31 @@ class $SemesterFilterComposer extends Composer<_$AppDatabase, Semester> {
     column: $table.gradeSubmissionDeadline,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> courseLimitingRefs(
+    Expression<bool> Function($CourseLimitingFilterComposer f) f,
+  ) {
+    final $CourseLimitingFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.courseLimiting,
+      getReferencedColumn: (t) => t.semesterId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $CourseLimitingFilterComposer(
+            $db: $db,
+            $table: $db.courseLimiting,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $SemesterOrderingComposer extends Composer<_$AppDatabase, Semester> {
@@ -18307,6 +17271,31 @@ class $SemesterAnnotationComposer extends Composer<_$AppDatabase, Semester> {
     column: $table.gradeSubmissionDeadline,
     builder: (column) => column,
   );
+
+  Expression<T> courseLimitingRefs<T extends Object>(
+    Expression<T> Function($CourseLimitingAnnotationComposer a) f,
+  ) {
+    final $CourseLimitingAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.courseLimiting,
+      getReferencedColumn: (t) => t.semesterId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $CourseLimitingAnnotationComposer(
+            $db: $db,
+            $table: $db.courseLimiting,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $SemesterTableManager
@@ -18320,9 +17309,9 @@ class $SemesterTableManager
           $SemesterAnnotationComposer,
           $SemesterCreateCompanionBuilder,
           $SemesterUpdateCompanionBuilder,
-          (SemesterData, BaseReferences<_$AppDatabase, Semester, SemesterData>),
+          (SemesterData, $SemesterReferences),
           SemesterData,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool courseLimitingRefs})
         > {
   $SemesterTableManager(_$AppDatabase db, Semester table)
     : super(
@@ -18372,9 +17361,38 @@ class $SemesterTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (e.readTable(table), $SemesterReferences(db, table, e)),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({courseLimitingRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (courseLimitingRefs) db.courseLimiting,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (courseLimitingRefs)
+                    await $_getPrefetchedData<
+                      SemesterData,
+                      Semester,
+                      CourseLimitingData
+                    >(
+                      currentTable: table,
+                      referencedTable: $SemesterReferences
+                          ._courseLimitingRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $SemesterReferences(db, table, p0).courseLimitingRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.semesterId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
         ),
       );
 }
@@ -18389,9 +17407,1149 @@ typedef $SemesterProcessedTableManager =
       $SemesterAnnotationComposer,
       $SemesterCreateCompanionBuilder,
       $SemesterUpdateCompanionBuilder,
-      (SemesterData, BaseReferences<_$AppDatabase, Semester, SemesterData>),
+      (SemesterData, $SemesterReferences),
       SemesterData,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool courseLimitingRefs})
+    >;
+typedef $ThesisCreateCompanionBuilder =
+    ThesisCompanion Function({
+      Value<int> id,
+      required int supervisorId,
+      Value<int?> presidentId,
+      Value<int?> firstReviewerId,
+      Value<int?> secondReviewerId,
+      Value<int?> secretaryId,
+      Value<int?> memberId,
+      Value<int?> studentId,
+      required String vietnameseTitle,
+      required String englishTitle,
+      Value<String> note,
+      Value<DateTime?> defenseDeadline,
+      Value<DateTime?> defenseDate,
+      Value<bool> flagTracking,
+      Value<bool> flagPaid,
+      Value<bool> flagIgnore,
+      Value<String?> group,
+      Value<String?> year,
+      required enums.MscDefenseStatus defenseStatus,
+    });
+typedef $ThesisUpdateCompanionBuilder =
+    ThesisCompanion Function({
+      Value<int> id,
+      Value<int> supervisorId,
+      Value<int?> presidentId,
+      Value<int?> firstReviewerId,
+      Value<int?> secondReviewerId,
+      Value<int?> secretaryId,
+      Value<int?> memberId,
+      Value<int?> studentId,
+      Value<String> vietnameseTitle,
+      Value<String> englishTitle,
+      Value<String> note,
+      Value<DateTime?> defenseDeadline,
+      Value<DateTime?> defenseDate,
+      Value<bool> flagTracking,
+      Value<bool> flagPaid,
+      Value<bool> flagIgnore,
+      Value<String?> group,
+      Value<String?> year,
+      Value<enums.MscDefenseStatus> defenseStatus,
+    });
+
+final class $ThesisReferences
+    extends BaseReferences<_$AppDatabase, Thesis, ThesisData> {
+  $ThesisReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static Teacher _supervisorIdTable(_$AppDatabase db) => db.teacher.createAlias(
+    $_aliasNameGenerator(db.thesis.supervisorId, db.teacher.id),
+  );
+
+  $TeacherProcessedTableManager get supervisorId {
+    final $_column = $_itemColumn<int>('supervisor_id')!;
+
+    final manager = $TeacherTableManager(
+      $_db,
+      $_db.teacher,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_supervisorIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static Teacher _presidentIdTable(_$AppDatabase db) => db.teacher.createAlias(
+    $_aliasNameGenerator(db.thesis.presidentId, db.teacher.id),
+  );
+
+  $TeacherProcessedTableManager? get presidentId {
+    final $_column = $_itemColumn<int>('president_id');
+    if ($_column == null) return null;
+    final manager = $TeacherTableManager(
+      $_db,
+      $_db.teacher,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_presidentIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static Teacher _firstReviewerIdTable(_$AppDatabase db) =>
+      db.teacher.createAlias(
+        $_aliasNameGenerator(db.thesis.firstReviewerId, db.teacher.id),
+      );
+
+  $TeacherProcessedTableManager? get firstReviewerId {
+    final $_column = $_itemColumn<int>('first_reviewer_id');
+    if ($_column == null) return null;
+    final manager = $TeacherTableManager(
+      $_db,
+      $_db.teacher,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_firstReviewerIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static Teacher _secondReviewerIdTable(_$AppDatabase db) =>
+      db.teacher.createAlias(
+        $_aliasNameGenerator(db.thesis.secondReviewerId, db.teacher.id),
+      );
+
+  $TeacherProcessedTableManager? get secondReviewerId {
+    final $_column = $_itemColumn<int>('second_reviewer_id');
+    if ($_column == null) return null;
+    final manager = $TeacherTableManager(
+      $_db,
+      $_db.teacher,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_secondReviewerIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static Teacher _secretaryIdTable(_$AppDatabase db) => db.teacher.createAlias(
+    $_aliasNameGenerator(db.thesis.secretaryId, db.teacher.id),
+  );
+
+  $TeacherProcessedTableManager? get secretaryId {
+    final $_column = $_itemColumn<int>('secretary_id');
+    if ($_column == null) return null;
+    final manager = $TeacherTableManager(
+      $_db,
+      $_db.teacher,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_secretaryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static Teacher _memberIdTable(_$AppDatabase db) => db.teacher.createAlias(
+    $_aliasNameGenerator(db.thesis.memberId, db.teacher.id),
+  );
+
+  $TeacherProcessedTableManager? get memberId {
+    final $_column = $_itemColumn<int>('member_id');
+    if ($_column == null) return null;
+    final manager = $TeacherTableManager(
+      $_db,
+      $_db.teacher,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_memberIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static Student _studentIdTable(_$AppDatabase db) => db.student.createAlias(
+    $_aliasNameGenerator(db.thesis.studentId, db.student.id),
+  );
+
+  $StudentProcessedTableManager? get studentId {
+    final $_column = $_itemColumn<int>('student_id');
+    if ($_column == null) return null;
+    final manager = $StudentTableManager(
+      $_db,
+      $_db.student,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_studentIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $ThesisFilterComposer extends Composer<_$AppDatabase, Thesis> {
+  $ThesisFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get vietnameseTitle => $composableBuilder(
+    column: $table.vietnameseTitle,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get englishTitle => $composableBuilder(
+    column: $table.englishTitle,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get defenseDeadline => $composableBuilder(
+    column: $table.defenseDeadline,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get defenseDate => $composableBuilder(
+    column: $table.defenseDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get flagTracking => $composableBuilder(
+    column: $table.flagTracking,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get flagPaid => $composableBuilder(
+    column: $table.flagPaid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get flagIgnore => $composableBuilder(
+    column: $table.flagIgnore,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get group => $composableBuilder(
+    column: $table.group,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<
+    enums.MscDefenseStatus,
+    enums.MscDefenseStatus,
+    String
+  >
+  get defenseStatus => $composableBuilder(
+    column: $table.defenseStatus,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  $TeacherFilterComposer get supervisorId {
+    final $TeacherFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.supervisorId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherFilterComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherFilterComposer get presidentId {
+    final $TeacherFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.presidentId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherFilterComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherFilterComposer get firstReviewerId {
+    final $TeacherFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.firstReviewerId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherFilterComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherFilterComposer get secondReviewerId {
+    final $TeacherFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.secondReviewerId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherFilterComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherFilterComposer get secretaryId {
+    final $TeacherFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.secretaryId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherFilterComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherFilterComposer get memberId {
+    final $TeacherFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.memberId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherFilterComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $StudentFilterComposer get studentId {
+    final $StudentFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.studentId,
+      referencedTable: $db.student,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $StudentFilterComposer(
+            $db: $db,
+            $table: $db.student,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $ThesisOrderingComposer extends Composer<_$AppDatabase, Thesis> {
+  $ThesisOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get vietnameseTitle => $composableBuilder(
+    column: $table.vietnameseTitle,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get englishTitle => $composableBuilder(
+    column: $table.englishTitle,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get defenseDeadline => $composableBuilder(
+    column: $table.defenseDeadline,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get defenseDate => $composableBuilder(
+    column: $table.defenseDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get flagTracking => $composableBuilder(
+    column: $table.flagTracking,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get flagPaid => $composableBuilder(
+    column: $table.flagPaid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get flagIgnore => $composableBuilder(
+    column: $table.flagIgnore,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get group => $composableBuilder(
+    column: $table.group,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get defenseStatus => $composableBuilder(
+    column: $table.defenseStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $TeacherOrderingComposer get supervisorId {
+    final $TeacherOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.supervisorId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherOrderingComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherOrderingComposer get presidentId {
+    final $TeacherOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.presidentId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherOrderingComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherOrderingComposer get firstReviewerId {
+    final $TeacherOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.firstReviewerId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherOrderingComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherOrderingComposer get secondReviewerId {
+    final $TeacherOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.secondReviewerId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherOrderingComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherOrderingComposer get secretaryId {
+    final $TeacherOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.secretaryId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherOrderingComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherOrderingComposer get memberId {
+    final $TeacherOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.memberId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherOrderingComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $StudentOrderingComposer get studentId {
+    final $StudentOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.studentId,
+      referencedTable: $db.student,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $StudentOrderingComposer(
+            $db: $db,
+            $table: $db.student,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $ThesisAnnotationComposer extends Composer<_$AppDatabase, Thesis> {
+  $ThesisAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get vietnameseTitle => $composableBuilder(
+    column: $table.vietnameseTitle,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get englishTitle => $composableBuilder(
+    column: $table.englishTitle,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get defenseDeadline => $composableBuilder(
+    column: $table.defenseDeadline,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get defenseDate => $composableBuilder(
+    column: $table.defenseDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get flagTracking => $composableBuilder(
+    column: $table.flagTracking,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get flagPaid =>
+      $composableBuilder(column: $table.flagPaid, builder: (column) => column);
+
+  GeneratedColumn<bool> get flagIgnore => $composableBuilder(
+    column: $table.flagIgnore,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get group =>
+      $composableBuilder(column: $table.group, builder: (column) => column);
+
+  GeneratedColumn<String> get year =>
+      $composableBuilder(column: $table.year, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<enums.MscDefenseStatus, String>
+  get defenseStatus => $composableBuilder(
+    column: $table.defenseStatus,
+    builder: (column) => column,
+  );
+
+  $TeacherAnnotationComposer get supervisorId {
+    final $TeacherAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.supervisorId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherAnnotationComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherAnnotationComposer get presidentId {
+    final $TeacherAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.presidentId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherAnnotationComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherAnnotationComposer get firstReviewerId {
+    final $TeacherAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.firstReviewerId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherAnnotationComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherAnnotationComposer get secondReviewerId {
+    final $TeacherAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.secondReviewerId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherAnnotationComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherAnnotationComposer get secretaryId {
+    final $TeacherAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.secretaryId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherAnnotationComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherAnnotationComposer get memberId {
+    final $TeacherAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.memberId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherAnnotationComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $StudentAnnotationComposer get studentId {
+    final $StudentAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.studentId,
+      referencedTable: $db.student,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $StudentAnnotationComposer(
+            $db: $db,
+            $table: $db.student,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $ThesisTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          Thesis,
+          ThesisData,
+          $ThesisFilterComposer,
+          $ThesisOrderingComposer,
+          $ThesisAnnotationComposer,
+          $ThesisCreateCompanionBuilder,
+          $ThesisUpdateCompanionBuilder,
+          (ThesisData, $ThesisReferences),
+          ThesisData,
+          PrefetchHooks Function({
+            bool supervisorId,
+            bool presidentId,
+            bool firstReviewerId,
+            bool secondReviewerId,
+            bool secretaryId,
+            bool memberId,
+            bool studentId,
+          })
+        > {
+  $ThesisTableManager(_$AppDatabase db, Thesis table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $ThesisFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $ThesisOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $ThesisAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> supervisorId = const Value.absent(),
+                Value<int?> presidentId = const Value.absent(),
+                Value<int?> firstReviewerId = const Value.absent(),
+                Value<int?> secondReviewerId = const Value.absent(),
+                Value<int?> secretaryId = const Value.absent(),
+                Value<int?> memberId = const Value.absent(),
+                Value<int?> studentId = const Value.absent(),
+                Value<String> vietnameseTitle = const Value.absent(),
+                Value<String> englishTitle = const Value.absent(),
+                Value<String> note = const Value.absent(),
+                Value<DateTime?> defenseDeadline = const Value.absent(),
+                Value<DateTime?> defenseDate = const Value.absent(),
+                Value<bool> flagTracking = const Value.absent(),
+                Value<bool> flagPaid = const Value.absent(),
+                Value<bool> flagIgnore = const Value.absent(),
+                Value<String?> group = const Value.absent(),
+                Value<String?> year = const Value.absent(),
+                Value<enums.MscDefenseStatus> defenseStatus =
+                    const Value.absent(),
+              }) => ThesisCompanion(
+                id: id,
+                supervisorId: supervisorId,
+                presidentId: presidentId,
+                firstReviewerId: firstReviewerId,
+                secondReviewerId: secondReviewerId,
+                secretaryId: secretaryId,
+                memberId: memberId,
+                studentId: studentId,
+                vietnameseTitle: vietnameseTitle,
+                englishTitle: englishTitle,
+                note: note,
+                defenseDeadline: defenseDeadline,
+                defenseDate: defenseDate,
+                flagTracking: flagTracking,
+                flagPaid: flagPaid,
+                flagIgnore: flagIgnore,
+                group: group,
+                year: year,
+                defenseStatus: defenseStatus,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int supervisorId,
+                Value<int?> presidentId = const Value.absent(),
+                Value<int?> firstReviewerId = const Value.absent(),
+                Value<int?> secondReviewerId = const Value.absent(),
+                Value<int?> secretaryId = const Value.absent(),
+                Value<int?> memberId = const Value.absent(),
+                Value<int?> studentId = const Value.absent(),
+                required String vietnameseTitle,
+                required String englishTitle,
+                Value<String> note = const Value.absent(),
+                Value<DateTime?> defenseDeadline = const Value.absent(),
+                Value<DateTime?> defenseDate = const Value.absent(),
+                Value<bool> flagTracking = const Value.absent(),
+                Value<bool> flagPaid = const Value.absent(),
+                Value<bool> flagIgnore = const Value.absent(),
+                Value<String?> group = const Value.absent(),
+                Value<String?> year = const Value.absent(),
+                required enums.MscDefenseStatus defenseStatus,
+              }) => ThesisCompanion.insert(
+                id: id,
+                supervisorId: supervisorId,
+                presidentId: presidentId,
+                firstReviewerId: firstReviewerId,
+                secondReviewerId: secondReviewerId,
+                secretaryId: secretaryId,
+                memberId: memberId,
+                studentId: studentId,
+                vietnameseTitle: vietnameseTitle,
+                englishTitle: englishTitle,
+                note: note,
+                defenseDeadline: defenseDeadline,
+                defenseDate: defenseDate,
+                flagTracking: flagTracking,
+                flagPaid: flagPaid,
+                flagIgnore: flagIgnore,
+                group: group,
+                year: year,
+                defenseStatus: defenseStatus,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), $ThesisReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                supervisorId = false,
+                presidentId = false,
+                firstReviewerId = false,
+                secondReviewerId = false,
+                secretaryId = false,
+                memberId = false,
+                studentId = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (supervisorId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.supervisorId,
+                                    referencedTable: $ThesisReferences
+                                        ._supervisorIdTable(db),
+                                    referencedColumn: $ThesisReferences
+                                        ._supervisorIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+                        if (presidentId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.presidentId,
+                                    referencedTable: $ThesisReferences
+                                        ._presidentIdTable(db),
+                                    referencedColumn: $ThesisReferences
+                                        ._presidentIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+                        if (firstReviewerId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.firstReviewerId,
+                                    referencedTable: $ThesisReferences
+                                        ._firstReviewerIdTable(db),
+                                    referencedColumn: $ThesisReferences
+                                        ._firstReviewerIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+                        if (secondReviewerId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.secondReviewerId,
+                                    referencedTable: $ThesisReferences
+                                        ._secondReviewerIdTable(db),
+                                    referencedColumn: $ThesisReferences
+                                        ._secondReviewerIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+                        if (secretaryId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.secretaryId,
+                                    referencedTable: $ThesisReferences
+                                        ._secretaryIdTable(db),
+                                    referencedColumn: $ThesisReferences
+                                        ._secretaryIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+                        if (memberId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.memberId,
+                                    referencedTable: $ThesisReferences
+                                        ._memberIdTable(db),
+                                    referencedColumn: $ThesisReferences
+                                        ._memberIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+                        if (studentId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.studentId,
+                                    referencedTable: $ThesisReferences
+                                        ._studentIdTable(db),
+                                    referencedColumn: $ThesisReferences
+                                        ._studentIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $ThesisProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      Thesis,
+      ThesisData,
+      $ThesisFilterComposer,
+      $ThesisOrderingComposer,
+      $ThesisAnnotationComposer,
+      $ThesisCreateCompanionBuilder,
+      $ThesisUpdateCompanionBuilder,
+      (ThesisData, $ThesisReferences),
+      ThesisData,
+      PrefetchHooks Function({
+        bool supervisorId,
+        bool presidentId,
+        bool firstReviewerId,
+        bool secondReviewerId,
+        bool secretaryId,
+        bool memberId,
+        bool studentId,
+      })
     >;
 typedef $AcademicGroupCreateCompanionBuilder =
     AcademicGroupCompanion Function({
@@ -19700,6 +19858,254 @@ typedef $TeachingRegistrationProcessedTableManager =
       (TeachingRegistrationData, $TeachingRegistrationReferences),
       TeachingRegistrationData,
       PrefetchHooks Function({bool teacherId, bool courseId})
+    >;
+typedef $CourseLimitingCreateCompanionBuilder =
+    CourseLimitingCompanion Function({
+      required int courseId,
+      required String semesterId,
+      Value<int> rowid,
+    });
+typedef $CourseLimitingUpdateCompanionBuilder =
+    CourseLimitingCompanion Function({
+      Value<int> courseId,
+      Value<String> semesterId,
+      Value<int> rowid,
+    });
+
+final class $CourseLimitingReferences
+    extends BaseReferences<_$AppDatabase, CourseLimiting, CourseLimitingData> {
+  $CourseLimitingReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static Semester _semesterIdTable(_$AppDatabase db) => db.semester.createAlias(
+    $_aliasNameGenerator(db.courseLimiting.semesterId, db.semester.id),
+  );
+
+  $SemesterProcessedTableManager get semesterId {
+    final $_column = $_itemColumn<String>('semester_id')!;
+
+    final manager = $SemesterTableManager(
+      $_db,
+      $_db.semester,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_semesterIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $CourseLimitingFilterComposer
+    extends Composer<_$AppDatabase, CourseLimiting> {
+  $CourseLimitingFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $SemesterFilterComposer get semesterId {
+    final $SemesterFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.semesterId,
+      referencedTable: $db.semester,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $SemesterFilterComposer(
+            $db: $db,
+            $table: $db.semester,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $CourseLimitingOrderingComposer
+    extends Composer<_$AppDatabase, CourseLimiting> {
+  $CourseLimitingOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $SemesterOrderingComposer get semesterId {
+    final $SemesterOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.semesterId,
+      referencedTable: $db.semester,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $SemesterOrderingComposer(
+            $db: $db,
+            $table: $db.semester,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $CourseLimitingAnnotationComposer
+    extends Composer<_$AppDatabase, CourseLimiting> {
+  $CourseLimitingAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $SemesterAnnotationComposer get semesterId {
+    final $SemesterAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.semesterId,
+      referencedTable: $db.semester,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $SemesterAnnotationComposer(
+            $db: $db,
+            $table: $db.semester,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $CourseLimitingTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          CourseLimiting,
+          CourseLimitingData,
+          $CourseLimitingFilterComposer,
+          $CourseLimitingOrderingComposer,
+          $CourseLimitingAnnotationComposer,
+          $CourseLimitingCreateCompanionBuilder,
+          $CourseLimitingUpdateCompanionBuilder,
+          (CourseLimitingData, $CourseLimitingReferences),
+          CourseLimitingData,
+          PrefetchHooks Function({bool semesterId})
+        > {
+  $CourseLimitingTableManager(_$AppDatabase db, CourseLimiting table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $CourseLimitingFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $CourseLimitingOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $CourseLimitingAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> courseId = const Value.absent(),
+                Value<String> semesterId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CourseLimitingCompanion(
+                courseId: courseId,
+                semesterId: semesterId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required int courseId,
+                required String semesterId,
+                Value<int> rowid = const Value.absent(),
+              }) => CourseLimitingCompanion.insert(
+                courseId: courseId,
+                semesterId: semesterId,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $CourseLimitingReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({semesterId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (semesterId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.semesterId,
+                                referencedTable: $CourseLimitingReferences
+                                    ._semesterIdTable(db),
+                                referencedColumn: $CourseLimitingReferences
+                                    ._semesterIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $CourseLimitingProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      CourseLimiting,
+      CourseLimitingData,
+      $CourseLimitingFilterComposer,
+      $CourseLimitingOrderingComposer,
+      $CourseLimitingAnnotationComposer,
+      $CourseLimitingCreateCompanionBuilder,
+      $CourseLimitingUpdateCompanionBuilder,
+      (CourseLimitingData, $CourseLimitingReferences),
+      CourseLimitingData,
+      PrefetchHooks Function({bool semesterId})
     >;
 typedef $CourseClassCreateCompanionBuilder =
     CourseClassCompanion Function({
@@ -21086,16 +21492,11 @@ typedef $StudyRegistrationProcessedTableManager =
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
+  $TeacherFtsTableManager get teacherFts =>
+      $TeacherFtsTableManager(_db, _db.teacherFts);
   $TeacherGroupTableManager get teacherGroup =>
       $TeacherGroupTableManager(_db, _db.teacherGroup);
   $TeacherTableManager get teacher => $TeacherTableManager(_db, _db.teacher);
-  $AdmissionCouncilTableManager get admissionCouncil =>
-      $AdmissionCouncilTableManager(_db, _db.admissionCouncil);
-  $CohortTableManager get cohort => $CohortTableManager(_db, _db.cohort);
-  $StudentTableManager get student => $StudentTableManager(_db, _db.student);
-  $ThesisTableManager get thesis => $ThesisTableManager(_db, _db.thesis);
-  $TeacherFtsTableManager get teacherFts =>
-      $TeacherFtsTableManager(_db, _db.teacherFts);
   $CourseFtsTableManager get courseFts =>
       $CourseFtsTableManager(_db, _db.courseFts);
   $CourseTableManager get course => $CourseTableManager(_db, _db.course);
@@ -21107,8 +21508,13 @@ class $AppDatabaseManager {
       $DocumentRoleTableManager(_db, _db.documentRole);
   $DocumentTableManager get document =>
       $DocumentTableManager(_db, _db.document);
+  $CohortTableManager get cohort => $CohortTableManager(_db, _db.cohort);
+  $AdmissionCouncilTableManager get admissionCouncil =>
+      $AdmissionCouncilTableManager(_db, _db.admissionCouncil);
+  $StudentTableManager get student => $StudentTableManager(_db, _db.student);
   $SemesterTableManager get semester =>
       $SemesterTableManager(_db, _db.semester);
+  $ThesisTableManager get thesis => $ThesisTableManager(_db, _db.thesis);
   $AcademicGroupTableManager get academicGroup =>
       $AcademicGroupTableManager(_db, _db.academicGroup);
   $PhdCohortTableManager get phdCohort =>
@@ -21117,6 +21523,8 @@ class $AppDatabaseManager {
       $PhdStudentTableManager(_db, _db.phdStudent);
   $TeachingRegistrationTableManager get teachingRegistration =>
       $TeachingRegistrationTableManager(_db, _db.teachingRegistration);
+  $CourseLimitingTableManager get courseLimiting =>
+      $CourseLimitingTableManager(_db, _db.courseLimiting);
   $CourseClassTableManager get courseClass =>
       $CourseClassTableManager(_db, _db.courseClass);
   $TeachingAssignmentTableManager get teachingAssignment =>

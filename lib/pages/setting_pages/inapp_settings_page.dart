@@ -2,16 +2,12 @@
 import 'dart:io';
 
 import 'package:external_path/external_path.dart' as ext_path;
-import 'package:file_picker/file_picker.dart';
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../business/db_v2_providers.dart';
 import '../../custom_tiles.dart';
@@ -34,7 +30,7 @@ class MyFalcutyTile extends ConsumerWidget {
 
     return ListTile(
       title: Text(title),
-      subtitle: Text(myDivisionText),
+      subtitle: Text(myDivisionText ?? "Chưa cài đặt"),
       onTap: () async {
         final newDivision = await showDialog(
           context: context,

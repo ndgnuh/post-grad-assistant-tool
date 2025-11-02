@@ -7,7 +7,13 @@ import 'package:drift_flutter/drift_flutter.dart';
 
 part 'file_content_database.g.dart';
 
-@DriftDatabase(include: {'file_content_database.drift'})
+class DocumentContent extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get fileName => text()();
+  BlobColumn get content => blob()();
+}
+
+@DriftDatabase(tables: [DocumentContent])
 class FileContentDatabase extends _$FileContentDatabase {
   FileContentDatabase(super.executor);
 

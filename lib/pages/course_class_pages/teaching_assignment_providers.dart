@@ -1,10 +1,13 @@
 import 'dart:async';
 
 import 'package:drift/drift.dart' show Value;
+import 'package:fami_tools/business/copy_pasta.dart';
+import 'package:fami_tools/business/excel_files.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../business/db_v2_providers.dart';
+import '../../business/pdfs/pdfs.dart';
 import '../../business/selection_models.dart';
 import '_interpersonal.dart' as interpersonal;
 import 'providers.dart';
@@ -18,6 +21,118 @@ final politenessProvider = AsyncNotifierProvider.family(
 final candidateSelectionProvider = AsyncNotifierProvider.family(
   CandidateSelectionNotifier.new,
 );
+
+final teachingAssignmentEmailProvider = FutureProvider<Email?>((ref) async {
+  // Get selected teacher
+  final semesterSelection = await ref.watch(
+    semesterSelectionModelProvider.future,
+  );
+  final semester = semesterSelection.selected;
+  if (semester == null) return null;
+
+  // Information
+  final specialistName = "Nguyễn Huy Hùng"; // TODO: get from preference
+  final specialistPronoun = "thầy";
+  final specialistEmail =
+      "hung.nguyenhuy@hust.edu.vn"; // TODO: get from preference
+  final semesterId = semester.id;
+  final myFalcuty =
+      await ref.watch(myFalcutyProvider.future) ?? "<<<< MY FACULTY >>>>";
+  final myName = await ref.watch(myNameProvider.future) ?? "<<<< MY NAME >>>>";
+
+  // Supervisor email
+  final mySupervisorId = await ref.watch(mySupervisorIdProvider.future);
+  final String mySupervisorEmail;
+  if (mySupervisorId == null) {
+    mySupervisorEmail = "";
+  } else {
+    final mySupervisor = await ref.watch(
+      teacherByIdProvider(mySupervisorId).future,
+    );
+    mySupervisorEmail = mySupervisor.email!;
+  }
+
+  /// List of course classes requires room arrangement
+  final classIds = await ref.watch(
+    courseClassIdsBySemesterProvider(semester.id).future,
+  );
+  final needsRoomArrangement = <String>[];
+  for (final classId in classIds) {
+    final courseClass = await ref.watch(
+      courseClassByIdProvider(classId).future,
+    );
+    final course = await ref.watch(
+      courseByIdProvider(courseClass.courseId).future,
+    );
+
+    if (courseClass.status == CourseClassStatus.canceled) continue;
+    if (courseClass.classId.startsWith("MI") == false) continue;
+    if (courseClass.registrationCount < 5) continue;
+    if ((courseClass.classroom ?? "").isEmpty ||
+        courseClass.classroom?.toLowerCase() == "mượn") {
+      final className = courseClass.classId.replaceFirst(
+        course.id,
+        course.vietnameseName,
+      );
+      needsRoomArrangement.add("- $className");
+    }
+  }
+
+  final String arrangementRequest;
+  if (needsRoomArrangement.isEmpty) {
+    arrangementRequest =
+        "Các lớp học dưới đây cần được sắp xếp phòng học, mong $specialistPronoun hỗ trợ ạ:"
+        "\n${needsRoomArrangement.join('\n')}\n\n"
+        "Em cảm ơn $specialistPronoun ạ.";
+  } else {
+    arrangementRequest = "Em cảm ơn $specialistPronoun ạ.";
+  }
+
+  final body =
+      """
+Kính gửi $specialistPronoun $specialistName,
+    
+Em gửi bảng phân công giảng dạy cao học đợt học $semesterId ạ. Bảng phân công được đính kèm trong email ạ.
+
+$arrangementRequest
+    
+Trân trọng,
+$myName"""
+          .trim();
+
+  return Email(
+    recipients: {specialistEmail},
+    ccRecipients: {mySupervisorEmail},
+    subject: "Phân công giảng dạy đợt học ${semester.id}, $myFalcuty",
+    body: body,
+  );
+});
+
+final teachingAssignmentPdfProvider = FutureProvider((ref) async {
+  final model = await ref.watch(teachingAssignmentOutputModelProvider.future);
+  if (model == null) return null;
+
+  return PdfFile.mscCourseClass.teachingAssignment(
+    semester: model.semester,
+    courseClasses: model.courseClasses,
+    mapCourses: model.mapCourses,
+    mapTeachers: model.mapTeachers,
+    mapWeights: model.mapWeights,
+  );
+});
+
+final teachingAssignmentXlsxProvider = FutureProvider((ref) async {
+  final model = await ref.watch(teachingAssignmentOutputModelProvider.future);
+  if (model == null) return null;
+
+  return ExcelFile.msc.teachingAssignment(
+    semester: model.semester,
+    courseClasses: model.courseClasses,
+    mapCourses: model.mapCourses,
+    mapTeachers: model.mapTeachers,
+    mapWeights: model.mapWeights,
+  );
+});
 
 /// Provide the teachers assigned to
 /// teach a course class, along with their contribution percentage
@@ -282,3 +397,52 @@ class PoliteNotifier extends AsyncNotifier<bool> {
     await pref.setBool(key, newValue);
   }
 }
+
+final teachingAssignmentOutputModelProvider = FutureProvider((ref) async {
+  final semesterSelection = await ref.watch(
+    semesterSelectionModelProvider.future,
+  );
+  final semester = semesterSelection.selected;
+  if (semester == null) return null;
+
+  final courseClassIds = await ref.watch(
+    courseClassIdsBySemesterProvider(semester.id).future,
+  );
+
+  final courseClasses = <CourseClassData>[];
+  final mapTeachers = <int, List<TeacherData>>{};
+  final mapWeights = <int, List<double>>{};
+  final mapCourses = <int, CourseData>{};
+
+  for (final classId in courseClassIds) {
+    final courseClass = await ref.watch(
+      courseClassByIdProvider(classId).future,
+    );
+    if (!courseClass.courseId.startsWith("MI")) continue;
+
+    final course = await ref.watch(
+      courseByIdProvider(courseClass.courseId).future,
+    );
+    final assignment = await ref.watch(
+      teachingAssignmentsProvider(classId).future,
+    );
+    final teachers = [
+      for (final a in assignment)
+        await ref.watch(teacherByIdProvider(a.teacherId).future),
+    ];
+    final weights = [for (final a in assignment) a.weight];
+
+    courseClasses.add(courseClass);
+    mapCourses[classId] = course;
+    mapTeachers[classId] = teachers;
+    mapWeights[classId] = weights;
+  }
+
+  return (
+    semester: semester,
+    courseClasses: courseClasses,
+    mapCourses: mapCourses,
+    mapTeachers: mapTeachers,
+    mapWeights: mapWeights,
+  );
+});

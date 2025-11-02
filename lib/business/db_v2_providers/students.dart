@@ -85,15 +85,17 @@ class FilteredAdmissionIdsNotifier extends AsyncNotifier<List<int>> {
   }
 }
 
-class StudentByIdNotifier extends AsyncNotifier<StudentData?> {
+class StudentByIdNotifier extends AsyncNotifier<StudentData> {
   final int studentId;
   StudentByIdNotifier(this.studentId);
 
   @override
-  FutureOr<StudentData?> build() async {
+  FutureOr<StudentData> build() async {
     final db = await ref.watch(mainDatabaseProvider.future);
     final query = db.student.select()..where((tbl) => tbl.id.equals(studentId));
-    return await query.getSingleOrNull();
+    final student = await query.getSingleOrNull();
+    assert(student != null, 'Student with id $studentId not found');
+    return student!;
   }
 
   Future<void> updateStudent({

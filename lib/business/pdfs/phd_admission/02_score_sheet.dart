@@ -26,7 +26,7 @@ Future<PdfFile> scoreSheetPdf({
     ),
   );
 
-  return PdfFile(fileName: fileName, bytes: bytes);
+  return PdfFile(name: fileName, bytes: bytes);
 }
 
 class TiledScoreSheet extends StatelessWidget {

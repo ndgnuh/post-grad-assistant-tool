@@ -106,7 +106,7 @@ class _SaveAdmissionFilesButton extends ConsumerWidget {
           paymentTable,
         ].whereType<PdfFile>().toList();
         for (final pdfFile in files) {
-          final savePath = path.join(directory, pdfFile.fileName);
+          final savePath = path.join(directory, pdfFile.name);
           final file = File(savePath);
           await file.writeAsBytes(pdfFile.bytes);
         }
@@ -287,7 +287,7 @@ class _PdfPreviewButton extends ConsumerWidget {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => PdfDataPreviewPage(
-              sourceName: pdf!.fileName,
+              sourceName: pdf!.name,
               title: title,
               pdfData: pdf.bytes,
             ),

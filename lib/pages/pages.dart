@@ -12,17 +12,120 @@ import 'semester_pages/semester_pages.dart';
 import 'setting_pages/setting_pages.dart';
 import 'student_pages/student_pages.dart';
 import 'teacher_pages/teacher_pages.dart';
-import 'thesis_defense/index.dart';
 import 'thesis_pages/thesis_pages.dart';
 import 'document_pages/document_pages.dart';
+
+import 'msc_thesis_defense/page.dart' as msc_thesis;
+import 'msc_thesis_assignment/page.dart' as msc_thesis;
 
 const initialLoadingRotue = InitialLoadingPage.routeName;
 const intialSettingsRoute = InitialSetupPage.routeName;
 
+class AppRoute {
+  final String name;
+  final IconData? icon;
+  final WidgetBuilder builder;
+  final String? group;
+
+  AppRoute({
+    required this.name,
+    required this.builder,
+    this.group,
+    this.icon,
+  });
+}
+
+final routes = [
+  /// Functional pages
+  AppRoute(
+    name: "/initial-loading",
+    builder: (context) => InitialLoadingPage(),
+  ),
+  AppRoute(
+    name: "/initial-setup",
+    builder: (context) => InitialSetupPage(),
+  ),
+
+  // Home page
+  // ---------
+  AppRoute(
+    name: "/",
+    icon: Symbols.home,
+    builder: (context) => HomePage(),
+  ),
+
+  // Student management
+  // ------------------
+  AppRoute(
+    name: "msc/students/list",
+    icon: Symbols.person_search,
+    group: "Thạc sĩ",
+    builder: (context) => StudentListPage(),
+  ),
+
+  // Msc Thesis
+  AppRoute(
+    name: "msc/thesis/list",
+    icon: Symbols.checklist,
+    group: "Thạc sĩ",
+    builder: (context) => ThesisListPage(),
+  ),
+  AppRoute(
+    name: "msc/thesis/assignment",
+    icon: Symbols.assignment,
+    group: "Thạc sĩ",
+    builder: (context) => msc_thesis.MscThesisAssignmentPage(),
+  ),
+];
+
+final routeLookups = {
+  for (final route in routes) route.name: route,
+};
+
+final routeGroups = [
+  for (final route in routes) route.group,
+].whereType<String>().toList();
+
+class AppNavigator {
+  BuildContext context;
+  AppNavigator(this.context);
+
+  NavigatorState get navigator => Navigator.of(context);
+
+  void moveTo(WidgetBuilder builder) {
+    navigator.push(
+      MaterialPageRoute(builder: builder),
+    );
+  }
+
+  void toPdfPreviewPage({
+    required String title,
+    required Uint8List pdfData,
+    required String sourceName,
+  }) => moveTo(
+    (context) => PdfDataPreviewPage(
+      title: title,
+      pdfData: pdfData,
+      sourceName: sourceName,
+    ),
+  );
+
+  void toHome() => navigator.pushNamed(HomePage.routeName);
+
+  void toThesisListPage() => navigator.pushNamed(ThesisListPage.routeName);
+
+  void toThesisAssignmentPage() => moveTo(
+    (context) => msc_thesis.MscThesisAssignmentPage(),
+  );
+
+  void toThesisHub() =>
+      navigator.pushNamed(msc_thesis.ThesisDefensePage.routeName);
+}
+
 final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
 
-  false => DraftPage.routeName,
+  // false => DraftPage.routeName,
 
   // Settings
   // false => InitialSetupPage.routeName,
@@ -41,16 +144,17 @@ final initialRoute = switch (kReleaseMode) {
 
   // Course classes pages
   // ====================
-  // false => CourseClassListPage.routeName,
+  false => CourseClassListPage.routeName,
   // false => SemesterListPage.routeName,
 
   // Course pages
-  // false => CourseListPage.routeName,
+  false => CourseListPage.routeName,
 
   // Thesis defends
   // false => ThesisDefenseRegisterPage.routeName,
   // false => ThesisDefensePaymentPage.routeName,
   // false => ThesisListPage.routeName,
+  false => msc_thesis.ThesisDefensePage.routeName,
 
   // PhD students pages
   false => PhdStudentListPage.routeName,
@@ -147,28 +251,28 @@ final routesBySections = <String, List<RouteItem>>{
       subtitle: null,
     ),
     (
-      route: ThesisDefenseRegisterPage.routeName,
-      label: "Bảo vệ luận văn",
+      route: msc_thesis.ThesisDefensePage.routeName,
+      label: "Luận văn thạc sĩ",
       icon: Symbols.school,
       subtitle: null,
     ),
   ],
 
   // Index, but for MsC students
-  "Thạc sĩ / danh mục": [
-    (
-      route: null,
-      label: "Niên khóa",
-      icon: Symbols.group,
-      subtitle: null,
-    ),
-    (
-      route: ThesisListPage.routeName,
-      label: "Đề tài hướng dẫn",
-      icon: Symbols.assignment,
-      subtitle: null,
-    ),
-  ],
+  // "Thạc sĩ / danh mục": [
+  //   (
+  //     route: null,
+  //     label: "Niên khóa",
+  //     icon: Symbols.group,
+  //     subtitle: null,
+  //   ),
+  //   (
+  //     route: ThesisListPage.routeName,
+  //     label: "Đề tài hướng dẫn",
+  //     icon: Symbols.assignment,
+  //     subtitle: null,
+  //   ),
+  // ],
 
   // PhD students
   "Nghiên cứu sinh": [
@@ -211,6 +315,14 @@ final routesBySections = <String, List<RouteItem>>{
 Widget buildRoute(BuildContext context, RouteSettings settings) {
   String? name = settings.name;
   Object? args = settings.arguments;
+
+  // final route = routeLookups[name];
+  // switch (route) {
+  //   case AppRoute():
+  //     return route.builder(context);
+  //   default:
+  //     return HomePage();
+  // }
 
   switch (name) {
     case HomePage.routeName:
@@ -292,10 +404,10 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       }
 
     // Thesis defense pages
-    case ThesisDefenseRegisterPage.routeName:
-      return const ThesisDefenseRegisterPage();
-    case ThesisDefensePaymentPage.routeName:
-      return const ThesisDefensePaymentPage();
+    case msc_thesis.ThesisDefensePage.routeName:
+      return const msc_thesis.ThesisDefensePage();
+    // case ThesisDefensePaymentPage.routeName:
+    //   return const ThesisDefensePaymentPage();
 
     // PhD Student pages
     case PhdStudentListPage.routeName:

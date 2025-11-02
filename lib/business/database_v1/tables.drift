@@ -113,10 +113,11 @@ create table thesis (
     "flag_ignore" BOOLEAN NOT NULL DEFAULT FALSE,
 	"group"	TEXT ,
 	"nam"	TEXT as year,
+    "defense_status" text not null mapped by `mscDefenseStatusConverter`
     -- Deprecated fields, probably to be removed later
-	"ngayGiao"	datetime as assignedDate,
-	"soQdGiao"	TEXT as assignedDecisionNumber,
-	"soQdBaoVe"	TEXT as defenseDecisionNumber
+	-- "ngayGiao"	datetime as assignedDate,
+	-- "soQdGiao"	TEXT as assignedDecisionNumber,
+	-- "soQdBaoVe"	TEXT as defenseDecisionNumber
 ) as ThesisData;
 
 create table academic_group (
@@ -204,6 +205,12 @@ create table "teaching_registration" (
     "teacher_id" INTEGER NOT NULL REFERENCES teacher(id),
     "course_id" TEXT NOT NULL AS courseId REFERENCES course(id),
     PRIMARY KEY("teacher_id", "course_id")
+);
+
+create table "course_limiting" (
+	course_id int not null references course(id),
+	semester_id text not null references semester(id),
+	primary key (course_id, semester_id)
 );
 
 create table "course_class" (

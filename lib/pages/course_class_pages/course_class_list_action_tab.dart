@@ -1,10 +1,15 @@
 import 'package:fami_tools/business/copy_pasta.dart';
 import 'package:fami_tools/custom_widgets.dart';
+import 'package:fami_tools/pages/course_class_pages/teaching_assignment_providers.dart';
+import 'package:fami_tools/pages/pages.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'course_class_pages.dart';
 import 'providers.dart';
@@ -113,6 +118,15 @@ class CourseClassActionTab extends StatelessWidget {
             ),
           ),
 
+          CardSection(
+            title: "Phân công giảng dạy",
+            children: [
+              _TeachingAssignmentPdfButton(),
+              _TeachingAssignmentSaveButton(),
+              _TeachingAssignmentEmailButton(),
+            ],
+          ),
+
           // Import/add classes
           CardSection(
             // title: "Tạo lớp học",
@@ -151,6 +165,130 @@ class CourseClassActionTab extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _TeachingAssignmentSaveButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pdfFileAsync = ref.watch(teachingAssignmentPdfProvider);
+    final xlsxFileAsync = ref.watch(teachingAssignmentXlsxProvider);
+    final pdfFile = pdfFileAsync.maybeWhen(
+      data: (pdfFile) => pdfFile,
+      orElse: () => null,
+    );
+    final xlsxFile = xlsxFileAsync.maybeWhen(
+      data: (xlsxFile) => xlsxFile,
+      orElse: () => null,
+    );
+
+    final subtitle = switch (xlsxFile?.name) {
+      String name => 'Lưu file $name.xlsx và .pdf',
+      _ => 'Lưu file xlsx và pdf',
+    };
+
+    final messenger = ScaffoldMessenger.of(context);
+
+    return ListTile(
+      leading: const Icon(Symbols.download),
+      title: const Text('Lưu bảng phân công'),
+      subtitle: Text(subtitle),
+      trailing: const Icon(Symbols.chevron_forward),
+      enabled: (pdfFile != null) && (xlsxFile != null),
+      onTap: () async {
+        final saveDirectory = await FilePicker.platform.getDirectoryPath();
+        if (saveDirectory == null) return;
+        await xlsxFile!.save(directory: saveDirectory);
+        await pdfFile!.save(directory: saveDirectory);
+
+        final saveDirectoryUri = Uri.directory(saveDirectory);
+
+        messenger.showSnackBar(
+          SnackBar(
+            content: Link(
+              uri: saveDirectoryUri,
+              builder: (context, followLink) => InkWell(
+                onTap: followLink,
+                child: Text('Đã lưu file vào $saveDirectory'),
+              ),
+            ),
+            action: SnackBarAction(
+              label: 'Mở',
+              onPressed: () => launchUrl(
+                saveDirectoryUri,
+                mode: LaunchMode.externalApplication,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _TeachingAssignmentPdfButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pdfFileAsync = ref.watch(teachingAssignmentPdfProvider);
+    switch (pdfFileAsync) {
+      case AsyncLoading():
+        return LinearProgressIndicator();
+      case AsyncError(:final error):
+        return ListTile(
+          title: Text('Bảng phân công'),
+          subtitle: Text(error.toString()),
+        );
+      default:
+    }
+
+    final pdfFile = pdfFileAsync.value;
+    return ListTile(
+      leading: const Icon(Symbols.docs),
+      title: const Text('Bảng phân công'),
+      subtitle: const Text('trước bảng phân công'),
+      trailing: const Icon(Symbols.chevron_forward),
+      enabled: pdfFile != null,
+      onTap: () async {
+        final nav = AppNavigator(context);
+        nav.toPdfPreviewPage(
+          title: pdfFile!.name,
+          pdfData: pdfFile.bytes,
+          sourceName: pdfFile.name,
+        );
+      },
+    );
+  }
+}
+
+class _TeachingAssignmentEmailButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final emailAsync = ref.watch(teachingAssignmentEmailProvider);
+    switch (emailAsync) {
+      case AsyncLoading():
+        return LinearProgressIndicator();
+      case AsyncError(:final error):
+        return ListTile(
+          title: Text('Email thông báo giảng dạy'),
+          subtitle: Text(error.toString()),
+        );
+      default:
+    }
+
+    final email = emailAsync.value;
+    return ListTile(
+      leading: const Icon(Symbols.email),
+      title: const Text('Email thông báo giảng dạy'),
+      subtitle: const Text('Xem và sao chép email thông báo giảng dạy'),
+      trailing: const Icon(Symbols.chevron_forward),
+      enabled: email != null,
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) => EmailCopyDialog(email: email!),
+        );
+      },
     );
   }
 }

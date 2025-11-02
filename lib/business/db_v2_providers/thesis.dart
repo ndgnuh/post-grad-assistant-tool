@@ -9,95 +9,92 @@ final thesisByIdProvider = AsyncNotifierProvider.family(
   ThesisByIdNotifier.new,
 );
 
-final thesisMemberProvider = AsyncNotifierProvider.family(
-  ThesisMemberProvider.new,
-);
-
-final thesisPresidentProvider = AsyncNotifierProvider.family(
-  ThesisPresidentProvider.new,
-);
-
-final thesisReviewer1Provider = AsyncNotifierProvider.family(
-  ThesisReviewer1Provider.new,
-);
-
-final thesisReviewer2Provider = AsyncNotifierProvider.family(
-  ThesisReviewer2Provider.new,
-);
-
-final thesisSecretaryProvider = AsyncNotifierProvider.family(
-  ThesisSecretaryProvider.new,
+final thesisIdByStudentProvider = AsyncNotifierProvider.family(
+  ThesisIdNotifier.new,
 );
 
 final trackedThesisIdsProvider = AsyncNotifierProvider(
   () => ThesisIdsNotifier(tracking: true),
 );
 
-class ThesisByIdNotifier extends AsyncNotifier<ThesisData?> {
+class ThesisByIdNotifier extends AsyncNotifier<ThesisData> {
   final int id;
   ThesisByIdNotifier(this.id);
 
   @override
-  FutureOr<ThesisData?> build() async {
+  FutureOr<ThesisData> build() async {
     final db = await ref.watch(mainDatabaseProvider.future);
     final stmt = db.thesis.select();
     stmt.where((r) => r.id.equals(id));
-    return await stmt.getSingleOrNull();
+    final thesis = await stmt.getSingleOrNull();
+    assert(thesis != null, 'Thesis with id $id not found');
+    return thesis!;
   }
+
+  void updateThesis(ThesisCompanion companion) async {
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final stmt = db.thesis.update();
+    stmt.where((r) => r.id.equals(id));
+    final thesis = await stmt.writeReturning(companion);
+    state = AsyncData(thesis.first);
+  }
+
+  void registerForDefense() => updateThesis(
+    ThesisCompanion(
+      defenseStatus: Value(MscDefenseStatus.registered),
+    ),
+  );
+
+  void applyForDefense() => updateThesis(
+    ThesisCompanion(
+      defenseStatus: Value(MscDefenseStatus.applied),
+    ),
+  );
+
+  void markAsDefended() => updateThesis(
+    ThesisCompanion(
+      defenseStatus: Value(MscDefenseStatus.defended),
+    ),
+  );
+
+  void resetDefenseStatus() => updateThesis(
+    ThesisCompanion(
+      defenseStatus: Value(MscDefenseStatus.normal),
+    ),
+  );
+
+  void cancelDefenseRegistration() => updateThesis(
+    ThesisCompanion(
+      defenseStatus: Value(MscDefenseStatus.normal),
+    ),
+  );
+
+  /// Unassign the thesis from the student.
+  void unassignStudent() => updateThesis(
+    ThesisCompanion(
+      studentId: const Value.absent(),
+    ),
+  );
+
+  /// Assign thesis to a student.
+  void assignToStudent(int studentId) => updateThesis(
+    ThesisCompanion(
+      studentId: Value(studentId),
+    ),
+  );
 }
 
-sealed class ThesisCouncilMemberProvider extends AsyncNotifier<TeacherData?> {
-  final int thesisId;
-  final CouncilRole role;
-
-  ThesisCouncilMemberProvider(this.thesisId, this.role);
-
-  Future<void> assign(int? teacherId) async {
-    // await assignTeacherInRole(
-    //   ref: ref,
-    //   thesisId: thesisId,
-    //   role: role,
-    //   teacherId: teacherId,
-    // );
-    // ref.invalidateSelf();
-  }
+class ThesisIdNotifier extends AsyncNotifier<int?> {
+  final int studentId;
+  ThesisIdNotifier(this.studentId);
 
   @override
-  Future<TeacherData?> build() async {
-    // FIXME: proper implementation
-    return null;
-    // return await getTeacherInRole(
-    //   ref: ref,
-    //   thesisId: thesisId,
-    //   role: role,
-    // );
+  Future<int?> build() async {
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final stmt = db.thesis.select();
+    stmt.where((r) => r.studentId.equals(studentId));
+    return await stmt.map((r) => r.id).getSingleOrNull();
   }
-
-  Future<void> unassign() => assign(null);
-}
-
-class ThesisMemberProvider extends ThesisCouncilMemberProvider {
-  ThesisMemberProvider(int thesisId) : super(thesisId, CouncilRole.member);
-}
-
-class ThesisPresidentProvider extends ThesisCouncilMemberProvider {
-  ThesisPresidentProvider(int thesisId)
-    : super(thesisId, CouncilRole.president);
-}
-
-class ThesisReviewer1Provider extends ThesisCouncilMemberProvider {
-  ThesisReviewer1Provider(int thesisId)
-    : super(thesisId, CouncilRole.reviewer1);
-}
-
-class ThesisReviewer2Provider extends ThesisCouncilMemberProvider {
-  ThesisReviewer2Provider(int thesisId)
-    : super(thesisId, CouncilRole.reviewer2);
-}
-
-class ThesisSecretaryProvider extends ThesisCouncilMemberProvider {
-  ThesisSecretaryProvider(int thesisId)
-    : super(thesisId, CouncilRole.secretary);
 }
 
 class ThesisIdsNotifier extends AsyncNotifier<List<int>> {
@@ -149,17 +146,5 @@ class ThesisIdsNotifier extends AsyncNotifier<List<int>> {
     ]);
 
     return await stmt.map((r) => r.id).get();
-  }
-
-  Future<void> track(int thesisId) async {
-    final db = await ref.watch(mainDatabaseProvider.future);
-    await db.trackThesis(thesisId: thesisId);
-    ref.invalidateSelf();
-  }
-
-  Future<void> untrack(int thesisId) async {
-    final db = await ref.watch(mainDatabaseProvider.future);
-    await db.untrackThesis(thesisId: thesisId);
-    ref.invalidateSelf();
   }
 }

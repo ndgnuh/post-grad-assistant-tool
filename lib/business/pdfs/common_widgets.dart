@@ -3,8 +3,20 @@ import 'package:fami_tools/utilities/pdf_building.dart';
 class TitleRule extends StatelessWidget {
   @override
   Widget build(Context context) {
+    final style = Theme.of(context).defaultTextStyle;
+    late final double width;
+    switch (style.fontSize?.toInt()) {
+      case 10:
+        width = 2.9 * cm;
+      case 11:
+        width = 3.2 * cm;
+      case 12:
+        width = 3.5 * cm;
+      default:
+        3.5 * cm;
+    }
     return Container(
-      width: 3.5 * cm,
+      width: width,
       height: 1 * pt,
       color: PdfColors.black,
     );

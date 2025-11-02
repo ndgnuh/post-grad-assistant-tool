@@ -40,7 +40,7 @@ Future<PdfFile> councilSuggestionPdf({
     },
   );
 
-  return PdfFile(fileName: fileName, bytes: pdfBytes);
+  return PdfFile(name: fileName, bytes: pdfBytes);
 }
 
 class PhdAdmissionCouncilSuggestionPdf extends StatelessWidget {

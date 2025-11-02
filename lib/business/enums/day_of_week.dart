@@ -15,6 +15,25 @@ enum DayOfWeek {
 
   @override
   String toString() => label;
+
+  String toShortString() {
+    switch (this) {
+      case DayOfWeek.monday:
+        return 'T2';
+      case DayOfWeek.tuesday:
+        return 'T3';
+      case DayOfWeek.wednesday:
+        return 'T4';
+      case DayOfWeek.thursday:
+        return 'T5';
+      case DayOfWeek.friday:
+        return 'T6';
+      case DayOfWeek.saturday:
+        return 'T7';
+      case DayOfWeek.sunday:
+        return 'CN';
+    }
+  }
 }
 
 class DayOfWeekConverter extends TypeConverter<DayOfWeek, int> {

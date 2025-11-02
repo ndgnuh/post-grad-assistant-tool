@@ -1,5 +1,6 @@
 // This is experimental code for drift ORM
 import 'package:drift/drift.dart';
+import 'package:fami_tools/utilities/strings.dart';
 
 // Database
 export 'enums/document_role.dart';
@@ -12,14 +13,35 @@ export 'enums/academic_titles.dart';
 export 'enums/admission_type.dart';
 export 'enums/student.dart';
 
-/// Roles in a council
-/// TODO: refactor later if needed
-enum CouncilRole {
-  president,
-  reviewer1,
-  reviewer2,
-  secretary,
-  member,
+enum MscDefenseStatus {
+  normal("Bình thường"),
+  registered("Đã đăng ký"),
+  applied("Đã nộp hồ sơ"),
+  defended("Đã bảo vệ");
+
+  final String label;
+  const MscDefenseStatus(this.label);
+
+  String get value => name.camelToKebabCase();
+
+  static MscDefenseStatus fromValue(String val) {
+    return MscDefenseStatus.values.where((status) {
+      return status.value == val.trim();
+    }).first;
+  }
+}
+
+const mscDefenseStatusConverter = MscDefenseStatusConverter();
+
+class MscDefenseStatusConverter
+    extends TypeConverter<MscDefenseStatus, String> {
+  const MscDefenseStatusConverter();
+
+  @override
+  MscDefenseStatus fromSql(String fromDb) => MscDefenseStatus.fromValue(fromDb);
+
+  @override
+  String toSql(MscDefenseStatus status) => status.value;
 }
 
 enum DocumentClass {

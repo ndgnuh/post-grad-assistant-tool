@@ -2,38 +2,47 @@ import 'dart:async';
 
 import 'package:drift/drift.dart';
 import 'package:riverpod/riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../db_v2_providers.dart';
 
-final myNameProvider = AsyncNotifierProvider(MyNameNotifier.new);
-final myFalcutyProvider = AsyncNotifierProvider(MyFalcutyNotifier.new);
+final myNameProvider = AsyncNotifierProvider(
+  MyNameNotifier.new,
+);
 
-Future<String?> _getPreference<T>(AppDatabase db, _PreferenceKey key) async {
+final myFalcutyProvider = AsyncNotifierProvider(
+  MyFalcutyNotifier.new,
+);
+
+final mySupervisorIdProvider = AsyncNotifierProvider(
+  MySupervisorIdNotifier.new,
+);
+
+Future<String?> _getPreference<T>(AppDatabase db, String key) async {
   final stmt = db.preference.select();
-  stmt.where((p) => p.key.equals(key.key));
+  stmt.where((p) => p.key.equals(key));
   final storedValue = await stmt.map((p) => p.value).getSingleOrNull();
-  return storedValue ?? key.defaultValue;
+  return storedValue;
 }
 
-sealed class _DbPreferenceNotifier<T> extends AsyncNotifier<T> {
-  final _PreferenceKey key;
-  _DbPreferenceNotifier(this.key);
+sealed class DbPreferenceNotifier<T> extends AsyncNotifier<T?> {
+  final String key;
+  DbPreferenceNotifier(this.key);
 
   String? toSql(T value);
-  T fromSql(String? value);
+  T? fromSql(String? value);
 
   @override
-  FutureOr<T> build() async {
+  FutureOr<T?> build() async {
     final db = await ref.watch(mainDatabaseProvider.future);
-    return fromSql(await _getPreference(db, key));
+    final rawValue = await _getPreference(db, key);
+    return fromSql(rawValue);
   }
 
   Future<void> set(T value) async {
     final sqlValue = toSql(value);
     final db = await ref.watch(mainDatabaseProvider.future);
     final stmt = db.preference.update();
-    stmt.where((t) => t.key.equals(key.key));
+    stmt.where((t) => t.key.equals(key));
     await stmt.write(
       PreferenceCompanion(value: Value(sqlValue)),
     );
@@ -41,52 +50,38 @@ sealed class _DbPreferenceNotifier<T> extends AsyncNotifier<T> {
   }
 }
 
-class MyNameNotifier extends _DbPreferenceNotifier<String?> {
-  MyNameNotifier() : super(_PreferenceKey.myName);
-
-  @override
-  String? toSql(String? value) => value;
-
-  @override
-  String? fromSql(String? value) => value;
-}
-
-class MyFalcutyNotifier extends _DbPreferenceNotifier<String> {
-  MyFalcutyNotifier() : super(_PreferenceKey.myFalcuty);
+class StringDatabasePreferenceNotifier extends DbPreferenceNotifier<String> {
+  StringDatabasePreferenceNotifier(super.key);
 
   @override
   String? toSql(String value) => value;
 
   @override
-  String fromSql(String? value) => value ?? "Khoa Toán - Tin";
+  String? fromSql(String? value) => value;
 }
 
-///  This is for database preference only...
-enum _PreferenceKey {
-  myName(key: 'my-name'),
-  myFalcuty(key: 'my-falcuty', defaultValue: 'Khoa Toán - Tin'),
-  currentPaymentPolicy(key: 'current-payment-policy');
+class IntDatabasePreferenceNotifier extends DbPreferenceNotifier<int> {
+  IntDatabasePreferenceNotifier(super.key);
 
-  final String key;
-  final String? defaultValue;
-  const _PreferenceKey({
-    required this.key,
-    this.defaultValue,
-  });
-}
-
-class IsDarkModeNotifier extends AsyncNotifier<bool> {
-  final String key = 'is-dark-mode';
   @override
-  FutureOr<bool> build() async {
-    final pref = await SharedPreferences.getInstance();
-    final value = pref.getBool(key);
-    return value ?? false;
-  }
+  String? toSql(int value) => value.toString();
 
-  Future<void> set(bool newValue) async {
-    final pref = await SharedPreferences.getInstance();
-    pref.setBool(key, newValue);
-    state = AsyncData(newValue);
-  }
+  @override
+  int? fromSql(String? value) => int.tryParse(value ?? '');
+}
+
+class MyNameNotifier extends StringDatabasePreferenceNotifier {
+  MyNameNotifier() : super("my-name");
+}
+
+class MyFalcutyNotifier extends StringDatabasePreferenceNotifier {
+  MyFalcutyNotifier() : super("my-falcuty");
+}
+
+class MscStudySpecialistNotifier extends StringDatabasePreferenceNotifier {
+  MscStudySpecialistNotifier() : super("msc-study-specialist-email");
+}
+
+class MySupervisorIdNotifier extends IntDatabasePreferenceNotifier {
+  MySupervisorIdNotifier() : super("my-supervisor-id");
 }
