@@ -18,6 +18,13 @@ enum Gender {
     _ => Gender.male,
   };
 
+  static Gender parseWebValue(String value) =>
+      switch (value.trim().toLowerCase()) {
+        "nam" => Gender.male,
+        "nữ" => Gender.female,
+        _ => Gender.unknown,
+      };
+
   static Gender? fromValueOrNull(String? value) {
     try {
       return fromValue(value ?? "");

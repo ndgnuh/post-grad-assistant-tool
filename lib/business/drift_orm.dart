@@ -26,6 +26,14 @@ extension SemesterHelp on SemesterData {
 }
 
 extension TeacherTitles on TeacherData {
+  /// Similar to [toJson] but includes extra computed fields
+  Map<String, Object?> toJsonExt() {
+    return {
+      ...toJson(),
+      "name_with_title": nameWithTitle,
+    };
+  }
+
   String get nameWithTitle {
     switch ((academicRank, academicDegree)) {
       case (AcademicRank rank, AcademicDegree degree):
@@ -58,6 +66,7 @@ class AppDatabase extends _$AppDatabase {
       name: 'fami-caohoc-drift',
       native: DriftNativeOptions(
         databasePath: () => Future.value(databasePath),
+        isolateDebugLog: true,
       ),
     );
     final db = AppDatabase(executor);

@@ -5,7 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../business/db_v2_providers.dart';
+import '../../business/document_models/document_models.dart';
+import '../../business/excel_files.dart';
 import '../../business/pdfs/pdfs.dart' as pdfs;
+import '../../business/pdfs/pdfs.dart';
 import 'providers.dart';
 
 const _memberPay = 60_000;
@@ -50,7 +53,7 @@ final paymentListingPdfProvider = FutureProvider<Uint8List>((ref) async {
     establishmentDecisionCode: estCode,
     establishmentDecisionDate: estDate,
     paymentPerStudent: _perCouncilPay,
-    studentNames: students.map((e) => e!.name).toList(),
+    studentNames: students.map((e) => e.name).toList(),
   );
   return pdfs.admissionPaymentListingPdf(model: model);
 });
@@ -102,7 +105,68 @@ final paymentTablePdfProvider = FutureProvider<Uint8List>((ref) async {
   return pdfs.admissionPaymentTablePdf(model: model);
 });
 
-final paymentAtmPdfProvider = FutureProvider<Uint8List>((ref) async {
+final paymentAtmExcelProvider = FutureProvider<ExcelFile>((ref) async {
+  final councilSelecionModel = await ref.watch(
+    admissionCouncilSelectionProvider.future,
+  );
+  final maybeCouncil = councilSelecionModel.selected;
+  assert(maybeCouncil != null, "Chưa chọn hội đồng tuyển sinh");
+  final council = maybeCouncil!;
+
+  // Number of students
+  final ids = await ref.watch(
+    paymentStudentIdsProvider(council).future,
+  );
+  final numStudents = ids.length;
+
+  // Teachers in the council
+  final president = await ref.watch(
+    teacherByIdProvider(council.presidentId).future,
+  );
+  final secretary = await ref.watch(
+    teacherByIdProvider(council.secretaryId).future,
+  );
+  final member1 = await ref.watch(
+    teacherByIdProvider(council.member1Id).future,
+  );
+  final member2 = await ref.watch(
+    teacherByIdProvider(council.member2Id).future,
+  );
+  final member3 = await ref.watch(
+    teacherByIdProvider(council.member3Id).future,
+  );
+
+  final model = pdfs.PaymentAtmModel(
+    reason: _paymentReason(council.year),
+    entries: [
+      pdfs.PaymentAtmEntry(
+        teacher: president,
+        amount: _presidentPay * numStudents,
+      ),
+      pdfs.PaymentAtmEntry(
+        teacher: secretary,
+        amount: _secretaryPay * numStudents,
+      ),
+      pdfs.PaymentAtmEntry(
+        teacher: member1,
+        amount: _memberPay * numStudents,
+      ),
+      pdfs.PaymentAtmEntry(
+        teacher: member2,
+        amount: _memberPay * numStudents,
+      ),
+      pdfs.PaymentAtmEntry(
+        teacher: member3,
+        amount: _memberPay * numStudents,
+      ),
+    ],
+  );
+  return ExcelFile.payment.atmTable(
+    model: model,
+  );
+});
+
+final paymentAtmPdfProvider = FutureProvider<PdfFile>((ref) async {
   final councilSelecionModel = await ref.watch(
     admissionCouncilSelectionProvider.future,
   );
@@ -168,7 +232,7 @@ final paymentAtmPdfProvider = FutureProvider<Uint8List>((ref) async {
 
 final paymentRequestPdfProvider = FutureProvider((ref) async {
   final myName = await ref.watch(myNameProvider.future);
-  final myOrganization = await ref.watch(myFalcutyProvider.future);
+  final myOrganization = await ref.watch(myFacultyProvider.future);
   final councilSelecionModel = await ref.watch(
     admissionCouncilSelectionProvider.future,
   );
@@ -181,12 +245,13 @@ final paymentRequestPdfProvider = FutureProvider((ref) async {
   final amount = _perCouncilPay * ids.length;
 
   final reason = _paymentReason(council.year);
-  final pdf = pdfs.paymentRequestPdf(
+  final model = PaymentRequestModel(
     requesterName: myName!,
     requesterOrganization: myOrganization!,
     paymentReason: reason,
     paymentAmount: amount,
   );
+  final pdf = pdfs.paymentRequestPdf(model: model);
   return pdf;
 });
 

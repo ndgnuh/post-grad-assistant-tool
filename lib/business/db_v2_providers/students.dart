@@ -37,6 +37,10 @@ final studentMutationProvider = NotifierProvider.family(
   StudentMutationNotifier.new,
 );
 
+final studentsMutationProvider = NotifierProvider(
+  StudentsMutationNotifier.new,
+);
+
 class AdmissionStudentIdsNotifier extends AsyncNotifier<List<int>> {
   @override
   FutureOr<List<int>> build() async {
@@ -206,6 +210,22 @@ class StudentIdsNotifier extends AsyncNotifier<List<int>> {
     );
 
     return await stmt.map((t) => t.id).get();
+  }
+}
+
+class StudentsMutationNotifier extends Notifier<void> {
+  @override
+  void build() {}
+
+  void addStudents(List<StudentCompanion> students) async {
+    final db = await ref.watch(mainDatabaseProvider.future);
+    await db.batch((batch) {
+      batch.insertAll(db.student, students);
+    });
+    ref.invalidate(admissionStudentIdsProvider);
+    ref.invalidate(delayedAdmissionStudentIdsProvider);
+    ref.invalidate(integratedAdmissionIdsProvider);
+    ref.invalidate(interviewAdmissionIdsProvider);
   }
 }
 

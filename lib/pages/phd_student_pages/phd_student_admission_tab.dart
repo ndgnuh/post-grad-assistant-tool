@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:fami_tools/business/copy_pasta.dart';
 import 'package:fami_tools/business/pdfs/pdfs.dart';
+import 'package:fami_tools/utilities/strings.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
@@ -89,6 +90,9 @@ class _SaveAdmissionFilesButton extends ConsumerWidget {
       onTap: () async {
         final directory = await FilePicker.platform.getDirectoryPath();
         if (directory == null) return;
+        final student = await ref.watch(
+          phdStudentByIdProvider(studentId).future,
+        );
 
         final councilSuggestion = await ref.read(
           councilSuggestionPdfProvider(studentId).future,
@@ -98,6 +102,10 @@ class _SaveAdmissionFilesButton extends ConsumerWidget {
         );
         final paymentTable = await ref.read(
           paymentTablePdfProvider(studentId).future,
+        );
+
+        final recordDocxData = await ref.read(
+          admissionRecordDocxProvider(studentId).future,
         );
 
         final files = [
@@ -110,6 +118,15 @@ class _SaveAdmissionFilesButton extends ConsumerWidget {
           final file = File(savePath);
           await file.writeAsBytes(pdfFile.bytes);
         }
+
+        // TODO: add strcuture for file docx file name, similar to PdfFile and ExcelFile
+        final studentName = student.name.toPascalCase();
+        final admissionId = student.admissionId.toString();
+        final docName = "${admissionId}_${studentName}_BienBanXetTuyen.docx";
+        final savePath = path.join(directory, docName);
+        final file = File(savePath);
+        await file.writeAsBytes(recordDocxData);
+
         messenger.showSnackBar(
           SnackBar(content: Text("Đã lưu hồ sơ vào thư mục $directory")),
         );

@@ -37,7 +37,7 @@ final teachingAssignmentEmailProvider = FutureProvider<Email?>((ref) async {
       "hung.nguyenhuy@hust.edu.vn"; // TODO: get from preference
   final semesterId = semester.id;
   final myFalcuty =
-      await ref.watch(myFalcutyProvider.future) ?? "<<<< MY FACULTY >>>>";
+      await ref.watch(myFacultyProvider.future) ?? "<<<< MY FACULTY >>>>";
   final myName = await ref.watch(myNameProvider.future) ?? "<<<< MY NAME >>>>";
 
   // Supervisor email

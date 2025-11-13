@@ -18,6 +18,17 @@ enum AdmissionType {
     throw Exception('Invalid AdmissionType value: $value');
   }
 
+  factory AdmissionType.fromWebValue(String value) {
+    switch (value) {
+      case "Tích hợp-Cử nhân thạc sĩ":
+        return AdmissionType.integrated;
+      case "Đăng ký xét tuyển":
+        return AdmissionType.interview;
+      default:
+        throw Exception('Invalid AdmissionType label: $value');
+    }
+  }
+
   @override
   String toString() => label;
 }

@@ -5,11 +5,65 @@ import 'dart:typed_data';
 import 'package:excel/excel.dart';
 export 'package:excel/excel.dart';
 
+class CellPointer {
+  late CellIndex index;
+  CellPointer(this.index);
+
+  CellIndex get current => index;
+
+  CellIndex peek({int advanceRow = 0, int advanceColumn = 0}) {
+    return CellIndex.indexByColumnRow(
+      columnIndex: index.columnIndex + advanceColumn,
+      rowIndex: index.rowIndex + advanceRow,
+    );
+  }
+
+  /// Jump to next row, return new index
+  /// Can specify how many row to advance
+  CellIndex advanceRow([int advance = 1]) {
+    index = CellIndex.indexByColumnRow(
+      columnIndex: index.columnIndex,
+      rowIndex: index.rowIndex + advance,
+    );
+    return index;
+  }
+
+  /// Jump to next column, return new index
+  /// Can specify how many column to advance
+  CellIndex advanceColumn([int advance = 1]) {
+    index = CellIndex.indexByColumnRow(
+      columnIndex: index.columnIndex + advance,
+      rowIndex: index.rowIndex,
+    );
+    return index;
+  }
+
+  /// Jump to specific row, return new index
+  CellIndex jumpToRow(int row) {
+    index = CellIndex.indexByColumnRow(
+      columnIndex: index.columnIndex,
+      rowIndex: row,
+    );
+    return index;
+  }
+
+  /// Jump to specific column, return new index
+  CellIndex jumpToColumn(int column) {
+    index = CellIndex.indexByColumnRow(
+      columnIndex: column,
+      rowIndex: index.rowIndex,
+    );
+    return index;
+  }
+}
+
 Uint8List buildSingleSheetExcel({
   required Function(Sheet) builder,
 }) {
   final excel = Excel.createExcel();
   final sheet = excel.sheets.values.first;
+
+  // Ok, so the library does not allow setting pages
 
   // Add headers
   builder(sheet);
@@ -43,6 +97,11 @@ extension CellStyleHelper on CellStyle {
   CellStyle get centerHorizontally =>
       copyWith(horizontalAlignVal: HorizontalAlign.Center);
 
+  CellStyle get flushLeft => copyWith(horizontalAlignVal: HorizontalAlign.Left);
+
+  CellStyle get flushRight =>
+      copyWith(horizontalAlignVal: HorizontalAlign.Right);
+
   CellStyle get center => centerVertically.centerHorizontally;
 }
 
@@ -60,7 +119,7 @@ extension SheetHelpers on Sheet {
     CellStyle? headerStyle,
     CellStyle? cellStyle,
     BorderStyle borderStyle = BorderStyle.Thin,
-    CellStyle Function(CellIndex index, Object? value, CellStyle defaultStyle)?
+    CellStyle Function(int row, int col, Object? value, CellStyle defaultStyle)?
     cellStyleBuilder,
   }) {
     final border = Border(borderStyle: borderStyle);
@@ -87,11 +146,26 @@ extension SheetHelpers on Sheet {
           rowIndex: topLeftIndex.rowIndex,
         );
         final value = header[colOffset];
-        setCell(
-          cellIndex: cellIndex,
-          value: value,
-          style: tableHeaderStyle,
-        );
+
+        if (cellStyleBuilder != null) {
+          final style = cellStyleBuilder(
+            0,
+            colOffset,
+            value,
+            tableHeaderStyle,
+          );
+          setCell(
+            cellIndex: cellIndex,
+            value: value,
+            style: style,
+          );
+        } else {
+          setCell(
+            cellIndex: cellIndex,
+            value: value,
+            style: tableHeaderStyle,
+          );
+        }
       }
     }
 
@@ -104,7 +178,21 @@ extension SheetHelpers on Sheet {
               topLeftIndex.rowIndex + rowOffset + (header != null ? 1 : 0),
         );
         final value = row[colOffset];
-        setCell(cellIndex: cellIndex, value: value, style: tableCellStyle);
+        if (cellStyleBuilder != null) {
+          final style = cellStyleBuilder(
+            rowOffset + 1,
+            colOffset,
+            value,
+            tableCellStyle,
+          );
+          setCell(
+            cellIndex: cellIndex,
+            value: value,
+            style: style,
+          );
+        } else {
+          setCell(cellIndex: cellIndex, value: value, style: tableCellStyle);
+        }
       }
     }
   }

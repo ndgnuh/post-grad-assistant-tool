@@ -1,27 +1,31 @@
-import 'dart:typed_data';
-
 import 'package:fami_tools/business/pdfs/common_widgets.dart';
-import 'package:number_to_vietnamese_words/number_to_vietnamese_words.dart';
 
 import 'package:fami_tools/utilities/pdf_building.dart';
 import 'package:fami_tools/utilities/strings.dart';
 
-Future<Uint8List> paymentRequestPdf({
-  required String requesterName,
-  required String requesterOrganization,
-  required String paymentReason,
-  required int paymentAmount,
+import '../document_models/document_models.dart';
+import 'pdfs.dart';
+
+Future<PdfFile> paymentRequestPdf({
+  required PaymentRequestModel model,
 }) async {
-  return await buildSinglePageDocument(
-    baseFontSize: 14,
-    pageFormat: PdfPageFormat.a5.transpose,
+  final bytes = await buildSinglePageDocument(
+    baseFontSize: 12,
+    pageFormat: PdfPageFormat.a5.landscape,
+    margin: EdgeInsets.symmetric(
+      vertical: 0.5 * inch,
+      horizontal: 1 * inch,
+    ),
     build: (context) => PaymentRequestPdf(
-      requesterName: requesterName,
-      requesterOrganization: requesterOrganization,
-      paymentReason: paymentReason,
-      paymentAmount: paymentAmount,
+      requesterName: model.requesterName,
+      requesterOrganization: model.requesterOrganization,
+      paymentReason: model.paymentReason,
+      paymentAmount: model.paymentAmount,
     ),
   );
+
+  final name = model.name;
+  return PdfFile(name: name, bytes: bytes);
 }
 
 class PaymentRequestPdf extends StatelessWidget {

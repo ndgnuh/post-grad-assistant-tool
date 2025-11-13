@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:fami_tools/business/pdfs/pdfs.dart' show PdfFile;
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +13,11 @@ import '../setting_pages/setting_pages.dart';
 import 'admission_payment_providers.dart';
 import 'providers.dart';
 import 'widgets.dart';
+
+final _paymentAtmPdfProvider = FutureProvider((ref) async {
+  final pdfFile = await ref.watch(paymentAtmPdfProvider.future);
+  return pdfFile.bytes;
+});
 
 class AdmissionPaymentPage extends StatelessWidget {
   static const routeName = "/admission/payment";
@@ -67,21 +73,9 @@ class AdmissionPaymentPage extends StatelessWidget {
                   children: [
                     SizedBox(height: context.gutterSmall),
 
-                    _PdfViewButton(
+                    _PdfFileViewButton(
                       title: "Đề thị thanh toán",
                       pdfProvider: paymentRequestPdfProvider,
-                      sourceName: "yeu-cau-thanh-toan.pdf",
-                      builder: (context, callback, error) => ListTile(
-                        title: Text("Yêu cầu thanh toán"),
-                        subtitle: Text(
-                          error != null
-                              ? "Lỗi tải dữ liệu"
-                              : "Xem trước yêu cầu thanh toán xét tuyển",
-                        ),
-                        trailing: Icon(Symbols.chevron_forward),
-                        onTap: callback,
-                        enabled: callback != null,
-                      ),
                     ),
 
                     Divider(),
@@ -117,7 +111,7 @@ class AdmissionPaymentPage extends StatelessWidget {
                     Divider(),
                     _PdfViewButton(
                       sourceName: "tong-hop-thanh-toan-atm.pdf",
-                      pdfProvider: paymentAtmPdfProvider,
+                      pdfProvider: _paymentAtmPdfProvider,
                       title: "Tổng hợp thanh toán",
                       builder: (context, callback, error) => ListTile(
                         title: Text("Tổng hợp thanh toán"),
@@ -193,18 +187,19 @@ class _SaveButton extends ConsumerWidget {
       final paymentAtmPdf = await ref.read(
         paymentAtmPdfProvider.future,
       );
+      final paymentAtmExcel = await ref.read(
+        paymentAtmExcelProvider.future,
+      );
 
       // Save files
       final saveDirectory = ref.read(saveDirectoryProvider)!;
       File(
         path.join(saveDirectory, "01-bang-thanh-toan.pdf"),
       ).writeAsBytesSync(paymentTablePdf);
-      File(
-        path.join(saveDirectory, "02-yeu-cau-thanh-toan.pdf"),
-      ).writeAsBytesSync(paymentRequestPdf);
-      File(
-        path.join(saveDirectory, "03-tong-hop-thanh-toan-atm-x2.pdf"),
-      ).writeAsBytesSync(paymentAtmPdf);
+
+      paymentRequestPdf.save(directory: saveDirectory);
+      paymentAtmPdf.save(directory: saveDirectory);
+      paymentAtmExcel.save(directory: saveDirectory);
 
       messenger.showSnackBar(
         SnackBar(
@@ -276,11 +271,72 @@ class _PdfViewButton extends ConsumerWidget {
       },
     };
 
+    switch (pdfAsync) {
+      case AsyncError(:final error, :final stackTrace):
+        print(error);
+        print(stackTrace);
+        break;
+      default:
+        break;
+    }
+
     final error = switch (pdfAsync) {
       AsyncError(:final error) => error.toString(),
       _ => null,
     };
 
     return builder(context, callback, error);
+  }
+}
+
+class _PdfFileViewButton extends ConsumerWidget {
+  final String title;
+  final FutureProvider<PdfFile> pdfProvider;
+
+  const _PdfFileViewButton({
+    required this.title,
+    required this.pdfProvider,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pdfAsync = ref.watch(pdfProvider);
+    switch (pdfAsync) {
+      case AsyncLoading():
+        return ListTile(
+          title: Text(title),
+          subtitle: Text("Đang tải dữ liệu..."),
+          trailing: CircularProgressIndicator(),
+        );
+      case AsyncError(:final error):
+        return ListTile(
+          title: Text(title),
+          subtitle: Text("Lỗi tải dữ liệu: $error"),
+          trailing: CircularProgressIndicator(),
+        );
+      default:
+    }
+
+    final pdfFile = pdfAsync.value!;
+
+    void onPressed() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PdfDataPreviewPage(
+            pdfData: pdfFile.bytes,
+            sourceName: pdfFile.name,
+            title: title,
+          ),
+        ),
+      );
+    }
+
+    return ListTile(
+      title: Text(title),
+      subtitle: Text("Xem trước $title"),
+      trailing: Icon(Symbols.chevron_forward),
+      onTap: onPressed,
+    );
   }
 }

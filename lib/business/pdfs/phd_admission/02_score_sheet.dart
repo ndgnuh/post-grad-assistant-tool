@@ -147,6 +147,9 @@ class SingleScoreSheet extends StatelessWidget {
     );
 
     return Container(
+      decoration: BoxDecoration(
+        border: Border.all(width: 1 * pt),
+      ),
       padding: EdgeInsets.symmetric(
         horizontal: 0.4 * inch,
         vertical: 0.3 * inch,

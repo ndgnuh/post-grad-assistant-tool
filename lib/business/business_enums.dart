@@ -6,6 +6,8 @@ import 'package:fami_tools/utilities/strings.dart';
 export 'enums/document_role.dart';
 export 'enums/phd_student.dart';
 export 'enums/day_of_week.dart';
+export 'enums/payment_status.dart';
+export 'enums/thesis_status.dart';
 
 // Interpersional misc
 export 'enums/gender.dart';
@@ -29,19 +31,6 @@ enum MscDefenseStatus {
       return status.value == val.trim();
     }).first;
   }
-}
-
-const mscDefenseStatusConverter = MscDefenseStatusConverter();
-
-class MscDefenseStatusConverter
-    extends TypeConverter<MscDefenseStatus, String> {
-  const MscDefenseStatusConverter();
-
-  @override
-  MscDefenseStatus fromSql(String fromDb) => MscDefenseStatus.fromValue(fromDb);
-
-  @override
-  String toSql(MscDefenseStatus status) => status.value;
 }
 
 enum DocumentClass {

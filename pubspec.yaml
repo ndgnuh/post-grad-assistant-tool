@@ -46,7 +46,7 @@ dependencies:
   path: ^1.9.0
 
   # For templating
-  jinja: ^0.6.0
+  jinja: ^0.6.5
   freezed_annotation: ^3.1.0
   json_annotation: ^4.9.0
 
@@ -81,6 +81,9 @@ dependencies:
   pdfrx: ^2.2.7
   path_provider: ^2.1.5
   external_path: ^2.2.0
+  archive: ^4.0.7
+  xml: ^6.6.1
+  pdf_combiner: ^4.4.0
 
 dev_dependencies:
   flutter_test:
@@ -89,6 +92,7 @@ dev_dependencies:
   build_runner:
   custom_lint:
   source_gen:
+  flutter_gen_runner:
 
   freezed: ^3.2.0
   json_serializable: ^6.9.0
@@ -126,6 +130,8 @@ flutter:
     - assets/fonts/Times_New_Roman_Bold_Italic.ttf
     - assets/fonts/Times_New_Roman_Italic.ttf
     - assets/copy-pasta.yaml
+    - assets/templates/phd-admission-record.docx
+    - assets/templates/sample.docx
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -17,6 +17,7 @@ import 'document_pages/document_pages.dart';
 
 import 'msc_thesis_defense/page.dart' as msc_thesis;
 import 'msc_thesis_assignment/page.dart' as msc_thesis;
+import 'thesis_defense_payment/page.dart' as msc_thesis;
 
 const initialLoadingRotue = InitialLoadingPage.routeName;
 const intialSettingsRoute = InitialSetupPage.routeName;
@@ -118,7 +119,13 @@ class AppNavigator {
 
   void toHome() => navigator.pushNamed(HomePage.routeName);
 
+  // Thesis defense payment page
   void toThesisListPage() => navigator.pushNamed(ThesisListPage.routeName);
+  void toThesisDefensePaymentPage() =>
+      navigator.pushNamed(msc_thesis.ThesisDefensePaymentPage.routeName);
+  void toThesisDetailsPage({required int thesisId}) => moveTo(
+    (context) => ThesisDetailPage(thesisId: thesisId),
+  );
 
   void toThesisAssignmentPage() => moveTo(
     (context) => msc_thesis.MscThesisAssignmentPage(),
@@ -150,23 +157,23 @@ final initialRoute = switch (kReleaseMode) {
 
   // Course classes pages
   // ====================
-  false => CourseClassListPage.routeName,
+  // false => CourseClassListPage.routeName,
   // false => SemesterListPage.routeName,
 
   // Course pages
-  false => CourseListPage.routeName,
+  // false => CourseListPage.routeName,
 
   // Thesis defends
   // false => ThesisDefenseRegisterPage.routeName,
-  // false => ThesisDefensePaymentPage.routeName,
+  false => msc_thesis.ThesisDefensePaymentPage.routeName,
   // false => ThesisListPage.routeName,
-  false => msc_thesis.ThesisDefensePage.routeName,
+  // false => msc_thesis.ThesisDefensePage.routeName,
 
   // PhD students pages
-  false => PhdStudentListPage.routeName,
+  // false => PhdStudentListPage.routeName,
 
   // Teacher pages
-  false => TeacherSearchPage.routeName,
+  // false => TeacherSearchPage.routeName,
 
   // false => DraftPage.routeName,
   // false => PageCourseClassList.routeName,
@@ -412,6 +419,8 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     // Thesis defense pages
     case msc_thesis.ThesisDefensePage.routeName:
       return const msc_thesis.ThesisDefensePage();
+    case msc_thesis.ThesisDefensePaymentPage.routeName:
+      return const msc_thesis.ThesisDefensePaymentPage();
     // case ThesisDefensePaymentPage.routeName:
     //   return const ThesisDefensePaymentPage();
 

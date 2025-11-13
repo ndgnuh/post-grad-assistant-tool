@@ -1,14 +1,13 @@
+import 'package:fami_tools/pages/msc_thesis_assignment/providers.dart';
+import 'package:fami_tools/utilities/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
 import './_import.dart';
-
-final importListProvider = NotifierProvider(
-  ImportListProvider.new,
-);
 
 class AdmissionImportPage extends StatelessWidget {
   static const routeName = '/admission/add';
@@ -41,17 +40,6 @@ class AdmissionImportPage extends StatelessWidget {
   }
 }
 
-class ImportListProvider extends Notifier<List<JsonSchema>> {
-  @override
-  List<JsonSchema> build() {
-    return [];
-  }
-
-  void set(List<JsonSchema> data) {
-    state = data;
-  }
-}
-
 class _ImportButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -77,15 +65,11 @@ class _SaveToDatabaseButton extends ConsumerWidget {
     }
 
     return ElevatedButton(
-      onPressed: null,
-      // TODO: port to drift
-      // onPressed: () async {
-      // await saveDataToDatabase(data);
-      // final notifier = ref.read(importListProvider.notifier);
-      // notifier.set([]);
-      // ref.invalidate(admissionStudentsProvider);
-      // navigator.pop();
-      // },
+      onPressed: () async {
+        final notifier = ref.read(studentsMutationProvider.notifier);
+        notifier.addStudents(data);
+        navigator.pop();
+      },
       child: Text("Lưu vào CSDL"),
     );
   }
@@ -128,21 +112,27 @@ class _ImportTable extends ConsumerWidget {
           for (final item in list)
             DataRow(
               cells: [
-                DataCell(Text(item.admissionId)),
-                DataCell(Text(item.admissionType.label)),
-                DataCell(Text(item.name)),
-                DataCell(Text(item.gender.label)),
-                DataCell(Text(dateFormat.format(item.dateOfBirth))),
-                DataCell(Text(item.placeOfBirth)),
-                DataCell(Text(item.email)),
-                DataCell(Text(item.phoneNumber)),
-                DataCell(Text(item.bachelorUniversity)),
-                DataCell(Text(item.bachelorMajor)),
-                DataCell(Text(item.bachelorDegreeType)),
-                DataCell(Text(dateFormat.format(item.bachelorGraduationDate))),
-                DataCell(Text(item.bachelorGraduationRank)),
-                DataCell(Text(item.masterMajor)),
-                DataCell(Text(item.specializationOrientation)),
+                DataCell(Text(item.admissionId.value!)),
+                DataCell(Text(item.admissionType.value!.label)),
+                DataCell(Text(item.name.value)),
+                DataCell(Text(item.gender.value!.label)),
+                DataCell(
+                  Text(item.dateOfBirth.value!.toDmy(separator: '/')),
+                ),
+                DataCell(Text(item.placeOfBirth.value!)),
+                DataCell(Text(item.personalEmail.value!)),
+                DataCell(Text(item.phone.value!)),
+                DataCell(Text(item.bachelorUniversity.value!)),
+                DataCell(Text(item.bachelorMajor.value!)),
+                DataCell(Text(item.bachelorProgram.value!)),
+                DataCell(
+                  Text(
+                    item.bachelorGraduationDate.value!.toDmy(separator: '/'),
+                  ),
+                ),
+                DataCell(Text(item.bachelorGraduationRank.value!)),
+                DataCell(Text(item.masterMajor.value!)),
+                DataCell(Text(item.intendedSpecialization.value!)),
               ],
             ),
         ],

@@ -9,8 +9,8 @@ final myNameProvider = AsyncNotifierProvider(
   MyNameNotifier.new,
 );
 
-final myFalcutyProvider = AsyncNotifierProvider(
-  MyFalcutyNotifier.new,
+final myFacultyProvider = AsyncNotifierProvider(
+  MyFacultyNotifier.new,
 );
 
 final mySupervisorIdProvider = AsyncNotifierProvider(
@@ -80,8 +80,8 @@ class MyNameNotifier extends StringDatabasePreferenceNotifier {
   MyNameNotifier() : super("my-name");
 }
 
-class MyFalcutyNotifier extends StringDatabasePreferenceNotifier {
-  MyFalcutyNotifier() : super("my-falcuty");
+class MyFacultyNotifier extends StringDatabasePreferenceNotifier {
+  MyFacultyNotifier() : super("my-falcuty");
 }
 
 class MscStudySpecialistNotifier extends StringDatabasePreferenceNotifier {

@@ -13,7 +13,7 @@ class TitleRule extends StatelessWidget {
       case 12:
         width = 3.5 * cm;
       default:
-        3.5 * cm;
+        width = 3.5 * cm;
     }
     return Container(
       width: width,

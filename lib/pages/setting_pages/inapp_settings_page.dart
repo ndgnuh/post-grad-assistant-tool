@@ -20,7 +20,7 @@ class MyFalcutyTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final myDivisionState = ref.watch(myFalcutyProvider);
+    final myDivisionState = ref.watch(myFacultyProvider);
 
     final myDivisionText = switch (myDivisionState) {
       AsyncData(:final value) => value,
@@ -42,7 +42,7 @@ class MyFalcutyTile extends ConsumerWidget {
 
         switch (newDivision) {
           case DialogValue(:final value):
-            await ref.read(myFalcutyProvider.notifier).set(value);
+            await ref.read(myFacultyProvider.notifier).set(value);
         }
       },
     );

@@ -219,7 +219,7 @@ class _ProfileDownloadButton extends ConsumerWidget {
         final students = <StudentData>[];
         for (final id in admissionIds) {
           final student = await ref.read(studentByIdProvider(id).future);
-          if (student != null) {
+          if (student.admissionType == AdmissionType.interview) {
             students.add(student);
           }
         }
@@ -238,14 +238,6 @@ class _ProfileDownloadButton extends ConsumerWidget {
         messenger.showSnackBar(
           SnackBar(
             content: Text(
-              "Đã lưu ${students.length} hồ sơ vào thư mục $saveDirectory",
-            ),
-          ),
-        );
-
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text(
               "Đang tải hồ sơ xét tuyển",
             ),
           ),
@@ -254,15 +246,17 @@ class _ProfileDownloadButton extends ConsumerWidget {
         for (final student in students) {
           await downloadAdmissionFiles(
             admissionId: student.admissionId!,
-            name: student.name,
-            outputDirectory: saveDirectory,
+            studentName: student.name,
+            saveDirectory: saveDirectory,
           );
+          messenger.clearSnackBars();
+          messenger.showMessage("Đã tải hồ sơ ${student.name}");
         }
 
         messenger.showSnackBar(
           SnackBar(
             content: Text(
-              "Đã tải hồ sơ học viên",
+              "Đã tải ${students.length} hồ sơ học viên",
             ),
           ),
         );

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gutter/flutter_gutter.dart';
 
 import '../../business/business_enums.dart';
 import '../../custom_widgets.dart';
@@ -47,17 +46,7 @@ class PhdStudentDetailsPage extends StatelessWidget {
           child: TabBarView(
             children: [
               PhdStudentDetailsTab(studentId: studentId),
-              PhdStudentInfo(
-                studentId: studentId,
-                builder: (_, student) {
-                  switch (student.status) {
-                    case StudentStatus.admission:
-                      return PhdStudentAdmissionTab(studentId: studentId);
-                    default:
-                      return Text("TODO");
-                  }
-                },
-              ),
+              PhdStudentAdmissionTab(studentId: studentId),
             ],
           ),
         ),

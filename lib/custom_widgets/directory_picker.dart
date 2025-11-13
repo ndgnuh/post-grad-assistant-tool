@@ -2,11 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:io';
 
 const _magicPreferenceKey = '<widget-selected-directory>';
 String _getDirectoryPreferenceKey(String name) {
   return '$_magicPreferenceKey/$name';
+}
+
+class DirectoryNotifier extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void setDirectory(String directory) {
+    state = directory;
+  }
+
+  void clearDirectory() {
+    state = null;
+  }
 }
 
 /// A widget that allows users to pick a directory.
@@ -15,13 +29,14 @@ String _getDirectoryPreferenceKey(String name) {
 /// The widget can also save the selected directory to shared preferences if a [name] is provided.
 /// Additionally, user can specify an [initialDirectory] and a callback [onDirectorySelected] for when a directory is selected.
 /// The label on the text field can be customized with [labelText] and [hintText].
-class DirectoryPicker extends StatefulWidget {
+class DirectoryPicker extends ConsumerStatefulWidget {
   final String? initialDirectory;
   final String? name;
   final ValueChanged<String>? onDirectorySelected;
   final TextEditingController? controller;
   final String? labelText;
   final String? hintText;
+  final NotifierProvider<DirectoryNotifier, String?>? provider;
 
   const DirectoryPicker({
     super.key,
@@ -31,13 +46,14 @@ class DirectoryPicker extends StatefulWidget {
     this.initialDirectory,
     this.controller,
     this.onDirectorySelected,
+    this.provider,
   });
 
   @override
-  State<DirectoryPicker> createState() => _DirectoryPickerState();
+  ConsumerState<DirectoryPicker> createState() => _DirectoryPickerState();
 }
 
-class _DirectoryPickerState extends State<DirectoryPicker> {
+class _DirectoryPickerState extends ConsumerState<DirectoryPicker> {
   final formKey = GlobalKey<FormState>();
   late TextEditingController valueNotifier;
 
@@ -76,6 +92,11 @@ class _DirectoryPickerState extends State<DirectoryPicker> {
     if (savedDirectory != null) {
       widget.onDirectorySelected?.call(savedDirectory);
       valueNotifier.text = savedDirectory;
+      switch (widget.provider) {
+        case NotifierProvider<DirectoryNotifier, String?> provider:
+          final notifier = ref.read(provider.notifier);
+          notifier.setDirectory(savedDirectory);
+      }
     }
     return;
   }

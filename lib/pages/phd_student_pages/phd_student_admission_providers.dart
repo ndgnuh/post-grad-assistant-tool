@@ -1,6 +1,9 @@
 import 'dart:typed_data';
 
+import 'package:fami_tools/gen/assets.gen.dart';
+import 'package:fami_tools/utilities/docx_template.dart';
 import 'package:fami_tools/utilities/strings.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:riverpod/riverpod.dart';
 import '../../business/db_v2_providers.dart';
 import '../../business/pdfs/pdfs.dart' as pdfs;
@@ -55,6 +58,59 @@ final councilSuggestionPdfProvider = FutureProvider.family((
     thirdMember: thirdMember,
   );
 });
+
+final admissionRecordDocxProvider = FutureProvider.family(
+  (ref, int studentId) async {
+    final docxAsset = await rootBundle.load(
+      Assets.templates.phdAdmissionRecord,
+    );
+
+    final student = await ref.read(phdStudentByIdProvider(studentId).future);
+    final president = await ref.read(
+      teacherByIdProvider(student.admissionPresidentId!).future,
+    );
+    final secretary = await ref.read(
+      teacherByIdProvider(student.admissionSecretaryId!).future,
+    );
+    final firstMember = await ref.read(
+      teacherByIdProvider(student.admission1stMemberId!).future,
+    );
+    final secondMember = await ref.read(
+      teacherByIdProvider(student.admission2ndMemberId!).future,
+    );
+    final thirdMember = await ref.read(
+      teacherByIdProvider(student.admission3rdMemberId!).future,
+    );
+    final supervisor = await ref.read(
+      teacherByIdProvider(student.supervisorId).future,
+    );
+    final TeacherData? secondarySupervisor;
+    if (student.secondarySupervisorId != null) {
+      secondarySupervisor = await ref.read(
+        teacherByIdProvider(student.secondarySupervisorId!).future,
+      );
+    } else {
+      secondarySupervisor = null;
+    }
+
+    final docx = docxAsset.buffer.asUint8List();
+    final template = DocxTemplate.fromBytes(docx);
+    final context = {
+      'student': student.toJson(),
+      'president': president.toJsonExt(),
+      'secretary': secretary.toJsonExt(),
+      'first_member': firstMember.toJsonExt(),
+      'second_member': secondMember.toJsonExt(),
+      'third_member': thirdMember.toJsonExt(),
+      'supervisor': supervisor.toJsonExt(),
+      'secondary_supervisor':
+          secondarySupervisor?.toJsonExt() ?? {"name_with_title": ""},
+    };
+    final output = template.render(context);
+
+    return output;
+  },
+);
 
 final paymentTablePdfProvider = FutureProvider.family((
   ref,

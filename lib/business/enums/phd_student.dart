@@ -13,6 +13,9 @@ enum PhdSpecialization {
   final String label;
   const PhdSpecialization(this.label);
 
+  @override
+  String toString() => label;
+
   static PhdSpecialization fromValue(String value) {
     return PhdSpecialization.values.firstWhere(
       (e) => e.value == value,

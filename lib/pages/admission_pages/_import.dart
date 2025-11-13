@@ -1,86 +1,43 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:drift/drift.dart' show Value;
+import 'package:fami_tools/business/db_v2_providers.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:riverpod/riverpod.dart';
 
-import '../../business/business_enums.dart';
+final importListProvider = NotifierProvider(
+  ImportListProvider.new,
+);
 
-part '_import.freezed.dart';
-part '_import.g.dart';
-
-Future<List<JsonSchema>?> readProfilesFromJson() async {
-  final result = await FilePicker.platform.pickFiles(
-    dialogTitle: "File danh sách",
-    allowMultiple: false,
-  );
-
-  if (result == null) return [];
-
-  final sourceFile = result.paths.first!;
-  final source = await File(sourceFile).readAsString();
-  final parsed = <JsonSchema>[];
-  final data = jsonDecode(source)["records"];
-  for (final row in data) {
-    final parsedRecord = JsonSchema.fromJson(row);
-
-    final bachelorMajor = parsedRecord.bachelorMajor
-        .replaceAll(" ", "")
-        .toLowerCase();
-    final prettifiedBachelorMajor = switch (bachelorMajor) {
-      "toán-tin" => "Toán Tin",
-      "toántin" => "Toán Tin",
-      _ => parsedRecord.bachelorMajor,
-    };
-
-    final university = parsedRecord.bachelorUniversity
-        .replaceAll("  ", " ")
-        .toLowerCase();
-    final prettifiedUniversity = switch (university) {
-      "đại học bách khoa hà nội" => "Đại học Bách khoa Hà Nội",
-      _ => parsedRecord.bachelorUniversity,
-    };
-
-    parsed.add(
-      parsedRecord.copyWith(
-        bachelorMajor: prettifiedBachelorMajor,
-        bachelorUniversity: prettifiedUniversity,
-      ),
-    );
+class ImportListProvider extends Notifier<List<StudentCompanion>> {
+  @override
+  List<StudentCompanion> build() {
+    return [];
   }
 
-  return parsed;
-}
-
-Future<void> saveDataToDatabase(List<JsonSchema> data) async {
-  // TODO: use drift DB
-}
-
-class AdmissionTypeWebConverter extends JsonConverter<AdmissionType, String> {
-  const AdmissionTypeWebConverter();
-  @override
-  AdmissionType fromJson(String json) {
-    return AdmissionType.fromValue(json);
-  }
-
-  @override
-  String toJson(AdmissionType object) {
-    return object.value;
+  void set(List<StudentCompanion> data) {
+    state = data;
   }
 }
 
-class GenderWebConverter extends JsonConverter<Gender, String> {
-  const GenderWebConverter();
-
-  @override
-  Gender fromJson(String str) => switch (str.trim().toLowerCase()) {
-    "nam" => Gender.male,
-    "nữ" => Gender.female,
-    _ => throw Exception("Invalid gender string"),
+String prettifyBachelorMajor(String rawMajor) {
+  final major = rawMajor.replaceAll(" ", "").toLowerCase();
+  return switch (major) {
+    "toán-tin" => "Toán Tin",
+    "toántin" => "Toán Tin",
+    _ => rawMajor.replaceAll("  ", " ").trim(),
   };
+}
 
-  @override
-  String toJson(Gender g) => g.label;
+String prettifyUniversity(String rawUniversity) {
+  final university = rawUniversity.replaceAll(" ", "").toLowerCase();
+  return switch (university) {
+    "đạihọcbáchkhoahànội" => "Đại học Bách khoa Hà Nội",
+    "đhbkhn" => "Đại học Bách khoa Hà Nội",
+    "dhbkhn" => "Đại học Bách khoa Hà Nội",
+    _ => rawUniversity.replaceAll("  ", " ").trim(),
+  };
 }
 
 // Thông tin cần thiết:
@@ -128,27 +85,71 @@ class GenderWebConverter extends JsonConverter<Gender, String> {
 //   "xepLoaiTotNghiep_Bang1": "Giỏi",
 //   "xepLoaiTotNghiep_Bang2": ""
 // }
-@freezed
-abstract class JsonSchema with _$JsonSchema {
-  const factory JsonSchema({
-    required String admissionId,
-    @AdmissionTypeWebConverter() required AdmissionType admissionType,
-    required String name,
-    @GenderWebConverter() required Gender gender,
-    required DateTime dateOfBirth,
-    required String placeOfBirth,
-    required String email,
-    required String phoneNumber,
-    required String bachelorUniversity,
-    required String bachelorMajor,
-    required String bachelorDegreeType,
-    required DateTime bachelorGraduationDate,
-    required String bachelorGraduationRank,
-    required String masterMajor,
-    required String specializationOrientation,
-  }) = _JsonSchema;
-  factory JsonSchema.fromJson(Map<String, dynamic> json) =>
-      _$JsonSchemaFromJson(json);
+Future<List<StudentCompanion>?> readProfilesFromJson() async {
+  final result = await FilePicker.platform.pickFiles(
+    dialogTitle: "File danh sách",
+    allowMultiple: false,
+  );
 
-  const JsonSchema._();
+  if (result == null) return [];
+
+  final sourceFile = result.paths.first!;
+  final source = await File(sourceFile).readAsString();
+  final parsed = <StudentCompanion>[];
+  final data = jsonDecode(source)["records"];
+
+  for (final rawJson in data) {
+    final name = rawJson["name"] as String;
+    final dateOfBirth = DateTime.parse(rawJson["dateOfBirth"] as String);
+    final admissionId = rawJson["admissionId"] as String;
+    final admissionType = AdmissionType.fromWebValue(rawJson["admissionType"]);
+    final gender = Gender.parseWebValue(rawJson["gender"]);
+    final bachelorMajor = (rawJson["bachelorMajor"] as String);
+    final bachelorUniversity = rawJson["bachelorUniversity"] as String;
+    final bachelorDegreeType = rawJson["bachelorDegreeType"] as String;
+    final bachelorGraduationDate = DateTime.parse(
+      rawJson["bachelorGraduationDate"] as String,
+    );
+    final bachelorGraduationRank = rawJson["bachelorGraduationRank"] as String;
+    final placeOfBirth = rawJson["placeOfBirth"] as String;
+    final email = rawJson["email"] as String;
+    final phoneNumber = rawJson["phoneNumber"] as String;
+    final masterMajor = rawJson["masterMajor"] as String;
+    final specializationOrientation =
+        rawJson["specializationOrientation"] as String;
+    // required DateTime dateOfBirth,
+    // required String placeOfBirth,
+    // required String email,
+    // required String phoneNumber,
+    // required String bachelorUniversity,
+    // required String bachelorMajor,
+    // required String bachelorDegreeType,
+    // required DateTime bachelorGraduationDate,
+    // required String bachelorGraduationRank,
+    // required String masterMajor,
+    // required String specializationOrientation,
+
+    final companion = StudentCompanion.insert(
+      admissionId: Value(admissionId),
+      admissionType: Value(admissionType),
+      name: name,
+      gender: Value(gender),
+      dateOfBirth: Value(dateOfBirth),
+      placeOfBirth: Value(placeOfBirth),
+      personalEmail: Value(email),
+      phone: Value(phoneNumber),
+      bachelorUniversity: Value(bachelorUniversity),
+      bachelorMajor: Value(bachelorMajor),
+      bachelorProgram: Value(bachelorDegreeType),
+      bachelorGraduationDate: Value(bachelorGraduationDate),
+      bachelorGraduationRank: Value(bachelorGraduationRank),
+      masterMajor: Value(masterMajor),
+      intendedSpecialization: Value(specializationOrientation),
+      status: Value(StudentStatus.admission),
+    );
+
+    parsed.add(companion);
+  }
+
+  return parsed;
 }

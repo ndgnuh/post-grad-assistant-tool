@@ -8,6 +8,9 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
+import 'payment_request_pdf.dart' as payment_pdfs;
+import 'payment_listing_pdf.dart' as payment_pdfs;
+import 'payment_atm_pdf.dart' as payment_pdfs;
 import 'phd_admission/01_council_suggestion.dart' as phd_admission;
 import 'phd_admission/02_score_sheet.dart' as phd_admission;
 import 'phd_admission/03_payment_table.dart' as phd_admission;
@@ -36,6 +39,11 @@ class PdfFile {
 
   static const mscCourseClass = (
     teachingAssignment: msc_course_class.buildTeachingAssignmentPdf,
+  );
+
+  static const payment = (
+    paymentRequest: payment_pdfs.paymentRequestPdf,
+    paymentAtm: payment_pdfs.paymentAtmPdf,
   );
 
   PdfFile({

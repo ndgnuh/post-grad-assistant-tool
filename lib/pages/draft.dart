@@ -1,103 +1,147 @@
-import 'package:fami_tools/business/pdfs/pdfs.dart' show PdfFile;
+import 'dart:io';
+import 'package:fami_tools/business/document_models/payment_atm.dart';
+import 'package:fami_tools/business/excel_files.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:pdfrx/pdfrx.dart';
+import 'package:fami_tools/gen/assets.gen.dart';
 
 // import '../business/domain_objects.dart';
 import '../business/db_v2_providers.dart';
-import '../business/pdfs/teaching_assignment_pdf.dart';
-import '../business/excel_files.dart';
 
-final pdfProvider = FutureProvider((ref) async {
-  final semesterId = "2025.1B";
-  final semester = await ref.watch(semesterByIdProvider(semesterId).future);
-  final courseClassIds = await ref.watch(
-    courseClassIdsBySemesterProvider(semester.id).future,
-  );
+import 'package:fami_tools/utilities/docx_template.dart';
 
-  final courseClasses = <CourseClassData>[];
-  final mapTeachers = <int, List<TeacherData>>{};
-  final mapWeights = <int, List<double>>{};
-  final mapCourses = <int, CourseData>{};
+Future<ExcelFile> buildExcel(WidgetRef ref) async {
+  final thesisIds = await ref.watch(trackedThesisIdsProvider.future);
+  final theses = await Future.wait([
+    for (final id in thesisIds) ref.watch(thesisByIdProvider(id).future),
+  ]);
 
-  for (final classId in courseClassIds) {
-    final courseClass = await ref.watch(
-      courseClassByIdProvider(classId).future,
-    );
-    if (!courseClass.courseId.startsWith("MI")) continue;
+  theses.sort((a, b) {
+    final aName = a.defenseDecisionNumber ?? "";
+    final bName = b.defenseDecisionNumber ?? "";
+    return aName.compareTo(bName);
+  });
 
-    final course = await ref.watch(
-      courseByIdProvider(courseClass.courseId).future,
-    );
-    final assignment = await ref.watch(
-      teachingAssignmentsProvider(classId).future,
-    );
-    final teachers = [
-      for (final a in assignment)
-        await ref.watch(teacherByIdProvider(a.teacherId).future),
-    ];
-    final weights = [for (final a in assignment) a.weight];
+  final teachers = <TeacherData>{};
+  final timesPresident = <TeacherData, int>{};
+  final timesSecretary = <TeacherData, int>{};
+  final timesReviewer = <TeacherData, int>{};
+  final timesMember = <TeacherData, int>{};
 
-    courseClasses.add(courseClass);
-    mapCourses[classId] = course;
-    mapTeachers[classId] = teachers;
-    mapWeights[classId] = weights;
+  Future<TeacherData> getTeacher(int? id) async {
+    final teacher = await ref.watch(teacherByIdProvider(id!).future);
+    teachers.add(teacher);
+    return teacher;
   }
 
-  return buildTeachingAssignmentPdf(
-    semester: semester,
-    courseClasses: courseClasses,
-    mapCourses: mapCourses,
-    mapTeachers: mapTeachers,
-    mapWeights: mapWeights,
-  );
-});
+  for (final thesis in theses) {
+    final president = await getTeacher(thesis.presidentId);
+    final secretary = await getTeacher(thesis.secretaryId);
+    final reviewer1 = await getTeacher(thesis.firstReviewerId);
+    final reviewer2 = await getTeacher(thesis.secondReviewerId);
+    final member = await getTeacher(thesis.memberId);
 
-Future<ExcelFile> buildExcelFile(
-  WidgetRef ref, [
-  String semesterId = "2025.1A",
-]) async {
-  final semester = await ref.watch(semesterByIdProvider(semesterId).future);
-  final courseClassIds = await ref.watch(
-    courseClassIdsBySemesterProvider(semester.id).future,
-  );
-
-  final courseClasses = <CourseClassData>[];
-  final mapTeachers = <int, List<TeacherData>>{};
-  final mapWeights = <int, List<double>>{};
-  final mapCourses = <int, CourseData>{};
-
-  for (final classId in courseClassIds) {
-    final courseClass = await ref.watch(
-      courseClassByIdProvider(classId).future,
-    );
-    if (!courseClass.courseId.startsWith("MI")) continue;
-
-    final course = await ref.watch(
-      courseByIdProvider(courseClass.courseId).future,
-    );
-    final assignment = await ref.watch(
-      teachingAssignmentsProvider(classId).future,
-    );
-    final teachers = [
-      for (final a in assignment)
-        await ref.watch(teacherByIdProvider(a.teacherId).future),
-    ];
-    final weights = [for (final a in assignment) a.weight];
-
-    courseClasses.add(courseClass);
-    mapCourses[classId] = course;
-    mapTeachers[classId] = teachers;
-    mapWeights[classId] = weights;
+    timesPresident[president] = (timesPresident[president] ?? 0) + 1;
+    timesSecretary[secretary] = (timesSecretary[secretary] ?? 0) + 1;
+    timesReviewer[reviewer1] = (timesReviewer[reviewer1] ?? 0) + 1;
+    timesReviewer[reviewer2] = (timesReviewer[reviewer2] ?? 0) + 1;
+    timesMember[member] = (timesMember[member] ?? 0) + 1;
   }
 
-  return ExcelFile.msc.teachingAssignment(
-    semester: semester,
-    courseClasses: courseClasses,
-    mapCourses: mapCourses,
-    mapTeachers: mapTeachers,
-    mapWeights: mapWeights,
+  final moneyPerRole = (
+    president: 400_000,
+    secretary: 400_000,
+    reviewer: 1_050_000,
+    member: 300_000,
   );
+
+  final entries = <PaymentAtmEntry>[];
+  final sortedTeachers = teachers.toList(growable: false);
+  sortedTeachers.sort((a, b) {
+    final c1 = a.isOutsider ? 1 : 0;
+    final c2 = b.isOutsider ? 1 : 0;
+    if (c1 != c2) return c1 - c2;
+
+    final aFirstName = a.name.split(" ").last;
+    final bFirstName = b.name.split(" ").last;
+
+    return aFirstName.compareTo(bFirstName);
+  });
+  for (final teacher in sortedTeachers) {
+    final timesAsPresident = timesPresident[teacher] ?? 0;
+    final timesAsSecretary = timesSecretary[teacher] ?? 0;
+    final timesAsReviewer = timesReviewer[teacher] ?? 0;
+    final timesAsMember = timesMember[teacher] ?? 0;
+
+    final totalAmount =
+        (timesAsPresident * moneyPerRole.president) +
+        (timesAsSecretary * moneyPerRole.secretary) +
+        (timesAsReviewer * moneyPerRole.reviewer) +
+        (timesAsMember * moneyPerRole.member);
+
+    final entry = PaymentAtmEntry(
+      teacher: teacher,
+      amount: totalAmount,
+    );
+    entries.add(entry);
+  }
+
+  final model = PaymentAtmModel(
+    reason: "HỘI ĐỒNG CHẤM LUẬN VĂN THẠC SĨ",
+    entries: entries,
+  );
+  final file = ExcelFile.payment.atmTable(model: model);
+  return file;
+}
+
+Future<Uint8List?> buildDocx(WidgetRef ref) async {
+  final docxAsset = await rootBundle.load(Assets.templates.phdAdmissionRecord);
+
+  final studentId = 18; // Example student ID
+  final student = await ref.read(phdStudentByIdProvider(studentId).future);
+  final president = await ref.read(
+    teacherByIdProvider(student.admissionPresidentId!).future,
+  );
+  final secretary = await ref.read(
+    teacherByIdProvider(student.admissionSecretaryId!).future,
+  );
+  final firstMember = await ref.read(
+    teacherByIdProvider(student.admission1stMemberId!).future,
+  );
+  final secondMember = await ref.read(
+    teacherByIdProvider(student.admission2ndMemberId!).future,
+  );
+  final thirdMember = await ref.read(
+    teacherByIdProvider(student.admission3rdMemberId!).future,
+  );
+  final supervisor = await ref.read(
+    teacherByIdProvider(student.supervisorId).future,
+  );
+  final TeacherData? secondarySupervisor;
+  if (student.secondarySupervisorId != null) {
+    secondarySupervisor = await ref.read(
+      teacherByIdProvider(student.secondarySupervisorId!).future,
+    );
+  } else {
+    secondarySupervisor = null;
+  }
+
+  final docx = docxAsset.buffer.asUint8List();
+  final template = DocxTemplate.fromBytes(docx);
+  final context = {
+    'student': student.toJson(),
+    'president': president.toJson(),
+    'secretary': secretary.toJson(),
+    'first_member': firstMember.toJson(),
+    'second_member': secondMember.toJson(),
+    'third_member': thirdMember.toJson(),
+    'supervisor': supervisor.toJson(),
+    'secondary_supervisor': secondarySupervisor?.toJson() ?? (name: ""),
+  };
+  final output = template.render(context);
+
+  return output;
 }
 
 class DraftPage extends ConsumerWidget {
@@ -106,25 +150,17 @@ class DraftPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pdfAsync = ref.watch(pdfProvider);
-    buildExcelFile(ref, "2025.1B").then((excelFile) {
-      excelFile.save(directory: '/tmp/');
-      print("Built ${excelFile.fileName} ");
+    buildExcel(ref).then((file) {
+      final bytes = file.save(directory: "/tmp");
+      print("Excel file created successfully.");
     });
-
-    switch (pdfAsync) {
-      case AsyncError(:final error, :final stackTrace):
-        print(error);
-        print(stackTrace);
-      default:
-    }
-
-    final pdf = switch (pdfAsync) {
-      AsyncData<PdfFile> data => data.value,
-      AsyncLoading() => null,
-      AsyncError() => null,
-    };
-
+    buildDocx(ref).then((data) {
+      if (data == null) {
+        return;
+      }
+      File("test.docx").writeAsBytesSync(data);
+      print("Document created successfully.");
+    });
     return Scaffold(
       appBar: AppBar(
         title: const Text('Draft Page'),
@@ -137,10 +173,7 @@ class DraftPage extends ConsumerWidget {
       ),
 
       body: Center(
-        child: switch (pdf) {
-          null => const CircularProgressIndicator(),
-          PdfFile file => PdfViewer.data(file.bytes, sourceName: file.name),
-        },
+        child: Text('Draft Page Content'),
       ),
     );
   }

@@ -41,33 +41,40 @@ class ThesisByIdNotifier extends AsyncNotifier<ThesisData> {
 
   void registerForDefense() => updateThesis(
     ThesisCompanion(
-      defenseStatus: Value(MscDefenseStatus.registered),
+      defenseStatus: Value(ThesisStatus.defenseIntended),
     ),
   );
 
   void applyForDefense() => updateThesis(
     ThesisCompanion(
-      defenseStatus: Value(MscDefenseStatus.applied),
+      defenseStatus: Value(ThesisStatus.defenseApplied),
     ),
   );
 
   void markAsDefended() => updateThesis(
     ThesisCompanion(
-      defenseStatus: Value(MscDefenseStatus.defended),
+      defenseStatus: Value(ThesisStatus.defensePassed),
     ),
   );
 
   void resetDefenseStatus() => updateThesis(
     ThesisCompanion(
-      defenseStatus: Value(MscDefenseStatus.normal),
+      defenseStatus: Value(ThesisStatus.assigned),
     ),
   );
 
-  void cancelDefenseRegistration() => updateThesis(
-    ThesisCompanion(
-      defenseStatus: Value(MscDefenseStatus.normal),
-    ),
-  );
+  void cancelDefenseRegistration() {
+    final value = state.value!;
+    final newValue = switch (value.studentId) {
+      null => ThesisStatus.unofficial,
+      _ => ThesisStatus.assigned,
+    };
+    updateThesis(
+      ThesisCompanion(
+        defenseStatus: Value(newValue),
+      ),
+    );
+  }
 
   /// Unassign the thesis from the student.
   void unassignStudent() => updateThesis(
@@ -103,12 +110,26 @@ class ThesisIdsNotifier extends AsyncNotifier<List<int>> {
   final bool? assigned;
   final int? studentId;
   final bool? ignore;
+  final PaymentStatus? paymentStatus;
+  final Set<ThesisStatus> defenseStatus;
+
+  factory ThesisIdsNotifier.paymentRequired() {
+    return ThesisIdsNotifier(
+      paymentStatus: PaymentStatus.unpaid,
+      defenseStatus: {
+        ThesisStatus.defensePassed,
+        ThesisStatus.defenseFailed,
+      },
+    );
+  }
 
   ThesisIdsNotifier({
     this.tracking,
     this.assigned,
     this.studentId,
     this.ignore = false,
+    this.paymentStatus,
+    this.defenseStatus = const {},
   });
 
   @override
@@ -136,6 +157,21 @@ class ThesisIdsNotifier extends AsyncNotifier<List<int>> {
       default:
     }
 
+    switch (paymentStatus) {
+      case PaymentStatus value:
+        stmt.where((r) => r.paymentStatus.equals(value.value));
+      default:
+    }
+
+    if (defenseStatus.isNotEmpty) {
+      stmt.where((r) {
+        final cond = defenseStatus
+            .map((value) => r.defenseStatus.equals(value.value))
+            .toList();
+        return cond.reduce((a, b) => a | b);
+      });
+    }
+
     if (studentId != null) {
       stmt.where((r) => r.studentId.equalsNullable(studentId!));
     }
@@ -145,6 +181,8 @@ class ThesisIdsNotifier extends AsyncNotifier<List<int>> {
       (r) => OrderingTerm(expression: r.studentId),
     ]);
 
-    return await stmt.map((r) => r.id).get();
+    final ids = await stmt.map((r) => r.id).get();
+    print(ids);
+    return ids;
   }
 }

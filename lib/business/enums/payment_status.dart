@@ -1,13 +1,18 @@
-enum PaymentStatus {
-  unpaid('unpaid', 'Chưa thanh toán'),
-  paid('paid', 'Đã thanh toán');
+import 'package:drift/drift.dart';
+import 'package:fami_tools/utilities/strings.dart';
 
-  final String value;
+final paymentStatusConverter = const PaymentStatusConverter();
+
+enum PaymentStatus {
+  unpaid('Chưa thanh toán'),
+  paid('Đã thanh toán');
+
   final String label;
 
-  const PaymentStatus(this.value, this.label);
+  const PaymentStatus(this.label);
 
-  String toValue() => value;
+  String get value => name.camelToKebabCase();
+
   static PaymentStatus fromValue(String value) {
     return PaymentStatus.values.firstWhere(
       (status) => status.value == value,
@@ -15,4 +20,14 @@ enum PaymentStatus {
           throw ArgumentError('Invalid thesis payment status value: $value'),
     );
   }
+}
+
+class PaymentStatusConverter extends TypeConverter<PaymentStatus, String> {
+  const PaymentStatusConverter();
+
+  @override
+  PaymentStatus fromSql(String fromDb) => PaymentStatus.fromValue(fromDb);
+
+  @override
+  String toSql(PaymentStatus value) => value.value;
 }

@@ -7400,7 +7400,7 @@ class Thesis extends Table with TableInfo<Thesis, ThesisData> {
     requiredDuringInsert: false,
     $customConstraints: '',
   );
-  late final GeneratedColumnWithTypeConverter<enums.MscDefenseStatus, String>
+  late final GeneratedColumnWithTypeConverter<enums.ThesisStatus, String>
   defenseStatus = GeneratedColumn<String>(
     'defense_status',
     aliasedName,
@@ -7408,7 +7408,38 @@ class Thesis extends Table with TableInfo<Thesis, ThesisData> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
     $customConstraints: 'NOT NULL',
-  ).withConverter<enums.MscDefenseStatus>(Thesis.$converterdefenseStatus);
+  ).withConverter<enums.ThesisStatus>(Thesis.$converterdefenseStatus);
+  late final GeneratedColumnWithTypeConverter<enums.PaymentStatus, String>
+  paymentStatus = GeneratedColumn<String>(
+    'payment_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  ).withConverter<enums.PaymentStatus>(Thesis.$converterpaymentStatus);
+  static const VerificationMeta _assignedDecisionNumberMeta =
+      const VerificationMeta('assignedDecisionNumber');
+  late final GeneratedColumn<String> assignedDecisionNumber =
+      GeneratedColumn<String>(
+        'soQdGiao',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      );
+  static const VerificationMeta _defenseDecisionNumberMeta =
+      const VerificationMeta('defenseDecisionNumber');
+  late final GeneratedColumn<String> defenseDecisionNumber =
+      GeneratedColumn<String>(
+        'soQdBaoVe',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -7430,6 +7461,9 @@ class Thesis extends Table with TableInfo<Thesis, ThesisData> {
     group,
     year,
     defenseStatus,
+    paymentStatus,
+    assignedDecisionNumber,
+    defenseDecisionNumber,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -7584,6 +7618,24 @@ class Thesis extends Table with TableInfo<Thesis, ThesisData> {
         year.isAcceptableOrUnknown(data['nam']!, _yearMeta),
       );
     }
+    if (data.containsKey('soQdGiao')) {
+      context.handle(
+        _assignedDecisionNumberMeta,
+        assignedDecisionNumber.isAcceptableOrUnknown(
+          data['soQdGiao']!,
+          _assignedDecisionNumberMeta,
+        ),
+      );
+    }
+    if (data.containsKey('soQdBaoVe')) {
+      context.handle(
+        _defenseDecisionNumberMeta,
+        defenseDecisionNumber.isAcceptableOrUnknown(
+          data['soQdBaoVe']!,
+          _defenseDecisionNumberMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -7671,6 +7723,20 @@ class Thesis extends Table with TableInfo<Thesis, ThesisData> {
           data['${effectivePrefix}defense_status'],
         )!,
       ),
+      paymentStatus: Thesis.$converterpaymentStatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}payment_status'],
+        )!,
+      ),
+      assignedDecisionNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}soQdGiao'],
+      ),
+      defenseDecisionNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}soQdBaoVe'],
+      ),
     );
   }
 
@@ -7679,8 +7745,10 @@ class Thesis extends Table with TableInfo<Thesis, ThesisData> {
     return Thesis(attachedDatabase, alias);
   }
 
-  static TypeConverter<enums.MscDefenseStatus, String> $converterdefenseStatus =
-      enums.mscDefenseStatusConverter;
+  static TypeConverter<enums.ThesisStatus, String> $converterdefenseStatus =
+      enums.thesisStatusConverter;
+  static TypeConverter<enums.PaymentStatus, String> $converterpaymentStatus =
+      enums.paymentStatusConverter;
   @override
   bool get dontWriteConstraints => true;
 }
@@ -7704,7 +7772,13 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
   final bool flagIgnore;
   final String? group;
   final String? year;
-  final enums.MscDefenseStatus defenseStatus;
+  final enums.ThesisStatus defenseStatus;
+  final enums.PaymentStatus paymentStatus;
+
+  /// Deprecated fields, probably to be removed later
+  /// "ngayGiao"	datetime as assignedDate,
+  final String? assignedDecisionNumber;
+  final String? defenseDecisionNumber;
   const ThesisData({
     required this.id,
     required this.supervisorId,
@@ -7725,6 +7799,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     this.group,
     this.year,
     required this.defenseStatus,
+    required this.paymentStatus,
+    this.assignedDecisionNumber,
+    this.defenseDecisionNumber,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -7772,6 +7849,17 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
         Thesis.$converterdefenseStatus.toSql(defenseStatus),
       );
     }
+    {
+      map['payment_status'] = Variable<String>(
+        Thesis.$converterpaymentStatus.toSql(paymentStatus),
+      );
+    }
+    if (!nullToAbsent || assignedDecisionNumber != null) {
+      map['soQdGiao'] = Variable<String>(assignedDecisionNumber);
+    }
+    if (!nullToAbsent || defenseDecisionNumber != null) {
+      map['soQdBaoVe'] = Variable<String>(defenseDecisionNumber);
+    }
     return map;
   }
 
@@ -7814,6 +7902,13 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
           : Value(group),
       year: year == null && nullToAbsent ? const Value.absent() : Value(year),
       defenseStatus: Value(defenseStatus),
+      paymentStatus: Value(paymentStatus),
+      assignedDecisionNumber: assignedDecisionNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(assignedDecisionNumber),
+      defenseDecisionNumber: defenseDecisionNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(defenseDecisionNumber),
     );
   }
 
@@ -7841,9 +7936,14 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
       flagIgnore: serializer.fromJson<bool>(json['flag_ignore']),
       group: serializer.fromJson<String?>(json['group']),
       year: serializer.fromJson<String?>(json['nam']),
-      defenseStatus: serializer.fromJson<enums.MscDefenseStatus>(
+      defenseStatus: serializer.fromJson<enums.ThesisStatus>(
         json['defense_status'],
       ),
+      paymentStatus: serializer.fromJson<enums.PaymentStatus>(
+        json['payment_status'],
+      ),
+      assignedDecisionNumber: serializer.fromJson<String?>(json['soQdGiao']),
+      defenseDecisionNumber: serializer.fromJson<String?>(json['soQdBaoVe']),
     );
   }
   @override
@@ -7868,9 +7968,10 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
       'flag_ignore': serializer.toJson<bool>(flagIgnore),
       'group': serializer.toJson<String?>(group),
       'nam': serializer.toJson<String?>(year),
-      'defense_status': serializer.toJson<enums.MscDefenseStatus>(
-        defenseStatus,
-      ),
+      'defense_status': serializer.toJson<enums.ThesisStatus>(defenseStatus),
+      'payment_status': serializer.toJson<enums.PaymentStatus>(paymentStatus),
+      'soQdGiao': serializer.toJson<String?>(assignedDecisionNumber),
+      'soQdBaoVe': serializer.toJson<String?>(defenseDecisionNumber),
     };
   }
 
@@ -7893,7 +7994,10 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     bool? flagIgnore,
     Value<String?> group = const Value.absent(),
     Value<String?> year = const Value.absent(),
-    enums.MscDefenseStatus? defenseStatus,
+    enums.ThesisStatus? defenseStatus,
+    enums.PaymentStatus? paymentStatus,
+    Value<String?> assignedDecisionNumber = const Value.absent(),
+    Value<String?> defenseDecisionNumber = const Value.absent(),
   }) => ThesisData(
     id: id ?? this.id,
     supervisorId: supervisorId ?? this.supervisorId,
@@ -7920,6 +8024,13 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     group: group.present ? group.value : this.group,
     year: year.present ? year.value : this.year,
     defenseStatus: defenseStatus ?? this.defenseStatus,
+    paymentStatus: paymentStatus ?? this.paymentStatus,
+    assignedDecisionNumber: assignedDecisionNumber.present
+        ? assignedDecisionNumber.value
+        : this.assignedDecisionNumber,
+    defenseDecisionNumber: defenseDecisionNumber.present
+        ? defenseDecisionNumber.value
+        : this.defenseDecisionNumber,
   );
   ThesisData copyWithCompanion(ThesisCompanion data) {
     return ThesisData(
@@ -7966,6 +8077,15 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
       defenseStatus: data.defenseStatus.present
           ? data.defenseStatus.value
           : this.defenseStatus,
+      paymentStatus: data.paymentStatus.present
+          ? data.paymentStatus.value
+          : this.paymentStatus,
+      assignedDecisionNumber: data.assignedDecisionNumber.present
+          ? data.assignedDecisionNumber.value
+          : this.assignedDecisionNumber,
+      defenseDecisionNumber: data.defenseDecisionNumber.present
+          ? data.defenseDecisionNumber.value
+          : this.defenseDecisionNumber,
     );
   }
 
@@ -7990,13 +8110,16 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
           ..write('flagIgnore: $flagIgnore, ')
           ..write('group: $group, ')
           ..write('year: $year, ')
-          ..write('defenseStatus: $defenseStatus')
+          ..write('defenseStatus: $defenseStatus, ')
+          ..write('paymentStatus: $paymentStatus, ')
+          ..write('assignedDecisionNumber: $assignedDecisionNumber, ')
+          ..write('defenseDecisionNumber: $defenseDecisionNumber')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     supervisorId,
     presidentId,
@@ -8016,7 +8139,10 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     group,
     year,
     defenseStatus,
-  );
+    paymentStatus,
+    assignedDecisionNumber,
+    defenseDecisionNumber,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -8039,7 +8165,10 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
           other.flagIgnore == this.flagIgnore &&
           other.group == this.group &&
           other.year == this.year &&
-          other.defenseStatus == this.defenseStatus);
+          other.defenseStatus == this.defenseStatus &&
+          other.paymentStatus == this.paymentStatus &&
+          other.assignedDecisionNumber == this.assignedDecisionNumber &&
+          other.defenseDecisionNumber == this.defenseDecisionNumber);
 }
 
 class ThesisCompanion extends UpdateCompanion<ThesisData> {
@@ -8061,7 +8190,10 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
   final Value<bool> flagIgnore;
   final Value<String?> group;
   final Value<String?> year;
-  final Value<enums.MscDefenseStatus> defenseStatus;
+  final Value<enums.ThesisStatus> defenseStatus;
+  final Value<enums.PaymentStatus> paymentStatus;
+  final Value<String?> assignedDecisionNumber;
+  final Value<String?> defenseDecisionNumber;
   const ThesisCompanion({
     this.id = const Value.absent(),
     this.supervisorId = const Value.absent(),
@@ -8082,6 +8214,9 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
     this.group = const Value.absent(),
     this.year = const Value.absent(),
     this.defenseStatus = const Value.absent(),
+    this.paymentStatus = const Value.absent(),
+    this.assignedDecisionNumber = const Value.absent(),
+    this.defenseDecisionNumber = const Value.absent(),
   });
   ThesisCompanion.insert({
     this.id = const Value.absent(),
@@ -8102,11 +8237,15 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
     this.flagIgnore = const Value.absent(),
     this.group = const Value.absent(),
     this.year = const Value.absent(),
-    required enums.MscDefenseStatus defenseStatus,
+    required enums.ThesisStatus defenseStatus,
+    required enums.PaymentStatus paymentStatus,
+    this.assignedDecisionNumber = const Value.absent(),
+    this.defenseDecisionNumber = const Value.absent(),
   }) : supervisorId = Value(supervisorId),
        vietnameseTitle = Value(vietnameseTitle),
        englishTitle = Value(englishTitle),
-       defenseStatus = Value(defenseStatus);
+       defenseStatus = Value(defenseStatus),
+       paymentStatus = Value(paymentStatus);
   static Insertable<ThesisData> custom({
     Expression<int>? id,
     Expression<int>? supervisorId,
@@ -8127,6 +8266,9 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
     Expression<String>? group,
     Expression<String>? year,
     Expression<String>? defenseStatus,
+    Expression<String>? paymentStatus,
+    Expression<String>? assignedDecisionNumber,
+    Expression<String>? defenseDecisionNumber,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -8148,6 +8290,9 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
       if (group != null) 'group': group,
       if (year != null) 'nam': year,
       if (defenseStatus != null) 'defense_status': defenseStatus,
+      if (paymentStatus != null) 'payment_status': paymentStatus,
+      if (assignedDecisionNumber != null) 'soQdGiao': assignedDecisionNumber,
+      if (defenseDecisionNumber != null) 'soQdBaoVe': defenseDecisionNumber,
     });
   }
 
@@ -8170,7 +8315,10 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
     Value<bool>? flagIgnore,
     Value<String?>? group,
     Value<String?>? year,
-    Value<enums.MscDefenseStatus>? defenseStatus,
+    Value<enums.ThesisStatus>? defenseStatus,
+    Value<enums.PaymentStatus>? paymentStatus,
+    Value<String?>? assignedDecisionNumber,
+    Value<String?>? defenseDecisionNumber,
   }) {
     return ThesisCompanion(
       id: id ?? this.id,
@@ -8192,6 +8340,11 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
       group: group ?? this.group,
       year: year ?? this.year,
       defenseStatus: defenseStatus ?? this.defenseStatus,
+      paymentStatus: paymentStatus ?? this.paymentStatus,
+      assignedDecisionNumber:
+          assignedDecisionNumber ?? this.assignedDecisionNumber,
+      defenseDecisionNumber:
+          defenseDecisionNumber ?? this.defenseDecisionNumber,
     );
   }
 
@@ -8257,6 +8410,17 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
         Thesis.$converterdefenseStatus.toSql(defenseStatus.value),
       );
     }
+    if (paymentStatus.present) {
+      map['payment_status'] = Variable<String>(
+        Thesis.$converterpaymentStatus.toSql(paymentStatus.value),
+      );
+    }
+    if (assignedDecisionNumber.present) {
+      map['soQdGiao'] = Variable<String>(assignedDecisionNumber.value);
+    }
+    if (defenseDecisionNumber.present) {
+      map['soQdBaoVe'] = Variable<String>(defenseDecisionNumber.value);
+    }
     return map;
   }
 
@@ -8281,7 +8445,10 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
           ..write('flagIgnore: $flagIgnore, ')
           ..write('group: $group, ')
           ..write('year: $year, ')
-          ..write('defenseStatus: $defenseStatus')
+          ..write('defenseStatus: $defenseStatus, ')
+          ..write('paymentStatus: $paymentStatus, ')
+          ..write('assignedDecisionNumber: $assignedDecisionNumber, ')
+          ..write('defenseDecisionNumber: $defenseDecisionNumber')
           ..write(')'))
         .toString();
   }
@@ -10545,11 +10712,11 @@ class CourseLimiting extends Table
   static const VerificationMeta _courseIdMeta = const VerificationMeta(
     'courseId',
   );
-  late final GeneratedColumn<int> courseId = GeneratedColumn<int>(
+  late final GeneratedColumn<double> courseId = GeneratedColumn<double>(
     'course_id',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.double,
     requiredDuringInsert: true,
     $customConstraints: 'NOT NULL REFERENCES course(id)',
   );
@@ -10604,7 +10771,7 @@ class CourseLimiting extends Table
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return CourseLimitingData(
       courseId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.double,
         data['${effectivePrefix}course_id'],
       )!,
       semesterId: attachedDatabase.typeMapping.read(
@@ -10629,13 +10796,13 @@ class CourseLimiting extends Table
 
 class CourseLimitingData extends DataClass
     implements Insertable<CourseLimitingData> {
-  final int courseId;
+  final double courseId;
   final String semesterId;
   const CourseLimitingData({required this.courseId, required this.semesterId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['course_id'] = Variable<int>(courseId);
+    map['course_id'] = Variable<double>(courseId);
     map['semester_id'] = Variable<String>(semesterId);
     return map;
   }
@@ -10653,7 +10820,7 @@ class CourseLimitingData extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return CourseLimitingData(
-      courseId: serializer.fromJson<int>(json['course_id']),
+      courseId: serializer.fromJson<double>(json['course_id']),
       semesterId: serializer.fromJson<String>(json['semester_id']),
     );
   }
@@ -10661,12 +10828,12 @@ class CourseLimitingData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'course_id': serializer.toJson<int>(courseId),
+      'course_id': serializer.toJson<double>(courseId),
       'semester_id': serializer.toJson<String>(semesterId),
     };
   }
 
-  CourseLimitingData copyWith({int? courseId, String? semesterId}) =>
+  CourseLimitingData copyWith({double? courseId, String? semesterId}) =>
       CourseLimitingData(
         courseId: courseId ?? this.courseId,
         semesterId: semesterId ?? this.semesterId,
@@ -10700,7 +10867,7 @@ class CourseLimitingData extends DataClass
 }
 
 class CourseLimitingCompanion extends UpdateCompanion<CourseLimitingData> {
-  final Value<int> courseId;
+  final Value<double> courseId;
   final Value<String> semesterId;
   final Value<int> rowid;
   const CourseLimitingCompanion({
@@ -10709,13 +10876,13 @@ class CourseLimitingCompanion extends UpdateCompanion<CourseLimitingData> {
     this.rowid = const Value.absent(),
   });
   CourseLimitingCompanion.insert({
-    required int courseId,
+    required double courseId,
     required String semesterId,
     this.rowid = const Value.absent(),
   }) : courseId = Value(courseId),
        semesterId = Value(semesterId);
   static Insertable<CourseLimitingData> custom({
-    Expression<int>? courseId,
+    Expression<double>? courseId,
     Expression<String>? semesterId,
     Expression<int>? rowid,
   }) {
@@ -10727,7 +10894,7 @@ class CourseLimitingCompanion extends UpdateCompanion<CourseLimitingData> {
   }
 
   CourseLimitingCompanion copyWith({
-    Value<int>? courseId,
+    Value<double>? courseId,
     Value<String>? semesterId,
     Value<int>? rowid,
   }) {
@@ -10742,7 +10909,7 @@ class CourseLimitingCompanion extends UpdateCompanion<CourseLimitingData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (courseId.present) {
-      map['course_id'] = Variable<int>(courseId.value);
+      map['course_id'] = Variable<double>(courseId.value);
     }
     if (semesterId.present) {
       map['semester_id'] = Variable<String>(semesterId.value);
@@ -17431,7 +17598,10 @@ typedef $ThesisCreateCompanionBuilder =
       Value<bool> flagIgnore,
       Value<String?> group,
       Value<String?> year,
-      required enums.MscDefenseStatus defenseStatus,
+      required enums.ThesisStatus defenseStatus,
+      required enums.PaymentStatus paymentStatus,
+      Value<String?> assignedDecisionNumber,
+      Value<String?> defenseDecisionNumber,
     });
 typedef $ThesisUpdateCompanionBuilder =
     ThesisCompanion Function({
@@ -17453,7 +17623,10 @@ typedef $ThesisUpdateCompanionBuilder =
       Value<bool> flagIgnore,
       Value<String?> group,
       Value<String?> year,
-      Value<enums.MscDefenseStatus> defenseStatus,
+      Value<enums.ThesisStatus> defenseStatus,
+      Value<enums.PaymentStatus> paymentStatus,
+      Value<String?> assignedDecisionNumber,
+      Value<String?> defenseDecisionNumber,
     });
 
 final class $ThesisReferences
@@ -17652,14 +17825,30 @@ class $ThesisFilterComposer extends Composer<_$AppDatabase, Thesis> {
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnWithTypeConverterFilters<
-    enums.MscDefenseStatus,
-    enums.MscDefenseStatus,
-    String
-  >
+  ColumnWithTypeConverterFilters<enums.ThesisStatus, enums.ThesisStatus, String>
   get defenseStatus => $composableBuilder(
     column: $table.defenseStatus,
     builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<
+    enums.PaymentStatus,
+    enums.PaymentStatus,
+    String
+  >
+  get paymentStatus => $composableBuilder(
+    column: $table.paymentStatus,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<String> get assignedDecisionNumber => $composableBuilder(
+    column: $table.assignedDecisionNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get defenseDecisionNumber => $composableBuilder(
+    column: $table.defenseDecisionNumber,
+    builder: (column) => ColumnFilters(column),
   );
 
   $TeacherFilterComposer get supervisorId {
@@ -17892,6 +18081,21 @@ class $ThesisOrderingComposer extends Composer<_$AppDatabase, Thesis> {
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get paymentStatus => $composableBuilder(
+    column: $table.paymentStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get assignedDecisionNumber => $composableBuilder(
+    column: $table.assignedDecisionNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get defenseDecisionNumber => $composableBuilder(
+    column: $table.defenseDecisionNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $TeacherOrderingComposer get supervisorId {
     final $TeacherOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -18107,9 +18311,25 @@ class $ThesisAnnotationComposer extends Composer<_$AppDatabase, Thesis> {
   GeneratedColumn<String> get year =>
       $composableBuilder(column: $table.year, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<enums.MscDefenseStatus, String>
+  GeneratedColumnWithTypeConverter<enums.ThesisStatus, String>
   get defenseStatus => $composableBuilder(
     column: $table.defenseStatus,
+    builder: (column) => column,
+  );
+
+  GeneratedColumnWithTypeConverter<enums.PaymentStatus, String>
+  get paymentStatus => $composableBuilder(
+    column: $table.paymentStatus,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get assignedDecisionNumber => $composableBuilder(
+    column: $table.assignedDecisionNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get defenseDecisionNumber => $composableBuilder(
+    column: $table.defenseDecisionNumber,
     builder: (column) => column,
   );
 
@@ -18329,8 +18549,10 @@ class $ThesisTableManager
                 Value<bool> flagIgnore = const Value.absent(),
                 Value<String?> group = const Value.absent(),
                 Value<String?> year = const Value.absent(),
-                Value<enums.MscDefenseStatus> defenseStatus =
-                    const Value.absent(),
+                Value<enums.ThesisStatus> defenseStatus = const Value.absent(),
+                Value<enums.PaymentStatus> paymentStatus = const Value.absent(),
+                Value<String?> assignedDecisionNumber = const Value.absent(),
+                Value<String?> defenseDecisionNumber = const Value.absent(),
               }) => ThesisCompanion(
                 id: id,
                 supervisorId: supervisorId,
@@ -18351,6 +18573,9 @@ class $ThesisTableManager
                 group: group,
                 year: year,
                 defenseStatus: defenseStatus,
+                paymentStatus: paymentStatus,
+                assignedDecisionNumber: assignedDecisionNumber,
+                defenseDecisionNumber: defenseDecisionNumber,
               ),
           createCompanionCallback:
               ({
@@ -18372,7 +18597,10 @@ class $ThesisTableManager
                 Value<bool> flagIgnore = const Value.absent(),
                 Value<String?> group = const Value.absent(),
                 Value<String?> year = const Value.absent(),
-                required enums.MscDefenseStatus defenseStatus,
+                required enums.ThesisStatus defenseStatus,
+                required enums.PaymentStatus paymentStatus,
+                Value<String?> assignedDecisionNumber = const Value.absent(),
+                Value<String?> defenseDecisionNumber = const Value.absent(),
               }) => ThesisCompanion.insert(
                 id: id,
                 supervisorId: supervisorId,
@@ -18393,6 +18621,9 @@ class $ThesisTableManager
                 group: group,
                 year: year,
                 defenseStatus: defenseStatus,
+                paymentStatus: paymentStatus,
+                assignedDecisionNumber: assignedDecisionNumber,
+                defenseDecisionNumber: defenseDecisionNumber,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), $ThesisReferences(db, table, e)))
@@ -19861,13 +20092,13 @@ typedef $TeachingRegistrationProcessedTableManager =
     >;
 typedef $CourseLimitingCreateCompanionBuilder =
     CourseLimitingCompanion Function({
-      required int courseId,
+      required double courseId,
       required String semesterId,
       Value<int> rowid,
     });
 typedef $CourseLimitingUpdateCompanionBuilder =
     CourseLimitingCompanion Function({
-      Value<int> courseId,
+      Value<double> courseId,
       Value<String> semesterId,
       Value<int> rowid,
     });
@@ -20022,7 +20253,7 @@ class $CourseLimitingTableManager
               $CourseLimitingAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> courseId = const Value.absent(),
+                Value<double> courseId = const Value.absent(),
                 Value<String> semesterId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CourseLimitingCompanion(
@@ -20032,7 +20263,7 @@ class $CourseLimitingTableManager
               ),
           createCompanionCallback:
               ({
-                required int courseId,
+                required double courseId,
                 required String semesterId,
                 Value<int> rowid = const Value.absent(),
               }) => CourseLimitingCompanion.insert(
