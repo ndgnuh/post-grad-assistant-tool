@@ -1,10 +1,13 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
+import 'package:fami_tools/services/pdf_builder.bak/drafting.dart';
 import 'package:fami_tools/utilities/strings.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:pdf_combiner/pdf_combiner.dart';
 import 'package:pdf_combiner/responses/pdf_combiner_status.dart';
+import 'package:dart_pdf_reader/dart_pdf_reader.dart';
 
 final dio = Dio();
 const baseTuyenSinhUrl = "https://sdh.hust.edu.vn/AnhTuyenSinh";
@@ -19,13 +22,28 @@ String bachelorDegreeUrl(Object? id) => "$baseTuyenSinhUrl/20172/$id.pdf";
 
 String degreeAppendixUrl(Object? id) => "$baseTuyenSinhUrl/20171/$id.pdf";
 
-Future<bool> downloadTo({
+Future<String> blankPdf() async {
+  final bytes = await createSinglePageDocument(build: (_) => SizedBox());
+  final tmpDir = await getTemporaryDirectory();
+  final tmpPath = p.join(tmpDir.path, "blank.pdf");
+  await File(tmpPath).writeAsBytes(bytes);
+  return tmpPath;
+}
+
+Future<bool> needPadding(Uint8List bytes) async {
+  final doc = await PDFParser(ByteStream(bytes)).parse();
+  final catalog = await doc.catalog;
+  final pages = await catalog.getPages();
+  return pages.pageCount % 2 == 1;
+}
+
+Future<Uint8List?> downloadTo({
   required String url,
   required String savePath,
   required failable,
 }) async {
   if (await File(savePath).exists()) {
-    return true;
+    return await File(savePath).readAsBytes();
   }
 
   try {
@@ -39,10 +57,10 @@ Future<bool> downloadTo({
     Uint8List data = res.data;
     File file = File(savePath);
     await file.writeAsBytes(data);
-    return true;
+    return data;
   } on Exception {
     if (failable) {
-      return false;
+      return null;
     } else {
       rethrow;
     }
@@ -76,27 +94,39 @@ Future<void> downloadAdmissionFiles({
     "$admissionId-$name-BaiBao.pdf",
   ];
 
-  final outputPaths = [for (final name in names) p.join(saveDirectory, name)];
+  final outputPaths = <String>[];
+  final needPaddings = <bool>[];
 
   for (final (i, (url, failable)) in urls.indexed) {
-    final outPath = outputPaths[i];
-    final success = await downloadTo(
+    final outPath = p.join(saveDirectory, names[i]);
+    final bytes = await downloadTo(
       url: url,
       savePath: outPath,
       failable: failable,
     );
-    if (!success) {
-      // Remove the path from outputPaths if download failed
-      if (failable) {
-        outputPaths.removeAt(i);
-      } else {
-        throw Exception("Failed to download required file from $url");
-      }
+
+    if (bytes == null && !failable) {
+      throw Exception("Failed to download required file from $url");
+    }
+
+    if (bytes != null) {
+      outputPaths.add(outPath);
+      final padding = await needPadding(bytes);
+      needPaddings.add(padding);
+    }
+  }
+
+  final paddedOutputPaths = <String>[];
+  final blankPath = await blankPdf();
+  for (final (i, path) in outputPaths.indexed) {
+    paddedOutputPaths.add(path);
+    if (needPaddings[i]) {
+      paddedOutputPaths.add(blankPath);
     }
   }
 
   final response = await PdfCombiner.generatePDFFromDocuments(
-    inputPaths: outputPaths,
+    inputPaths: paddedOutputPaths,
     outputPath: outputPath,
   );
   switch (response.status) {
