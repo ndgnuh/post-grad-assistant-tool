@@ -162,11 +162,13 @@ class StudentIdsNotifier extends AsyncNotifier<List<int>> {
   final CohortData? cohort;
   final String? searchQuery;
   final AdmissionCouncilData? admissionCouncil;
+  final StudentStatus? status;
 
   StudentIdsNotifier({
     this.cohort,
     this.searchQuery,
     this.admissionCouncil,
+    this.status,
   });
 
   @override
@@ -198,6 +200,12 @@ class StudentIdsNotifier extends AsyncNotifier<List<int>> {
               t.cohort.contains(searchQuery) |
               t.personalEmail.contains(searchQuery),
         );
+    }
+
+    switch (status) {
+      case StudentStatus status:
+        stmt.where((t) => t.status.equals(status.value));
+      default:
     }
 
     stmt.orderBy(

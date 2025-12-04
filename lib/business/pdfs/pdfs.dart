@@ -16,6 +16,9 @@ import 'phd_admission/02_score_sheet.dart' as phd_admission;
 import 'phd_admission/03_payment_table.dart' as phd_admission;
 import 'teaching_assignment_pdf.dart' as msc_course_class;
 
+import 'msc_thesis/score_sheet.dart' as msc_thesis;
+import 'msc_thesis/council_suggestion.dart' as msc_thesis;
+
 import 'dart:typed_data';
 
 /// Structure that holds a PDF file's name and bytes
@@ -39,6 +42,13 @@ class PdfFile {
 
   static const mscCourseClass = (
     teachingAssignment: msc_course_class.buildTeachingAssignmentPdf,
+  );
+
+  static const mscThesis = (
+    scoreSheet: msc_thesis.thesisScoreSheetsPdf,
+    councilSuggestion: msc_thesis.councilSuggestionPdf,
+    multipleScoreSheets: msc_thesis.thesisScoreSheetsMultiplePdf,
+    multipleCouncilSuggestion: msc_thesis.multipleCouncilSuggestionPdfs,
   );
 
   static const payment = (

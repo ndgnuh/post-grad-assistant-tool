@@ -1,3 +1,5 @@
+import 'package:fami_tools/business/copy_pasta.dart'
+    show Email, EmailCopyDialog;
 import 'package:fami_tools/business/db_v2_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
@@ -101,6 +103,23 @@ class _AdmissionActionTabViewState
                     title: Text("Email mời phỏng vấn"),
                     trailing: const Icon(Symbols.send),
                     onTap: callback,
+                  ),
+                ),
+                EmailBuilder(
+                  emailProvider: ruleBriefingEmailProvider,
+                  builder: (context, email) => ListTile(
+                    leading: const Icon(Symbols.email),
+                    subtitle: const Text(
+                      "Gửi email mời phổ biến quy chế cho học viên tích hợp",
+                    ),
+                    title: Text("Email mời nghe phổ biến quy chế"),
+                    trailing: const Icon(Symbols.send),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => EmailCopyDialog(email: email),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -408,5 +427,32 @@ class _InterviewTimeInput extends ConsumerWidget {
       },
       subtitle: Text(interviewTimeText),
     );
+  }
+}
+
+class EmailBuilder extends ConsumerWidget {
+  final Widget Function(BuildContext context, Email email) builder;
+  final FutureProvider<Email> emailProvider;
+
+  const EmailBuilder({
+    super.key,
+    required this.builder,
+    required this.emailProvider,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final emailAsync = ref.watch(emailProvider);
+    switch (emailAsync) {
+      case AsyncLoading():
+        return const LinearProgressIndicator();
+      case AsyncError(:final error, :final stackTrace):
+        print(stackTrace);
+        return Text("Lỗi tải dữ liệu. $error");
+      default:
+    }
+
+    final email = emailAsync.value!;
+    return builder(context, email);
   }
 }

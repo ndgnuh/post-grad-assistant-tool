@@ -32,6 +32,7 @@ Future main() async {
     ProviderScope(
       child: app,
       retry: (int retryCount, Object error) {
+        return null;
         if (retryCount >= 3) return null;
         // Exponential backoff
         return Duration(

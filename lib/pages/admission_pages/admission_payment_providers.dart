@@ -16,7 +16,7 @@ const _perCouncilPay = _presidentPay + _secretaryPay + _memberPay * 3;
 const _presidentPay = 70_000;
 const _secretaryPay = 70_000;
 
-final paymentListingPdfProvider = FutureProvider<Uint8List>((ref) async {
+final paymentListingPdfProvider = FutureProvider<PdfFile>((ref) async {
   final councilSelecionModel = await ref.watch(
     admissionCouncilSelectionProvider.future,
   );

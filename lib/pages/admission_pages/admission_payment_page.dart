@@ -95,17 +95,9 @@ class AdmissionPaymentPage extends StatelessWidget {
                     ),
 
                     Divider(),
-                    _PdfViewButton(
+                    _PdfFileViewButton(
                       title: "Bản kê thanh toán",
                       pdfProvider: paymentListingPdfProvider,
-                      sourceName: "ban-ke-thanh-toan.pdf",
-                      builder: (context, callback, error) => ListTile(
-                        title: Text("Bản kê thanh toán"),
-                        subtitle: Text(error ?? "Xem trước bản kê thanh toán"),
-                        trailing: Icon(Symbols.chevron_forward),
-                        enabled: callback != null,
-                        onTap: callback,
-                      ),
                     ),
 
                     Divider(),
@@ -190,6 +182,9 @@ class _SaveButton extends ConsumerWidget {
       final paymentAtmExcel = await ref.read(
         paymentAtmExcelProvider.future,
       );
+      final paymentListingPdf = await ref.read(
+        paymentListingPdfProvider.future,
+      );
 
       // Save files
       final saveDirectory = ref.read(saveDirectoryProvider)!;
@@ -197,6 +192,7 @@ class _SaveButton extends ConsumerWidget {
         path.join(saveDirectory, "01-bang-thanh-toan.pdf"),
       ).writeAsBytesSync(paymentTablePdf);
 
+      paymentListingPdf.save(directory: saveDirectory);
       paymentRequestPdf.save(directory: saveDirectory);
       paymentAtmPdf.save(directory: saveDirectory);
       paymentAtmExcel.save(directory: saveDirectory);

@@ -15,7 +15,7 @@ Future<PdfFile> paymentAtmPdf({
   ),
 }) async {
   final bytes = await buildMultiPageDocument(
-    pageFormat: PdfPageFormat.a4,
+    pageFormat: PdfPageFormat.a4.transpose,
     margin: margin,
     baseFontSize: baseFontSize,
     build: (context) {

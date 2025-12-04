@@ -139,6 +139,54 @@ class AppDatabase extends _$AppDatabase {
     }
   }
 
+  SimpleSelectStatement<Thesis, ThesisData> thesisByStudentId({
+    required int studentId,
+  }) {
+    final stmt = select(thesis)..where((t) => t.studentId.equals(studentId));
+    return stmt;
+  }
+
+  SimpleSelectStatement<Teacher, TeacherData> teacherById({
+    required int teacherId,
+  }) {
+    final stmt = select(teacher)..where((t) => t.id.equals(teacherId));
+    return stmt;
+  }
+
+  SimpleSelectStatement<Student, StudentData> searchStudents({
+    String searchText = "",
+    enums.StudentStatus? status,
+  }) {
+    final stmt = select(student);
+
+    if (status != null) {
+      stmt.where((s) => s.status.equals(status.value));
+    }
+
+    if (searchText.isNotEmpty) {
+      final st = searchText.trim();
+
+      final idsFts = selectOnly(student);
+      idsFts.addColumns([student.id]);
+      idsFts.where(
+        CustomExpression(
+          "id in (select id from student_fts where student_fts MATCH '$st')",
+        ),
+      );
+
+      stmt.where(
+        (s) =>
+            s.name.contains(st) |
+            s.studentId.contains(st) |
+            s.personalEmail.contains(st) |
+            s.cohort.contains(st) |
+            s.phone.contains(st),
+      );
+    }
+
+    return stmt;
+  }
+
   /// Search teachers by name and outsider status
   /// Returns only the ids of the teachers
   SimpleSelectStatement<Teacher, TeacherData> searchTeachers({

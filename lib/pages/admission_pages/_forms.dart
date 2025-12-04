@@ -131,7 +131,7 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
       List<String> headers = [
         "TT",
         "Số\nhồ sơ",
-        "Họ và tên thí sinh",
+        "Họ và tên\nthí sinh",
         "Giới\ntính",
         "Nơi sinh",
         "Trường tốt\nnghiệp ĐH",
@@ -149,6 +149,22 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
         fontWeight: pw.FontWeight.bold,
       );
       final tbl = pw.Table(
+        columnWidths: {
+          0: pw.IntrinsicColumnWidth(),
+          1: pw.IntrinsicColumnWidth(),
+          2: pw.FlexColumnWidth(),
+          3: pw.IntrinsicColumnWidth(),
+          4: pw.IntrinsicColumnWidth(),
+          5: pw.FlexColumnWidth(),
+          6: pw.IntrinsicColumnWidth(),
+          7: pw.FlexColumnWidth(),
+          8: pw.IntrinsicColumnWidth(),
+          9: pw.IntrinsicColumnWidth(),
+          10: pw.IntrinsicColumnWidth(),
+          11: pw.IntrinsicColumnWidth(),
+          12: pw.IntrinsicColumnWidth(),
+          13: pw.IntrinsicColumnWidth(),
+        },
         border: pw.TableBorder.all(),
         children: [
           pw.TableRow(

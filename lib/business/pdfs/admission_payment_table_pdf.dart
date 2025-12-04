@@ -11,7 +11,7 @@ Future<Uint8List> admissionPaymentTablePdf({
 }) async {
   return await buildSinglePageDocument(
     baseFontSize: 12,
-    pageFormat: PdfPageFormat.a4,
+    pageFormat: PdfPageFormat.a4.landscape,
     margin: EdgeInsets.all(1 * inch),
     build: (context) => AdmissionPaymentTablePdf(
       model: model,

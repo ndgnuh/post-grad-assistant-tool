@@ -15,6 +15,7 @@ export 'custom_widgets/directory_picker.dart';
 export 'custom_widgets/expanded_scrollview.dart';
 export 'custom_widgets/menu_dialog.dart';
 export 'custom_widgets/responsive_breakpoints.dart';
+export 'custom_widgets/providers.dart';
 
 extension CustomFormatter on TextEditingController {
   static TextInputFormatter get trimmedText => TextInputFormatter.withFunction(

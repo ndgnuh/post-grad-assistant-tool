@@ -5297,7 +5297,7 @@ class Student extends Table with TableInfo<Student, StudentData> {
     'admissionId',
   );
   late final GeneratedColumn<String> admissionId = GeneratedColumn<String>(
-    'soHoSo',
+    'admission_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -5306,7 +5306,7 @@ class Student extends Table with TableInfo<Student, StudentData> {
   );
   static const VerificationMeta _cohortMeta = const VerificationMeta('cohort');
   late final GeneratedColumn<String> cohort = GeneratedColumn<String>(
-    'nienKhoa',
+    'cohort_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -5317,7 +5317,7 @@ class Student extends Table with TableInfo<Student, StudentData> {
     'studentId',
   );
   late final GeneratedColumn<String> studentId = GeneratedColumn<String>(
-    'maHocVien',
+    'management_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -5326,7 +5326,7 @@ class Student extends Table with TableInfo<Student, StudentData> {
   );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
-    'hoTen',
+    'name',
     aliasedName,
     false,
     type: DriftSqlType.string,
@@ -5337,7 +5337,7 @@ class Student extends Table with TableInfo<Student, StudentData> {
     'dateOfBirth',
   );
   late final GeneratedColumn<DateTime> dateOfBirth = GeneratedColumn<DateTime>(
-    'ngaySinh',
+    'date_of_birth',
     aliasedName,
     true,
     type: DriftSqlType.dateTime,
@@ -5346,7 +5346,7 @@ class Student extends Table with TableInfo<Student, StudentData> {
   );
   late final GeneratedColumnWithTypeConverter<enums.Gender?, String> gender =
       GeneratedColumn<String>(
-        'gioiTinh',
+        'gender',
         aliasedName,
         true,
         type: DriftSqlType.string,
@@ -5357,7 +5357,7 @@ class Student extends Table with TableInfo<Student, StudentData> {
     'placeOfBirth',
   );
   late final GeneratedColumn<String> placeOfBirth = GeneratedColumn<String>(
-    'noiSinh',
+    'place_of_birth',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -5366,7 +5366,7 @@ class Student extends Table with TableInfo<Student, StudentData> {
   );
   static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
   late final GeneratedColumn<String> phone = GeneratedColumn<String>(
-    'dienThoai',
+    'phone_number',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -5377,7 +5377,7 @@ class Student extends Table with TableInfo<Student, StudentData> {
     'personalEmail',
   );
   late final GeneratedColumn<String> personalEmail = GeneratedColumn<String>(
-    'email',
+    'personal_email',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -5388,7 +5388,7 @@ class Student extends Table with TableInfo<Student, StudentData> {
     'schoolEmail',
   );
   late final GeneratedColumn<String> schoolEmail = GeneratedColumn<String>(
-    'emailHust',
+    'hust_email',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -5485,7 +5485,7 @@ class Student extends Table with TableInfo<Student, StudentData> {
   );
   late final GeneratedColumnWithTypeConverter<enums.StudentStatus?, String>
   status = GeneratedColumn<String>(
-    'maTrangThai',
+    'status',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -5589,60 +5589,75 @@ class Student extends Table with TableInfo<Student, StudentData> {
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('soHoSo')) {
+    if (data.containsKey('admission_id')) {
       context.handle(
         _admissionIdMeta,
-        admissionId.isAcceptableOrUnknown(data['soHoSo']!, _admissionIdMeta),
+        admissionId.isAcceptableOrUnknown(
+          data['admission_id']!,
+          _admissionIdMeta,
+        ),
       );
     }
-    if (data.containsKey('nienKhoa')) {
+    if (data.containsKey('cohort_id')) {
       context.handle(
         _cohortMeta,
-        cohort.isAcceptableOrUnknown(data['nienKhoa']!, _cohortMeta),
+        cohort.isAcceptableOrUnknown(data['cohort_id']!, _cohortMeta),
       );
     }
-    if (data.containsKey('maHocVien')) {
+    if (data.containsKey('management_id')) {
       context.handle(
         _studentIdMeta,
-        studentId.isAcceptableOrUnknown(data['maHocVien']!, _studentIdMeta),
+        studentId.isAcceptableOrUnknown(data['management_id']!, _studentIdMeta),
       );
     }
-    if (data.containsKey('hoTen')) {
+    if (data.containsKey('name')) {
       context.handle(
         _nameMeta,
-        name.isAcceptableOrUnknown(data['hoTen']!, _nameMeta),
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
       );
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
-    if (data.containsKey('ngaySinh')) {
+    if (data.containsKey('date_of_birth')) {
       context.handle(
         _dateOfBirthMeta,
-        dateOfBirth.isAcceptableOrUnknown(data['ngaySinh']!, _dateOfBirthMeta),
+        dateOfBirth.isAcceptableOrUnknown(
+          data['date_of_birth']!,
+          _dateOfBirthMeta,
+        ),
       );
     }
-    if (data.containsKey('noiSinh')) {
+    if (data.containsKey('place_of_birth')) {
       context.handle(
         _placeOfBirthMeta,
-        placeOfBirth.isAcceptableOrUnknown(data['noiSinh']!, _placeOfBirthMeta),
+        placeOfBirth.isAcceptableOrUnknown(
+          data['place_of_birth']!,
+          _placeOfBirthMeta,
+        ),
       );
     }
-    if (data.containsKey('dienThoai')) {
+    if (data.containsKey('phone_number')) {
       context.handle(
         _phoneMeta,
-        phone.isAcceptableOrUnknown(data['dienThoai']!, _phoneMeta),
+        phone.isAcceptableOrUnknown(data['phone_number']!, _phoneMeta),
       );
     }
-    if (data.containsKey('email')) {
+    if (data.containsKey('personal_email')) {
       context.handle(
         _personalEmailMeta,
-        personalEmail.isAcceptableOrUnknown(data['email']!, _personalEmailMeta),
+        personalEmail.isAcceptableOrUnknown(
+          data['personal_email']!,
+          _personalEmailMeta,
+        ),
       );
     }
-    if (data.containsKey('emailHust')) {
+    if (data.containsKey('hust_email')) {
       context.handle(
         _schoolEmailMeta,
-        schoolEmail.isAcceptableOrUnknown(data['emailHust']!, _schoolEmailMeta),
+        schoolEmail.isAcceptableOrUnknown(
+          data['hust_email']!,
+          _schoolEmailMeta,
+        ),
       );
     }
     if (data.containsKey('truongTotNghiepDaiHoc')) {
@@ -5768,45 +5783,45 @@ class Student extends Table with TableInfo<Student, StudentData> {
       )!,
       admissionId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}soHoSo'],
+        data['${effectivePrefix}admission_id'],
       ),
       cohort: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}nienKhoa'],
+        data['${effectivePrefix}cohort_id'],
       ),
       studentId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}maHocVien'],
+        data['${effectivePrefix}management_id'],
       ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}hoTen'],
+        data['${effectivePrefix}name'],
       )!,
       dateOfBirth: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
-        data['${effectivePrefix}ngaySinh'],
+        data['${effectivePrefix}date_of_birth'],
       ),
       gender: Student.$convertergendern.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.string,
-          data['${effectivePrefix}gioiTinh'],
+          data['${effectivePrefix}gender'],
         ),
       ),
       placeOfBirth: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}noiSinh'],
+        data['${effectivePrefix}place_of_birth'],
       ),
       phone: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}dienThoai'],
+        data['${effectivePrefix}phone_number'],
       ),
       personalEmail: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}email'],
+        data['${effectivePrefix}personal_email'],
       ),
       schoolEmail: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}emailHust'],
+        data['${effectivePrefix}hust_email'],
       ),
       bachelorUniversity: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -5843,7 +5858,7 @@ class Student extends Table with TableInfo<Student, StudentData> {
       status: Student.$converterstatusn.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.string,
-          data['${effectivePrefix}maTrangThai'],
+          data['${effectivePrefix}status'],
         ),
       ),
       hasHirstExtension: attachedDatabase.typeMapping.read(
@@ -5891,7 +5906,7 @@ class Student extends Table with TableInfo<Student, StudentData> {
   @override
   List<String> get customConstraints => const [
     'FOREIGN KEY(idTieuBanXetTuyen)REFERENCES admission_council(id)',
-    'FOREIGN KEY(nienKhoa)REFERENCES cohort(id)ON UPDATE CASCADE',
+    'FOREIGN KEY(cohort_id)REFERENCES cohort(id)ON UPDATE CASCADE',
   ];
   @override
   bool get dontWriteConstraints => true;
@@ -5955,34 +5970,32 @@ class StudentData extends DataClass implements Insertable<StudentData> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     if (!nullToAbsent || admissionId != null) {
-      map['soHoSo'] = Variable<String>(admissionId);
+      map['admission_id'] = Variable<String>(admissionId);
     }
     if (!nullToAbsent || cohort != null) {
-      map['nienKhoa'] = Variable<String>(cohort);
+      map['cohort_id'] = Variable<String>(cohort);
     }
     if (!nullToAbsent || studentId != null) {
-      map['maHocVien'] = Variable<String>(studentId);
+      map['management_id'] = Variable<String>(studentId);
     }
-    map['hoTen'] = Variable<String>(name);
+    map['name'] = Variable<String>(name);
     if (!nullToAbsent || dateOfBirth != null) {
-      map['ngaySinh'] = Variable<DateTime>(dateOfBirth);
+      map['date_of_birth'] = Variable<DateTime>(dateOfBirth);
     }
     if (!nullToAbsent || gender != null) {
-      map['gioiTinh'] = Variable<String>(
-        Student.$convertergendern.toSql(gender),
-      );
+      map['gender'] = Variable<String>(Student.$convertergendern.toSql(gender));
     }
     if (!nullToAbsent || placeOfBirth != null) {
-      map['noiSinh'] = Variable<String>(placeOfBirth);
+      map['place_of_birth'] = Variable<String>(placeOfBirth);
     }
     if (!nullToAbsent || phone != null) {
-      map['dienThoai'] = Variable<String>(phone);
+      map['phone_number'] = Variable<String>(phone);
     }
     if (!nullToAbsent || personalEmail != null) {
-      map['email'] = Variable<String>(personalEmail);
+      map['personal_email'] = Variable<String>(personalEmail);
     }
     if (!nullToAbsent || schoolEmail != null) {
-      map['emailHust'] = Variable<String>(schoolEmail);
+      map['hust_email'] = Variable<String>(schoolEmail);
     }
     if (!nullToAbsent || bachelorUniversity != null) {
       map['truongTotNghiepDaiHoc'] = Variable<String>(bachelorUniversity);
@@ -6009,9 +6022,7 @@ class StudentData extends DataClass implements Insertable<StudentData> {
       map['nganhDaoTaoThacSi'] = Variable<String>(masterMajor);
     }
     if (!nullToAbsent || status != null) {
-      map['maTrangThai'] = Variable<String>(
-        Student.$converterstatusn.toSql(status),
-      );
+      map['status'] = Variable<String>(Student.$converterstatusn.toSql(status));
     }
     map['flag_extend_1'] = Variable<bool>(hasHirstExtension);
     map['flag_extend_2'] = Variable<bool>(hasSecondExtension);
@@ -6104,16 +6115,16 @@ class StudentData extends DataClass implements Insertable<StudentData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return StudentData(
       id: serializer.fromJson<int>(json['id']),
-      admissionId: serializer.fromJson<String?>(json['soHoSo']),
-      cohort: serializer.fromJson<String?>(json['nienKhoa']),
-      studentId: serializer.fromJson<String?>(json['maHocVien']),
-      name: serializer.fromJson<String>(json['hoTen']),
-      dateOfBirth: serializer.fromJson<DateTime?>(json['ngaySinh']),
-      gender: serializer.fromJson<enums.Gender?>(json['gioiTinh']),
-      placeOfBirth: serializer.fromJson<String?>(json['noiSinh']),
-      phone: serializer.fromJson<String?>(json['dienThoai']),
-      personalEmail: serializer.fromJson<String?>(json['email']),
-      schoolEmail: serializer.fromJson<String?>(json['emailHust']),
+      admissionId: serializer.fromJson<String?>(json['admission_id']),
+      cohort: serializer.fromJson<String?>(json['cohort_id']),
+      studentId: serializer.fromJson<String?>(json['management_id']),
+      name: serializer.fromJson<String>(json['name']),
+      dateOfBirth: serializer.fromJson<DateTime?>(json['date_of_birth']),
+      gender: serializer.fromJson<enums.Gender?>(json['gender']),
+      placeOfBirth: serializer.fromJson<String?>(json['place_of_birth']),
+      phone: serializer.fromJson<String?>(json['phone_number']),
+      personalEmail: serializer.fromJson<String?>(json['personal_email']),
+      schoolEmail: serializer.fromJson<String?>(json['hust_email']),
       bachelorUniversity: serializer.fromJson<String?>(
         json['truongTotNghiepDaiHoc'],
       ),
@@ -6130,7 +6141,7 @@ class StudentData extends DataClass implements Insertable<StudentData> {
       ),
       exemptedCourses: serializer.fromJson<String?>(json['hocPhanDuocMien']),
       masterMajor: serializer.fromJson<String?>(json['nganhDaoTaoThacSi']),
-      status: serializer.fromJson<enums.StudentStatus?>(json['maTrangThai']),
+      status: serializer.fromJson<enums.StudentStatus?>(json['status']),
       hasHirstExtension: serializer.fromJson<bool>(json['flag_extend_1']),
       hasSecondExtension: serializer.fromJson<bool>(json['flag_extend_2']),
       admissionCouncilId: serializer.fromJson<int?>(json['idTieuBanXetTuyen']),
@@ -6145,16 +6156,16 @@ class StudentData extends DataClass implements Insertable<StudentData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'soHoSo': serializer.toJson<String?>(admissionId),
-      'nienKhoa': serializer.toJson<String?>(cohort),
-      'maHocVien': serializer.toJson<String?>(studentId),
-      'hoTen': serializer.toJson<String>(name),
-      'ngaySinh': serializer.toJson<DateTime?>(dateOfBirth),
-      'gioiTinh': serializer.toJson<enums.Gender?>(gender),
-      'noiSinh': serializer.toJson<String?>(placeOfBirth),
-      'dienThoai': serializer.toJson<String?>(phone),
-      'email': serializer.toJson<String?>(personalEmail),
-      'emailHust': serializer.toJson<String?>(schoolEmail),
+      'admission_id': serializer.toJson<String?>(admissionId),
+      'cohort_id': serializer.toJson<String?>(cohort),
+      'management_id': serializer.toJson<String?>(studentId),
+      'name': serializer.toJson<String>(name),
+      'date_of_birth': serializer.toJson<DateTime?>(dateOfBirth),
+      'gender': serializer.toJson<enums.Gender?>(gender),
+      'place_of_birth': serializer.toJson<String?>(placeOfBirth),
+      'phone_number': serializer.toJson<String?>(phone),
+      'personal_email': serializer.toJson<String?>(personalEmail),
+      'hust_email': serializer.toJson<String?>(schoolEmail),
       'truongTotNghiepDaiHoc': serializer.toJson<String?>(bachelorUniversity),
       'nganhTotNghiepDaiHoc': serializer.toJson<String?>(bachelorMajor),
       'heTotNghiepDaiHoc': serializer.toJson<String?>(bachelorProgram),
@@ -6167,7 +6178,7 @@ class StudentData extends DataClass implements Insertable<StudentData> {
       'dinhHuongChuyenSau': serializer.toJson<String?>(intendedSpecialization),
       'hocPhanDuocMien': serializer.toJson<String?>(exemptedCourses),
       'nganhDaoTaoThacSi': serializer.toJson<String?>(masterMajor),
-      'maTrangThai': serializer.toJson<enums.StudentStatus?>(status),
+      'status': serializer.toJson<enums.StudentStatus?>(status),
       'flag_extend_1': serializer.toJson<bool>(hasHirstExtension),
       'flag_extend_2': serializer.toJson<bool>(hasSecondExtension),
       'idTieuBanXetTuyen': serializer.toJson<int?>(admissionCouncilId),
@@ -6515,16 +6526,16 @@ class StudentCompanion extends UpdateCompanion<StudentData> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (admissionId != null) 'soHoSo': admissionId,
-      if (cohort != null) 'nienKhoa': cohort,
-      if (studentId != null) 'maHocVien': studentId,
-      if (name != null) 'hoTen': name,
-      if (dateOfBirth != null) 'ngaySinh': dateOfBirth,
-      if (gender != null) 'gioiTinh': gender,
-      if (placeOfBirth != null) 'noiSinh': placeOfBirth,
-      if (phone != null) 'dienThoai': phone,
-      if (personalEmail != null) 'email': personalEmail,
-      if (schoolEmail != null) 'emailHust': schoolEmail,
+      if (admissionId != null) 'admission_id': admissionId,
+      if (cohort != null) 'cohort_id': cohort,
+      if (studentId != null) 'management_id': studentId,
+      if (name != null) 'name': name,
+      if (dateOfBirth != null) 'date_of_birth': dateOfBirth,
+      if (gender != null) 'gender': gender,
+      if (placeOfBirth != null) 'place_of_birth': placeOfBirth,
+      if (phone != null) 'phone_number': phone,
+      if (personalEmail != null) 'personal_email': personalEmail,
+      if (schoolEmail != null) 'hust_email': schoolEmail,
       if (bachelorUniversity != null)
         'truongTotNghiepDaiHoc': bachelorUniversity,
       if (bachelorMajor != null) 'nganhTotNghiepDaiHoc': bachelorMajor,
@@ -6537,7 +6548,7 @@ class StudentCompanion extends UpdateCompanion<StudentData> {
         'dinhHuongChuyenSau': intendedSpecialization,
       if (exemptedCourses != null) 'hocPhanDuocMien': exemptedCourses,
       if (masterMajor != null) 'nganhDaoTaoThacSi': masterMajor,
-      if (status != null) 'maTrangThai': status,
+      if (status != null) 'status': status,
       if (hasHirstExtension != null) 'flag_extend_1': hasHirstExtension,
       if (hasSecondExtension != null) 'flag_extend_2': hasSecondExtension,
       if (admissionCouncilId != null) 'idTieuBanXetTuyen': admissionCouncilId,
@@ -6612,36 +6623,36 @@ class StudentCompanion extends UpdateCompanion<StudentData> {
       map['id'] = Variable<int>(id.value);
     }
     if (admissionId.present) {
-      map['soHoSo'] = Variable<String>(admissionId.value);
+      map['admission_id'] = Variable<String>(admissionId.value);
     }
     if (cohort.present) {
-      map['nienKhoa'] = Variable<String>(cohort.value);
+      map['cohort_id'] = Variable<String>(cohort.value);
     }
     if (studentId.present) {
-      map['maHocVien'] = Variable<String>(studentId.value);
+      map['management_id'] = Variable<String>(studentId.value);
     }
     if (name.present) {
-      map['hoTen'] = Variable<String>(name.value);
+      map['name'] = Variable<String>(name.value);
     }
     if (dateOfBirth.present) {
-      map['ngaySinh'] = Variable<DateTime>(dateOfBirth.value);
+      map['date_of_birth'] = Variable<DateTime>(dateOfBirth.value);
     }
     if (gender.present) {
-      map['gioiTinh'] = Variable<String>(
+      map['gender'] = Variable<String>(
         Student.$convertergendern.toSql(gender.value),
       );
     }
     if (placeOfBirth.present) {
-      map['noiSinh'] = Variable<String>(placeOfBirth.value);
+      map['place_of_birth'] = Variable<String>(placeOfBirth.value);
     }
     if (phone.present) {
-      map['dienThoai'] = Variable<String>(phone.value);
+      map['phone_number'] = Variable<String>(phone.value);
     }
     if (personalEmail.present) {
-      map['email'] = Variable<String>(personalEmail.value);
+      map['personal_email'] = Variable<String>(personalEmail.value);
     }
     if (schoolEmail.present) {
-      map['emailHust'] = Variable<String>(schoolEmail.value);
+      map['hust_email'] = Variable<String>(schoolEmail.value);
     }
     if (bachelorUniversity.present) {
       map['truongTotNghiepDaiHoc'] = Variable<String>(bachelorUniversity.value);
@@ -6674,7 +6685,7 @@ class StudentCompanion extends UpdateCompanion<StudentData> {
       map['nganhDaoTaoThacSi'] = Variable<String>(masterMajor.value);
     }
     if (status.present) {
-      map['maTrangThai'] = Variable<String>(
+      map['status'] = Variable<String>(
         Student.$converterstatusn.toSql(status.value),
       );
     }
@@ -10712,11 +10723,11 @@ class CourseLimiting extends Table
   static const VerificationMeta _courseIdMeta = const VerificationMeta(
     'courseId',
   );
-  late final GeneratedColumn<double> courseId = GeneratedColumn<double>(
+  late final GeneratedColumn<String> courseId = GeneratedColumn<String>(
     'course_id',
     aliasedName,
     false,
-    type: DriftSqlType.double,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
     $customConstraints: 'NOT NULL REFERENCES course(id)',
   );
@@ -10771,7 +10782,7 @@ class CourseLimiting extends Table
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return CourseLimitingData(
       courseId: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
+        DriftSqlType.string,
         data['${effectivePrefix}course_id'],
       )!,
       semesterId: attachedDatabase.typeMapping.read(
@@ -10796,13 +10807,13 @@ class CourseLimiting extends Table
 
 class CourseLimitingData extends DataClass
     implements Insertable<CourseLimitingData> {
-  final double courseId;
+  final String courseId;
   final String semesterId;
   const CourseLimitingData({required this.courseId, required this.semesterId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['course_id'] = Variable<double>(courseId);
+    map['course_id'] = Variable<String>(courseId);
     map['semester_id'] = Variable<String>(semesterId);
     return map;
   }
@@ -10820,7 +10831,7 @@ class CourseLimitingData extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return CourseLimitingData(
-      courseId: serializer.fromJson<double>(json['course_id']),
+      courseId: serializer.fromJson<String>(json['course_id']),
       semesterId: serializer.fromJson<String>(json['semester_id']),
     );
   }
@@ -10828,12 +10839,12 @@ class CourseLimitingData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'course_id': serializer.toJson<double>(courseId),
+      'course_id': serializer.toJson<String>(courseId),
       'semester_id': serializer.toJson<String>(semesterId),
     };
   }
 
-  CourseLimitingData copyWith({double? courseId, String? semesterId}) =>
+  CourseLimitingData copyWith({String? courseId, String? semesterId}) =>
       CourseLimitingData(
         courseId: courseId ?? this.courseId,
         semesterId: semesterId ?? this.semesterId,
@@ -10867,7 +10878,7 @@ class CourseLimitingData extends DataClass
 }
 
 class CourseLimitingCompanion extends UpdateCompanion<CourseLimitingData> {
-  final Value<double> courseId;
+  final Value<String> courseId;
   final Value<String> semesterId;
   final Value<int> rowid;
   const CourseLimitingCompanion({
@@ -10876,13 +10887,13 @@ class CourseLimitingCompanion extends UpdateCompanion<CourseLimitingData> {
     this.rowid = const Value.absent(),
   });
   CourseLimitingCompanion.insert({
-    required double courseId,
+    required String courseId,
     required String semesterId,
     this.rowid = const Value.absent(),
   }) : courseId = Value(courseId),
        semesterId = Value(semesterId);
   static Insertable<CourseLimitingData> custom({
-    Expression<double>? courseId,
+    Expression<String>? courseId,
     Expression<String>? semesterId,
     Expression<int>? rowid,
   }) {
@@ -10894,7 +10905,7 @@ class CourseLimitingCompanion extends UpdateCompanion<CourseLimitingData> {
   }
 
   CourseLimitingCompanion copyWith({
-    Value<double>? courseId,
+    Value<String>? courseId,
     Value<String>? semesterId,
     Value<int>? rowid,
   }) {
@@ -10909,7 +10920,7 @@ class CourseLimitingCompanion extends UpdateCompanion<CourseLimitingData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (courseId.present) {
-      map['course_id'] = Variable<double>(courseId.value);
+      map['course_id'] = Variable<String>(courseId.value);
     }
     if (semesterId.present) {
       map['semester_id'] = Variable<String>(semesterId.value);
@@ -14165,6 +14176,24 @@ final class $CourseReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<CourseLimiting, List<CourseLimitingData>>
+  _courseLimitingRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.courseLimiting,
+    aliasName: $_aliasNameGenerator(db.course.id, db.courseLimiting.courseId),
+  );
+
+  $CourseLimitingProcessedTableManager get courseLimitingRefs {
+    final manager = $CourseLimitingTableManager(
+      $_db,
+      $_db.courseLimiting,
+    ).filter((f) => f.courseId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_courseLimitingRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $CourseFilterComposer extends Composer<_$AppDatabase, Course> {
@@ -14241,6 +14270,31 @@ class $CourseFilterComposer extends Composer<_$AppDatabase, Course> {
           }) => $TeachingRegistrationFilterComposer(
             $db: $db,
             $table: $db.teachingRegistration,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> courseLimitingRefs(
+    Expression<bool> Function($CourseLimitingFilterComposer f) f,
+  ) {
+    final $CourseLimitingFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.courseLimiting,
+      getReferencedColumn: (t) => t.courseId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $CourseLimitingFilterComposer(
+            $db: $db,
+            $table: $db.courseLimiting,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -14378,6 +14432,31 @@ class $CourseAnnotationComposer extends Composer<_$AppDatabase, Course> {
     );
     return f(composer);
   }
+
+  Expression<T> courseLimitingRefs<T extends Object>(
+    Expression<T> Function($CourseLimitingAnnotationComposer a) f,
+  ) {
+    final $CourseLimitingAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.courseLimiting,
+      getReferencedColumn: (t) => t.courseId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $CourseLimitingAnnotationComposer(
+            $db: $db,
+            $table: $db.courseLimiting,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $CourseTableManager
@@ -14393,7 +14472,10 @@ class $CourseTableManager
           $CourseUpdateCompanionBuilder,
           (CourseData, $CourseReferences),
           CourseData,
-          PrefetchHooks Function({bool teachingRegistrationRefs})
+          PrefetchHooks Function({
+            bool teachingRegistrationRefs,
+            bool courseLimitingRefs,
+          })
         > {
   $CourseTableManager(_$AppDatabase db, Course table)
     : super(
@@ -14457,37 +14539,61 @@ class $CourseTableManager
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), $CourseReferences(db, table, e)))
               .toList(),
-          prefetchHooksCallback: ({teachingRegistrationRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (teachingRegistrationRefs) db.teachingRegistration,
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (teachingRegistrationRefs)
-                    await $_getPrefetchedData<
-                      CourseData,
-                      Course,
-                      TeachingRegistrationData
-                    >(
-                      currentTable: table,
-                      referencedTable: $CourseReferences
-                          ._teachingRegistrationRefsTable(db),
-                      managerFromTypedResult: (p0) => $CourseReferences(
-                        db,
-                        table,
-                        p0,
-                      ).teachingRegistrationRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.courseId == item.id),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({teachingRegistrationRefs = false, courseLimitingRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (teachingRegistrationRefs) db.teachingRegistration,
+                    if (courseLimitingRefs) db.courseLimiting,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (teachingRegistrationRefs)
+                        await $_getPrefetchedData<
+                          CourseData,
+                          Course,
+                          TeachingRegistrationData
+                        >(
+                          currentTable: table,
+                          referencedTable: $CourseReferences
+                              ._teachingRegistrationRefsTable(db),
+                          managerFromTypedResult: (p0) => $CourseReferences(
+                            db,
+                            table,
+                            p0,
+                          ).teachingRegistrationRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.courseId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (courseLimitingRefs)
+                        await $_getPrefetchedData<
+                          CourseData,
+                          Course,
+                          CourseLimitingData
+                        >(
+                          currentTable: table,
+                          referencedTable: $CourseReferences
+                              ._courseLimitingRefsTable(db),
+                          managerFromTypedResult: (p0) => $CourseReferences(
+                            db,
+                            table,
+                            p0,
+                          ).courseLimitingRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.courseId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -14504,7 +14610,10 @@ typedef $CourseProcessedTableManager =
       $CourseUpdateCompanionBuilder,
       (CourseData, $CourseReferences),
       CourseData,
-      PrefetchHooks Function({bool teachingRegistrationRefs})
+      PrefetchHooks Function({
+        bool teachingRegistrationRefs,
+        bool courseLimitingRefs,
+      })
     >;
 typedef $ThesisFtsCreateCompanionBuilder =
     ThesisFtsCompanion Function({
@@ -20092,13 +20201,13 @@ typedef $TeachingRegistrationProcessedTableManager =
     >;
 typedef $CourseLimitingCreateCompanionBuilder =
     CourseLimitingCompanion Function({
-      required double courseId,
+      required String courseId,
       required String semesterId,
       Value<int> rowid,
     });
 typedef $CourseLimitingUpdateCompanionBuilder =
     CourseLimitingCompanion Function({
-      Value<double> courseId,
+      Value<String> courseId,
       Value<String> semesterId,
       Value<int> rowid,
     });
@@ -20106,6 +20215,24 @@ typedef $CourseLimitingUpdateCompanionBuilder =
 final class $CourseLimitingReferences
     extends BaseReferences<_$AppDatabase, CourseLimiting, CourseLimitingData> {
   $CourseLimitingReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static Course _courseIdTable(_$AppDatabase db) => db.course.createAlias(
+    $_aliasNameGenerator(db.courseLimiting.courseId, db.course.id),
+  );
+
+  $CourseProcessedTableManager get courseId {
+    final $_column = $_itemColumn<String>('course_id')!;
+
+    final manager = $CourseTableManager(
+      $_db,
+      $_db.course,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_courseIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 
   static Semester _semesterIdTable(_$AppDatabase db) => db.semester.createAlias(
     $_aliasNameGenerator(db.courseLimiting.semesterId, db.semester.id),
@@ -20135,6 +20262,29 @@ class $CourseLimitingFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  $CourseFilterComposer get courseId {
+    final $CourseFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.courseId,
+      referencedTable: $db.course,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $CourseFilterComposer(
+            $db: $db,
+            $table: $db.course,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $SemesterFilterComposer get semesterId {
     final $SemesterFilterComposer composer = $composerBuilder(
       composer: this,
@@ -20168,6 +20318,29 @@ class $CourseLimitingOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  $CourseOrderingComposer get courseId {
+    final $CourseOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.courseId,
+      referencedTable: $db.course,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $CourseOrderingComposer(
+            $db: $db,
+            $table: $db.course,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $SemesterOrderingComposer get semesterId {
     final $SemesterOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -20201,6 +20374,29 @@ class $CourseLimitingAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  $CourseAnnotationComposer get courseId {
+    final $CourseAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.courseId,
+      referencedTable: $db.course,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $CourseAnnotationComposer(
+            $db: $db,
+            $table: $db.course,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $SemesterAnnotationComposer get semesterId {
     final $SemesterAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -20238,7 +20434,7 @@ class $CourseLimitingTableManager
           $CourseLimitingUpdateCompanionBuilder,
           (CourseLimitingData, $CourseLimitingReferences),
           CourseLimitingData,
-          PrefetchHooks Function({bool semesterId})
+          PrefetchHooks Function({bool courseId, bool semesterId})
         > {
   $CourseLimitingTableManager(_$AppDatabase db, CourseLimiting table)
     : super(
@@ -20253,7 +20449,7 @@ class $CourseLimitingTableManager
               $CourseLimitingAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<double> courseId = const Value.absent(),
+                Value<String> courseId = const Value.absent(),
                 Value<String> semesterId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CourseLimitingCompanion(
@@ -20263,7 +20459,7 @@ class $CourseLimitingTableManager
               ),
           createCompanionCallback:
               ({
-                required double courseId,
+                required String courseId,
                 required String semesterId,
                 Value<int> rowid = const Value.absent(),
               }) => CourseLimitingCompanion.insert(
@@ -20279,7 +20475,7 @@ class $CourseLimitingTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({semesterId = false}) {
+          prefetchHooksCallback: ({courseId = false, semesterId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -20299,6 +20495,19 @@ class $CourseLimitingTableManager
                       dynamic
                     >
                   >(state) {
+                    if (courseId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.courseId,
+                                referencedTable: $CourseLimitingReferences
+                                    ._courseIdTable(db),
+                                referencedColumn: $CourseLimitingReferences
+                                    ._courseIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
                     if (semesterId) {
                       state =
                           state.withJoin(
@@ -20336,7 +20545,7 @@ typedef $CourseLimitingProcessedTableManager =
       $CourseLimitingUpdateCompanionBuilder,
       (CourseLimitingData, $CourseLimitingReferences),
       CourseLimitingData,
-      PrefetchHooks Function({bool semesterId})
+      PrefetchHooks Function({bool courseId, bool semesterId})
     >;
 typedef $CourseClassCreateCompanionBuilder =
     CourseClassCompanion Function({

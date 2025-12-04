@@ -43,18 +43,18 @@ create table "admission_council" (
     establishment_decision_date datetime NOT NULL
 );
 
-CREATE TABLE student (
+CREATE TABLE "student" (
 	"id" INTEGER PRIMARY KEY AUTOINCREMENT,
-    "soHoSo" TEXT as admissionId,
-	"nienKhoa"	TEXT as cohort,
-	"maHocVien"	TEXT as studentId,
-	"hoTen"	TEXT NOT NULL as name,
-	"ngaySinh"	datetime as dateOfBirth,
-	"gioiTinh"	TEXT mapped by `const GenderConverter()` as gender,
-	"noiSinh"	TEXT as placeOfBirth,
-	"dienThoai"	TEXT as phone,
-	"email"	TEXT as personalEmail,
-	"emailHust"	TEXT as schoolEmail,
+    "admission_id" TEXT,
+	"cohort_id"	TEXT as cohort,
+	"management_id"	TEXT as studentId,
+	"name" TEXT NOT NULL,
+	"date_of_birth"	datetime,
+	"gender" TEXT mapped by `const GenderConverter()` as gender,
+	"place_of_birth" TEXT,
+	"phone_number" TEXT as phone,
+	"personal_email" TEXT,
+	"hust_email" TEXT as schoolEmail,
     "truongTotNghiepDaiHoc" TEXT as bachelorUniversity,
     "nganhTotNghiepDaiHoc" TEXT as bachelorMajor,
     "heTotNghiepDaiHoc" TEXT as bachelorProgram,
@@ -63,14 +63,14 @@ CREATE TABLE student (
     "dinhHuongChuyenSau" TEXT as intendedSpecialization,
     "hocPhanDuocMien" TEXT as exemptedCourses,
     "nganhDaoTaoThacSi" TEXT as masterMajor,
-	"maTrangThai"	TEXT mapped by `const StudentStatusConverter()` as status,
+	"status" TEXT mapped by `const StudentStatusConverter()`,
     "flag_extend_1" BOOLEAN NOT NULL DEFAULT false as hasHirstExtension,
     "flag_extend_2" BOOLEAN NOT NULL DEFAULT false as hasSecondExtension,
 	"idTieuBanXetTuyen"	INTEGER as admissionCouncilId,
     "idDienTuyenSinh" TEXT mapped by `const AdmissionTypeConverter()` as admissionType,
 	"thanhToanXetTuyen"	BOOL NOT NULL DEFAULT false as isAdmissionPaid,
 	FOREIGN KEY(idTieuBanXetTuyen) REFERENCES admission_council(id),
-	FOREIGN KEY(nienKhoa) REFERENCES cohort(id) ON UPDATE CASCADE
+	FOREIGN KEY(cohort_id) REFERENCES cohort(id) ON UPDATE CASCADE
 );
 
 create table "semester" (
@@ -102,7 +102,7 @@ create table thesis (
 	"second_reviewer_id" INTEGER REFERENCES "teacher"("id") as secondReviewerId,
 	"secretary_id"	INTEGER REFERENCES "teacher"("id"),
 	"member_id"	INTEGER REFERENCES "teacher"("id"),
-	"student_id" INTEGER REFERENCES "student"("id") as studentId,
+	"student_id" INTEGER REFERENCES "student"("id"),
 	"vietnamese_title"	TEXT NOT NULL,
 	"english_title"	TEXT NOT NULL,
 	"note"	TEXT NOT NULL DEFAULT ("") as note,
@@ -210,7 +210,7 @@ create table "teaching_registration" (
 );
 
 create table "course_limiting" (
-	course_id string not null references course(id),
+	course_id text not null references course(id),
 	semester_id text not null references semester(id),
 	primary key (course_id, semester_id)
 );

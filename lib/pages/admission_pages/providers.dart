@@ -13,6 +13,45 @@ final acceptanceEmailProvider = AsyncNotifierProvider(
   AcceptanceEmailNotifier.new,
 );
 
+final ruleBriefingEmailProvider = FutureProvider((ref) async {
+  final location = await ref.watch(interviewLocationProvider.future);
+  final datetime = await ref.watch(interviewDateTimeProvider.future);
+  final time = DateFormat("HH:mm").format(datetime!);
+  final date = DateFormat("dd/MM/yyyy").format(datetime);
+  final integratedIds = await ref.watch(integratedAdmissionIdsProvider.future);
+  final myName = await ref.watch(myNameProvider.future);
+
+  final subject = "Phổ biến quy chế chương trình Thạc sĩ Toán - Tin";
+
+  final recipients = <String>{};
+  for (final id in integratedIds) {
+    final student = await ref.watch(studentByIdProvider(id).future);
+    recipients.add(student.personalEmail!);
+  }
+
+  final body =
+      """Chào các bạn ứng viên,
+
+Mình là $myName, trợ lý đào tạo sau đại học của Khoa Toán - Tin, Đại học Bách khoa Hà Nội.
+
+Chúc mừng hồ sơ của các bạn đã đạt điều kiện của chương trình Thạc sĩ Toán Tin. Vì các bạn thuộc diện Tích hợp - Cử nhân Thạc sĩ nên được bỏ qua bước phỏng vấn.
+Mời các bạn đến tham gia nghe phổ biến quy chế và hỏi đáp về chương trình.
+
+- Thời gian: $time, ngày $date
+- Địa điểm: $location, Đại học Bách khoa Hà Nội
+
+Các bạn xác nhận tham gia bằng cách trả lời email này với tiêu đề "Xác nhận tham gia - [Họ và tên]" giúp mình nhé.
+
+Cảm ơn các bạn.
+""";
+
+  return Email(
+    subject: subject,
+    recipients: recipients,
+    body: body,
+  );
+});
+
 // View models
 // ===========
 
@@ -67,9 +106,7 @@ class AcceptanceEmailNotifier extends AsyncNotifier<Email?> {
     final recipients = <String>{};
     for (final id in admissionIds) {
       final student = await ref.watch(studentByIdProvider(id).future);
-      if (student != null) {
-        recipients.add(student.personalEmail!);
-      }
+      recipients.add(student.personalEmail!);
     }
 
     final text =
@@ -204,10 +241,13 @@ class InterviewEmailNotifier extends AsyncNotifier<Email> {
       }
     }
 
+    final myName = await ref.watch(myNameProvider.future);
+
     return Email(
       subject: subject,
       recipients: recipients,
       body: emailBody(
+        myName: myName!,
         location: location,
         datetime: datetime ?? DateTime.now(),
       ),
@@ -217,6 +257,7 @@ class InterviewEmailNotifier extends AsyncNotifier<Email> {
   static String emailBody({
     required String location,
     required DateTime datetime,
+    required String myName,
   }) {
     final dateFormat = DateFormat('dd/MM/yyyy');
     final timeFormat = DateFormat('HH:mm');
@@ -224,7 +265,7 @@ class InterviewEmailNotifier extends AsyncNotifier<Email> {
     final dateStr = dateFormat.format(datetime);
     return """Chào các bạn ứng viên,
 
-Mình là Hùng, trợ lý đào tạo sau đại học của Khoa Toán - Tin, Đại học Bách khoa Hà Nội.
+Mình là $myName, trợ lý đào tạo sau đại học của Khoa Toán - Tin, Đại học Bách khoa Hà Nội.
 
 Chúc mừng hồ sơ của bạn đã đạt điều kiện của chương trình Thạc sĩ Toán Tin. Bước tiếp theo để nhập học là phỏng vấn xét tuyển.
 Mời bạn đến phỏng vấn xét tuyển vào:

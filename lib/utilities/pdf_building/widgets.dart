@@ -18,32 +18,28 @@ const double pt = PdfPageFormat.point;
 /// for creating pdf forms.
 class PrintedCheckBox extends StatelessWidget {
   final String? title;
-  PrintedCheckBox(this.title);
+  final TextStyle? style;
+  PrintedCheckBox(this.title, {this.style});
 
   @override
   Widget build(Context context) {
     final theme = Theme.of(context);
     final fontSize = theme.defaultTextStyle.fontSize ?? 12 * pt;
-    return RichText(
-      text: TextSpan(
-        children: [
-          WidgetSpan(
-            child: Container(
-              width: fontSize,
-              height: fontSize,
-              decoration: BoxDecoration(
-                border: Border.all(width: 1 * pt),
-                borderRadius: BorderRadius.circular(3 * pt),
-              ),
-            ),
-            baseline: -2 * pt,
+    return Row(
+      children: [
+        Container(
+          width: fontSize,
+          height: fontSize,
+          decoration: BoxDecoration(
+            border: Border.all(width: 1 * pt),
+            borderRadius: BorderRadius.circular(3 * pt),
           ),
-          if (title != null) ...[
-            TextSpan(text: " "),
-            TextSpan(text: title),
-          ],
+        ),
+        if (title != null) ...[
+          SizedBox(width: 3 * pt),
+          Text(title!, style: style ?? theme.defaultTextStyle),
         ],
-      ),
+      ],
     );
   }
 }
@@ -265,7 +261,8 @@ extension TextStyleHelpers on TextStyle {
 /// Create dot fill pattern like "Name: ............"
 class Dotfill extends StatelessWidget {
   final Widget leading;
-  Dotfill({required this.leading});
+  final int flex;
+  Dotfill({required this.leading, this.flex = 1});
 
   @override
   Widget build(Context context) {
@@ -275,6 +272,7 @@ class Dotfill extends StatelessWidget {
       children: [
         leading,
         Expanded(
+          flex: flex,
           child: Divider(
             height: (theme.defaultTextStyle.fontSize ?? 12) * 0.5,
             borderStyle: BorderStyle.dotted,

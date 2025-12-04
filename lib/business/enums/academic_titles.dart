@@ -1,5 +1,7 @@
 import 'package:drift/drift.dart';
 
+/// [AcademicDegree] lưu thông tin về học vị học thuật của giảng viên
+/// Ví dụ: Cử nhân, Kỹ sư, Thạc sĩ, Tiến sĩ Khoa học, Tiến sĩ
 enum AcademicDegree {
   bachelor(value: "CN", label: "Cử nhân", short: "CN."),
   engineer(value: "KS", label: "Kỹ sư", short: "KS."),
@@ -38,6 +40,8 @@ class AcademicDegreeConverter extends TypeConverter<AcademicDegree?, String?> {
   String toSql(AcademicDegree? degree) => degree?.value ?? "";
 }
 
+/// [AcademicRank] lưu thông tin về học hàm học thuật của giảng viên
+/// Ví dụ: Phó giáo sư, Giáo sư
 enum AcademicRank {
   associateProfessor(value: "PGS", label: "Phó giáo sư", short: "PGS."),
   professor(value: "GS", label: "Giáo sư", short: "GS.");

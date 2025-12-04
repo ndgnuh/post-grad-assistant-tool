@@ -17,7 +17,10 @@ import 'document_pages/document_pages.dart';
 
 import 'msc_thesis_defense/page.dart' as msc_thesis;
 import 'msc_thesis_assignment/page.dart' as msc_thesis;
+import 'msc_thesis_defense/msc_thesis_details.dart' as msc_thesis;
 import 'thesis_defense_payment/page.dart' as msc_thesis;
+
+import 'phd_admission_payment/index.dart' as phd_pages;
 
 const initialLoadingRotue = InitialLoadingPage.routeName;
 const intialSettingsRoute = InitialSetupPage.routeName;
@@ -121,10 +124,20 @@ class AppNavigator {
 
   // Thesis defense payment page
   void toThesisListPage() => navigator.pushNamed(ThesisListPage.routeName);
+
   void toThesisDefensePaymentPage() =>
       navigator.pushNamed(msc_thesis.ThesisDefensePaymentPage.routeName);
+
+  /// Navigate to thesis details page
   void toThesisDetailsPage({required int thesisId}) => moveTo(
     (context) => ThesisDetailPage(thesisId: thesisId),
+  );
+
+  /// Navigate to thesis defense council assignment page
+  void toThesisDefenseCouncilAssignmentPage({required int thesisId}) => moveTo(
+    (context) => msc_thesis.MscThesisDetailsPage.assignDefenseCouncil(
+      thesisId: thesisId,
+    ),
   );
 
   void toThesisAssignmentPage() => moveTo(
@@ -132,7 +145,11 @@ class AppNavigator {
   );
 
   void toThesisHub() =>
-      navigator.pushNamed(msc_thesis.ThesisDefensePage.routeName);
+      navigator.pushNamed(msc_thesis.ThesisEverythingPage.routeName);
+
+  void toThesisDefenseRegisterPage() => moveTo(
+    (context) => msc_thesis.ThesisDefenseRegisterPage(),
+  );
 }
 
 final initialRoute = switch (kReleaseMode) {
@@ -165,12 +182,14 @@ final initialRoute = switch (kReleaseMode) {
 
   // Thesis defends
   // false => ThesisDefenseRegisterPage.routeName,
-  false => msc_thesis.ThesisDefensePaymentPage.routeName,
+  // false => msc_thesis.ThesisDefensePaymentPage.routeName,
   // false => ThesisListPage.routeName,
-  // false => msc_thesis.ThesisDefensePage.routeName,
+  // false => msc_thesis.ThesisEverythingPage.routeName,
+  false => msc_thesis.ThesisDefenseRegisterPage.routeName,
 
   // PhD students pages
   // false => PhdStudentListPage.routeName,
+  false => phd_pages.PhdAdmissionPaymentPage.routeName,
 
   // Teacher pages
   // false => TeacherSearchPage.routeName,
@@ -264,7 +283,7 @@ final routesBySections = <String, List<RouteItem>>{
       subtitle: null,
     ),
     (
-      route: msc_thesis.ThesisDefensePage.routeName,
+      route: msc_thesis.ThesisEverythingPage.routeName,
       label: "Luận văn thạc sĩ",
       icon: Symbols.school,
       subtitle: null,
@@ -417,10 +436,12 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       }
 
     // Thesis defense pages
-    case msc_thesis.ThesisDefensePage.routeName:
-      return const msc_thesis.ThesisDefensePage();
+    case msc_thesis.ThesisEverythingPage.routeName:
+      return const msc_thesis.ThesisEverythingPage();
     case msc_thesis.ThesisDefensePaymentPage.routeName:
       return const msc_thesis.ThesisDefensePaymentPage();
+    case msc_thesis.ThesisDefenseRegisterPage.routeName:
+      return const msc_thesis.ThesisDefenseRegisterPage();
     // case ThesisDefensePaymentPage.routeName:
     //   return const ThesisDefensePaymentPage();
 
@@ -436,6 +457,8 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       }
     case PhdStudentCreatePage.routeName:
       return const PhdStudentCreatePage();
+    case phd_pages.PhdAdmissionPaymentPage.routeName:
+      return const phd_pages.PhdAdmissionPaymentPage();
 
     /// Functional pages
     case SettingsPage.routeName:

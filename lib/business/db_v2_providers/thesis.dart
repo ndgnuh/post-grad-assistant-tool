@@ -31,6 +31,36 @@ class ThesisByIdNotifier extends AsyncNotifier<ThesisData> {
     return thesis!;
   }
 
+  void assignPresident(int teacherId) => updateThesis(
+    ThesisCompanion(
+      presidentId: Value(teacherId),
+    ),
+  );
+
+  void assignSecretary(int teacherId) => updateThesis(
+    ThesisCompanion(
+      secretaryId: Value(teacherId),
+    ),
+  );
+
+  void assignFirstReviewer(int teacherId) => updateThesis(
+    ThesisCompanion(
+      firstReviewerId: Value(teacherId),
+    ),
+  );
+
+  void assignSecondReviewer(int teacherId) => updateThesis(
+    ThesisCompanion(
+      secondReviewerId: Value(teacherId),
+    ),
+  );
+
+  void assignMember(int teacherId) => updateThesis(
+    ThesisCompanion(
+      memberId: Value(teacherId),
+    ),
+  );
+
   void updateThesis(ThesisCompanion companion) async {
     final db = await ref.watch(mainDatabaseProvider.future);
     final stmt = db.thesis.update();
