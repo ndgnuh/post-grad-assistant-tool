@@ -1,9 +1,9 @@
 import 'package:fami_tools/utilities/strings.dart';
 
-import '../documents.dart';
+import '../../documents.dart';
 import 'package:fami_tools/utilities/excel_builder.dart';
 
-import '../documents/models/payment_atm.dart';
+import '../models/payment_atm.dart';
 
 ExcelFile paymentTableExcel({required PaymentAtmModel model}) {
   final builder = _PaymentAtmExcelBuilder(model);

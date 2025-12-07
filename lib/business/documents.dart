@@ -1,6 +1,6 @@
-export 'documents/payment_request_pdf.dart';
-export 'documents/payment_listing_pdf.dart';
-export 'documents/payment_atm_pdf.dart';
+export 'documents/payment/request_pdf.dart';
+export 'documents/payment/listing_pdf.dart';
+export 'documents/payment/atm_pdf.dart';
 export 'documents/admission_payment_table_pdf.dart';
 export 'documents/admission_payment_listing_pdf.dart';
 
@@ -8,9 +8,9 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
-import 'documents/payment_request_pdf.dart' as payment_pdfs;
-import 'documents/payment_listing_pdf.dart' as payment_pdfs;
-import 'documents/payment_atm_pdf.dart' as payment_pdfs;
+import 'documents/payment/request_pdf.dart' as payment_pdfs;
+import 'documents/payment/listing_pdf.dart' as payment_pdfs;
+import 'documents/payment/atm_pdf.dart' as payment_pdfs;
 import 'documents/phd_admission/01_council_suggestion.dart' as phd_admission;
 import 'documents/phd_admission/02_score_sheet.dart' as phd_admission;
 import 'documents/phd_admission/03_payment_table.dart' as phd_admission;
@@ -20,8 +20,8 @@ import 'documents/msc_thesis/assignment.dart' as msc_thesis;
 import 'documents/msc_thesis/score_sheet.dart' as msc_thesis;
 import 'documents/msc_thesis/council_suggestion.dart' as msc_thesis;
 
-import 'excel_files/msc_teaching_assignment.dart' as msc_xlsx;
-import 'excel_files/payment_atm_table.dart' as payment_xlsx;
+import 'documents/msc_teaching_assignment.dart' as msc_xlsx;
+import 'documents/payment/atm_xlsx.dart' as payment_xlsx;
 
 import 'dart:typed_data';
 

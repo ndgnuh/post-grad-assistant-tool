@@ -1,9 +1,9 @@
 import 'package:fami_tools/utilities/pdf_building.dart';
 import 'package:fami_tools/utilities/strings.dart';
 
-import 'common_widgets.dart';
-import 'models/payment_request.dart';
-import '../documents.dart';
+import '../common_widgets.dart';
+import '../models/payment_request.dart';
+import '../../documents.dart';
 
 Future<PdfFile> paymentRequestPdf({
   required PaymentRequestModel model,
