@@ -4,7 +4,7 @@ import 'package:fami_tools/utilities/pdf_building.dart';
 import 'package:fami_tools/utilities/strings.dart';
 import 'package:intl/intl.dart';
 
-import 'pdfs.dart';
+import '../documents.dart';
 
 Future<PdfFile> admissionPaymentListingPdf({
   required AdmissionPaymentListingModel model,

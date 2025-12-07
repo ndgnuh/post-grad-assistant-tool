@@ -5,10 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../business/db_v2_providers.dart';
-import '../../business/document_models/document_models.dart';
-import '../../business/excel_files.dart';
-import '../../business/pdfs/pdfs.dart' as pdfs;
-import '../../business/pdfs/pdfs.dart';
+import '../../business/documents/models/document_models.dart';
+import '../../business/documents.dart';
 import 'providers.dart';
 
 const _memberPay = 60_000;
@@ -35,12 +33,12 @@ final paymentListingPdfProvider = FutureProvider<PdfFile>((ref) async {
   );
 
   // Teachers in the council
-  final entries = <pdfs.PaymentListingEntry>[];
+  final entries = <PaymentListingEntry>[];
   final estDate = council.establishmentDecisionDate;
   final estCode = council.establishmentDecisionId;
   final estDateStr = DateFormat("dd/MM/yyyy").format(estDate);
   for (final student in students) {
-    final pdfs.PaymentListingEntry entry = (
+    final PaymentListingEntry entry = (
       amount: _perCouncilPay,
       reason:
           "Thanh toán tiền cho tiểu ban xét tuyển thạc sĩ theo định hướng nghiên cứu của thí sinh ${student.name}, theo Quyết định số $estCode ngày $estDateStr",
@@ -49,13 +47,13 @@ final paymentListingPdfProvider = FutureProvider<PdfFile>((ref) async {
   }
 
   /// Creating the PDF model
-  final model = pdfs.AdmissionPaymentListingModel(
+  final model = AdmissionPaymentListingModel(
     establishmentDecisionCode: estCode,
     establishmentDecisionDate: estDate,
     paymentPerStudent: _perCouncilPay,
     studentNames: students.map((e) => e.name).toList(),
   );
-  return pdfs.admissionPaymentListingPdf(model: model);
+  return admissionPaymentListingPdf(model: model);
 });
 
 final paymentTablePdfProvider = FutureProvider<Uint8List>((ref) async {
@@ -89,7 +87,7 @@ final paymentTablePdfProvider = FutureProvider<Uint8List>((ref) async {
     teacherByIdProvider(council.member3Id).future,
   );
 
-  final model = pdfs.AdmissionPaymentTableModel(
+  final model = AdmissionPaymentTableModel(
     establishmentDecisionCode: council.establishmentDecisionId,
     establishmentDecisionDate: council.establishmentDecisionDate,
     president: president,
@@ -102,7 +100,7 @@ final paymentTablePdfProvider = FutureProvider<Uint8List>((ref) async {
     secretaryAllowance: _secretaryPay,
     memberAllowance: _memberPay,
   );
-  return pdfs.admissionPaymentTablePdf(model: model);
+  return admissionPaymentTablePdf(model: model);
 });
 
 final paymentAtmExcelProvider = FutureProvider<ExcelFile>((ref) async {
@@ -136,26 +134,26 @@ final paymentAtmExcelProvider = FutureProvider<ExcelFile>((ref) async {
     teacherByIdProvider(council.member3Id).future,
   );
 
-  final model = pdfs.PaymentAtmModel(
+  final model = PaymentAtmModel(
     reason: _paymentReason(council.year),
     entries: [
-      pdfs.PaymentAtmEntry(
+      PaymentAtmEntry(
         teacher: president,
         amount: _presidentPay * numStudents,
       ),
-      pdfs.PaymentAtmEntry(
+      PaymentAtmEntry(
         teacher: secretary,
         amount: _secretaryPay * numStudents,
       ),
-      pdfs.PaymentAtmEntry(
+      PaymentAtmEntry(
         teacher: member1,
         amount: _memberPay * numStudents,
       ),
-      pdfs.PaymentAtmEntry(
+      PaymentAtmEntry(
         teacher: member2,
         amount: _memberPay * numStudents,
       ),
-      pdfs.PaymentAtmEntry(
+      PaymentAtmEntry(
         teacher: member3,
         amount: _memberPay * numStudents,
       ),
@@ -197,32 +195,32 @@ final paymentAtmPdfProvider = FutureProvider<PdfFile>((ref) async {
     teacherByIdProvider(council.member3Id).future,
   );
 
-  final model = pdfs.PaymentAtmModel(
+  final model = PaymentAtmModel(
     reason: _paymentReason(council.year),
     entries: [
-      pdfs.PaymentAtmEntry(
+      PaymentAtmEntry(
         teacher: president,
         amount: _presidentPay * numStudents,
       ),
-      pdfs.PaymentAtmEntry(
+      PaymentAtmEntry(
         teacher: secretary,
         amount: _secretaryPay * numStudents,
       ),
-      pdfs.PaymentAtmEntry(
+      PaymentAtmEntry(
         teacher: member1,
         amount: _memberPay * numStudents,
       ),
-      pdfs.PaymentAtmEntry(
+      PaymentAtmEntry(
         teacher: member2,
         amount: _memberPay * numStudents,
       ),
-      pdfs.PaymentAtmEntry(
+      PaymentAtmEntry(
         teacher: member3,
         amount: _memberPay * numStudents,
       ),
     ],
   );
-  return pdfs.paymentAtmPdf(
+  return paymentAtmPdf(
     model: model,
     baseFontSize: 12,
     margin: EdgeInsets.all(1.5 * inch),
@@ -251,7 +249,7 @@ final paymentRequestPdfProvider = FutureProvider((ref) async {
     paymentReason: reason,
     paymentAmount: amount,
   );
-  final pdf = pdfs.paymentRequestPdf(model: model);
+  final pdf = paymentRequestPdf(model: model);
   return pdf;
 });
 

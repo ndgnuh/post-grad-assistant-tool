@@ -1,10 +1,11 @@
-import 'package:fami_tools/business/pdfs/common_widgets.dart';
+import 'package:fami_tools/business/view_models.dart';
 import 'package:fami_tools/utilities/strings.dart';
 import 'package:intl/intl.dart';
-import 'package:fami_tools/business/view_models.dart';
+
 import '../../../utilities/pdf_building.dart';
+import '../../documents.dart';
 import '../../drift_orm.dart';
-import '../pdfs.dart';
+import '../common_widgets.dart';
 
 final margin = EdgeInsets.symmetric(
   vertical: 0.75 * inch,

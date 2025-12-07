@@ -1,5 +1,5 @@
 import 'package:fami_tools/business/copy_pasta.dart';
-import 'package:fami_tools/business/pdfs/pdfs.dart';
+import 'package:fami_tools/business/documents.dart';
 import 'package:fami_tools/custom_widgets.dart';
 import 'package:fami_tools/custom_widgets/pdf_preview_tile.dart';
 import 'package:flutter/material.dart';

@@ -1,9 +1,9 @@
-import 'package:fami_tools/business/pdfs/common_widgets.dart';
-import 'package:fami_tools/business/pdfs/pdfs.dart';
 import 'package:fami_tools/utilities/pdf_building.dart';
 import 'package:fami_tools/utilities/strings.dart';
 
-export '../document_models/payment_atm.dart';
+import 'common_widgets.dart';
+import '../documents.dart';
+export 'models/payment_atm.dart';
 
 Future<PdfFile> paymentAtmPdf({
   required PaymentAtmModel model,

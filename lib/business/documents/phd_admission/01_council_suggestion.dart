@@ -3,7 +3,7 @@ import 'package:fami_tools/utilities/strings.dart';
 
 import '../../drift_orm.dart';
 import '../common_widgets.dart';
-import '../pdfs.dart';
+import '../../documents.dart';
 
 Future<PdfFile> councilSuggestionPdf({
   required PhdStudentData phdStudent,

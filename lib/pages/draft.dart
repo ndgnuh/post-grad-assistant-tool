@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:fami_tools/business/document_models/payment_atm.dart';
-import 'package:fami_tools/business/excel_files.dart';
+import 'package:fami_tools/business/documents/models/payment_atm.dart';
+import 'package:fami_tools/business/documents.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

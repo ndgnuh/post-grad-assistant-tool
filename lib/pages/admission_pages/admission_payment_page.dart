@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:fami_tools/business/pdfs/pdfs.dart' show PdfFile;
+import 'package:fami_tools/business/documents.dart' show PdfFile;
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

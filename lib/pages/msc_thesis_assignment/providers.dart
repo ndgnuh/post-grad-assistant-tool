@@ -3,9 +3,9 @@ import 'package:fami_tools/business/selection_models.dart';
 import 'package:fami_tools/business/view_models.dart';
 import 'package:riverpod/riverpod.dart';
 import '../../business/db_v2_providers.dart';
-import 'package:fami_tools/business/pdfs/pdfs.dart';
+import 'package:fami_tools/business/documents.dart';
 
-import '../../business/excel_files.dart';
+import '../../business/documents.dart';
 
 final _name = "msc-thesis-assignment";
 

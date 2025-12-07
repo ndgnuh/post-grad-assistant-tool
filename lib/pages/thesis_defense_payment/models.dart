@@ -1,7 +1,7 @@
 import 'package:fami_tools/business/db_v2_providers.dart';
-import 'package:fami_tools/business/document_models/document_models.dart'
+import 'package:fami_tools/business/documents/models/document_models.dart'
     as document_models;
-import 'package:fami_tools/business/pdfs/pdfs.dart';
+import 'package:fami_tools/business/documents.dart';
 
 class ThesisViewModel {
   final ThesisData thesis;
@@ -60,7 +60,7 @@ class ThesisPaymentModel {
   }
 
   /// Model used to build Payment ATM document (PDF/Excel)
-  PaymentAtmModel get paymentAtmModel {
+  document_models.PaymentAtmModel get paymentAtmModel {
     final teachers = <TeacherData>{};
     final timesPresident = <TeacherData, int>{};
     final timesSecretary = <TeacherData, int>{};
@@ -94,7 +94,7 @@ class ThesisPaymentModel {
       member: 300_000,
     );
 
-    final entries = <PaymentAtmEntry>[];
+    final entries = <document_models.PaymentAtmEntry>[];
     final sortedTeachers = teachers.toList(growable: false);
     sortedTeachers.sort((a, b) {
       final c1 = a.isOutsider ? 1 : 0;
@@ -118,14 +118,14 @@ class ThesisPaymentModel {
           (timesAsReviewer * moneyPerRole.reviewer) +
           (timesAsMember * moneyPerRole.member);
 
-      final entry = PaymentAtmEntry(
+      final entry = document_models.PaymentAtmEntry(
         teacher: teacher,
         amount: totalAmount,
       );
       entries.add(entry);
     }
 
-    return PaymentAtmModel(
+    return document_models.PaymentAtmModel(
       reason: reason,
       entries: entries,
     );

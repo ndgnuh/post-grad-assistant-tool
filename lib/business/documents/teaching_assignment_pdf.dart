@@ -1,8 +1,8 @@
-import 'package:fami_tools/business/pdfs/common_widgets.dart';
 import 'package:fami_tools/utilities/strings.dart';
-import 'package:fami_tools/business/pdfs/pdfs.dart';
 import 'package:fami_tools/utilities/pdf_building.dart';
 
+import 'common_widgets.dart';
+import '../documents.dart';
 import '../drift_orm.dart';
 
 Future<PdfFile> buildTeachingAssignmentPdf({

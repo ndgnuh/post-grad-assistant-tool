@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 
-import 'package:fami_tools/business/pdfs/common_widgets.dart';
 import 'package:fami_tools/utilities/pdf_building.dart';
 import 'package:fami_tools/utilities/strings.dart';
 
+import '../common_widgets.dart';
 import '../../db_v2_providers.dart';
-import '../pdfs.dart';
+import '../../documents.dart';
 
 Future<PdfFile> paymentTablePdf({
   required final PhdStudentData student,

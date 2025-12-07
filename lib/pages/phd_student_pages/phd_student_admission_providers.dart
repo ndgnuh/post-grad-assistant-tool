@@ -6,7 +6,7 @@ import 'package:fami_tools/utilities/strings.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:riverpod/riverpod.dart';
 import '../../business/db_v2_providers.dart';
-import '../../business/pdfs/pdfs.dart' as pdfs;
+import '../../business/documents.dart' as pdfs;
 
 final scoreSheetPdfProvider = FutureProvider.family((ref, int studentId) async {
   final provider = phdStudentByIdProvider(studentId);

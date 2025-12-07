@@ -1,7 +1,7 @@
 import 'package:fami_tools/business/db_v2_providers/database.dart';
 import 'package:fami_tools/business/db_v2_providers/thesis.dart';
 import 'package:fami_tools/business/drift_orm.dart';
-import 'package:fami_tools/business/pdfs/pdfs.dart';
+import 'package:fami_tools/business/documents.dart';
 import 'package:fami_tools/business/view_models.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

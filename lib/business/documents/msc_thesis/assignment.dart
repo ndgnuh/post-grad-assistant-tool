@@ -1,14 +1,13 @@
 // ignore_for_file: unnecessary_brace_in_string_interps
 
 import 'package:fami_tools/business/db_v2_providers.dart';
-import 'package:fami_tools/business/pdfs/common_widgets.dart';
+
 import 'package:fami_tools/utilities/pdf_building.dart';
 import '../../../utilities/excel_builder.dart';
 import 'package:fami_tools/business/view_models.dart';
-import 'package:flutter/gestures.dart';
 
-import '../pdfs.dart';
-import '../../excel_files.dart';
+import '../common_widgets.dart';
+import '../../documents.dart';
 
 Future<ExcelFile> buildThesisAssignmentExcel({
   required List<StudentViewModel> theses,

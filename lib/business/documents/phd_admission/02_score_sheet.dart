@@ -4,7 +4,7 @@ import 'package:fami_tools/utilities/strings.dart';
 import 'package:fami_tools/utilities/pdf_building.dart';
 
 import '../../db_v2_providers.dart';
-import '../pdfs.dart';
+import '../../documents.dart';
 
 Future<PdfFile> scoreSheetPdf({
   required PhdStudentData student,

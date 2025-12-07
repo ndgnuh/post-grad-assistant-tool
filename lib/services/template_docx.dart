@@ -18,7 +18,7 @@ Future<void> renderDocxFromContext({
   // Load document xml
   final documentXmlFile = archive.findFile("word/document.xml");
   final xmlBytes = documentXmlFile!.readBytes();
-  final xmlString = utf8.decode(xmlBytes);
+  final xmlString = utf8.decode(xmlBytes as List<int>);
   final xmlObj = XmlDocument.parse(xmlString);
 
   // Render the xml object
