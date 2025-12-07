@@ -9,7 +9,7 @@ import 'package:fami_tools/gen/assets.gen.dart';
 // import '../business/domain_objects.dart';
 import '../business/db_v2_providers.dart';
 
-import 'package:fami_tools/utilities/docx_template.dart';
+import 'package:fami_tools/business/documents/utilities/docx_template.dart';
 
 Future<ExcelFile> buildExcel(WidgetRef ref) async {
   final thesisIds = await ref.watch(trackedThesisIdsProvider.future);

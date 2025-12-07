@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:fami_tools/gen/assets.gen.dart';
-import 'package:fami_tools/utilities/docx_template.dart';
+import 'package:fami_tools/business/documents/utilities/docx_template.dart';
 import 'package:fami_tools/utilities/strings.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:riverpod/riverpod.dart';

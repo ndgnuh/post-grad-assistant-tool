@@ -7,7 +7,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf_combiner/responses/pdf_combiner_status.dart';
 
-import './widgets.dart';
+import 'pdf_widgets.dart';
 
 const defaultBaseFontSize = 12.0 * pt;
 const defaultMargin = EdgeInsets.all(1.0 * inch);

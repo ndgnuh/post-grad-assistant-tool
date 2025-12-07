@@ -2,7 +2,7 @@ import 'package:fami_tools/business/view_models.dart';
 import 'package:fami_tools/utilities/strings.dart';
 import 'package:intl/intl.dart';
 
-import '../../../utilities/pdf_building.dart';
+import '../pdf_utils.dart';
 import '../../documents.dart';
 import '../../main_database.dart';
 import '../common_widgets.dart';

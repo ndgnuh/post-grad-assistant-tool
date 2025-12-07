@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:fami_tools/utilities/strings.dart';
-import 'package:fami_tools/utilities/pdf_building.dart';
+import 'package:fami_tools/business/documents/pdf_utils.dart';
 
 import '../../db_v2_providers.dart';
 import '../../documents.dart';

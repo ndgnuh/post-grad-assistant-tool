@@ -1,0 +1,1 @@
+export 'utilities/docx_template.dart';

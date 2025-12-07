@@ -1,7 +1,7 @@
 import 'package:fami_tools/utilities/strings.dart';
 
 import '../../documents.dart';
-import 'package:fami_tools/utilities/excel_builder.dart';
+import 'package:fami_tools/business/documents/utilities/xlsx_builder.dart';
 
 import '../models/payment_atm.dart';
 

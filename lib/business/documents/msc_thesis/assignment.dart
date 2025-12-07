@@ -2,8 +2,8 @@
 
 import 'package:fami_tools/business/db_v2_providers.dart';
 
-import 'package:fami_tools/utilities/pdf_building.dart';
-import '../../../utilities/excel_builder.dart';
+import 'package:fami_tools/business/documents/pdf_utils.dart';
+import '../utilities/xlsx_builder.dart';
 import 'package:fami_tools/business/view_models.dart';
 
 import '../common_widgets.dart';
