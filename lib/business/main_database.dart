@@ -5,7 +5,7 @@ import 'business_enums.dart';
 
 export './business_enums.dart';
 
-part 'drift_orm.g.dart';
+part 'main_database.g.dart';
 
 extension AnyEmail on TeacherData {
   String? get email => workEmail ?? personalEmail;

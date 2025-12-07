@@ -12,4 +12,4 @@ export 'db_v2_providers/teachers.dart';
 export 'db_v2_providers/teaching_assignment.dart';
 export 'db_v2_providers/teaching_registration.dart';
 export 'db_v2_providers/thesis.dart';
-export 'drift_orm.dart';
+export 'main_database.dart';

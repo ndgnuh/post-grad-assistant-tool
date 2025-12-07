@@ -4,7 +4,7 @@ import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../business/db_v2_providers.dart';
-import '../../business/drift_orm.dart';
+import '../../business/main_database.dart';
 
 final filteredPhdStudentsProvider = AsyncNotifierProvider(
   FilteredPhdStudentsNotifier.new,

@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-import '../../business/drift_orm.dart';
+import '../../business/main_database.dart';
 
 String teachingInvitationMessage({
   required Pronoun pronoun,

@@ -3,7 +3,7 @@ import 'package:fami_tools/utilities/pdf_building.dart';
 
 import 'common_widgets.dart';
 import '../documents.dart';
-import '../drift_orm.dart';
+import '../main_database.dart';
 
 Future<PdfFile> buildTeachingAssignmentPdf({
   required SemesterData semester,

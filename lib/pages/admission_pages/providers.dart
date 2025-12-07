@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../business/copy_pasta.dart';
 import '../../business/db_v2_providers.dart';
-import '../../business/drift_orm.dart';
+import '../../business/main_database.dart';
 import '../../business/selection_models.dart';
 
 final acceptanceEmailProvider = AsyncNotifierProvider(

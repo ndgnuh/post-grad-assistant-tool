@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../utilities/pdf_building.dart';
 import '../../documents.dart';
-import '../../drift_orm.dart';
+import '../../main_database.dart';
 import '../common_widgets.dart';
 
 final margin = EdgeInsets.symmetric(

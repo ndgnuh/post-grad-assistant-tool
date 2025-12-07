@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:number_to_vietnamese_words/number_to_vietnamese_words.dart';
 import 'package:pdf/pdf.dart';
 
-import '../drift_orm.dart';
+import '../main_database.dart';
 import '../../services/pdf_builder/index.dart';
 
 const _taxPercent = 0.1;

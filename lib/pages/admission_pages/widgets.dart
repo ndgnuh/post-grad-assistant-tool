@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../business/copy_pasta.dart';
-import '../../business/drift_orm.dart';
+import '../../business/main_database.dart';
 import 'providers.dart';
 
 /// Create a heading for expansion panel

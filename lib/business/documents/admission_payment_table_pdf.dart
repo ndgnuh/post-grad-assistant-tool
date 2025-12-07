@@ -4,7 +4,7 @@ import 'package:fami_tools/utilities/pdf_building.dart';
 import 'package:fami_tools/utilities/strings.dart';
 import 'package:intl/intl.dart';
 
-import '../drift_orm.dart';
+import '../main_database.dart';
 
 Future<Uint8List> admissionPaymentTablePdf({
   required AdmissionPaymentTableModel model,

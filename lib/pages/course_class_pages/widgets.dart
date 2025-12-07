@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../business/drift_orm.dart';
+import '../../business/main_database.dart';
 import 'providers.dart';
 
 class RegistrationNotificationButton extends ConsumerWidget {
