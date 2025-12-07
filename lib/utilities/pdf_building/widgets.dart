@@ -46,34 +46,53 @@ class PrintedCheckBox extends StatelessWidget {
 
 /// Create a footer just like fancyhdr
 /// Should I use [Widget] instead of [String?]
-class FancyFoot extends StatelessWidget {
+class FancyHdr extends StatelessWidget {
   final String left;
   final String center;
   final String right;
   final double rule;
-  FancyFoot({
+  final bool header;
+  FancyHdr({
     this.left = "",
     this.right = "",
     this.center = "",
-    this.rule = 1,
+    this.header = false,
+    this.rule = 1 * pt,
   });
 
   @override
   Widget build(Context context) {
+    final row = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(left),
+        Text(center),
+        Text(right),
+      ],
+    );
+
+    if (rule <= 0) {
+      return row;
+    }
+
+    if (header) {
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(width: rule),
+          ),
+        ),
+        child: row,
+      );
+    }
+
     return DecoratedBox(
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(width: rule),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(left),
-          Text(center),
-          Text(right),
-        ],
-      ),
+      child: row,
     );
   }
 }
@@ -86,7 +105,8 @@ class EzTable<T> extends StatelessWidget {
   final List<Object?> headers;
   final TableBorder? border;
   final EdgeInsetsGeometry padding;
-  final bool dataWrap;
+  final bool defaultDataWrap;
+  final Map<int, bool> dataWraps;
   final bool headerWrap;
   final List<T> data;
   final List<Object?> Function(int, T) rowBuilder;
@@ -105,7 +125,8 @@ class EzTable<T> extends StatelessWidget {
       vertical: 2 * pt,
       horizontal: 3 * pt,
     ),
-    this.dataWrap = false,
+    this.defaultDataWrap = false,
+    this.dataWraps = const {},
     this.headerWrap = false,
     this.headerForeground,
     this.columnWidths,
@@ -120,6 +141,7 @@ class EzTable<T> extends StatelessWidget {
       children: [
         // Headers
         TableRow(
+          repeat: true,
           verticalAlignment: TableCellVerticalAlignment.middle,
           children: _headerWidgets(context),
         ),
@@ -144,7 +166,7 @@ class EzTable<T> extends StatelessWidget {
               alignment: alignments?[colCount] ?? Alignment.center,
               child: Text(
                 data?.toString() ?? "",
-                softWrap: dataWrap,
+                softWrap: dataWraps[colCount] ?? defaultDataWrap,
                 textAlign: textAligns?[colCount] ?? TextAlign.center,
                 style: Theme.of(context).defaultTextStyle.copyWith(),
               ),
@@ -179,7 +201,7 @@ class EzTable<T> extends StatelessWidget {
         alignment: Alignment.center,
         child: Text(
           header?.toString() ?? "",
-          textAlign: textAligns?[i] ?? TextAlign.center,
+          textAlign: TextAlign.center,
           softWrap: headerWrap,
           style: theme.defaultTextStyle.copyWith(
             color: headerForeground,

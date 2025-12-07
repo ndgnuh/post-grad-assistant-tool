@@ -85,6 +85,7 @@ dependencies:
   xml: ^6.6.1
   pdf_combiner: ^4.4.0
   dart_pdf_reader: ^0.4.3
+  flutter_hooks: ^0.21.3+1
 
 dev_dependencies:
   flutter_test:

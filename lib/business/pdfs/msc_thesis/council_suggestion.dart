@@ -1,19 +1,19 @@
 import 'package:fami_tools/business/pdfs/common_widgets.dart';
 import 'package:fami_tools/utilities/strings.dart';
 import 'package:intl/intl.dart';
-import '../../../pages/msc_thesis_defense/models.dart';
+import 'package:fami_tools/business/view_models.dart';
 import '../../../utilities/pdf_building.dart';
 import '../../drift_orm.dart';
 import '../pdfs.dart';
 
 final margin = EdgeInsets.symmetric(
   vertical: 0.75 * inch,
-  horizontal: 1 * inch,
+  horizontal: 0.79 * inch,
 );
 final baseFontSize = 11.0;
 
 Future<PdfFile> councilSuggestionPdf({
-  required StudentThesisViewModel model,
+  required ThesisViewModel model,
 }) async {
   assert(model.student != null, "Student data must not be null");
 
@@ -31,7 +31,7 @@ Future<PdfFile> councilSuggestionPdf({
 }
 
 Future<PdfFile> multipleCouncilSuggestionPdfs({
-  required List<StudentThesisViewModel> models,
+  required List<ThesisViewModel> models,
 }) async {
   final files = [
     for (final model in models) await councilSuggestionPdf(model: model),
@@ -58,7 +58,7 @@ class CouncilSuggestion extends StatelessWidget {
   final TeacherData? member;
 
   factory CouncilSuggestion.fromViewModel({
-    required StudentThesisViewModel viewModel,
+    required ThesisViewModel viewModel,
   }) {
     return CouncilSuggestion(
       student: viewModel.student!,
@@ -83,9 +83,9 @@ class CouncilSuggestion extends StatelessWidget {
 
   static const List<String> roles = [
     "Chủ tịch",
-    "Thư ký",
     "Phản biện 1",
     "Phản biện 2",
+    "Thư ký",
     "Ủy viên",
   ];
 
@@ -93,7 +93,7 @@ class CouncilSuggestion extends StatelessWidget {
     "TT",
     "Họ và tên",
     "Học vị/chức danh\nkhoa học",
-        "Ngành/Chuyên ngành",
+    "Ngành/Chuyên ngành",
     "Đơn vị công tác\nĐiện thoại",
     "Tháng/Năm nhận\nhọc vị tiến sĩ",
     "Trách nhiệm\ntrong Hội đồng",
@@ -141,9 +141,9 @@ class CouncilSuggestion extends StatelessWidget {
     }
 
     addRow(president, "Chủ tịch");
-    addRow(secretary, "Thư ký");
     addRow(firstReviewer, "Phản biện 1");
     addRow(secondReviewer, "Phản biện 2");
+    addRow(secretary, "Thư ký");
     addRow(member, "Ủy viên");
 
     return rows;
@@ -154,6 +154,7 @@ class CouncilSuggestion extends StatelessWidget {
     final bold = TextStyle(fontWeight: FontWeight.bold);
     final year = DateTime.now().year;
     final italic = TextStyle(fontStyle: FontStyle.italic);
+    final indent = " " * 0;
 
     return FullPage(
       ignoreMargins: false,
@@ -162,42 +163,39 @@ class CouncilSuggestion extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              FormalTitle(
-                firstTitle: "ĐẠI HỌC BÁCH KHOA HÀ NỘI",
-                secondTitle: "KHOA TOÁN - TIN",
-              ),
-              Spacer(),
-              Text(
-                "ĐỀ NGHỊ DANH SÁCH HỘI ĐỒNG CHẤM LUẬN VĂN THẠC SĨ",
-                style: bold,
-              ),
-            ],
+          Footer(
+            leading: FormalTitle(
+              firstTitle: "ĐẠI HỌC BÁCH KHOA HÀ NỘI",
+              secondTitle: "KHOA TOÁN - TIN",
+            ),
           ),
 
-          SizedBox(height: 20 * pt),
+          SizedBox(height: 8 * pt),
+          Center(
+            child: Text(
+              "ĐỀ NGHỊ DANH SÁCH HỘI ĐỒNG CHẤM LUẬN VĂN THẠC SĨ",
+              style: bold,
+            ),
+          ),
+          SizedBox(height: 8 * pt),
+
           Row(
             children: [
               Expanded(
                 child: Dotfill(
                   leading: InfoField(
                     texts: [
-                      "Của học viên cao học: ",
+                      "${indent}Của học viên cao học: ",
                       student.name,
+                      " ",
                     ],
                   ),
                 ),
               ),
               Expanded(
-                flex: 2,
                 child: Dotfill(
-                  flex: 4,
                   leading: InfoField(
-                    texts: [
-                      " Mã HV: ",
-                      student.studentId ?? "202xxxxxM",
-                    ],
+                    texts: [" Mã HV: ", student.studentId ?? "202xxxxxM", " "],
                   ),
                 ),
               ),
@@ -205,12 +203,21 @@ class CouncilSuggestion extends StatelessWidget {
           ),
 
           SizedBox(height: 3 * pt),
-          Dotfill(leading: InfoField(texts: ["Ngành: ", "Toán - Tin"])),
-          SizedBox(height: 10 * pt),
+          Dotfill(
+            leading: InfoField(
+              // ignore: unnecessary_brace_in_string_interps
+              texts: ["${indent}Đề tài: ", thesis.vietnameseTitle, " "],
+            ),
+          ),
+          SizedBox(height: 3 * pt),
+          Dotfill(
+            leading: InfoField(texts: ["${indent}Ngành: ", "Toán - Tin "]),
+          ),
+          SizedBox(height: 3 * pt),
 
           /// TODO: my falcuty magic to configurable
           Text(
-            "Căn cứ vào hồ sơ bảo vệ luận văn thạc sĩ của học viên, Khoa Toán - Tin đồng ý cho học viên bảo vệ luận văn của mình trước Hội đồng chấm luận văn thạc sĩ và đề nghị Danh sách Hội đồng gồm các thành viên sau đây:",
+            "${indent}Căn cứ vào hồ sơ bảo vệ luận văn thạc sĩ của học viên, Khoa Toán - Tin đồng ý cho học viên bảo vệ luận văn của mình trước Hội đồng chấm luận văn thạc sĩ và đề nghị Danh sách Hội đồng gồm các thành viên sau đây:",
           ),
           SizedBox(height: 3 * pt),
 
@@ -227,11 +234,11 @@ class CouncilSuggestion extends StatelessWidget {
             },
             columnWidths: {
               0: IntrinsicColumnWidth(),
-              1: FlexColumnWidth(), // Họ và tên
+              1: IntrinsicColumnWidth(), // Họ và tên
               2: IntrinsicColumnWidth(), // Chức vụ
               3: FlexColumnWidth(), // Ngành/Chuyên ngành
-              4: FlexColumnWidth(), // Đơn vị công tác/Điện thoại
-              5: IntrinsicColumnWidth(),
+              4: IntrinsicColumnWidth(), // Đơn vị công tác/Điện thoại
+              5: FlexColumnWidth(),
               6: IntrinsicColumnWidth(),
             },
             cellAlignment: Alignment.centerLeft,
@@ -241,7 +248,7 @@ class CouncilSuggestion extends StatelessWidget {
           ),
 
           // Sign area
-          SizedBox(height: 20 * pt),
+          SizedBox(height: 6 * pt),
           Row(
             children: [
               Spacer(),
@@ -256,7 +263,7 @@ class CouncilSuggestion extends StatelessWidget {
           ),
 
           Spacer(),
-          FancyFoot(
+          FancyHdr(
             left: "ĐT.QT12.BM04",
             center: "Lần ban hành: 02",
             right: "Ngày ban hành: 28/04/2023",

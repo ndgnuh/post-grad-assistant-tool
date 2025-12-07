@@ -16,6 +16,7 @@ import 'phd_admission/02_score_sheet.dart' as phd_admission;
 import 'phd_admission/03_payment_table.dart' as phd_admission;
 import 'teaching_assignment_pdf.dart' as msc_course_class;
 
+import 'msc_thesis/assignment.dart' as msc_thesis;
 import 'msc_thesis/score_sheet.dart' as msc_thesis;
 import 'msc_thesis/council_suggestion.dart' as msc_thesis;
 
@@ -49,6 +50,7 @@ class PdfFile {
     councilSuggestion: msc_thesis.councilSuggestionPdf,
     multipleScoreSheets: msc_thesis.thesisScoreSheetsMultiplePdf,
     multipleCouncilSuggestion: msc_thesis.multipleCouncilSuggestionPdfs,
+    assignment: msc_thesis.buildThesisAssignmentPdf,
   );
 
   static const payment = (

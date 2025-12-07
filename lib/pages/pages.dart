@@ -185,7 +185,9 @@ final initialRoute = switch (kReleaseMode) {
   // false => msc_thesis.ThesisDefensePaymentPage.routeName,
   // false => ThesisListPage.routeName,
   // false => msc_thesis.ThesisEverythingPage.routeName,
-  false => msc_thesis.ThesisDefenseRegisterPage.routeName,
+  // false => msc_thesis.ThesisDefenseRegisterPage.routeName,
+  false => msc_thesis.MscThesisAssignmentPage.routeName,
+  false => msc_thesis.MscThesisSelectionPage.routeName,
 
   // PhD students pages
   // false => PhdStudentListPage.routeName,
@@ -274,12 +276,6 @@ final routesBySections = <String, List<RouteItem>>{
       route: CourseClassListPage.routeName,
       label: "Phân công giảng dạy",
       icon: Symbols.co_present,
-      subtitle: null,
-    ),
-    (
-      route: null,
-      label: "Giao đề tài",
-      icon: Symbols.assignment_turned_in,
       subtitle: null,
     ),
     (
@@ -442,6 +438,12 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       return const msc_thesis.ThesisDefensePaymentPage();
     case msc_thesis.ThesisDefenseRegisterPage.routeName:
       return const msc_thesis.ThesisDefenseRegisterPage();
+    case msc_thesis.MscThesisAssignmentPage.routeName:
+      return const msc_thesis.MscThesisAssignmentPage();
+    case msc_thesis.MscThesisSelectionPage.routeName:
+
+      // Draft
+      return const msc_thesis.MscThesisSelectionPage(studentId: 61);
     // case ThesisDefensePaymentPage.routeName:
     //   return const ThesisDefensePaymentPage();
 

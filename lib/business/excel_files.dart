@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:path/path.dart' as p;
 import 'excel_files/msc_teaching_assignment.dart' as msc_xlsx;
 import 'excel_files/payment_atm_table.dart' as payment_xlsx;
+import 'pdfs/msc_thesis/assignment.dart' as msc_thesis;
 
 class ExcelFile {
   final String name;
@@ -13,6 +14,10 @@ class ExcelFile {
 
   static const msc = (
     teachingAssignment: msc_xlsx.buildTeachingAssignmentXlsx,
+  );
+
+  static const mscThesis = (
+    assignment: msc_thesis.buildThesisAssignmentExcel,
   );
 
   static const payment = (

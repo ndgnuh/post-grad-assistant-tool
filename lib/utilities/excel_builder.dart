@@ -48,12 +48,28 @@ class CellPointer {
   }
 
   /// Jump to specific column, return new index
-  CellIndex jumpToColumn(int column) {
-    index = CellIndex.indexByColumnRow(
-      columnIndex: column,
-      rowIndex: index.rowIndex,
-    );
-    return index;
+  CellIndex jumpToColumn(Object column) {
+    switch (column) {
+      case String colStr:
+        final columnIndex = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(
+          colStr.toUpperCase(),
+        );
+        index = CellIndex.indexByColumnRow(
+          columnIndex: columnIndex,
+          rowIndex: index.rowIndex,
+        );
+        return index;
+      case int colInt:
+        index = CellIndex.indexByColumnRow(
+          columnIndex: colInt,
+          rowIndex: index.rowIndex,
+        );
+        return index;
+      default:
+        throw ArgumentError(
+          'Column must be String (column name) or int (column index)',
+        );
+    }
   }
 }
 
@@ -84,6 +100,13 @@ extension CellStyleHelper on CellStyle {
       bottomBorderVal: border,
     );
   }
+
+  CellStyle adjustFontSize({int? fontSize, int increment = 0}) {
+    fontSize ??= this.fontSize ?? 12;
+    return copyWith(fontSizeVal: fontSize + increment);
+  }
+
+  CellStyle get wrapText => copyWith(textWrappingVal: TextWrapping.WrapText);
 
   CellStyle get bold => copyWith(boldVal: true);
 

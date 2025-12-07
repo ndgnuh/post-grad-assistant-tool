@@ -1,40 +1,185 @@
+import 'package:fami_tools/business/copy_pasta.dart';
+import 'package:fami_tools/business/pdfs/pdfs.dart';
 import 'package:fami_tools/custom_widgets.dart';
+import 'package:fami_tools/custom_widgets/pdf_preview_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/db_v2_providers.dart';
-import '../pages.dart';
 import 'providers.dart';
 import 'selection_page.dart';
 
+export 'selection_page.dart' show MscThesisSelectionPage;
+
 class MscThesisAssignmentPage extends StatelessWidget {
+  static const routeName = '/msc/thesis/assignment';
   const MscThesisAssignmentPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: ConstrainedAppBar(
-        child: AppBar(
-          title: Text('Giao đề tài'),
+    return DefaultTabController(
+      initialIndex: 1,
+      length: 2,
+      child: Scaffold(
+        appBar: ConstrainedAppBar(
+          withTabBar: true,
+          child: AppBar(
+            title: Text('Giao đề tài'),
+            bottom: TabBar(
+              tabs: [
+                Tab(text: 'Danh sách'),
+                Tab(text: 'Quản trị'),
+              ],
+            ),
+          ),
         ),
-      ),
-      body: ConstrainedBody(
-        child: Padding(
-          padding: EdgeInsets.all(context.gutter),
-          child: Column(
-            verticalDirection: context.verticalDirection,
-            spacing: context.gutter,
-            crossAxisAlignment: CrossAxisAlignment.start,
+        body: ConstrainedBody(
+          child: TabBarView(
             children: [
-              CohortDropdownMenu(),
-              Expanded(
-                child: StudentThesisListView(),
-              ),
+              _ListTabView(),
+              _ActionTabView(),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ActionTabView extends HookWidget {
+  @override
+  Widget build(BuildContext context) {
+    final messenger = ScaffoldMessenger.of(context);
+    final saveDirectory = useState<String?>(null);
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(context.gutter),
+      child: Column(
+        verticalDirection: context.verticalDirection,
+        spacing: context.gutter,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CohortDropdownMenu(),
+          CardSection(
+            title: "Gửi học viên",
+            children: [
+              ListTile(
+                title: Text("Thông báo đăng ký đề tài"),
+                subtitle: Text("Gửi email thông báo cho học viên"),
+              ),
+              ListTile(
+                title: Text("Nhắc đăng ký đề tài"),
+                subtitle: Text("Nhắc nhở đăng ký"),
+              ),
+            ],
+          ),
+          CardSection(
+            title: "Giấy tờ",
+            children: [
+              Consumer(
+                builder: (context, ref, _) => PdfPreviewTile(
+                  pdfFileAsync: ref.watch(assignmentPdfProvider),
+                  title: Text("PDF giao đề tài"),
+                  subtitle: Text(
+                    "ĐT.QT10.BM04. Danh sách đề tài luận văn thạc sĩ (Chính thức)",
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.folder_open),
+                title: DirectoryPicker(
+                  name: "thesis-assignment-save-directory",
+                  labelText: "Chọn thư mục lưu file",
+                  onDirectorySelected: (dir) {
+                    saveDirectory.value = dir;
+                  },
+                ),
+              ),
+              Consumer(
+                builder: (context, ref, _) => ListTile(
+                  title: Text("Lưu giấy tờ"),
+                  subtitle: Text("Lưu mẫu PDF & Excel giao đề tài"),
+                  enabled: saveDirectory.value != null,
+                  onTap: () async {
+                    final directory = saveDirectory.value!;
+                    final assignmentPdf = await ref.read(
+                      assignmentPdfProvider.future,
+                    );
+                    final assignmentExcel = await ref.read(
+                      assignmentExcelProvider.future,
+                    );
+
+                    if (assignmentPdf == null || assignmentExcel == null) {
+                      messenger.showSnackBar(
+                        SnackBar(
+                          content: Text('Không có file PDF để lưu.'),
+                        ),
+                      );
+                      return;
+                    }
+
+                    assignmentPdf.save(directory: directory);
+                    assignmentExcel.save(directory: directory);
+                    messenger.showSnackBar(
+                      SnackBar(
+                        content: Text('Đã lưu file vào $directory'),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Consumer(
+                builder: (context, ref, _) => ListTile(
+                  title: Text("Gửi email cho BĐT"),
+                  subtitle: Text("Gửi file giao đề tài cho BĐT"),
+                  onTap: () async {
+                    final email = await ref.read(
+                      assignmentProcessingEmailProvider.future,
+                    );
+                    if (email == null) {
+                      messenger.showSnackBar(
+                        SnackBar(
+                          content: Text('Vui lòng chọn khóa học viên.'),
+                        ),
+                      );
+                      return;
+                    }
+
+                    await showDialog(
+                      context: context,
+                      builder: (context) => EmailCopyDialog(
+                        email: email,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ListTabView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(context.gutter),
+      child: Column(
+        verticalDirection: context.verticalDirection,
+        spacing: context.gutter,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CohortDropdownMenu(),
+          Expanded(
+            child: StudentThesisListView(),
+          ),
+        ],
       ),
     );
   }

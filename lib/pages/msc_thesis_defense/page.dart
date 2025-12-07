@@ -2,6 +2,7 @@ import 'package:fami_tools/business/db_v2_providers/database.dart';
 import 'package:fami_tools/business/db_v2_providers/thesis.dart';
 import 'package:fami_tools/business/drift_orm.dart';
 import 'package:fami_tools/business/pdfs/pdfs.dart';
+import 'package:fami_tools/business/view_models.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
@@ -11,7 +12,6 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../pages.dart';
 import '../../custom_widgets.dart';
 import 'providers.dart';
-import 'models.dart';
 
 class ThesisEverythingPage extends StatelessWidget {
   static const String routeName = '/thesis';
@@ -280,10 +280,10 @@ class _StudentThesisListTile extends ConsumerWidget {
         items: [
           MenuDialogItem(title: "Bỏ đăng ký", onTap: cancelDefenseRegistration),
           MenuDialogItem(title: "Thu hồ sơ", onTap: collectDefenseApplication),
-          MenuDialogItem(
-            title: "Xem chi tiết",
-            onTap: () => navigator.toThesisDetailsPage(thesisId: thesis.id),
-          ),
+          // MenuDialogItem(
+          //   title: "Xem chi tiết",
+          //   onTap: () => navigator.toThesisDetailsPage(thesisId: thesis.id),
+          // ),
           MenuDialogItem(
             title: "Xếp hội đồng",
             onTap: () => navigator.toThesisDefenseCouncilAssignmentPage(
@@ -297,14 +297,16 @@ class _StudentThesisListTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModelAsync = ref.watch(viewModelByStudentProvider(studentId));
+    final viewModelAsync = ref.watch(
+      ThesisViewModel.providerByStudentId(studentId),
+    );
     switch (viewModelAsync) {
-      case AsyncLoading<StudentThesisViewModel>():
+      case AsyncLoading():
         return LinearProgressIndicator();
-      case AsyncError<StudentThesisViewModel>():
+      case AsyncError(:final error):
         return ListTile(
           title: Text(
-            "Lỗi tải dữ liệu học viên $studentId: ${viewModelAsync.error}",
+            "Lỗi tải dữ liệu học viên $studentId: $error",
           ),
         );
       default:

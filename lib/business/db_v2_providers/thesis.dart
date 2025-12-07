@@ -9,6 +9,10 @@ final thesisByIdProvider = AsyncNotifierProvider.family(
   ThesisByIdNotifier.new,
 );
 
+final thesisMutationProvider = AsyncNotifierProvider.family(
+  ThesisMutationNotifier.new,
+);
+
 final thesisIdByStudentProvider = AsyncNotifierProvider.family(
   ThesisIdNotifier.new,
 );
@@ -21,25 +25,9 @@ class ThesisByIdNotifier extends AsyncNotifier<ThesisData> {
   final int id;
   ThesisByIdNotifier(this.id);
 
-  @override
-  FutureOr<ThesisData> build() async {
-    final db = await ref.watch(mainDatabaseProvider.future);
-    final stmt = db.thesis.select();
-    stmt.where((r) => r.id.equals(id));
-    final thesis = await stmt.getSingleOrNull();
-    assert(thesis != null, 'Thesis with id $id not found');
-    return thesis!;
-  }
-
-  void assignPresident(int teacherId) => updateThesis(
+  void applyForDefense() => updateThesis(
     ThesisCompanion(
-      presidentId: Value(teacherId),
-    ),
-  );
-
-  void assignSecretary(int teacherId) => updateThesis(
-    ThesisCompanion(
-      secretaryId: Value(teacherId),
+      defenseStatus: Value(ThesisStatus.defenseApplied),
     ),
   );
 
@@ -49,49 +37,46 @@ class ThesisByIdNotifier extends AsyncNotifier<ThesisData> {
     ),
   );
 
-  void assignSecondReviewer(int teacherId) => updateThesis(
-    ThesisCompanion(
-      secondReviewerId: Value(teacherId),
-    ),
-  );
-
   void assignMember(int teacherId) => updateThesis(
     ThesisCompanion(
       memberId: Value(teacherId),
     ),
   );
 
-  void updateThesis(ThesisCompanion companion) async {
+  void assignPresident(int teacherId) => updateThesis(
+    ThesisCompanion(
+      presidentId: Value(teacherId),
+    ),
+  );
+
+  void assignSecondReviewer(int teacherId) => updateThesis(
+    ThesisCompanion(
+      secondReviewerId: Value(teacherId),
+    ),
+  );
+
+  void assignSecretary(int teacherId) => updateThesis(
+    ThesisCompanion(
+      secretaryId: Value(teacherId),
+    ),
+  );
+
+  /// Assign thesis to a student.
+  void assignToStudent(int studentId) => updateThesis(
+    ThesisCompanion(
+      studentId: Value(studentId),
+    ),
+  );
+
+  @override
+  FutureOr<ThesisData> build() async {
     final db = await ref.watch(mainDatabaseProvider.future);
-    final stmt = db.thesis.update();
+    final stmt = db.thesis.select();
     stmt.where((r) => r.id.equals(id));
-    final thesis = await stmt.writeReturning(companion);
-    state = AsyncData(thesis.first);
+    final thesis = await stmt.getSingleOrNull();
+    assert(thesis != null, 'Thesis with id $id not found');
+    return thesis!;
   }
-
-  void registerForDefense() => updateThesis(
-    ThesisCompanion(
-      defenseStatus: Value(ThesisStatus.defenseIntended),
-    ),
-  );
-
-  void applyForDefense() => updateThesis(
-    ThesisCompanion(
-      defenseStatus: Value(ThesisStatus.defenseApplied),
-    ),
-  );
-
-  void markAsDefended() => updateThesis(
-    ThesisCompanion(
-      defenseStatus: Value(ThesisStatus.defensePassed),
-    ),
-  );
-
-  void resetDefenseStatus() => updateThesis(
-    ThesisCompanion(
-      defenseStatus: Value(ThesisStatus.assigned),
-    ),
-  );
 
   void cancelDefenseRegistration() {
     final value = state.value!;
@@ -106,19 +91,41 @@ class ThesisByIdNotifier extends AsyncNotifier<ThesisData> {
     );
   }
 
-  /// Unassign the thesis from the student.
-  void unassignStudent() => updateThesis(
+  void markAsDefended() => updateThesis(
     ThesisCompanion(
-      studentId: const Value.absent(),
+      defenseStatus: Value(ThesisStatus.defensePassed),
     ),
   );
 
-  /// Assign thesis to a student.
-  void assignToStudent(int studentId) => updateThesis(
+  void registerForDefense() => updateThesis(
     ThesisCompanion(
-      studentId: Value(studentId),
+      defenseStatus: Value(ThesisStatus.defenseIntended),
     ),
   );
+
+  void resetDefenseStatus() => updateThesis(
+    ThesisCompanion(
+      defenseStatus: Value(ThesisStatus.assigned),
+    ),
+  );
+
+  /// Unassign the thesis from the student.
+  void unassignStudent() {
+    updateThesis(
+      ThesisCompanion(
+        studentId: const Value.absent(),
+      ),
+    );
+    ref.invalidate(thesisIdByStudentProvider(id));
+  }
+
+  void updateThesis(ThesisCompanion companion) async {
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final stmt = db.thesis.update();
+    stmt.where((r) => r.id.equals(id));
+    final thesis = await stmt.writeReturning(companion);
+    state = AsyncData(thesis.first);
+  }
 }
 
 class ThesisIdNotifier extends AsyncNotifier<int?> {
@@ -143,6 +150,15 @@ class ThesisIdsNotifier extends AsyncNotifier<List<int>> {
   final PaymentStatus? paymentStatus;
   final Set<ThesisStatus> defenseStatus;
 
+  ThesisIdsNotifier({
+    this.tracking,
+    this.assigned,
+    this.studentId,
+    this.ignore = false,
+    this.paymentStatus,
+    this.defenseStatus = const {},
+  });
+
   factory ThesisIdsNotifier.paymentRequired() {
     return ThesisIdsNotifier(
       paymentStatus: PaymentStatus.unpaid,
@@ -152,15 +168,6 @@ class ThesisIdsNotifier extends AsyncNotifier<List<int>> {
       },
     );
   }
-
-  ThesisIdsNotifier({
-    this.tracking,
-    this.assigned,
-    this.studentId,
-    this.ignore = false,
-    this.paymentStatus,
-    this.defenseStatus = const {},
-  });
 
   @override
   Future<List<int>> build() async {
@@ -214,5 +221,105 @@ class ThesisIdsNotifier extends AsyncNotifier<List<int>> {
     final ids = await stmt.map((r) => r.id).get();
     print(ids);
     return ids;
+  }
+}
+
+/// This provider does not return any data, it is used to access [Ref]
+/// and invalidate other providers when mutations occur.
+class ThesisMutationNotifier extends AsyncNotifier<void> {
+  final int id;
+  ThesisMutationNotifier(this.id);
+
+  void applyForDefense() => updateThesis(
+    ThesisCompanion(
+      defenseStatus: Value(ThesisStatus.defenseApplied),
+    ),
+  );
+
+  void assignFirstReviewer(int teacherId) => updateThesis(
+    ThesisCompanion(
+      firstReviewerId: Value(teacherId),
+    ),
+  );
+
+  void assignMember(int teacherId) => updateThesis(
+    ThesisCompanion(
+      memberId: Value(teacherId),
+    ),
+  );
+
+  void assignPresident(int teacherId) => updateThesis(
+    ThesisCompanion(
+      presidentId: Value(teacherId),
+    ),
+  );
+
+  void assignSecondReviewer(int teacherId) => updateThesis(
+    ThesisCompanion(
+      secondReviewerId: Value(teacherId),
+    ),
+  );
+
+  void assignSecretary(int teacherId) => updateThesis(
+    ThesisCompanion(
+      secretaryId: Value(teacherId),
+    ),
+  );
+
+  /// Assign thesis to a student.
+  void assignToStudent(int studentId) {
+    updateThesis(
+      ThesisCompanion(
+        studentId: Value(studentId),
+      ),
+    );
+    ref.invalidate(thesisIdByStudentProvider(id));
+  }
+
+  @override
+  FutureOr<void> build() => null;
+
+  void cancelDefenseRegistration() async {
+    final newValue = ThesisStatus.assigned;
+    updateThesis(
+      ThesisCompanion(
+        defenseStatus: Value(newValue),
+      ),
+    );
+  }
+
+  void markAsDefended() => updateThesis(
+    ThesisCompanion(
+      defenseStatus: Value(ThesisStatus.defensePassed),
+    ),
+  );
+
+  void registerForDefense() => updateThesis(
+    ThesisCompanion(
+      defenseStatus: Value(ThesisStatus.defenseIntended),
+    ),
+  );
+
+  void resetDefenseStatus() => updateThesis(
+    ThesisCompanion(
+      defenseStatus: Value(ThesisStatus.assigned),
+    ),
+  );
+
+  /// Unassign the thesis from the student.
+  void unassignStudent() => updateThesis(
+    ThesisCompanion(
+      studentId: const Value.absent(),
+    ),
+  );
+
+  void updateThesis(ThesisCompanion companion) async {
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final stmt = db.thesis.update();
+    stmt.where((r) => r.id.equals(id));
+    await stmt.writeReturning(companion);
+
+    // By default, invalidate the thesisByIdProvider
+    ref.invalidate(thesisByIdProvider(id));
   }
 }

@@ -57,6 +57,8 @@ Future<Uint8List> buildMultiPageDocument({
   PdfPageFormat pageFormat = defaultPageFormat,
   EdgeInsetsGeometry margin = defaultMargin,
   double baseFontSize = defaultBaseFontSize,
+  Widget Function(Context)? header,
+  Widget Function(Context)? footer,
 }) async {
   final theme = ThemeData(
     defaultTextStyle: await getPdfDefaultTextStyle(
@@ -71,6 +73,8 @@ Future<Uint8List> buildMultiPageDocument({
       pageFormat: pageFormat,
       margin: margin,
       build: build,
+      header: header,
+      footer: footer,
     ),
   );
 

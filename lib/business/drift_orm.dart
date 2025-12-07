@@ -226,4 +226,32 @@ class AppDatabase extends _$AppDatabase {
 
     return stmt;
   }
+
+  /// Craete new thesis
+  void createThesis({
+    required String vietnameseTitle,
+    required String englishTitle,
+    required TeacherData supervisor,
+    required StudentData? student,
+  }) {
+    final studentId = switch (student?.id) {
+      null => Value<int>.absent(),
+      int id => Value(id),
+    };
+
+    final thesisStatus = switch (student?.id) {
+      null => ThesisStatus.unofficial,
+      int _ => ThesisStatus.assigned,
+    };
+    thesis.insertOne(
+      ThesisCompanion.insert(
+        vietnameseTitle: vietnameseTitle,
+        englishTitle: englishTitle,
+        supervisorId: supervisor.id,
+        studentId: studentId,
+        defenseStatus: thesisStatus,
+        paymentStatus: PaymentStatus.unpaid,
+      ),
+    );
+  }
 }

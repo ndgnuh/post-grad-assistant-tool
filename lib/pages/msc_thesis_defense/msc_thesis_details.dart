@@ -1,13 +1,9 @@
 import 'package:fami_tools/business/db_v2_providers.dart';
-import 'package:fami_tools/business/db_v2_providers/database.dart';
 import 'package:fami_tools/custom_widgets.dart';
-import 'package:fami_tools/pages/course_pages/providers.dart';
-import 'package:fami_tools/pages/msc_thesis_defense/models.dart';
+import 'package:fami_tools/business/view_models.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-
-import './providers.dart';
 
 class MscThesisDetailsPage extends ConsumerWidget {
   final int thesisId;
@@ -82,7 +78,7 @@ class _InformationSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final modelAsync = ref.watch(viewModelByIdProvider(thesisId));
+    final modelAsync = ref.watch(ThesisViewModel.providerById(thesisId));
     switch (modelAsync) {
       case AsyncLoading():
         return LinearProgressIndicator();
@@ -133,12 +129,6 @@ class _AssignmentSection extends StatelessWidget {
           callback: (notifier, id) => notifier.assignPresident(id),
         ),
         _AssignmentButton(
-          title: "Thư ký",
-          thesisId: thesisId,
-          callback: (notifier, id) => notifier.assignSecretary(id),
-          getter: (model) => model.secretary,
-        ),
-        _AssignmentButton(
           title: "Phản biện 1",
           thesisId: thesisId,
           getter: (model) => model.firstReviewer,
@@ -149,6 +139,12 @@ class _AssignmentSection extends StatelessWidget {
           getter: (model) => model.secondReviewer,
           thesisId: thesisId,
           callback: (notifier, id) => notifier.assignSecondReviewer(id),
+        ),
+        _AssignmentButton(
+          title: "Thư ký",
+          thesisId: thesisId,
+          callback: (notifier, id) => notifier.assignSecretary(id),
+          getter: (model) => model.secretary,
         ),
         _AssignmentButton(
           title: "Ủy viên",
@@ -164,7 +160,7 @@ class _AssignmentSection extends StatelessWidget {
 class _AssignmentButton extends ConsumerWidget {
   final int thesisId;
   final String title;
-  final TeacherData? Function(StudentThesisViewModel model) getter;
+  final TeacherData? Function(ThesisViewModel model) getter;
   final void Function(ThesisByIdNotifier notifier, int id) callback;
 
   const _AssignmentButton({
@@ -177,7 +173,7 @@ class _AssignmentButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(thesisByIdProvider(thesisId).notifier);
-    final modelAsync = ref.watch(viewModelByIdProvider(thesisId));
+    final modelAsync = ref.watch(ThesisViewModel.providerById(thesisId));
     switch (modelAsync) {
       case AsyncLoading():
         return const Center(child: LinearProgressIndicator());

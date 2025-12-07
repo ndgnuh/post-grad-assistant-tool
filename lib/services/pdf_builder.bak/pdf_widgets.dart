@@ -262,6 +262,7 @@ class EzTable<T> extends StatelessWidget {
       children: [
         // Headers
         TableRow(
+          repeat: true,
           verticalAlignment: TableCellVerticalAlignment.middle,
           children: _headers(context),
         ),
