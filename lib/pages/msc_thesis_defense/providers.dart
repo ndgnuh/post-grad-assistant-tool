@@ -47,6 +47,24 @@ final scoreSheetsPdfProvider = FutureProvider<PdfFile>(
   },
 );
 
+final councilDecisionDocxFilesProvider = FutureProvider(
+  (Ref ref) async {
+    final ids = await ref.read(registeredStudentIdsProvider.future);
+    final docx = <DocxFile>[];
+
+    for (final id in ids) {
+      final thesisViewModel = await ref.read(
+        ThesisViewModel.providerByStudentId(id).future,
+      );
+      final docxFile = await DocxFactory.mscThesis.councilDecision(
+        thesis: thesisViewModel,
+      );
+      docx.add(docxFile);
+    }
+    return docx;
+  },
+);
+
 /// Council suggestions
 final councilSuggestionsPdfProvider = FutureProvider<PdfFile>(
   (ref) async {

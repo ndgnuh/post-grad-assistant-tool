@@ -9,7 +9,7 @@ import 'package:fami_tools/business/view_models.dart';
 import '../common_widgets.dart';
 import '../../documents.dart';
 
-Future<ExcelFile> buildThesisAssignmentExcel({
+Future<XlsxFile> buildThesisAssignmentExcel({
   required List<StudentViewModel> theses,
   required CohortData cohort,
 }) async {
@@ -23,7 +23,7 @@ Future<ExcelFile> buildThesisAssignmentExcel({
   );
 
   final name = model.fileName;
-  return ExcelFile(name: name, bytes: bytes);
+  return XlsxFile(name: name, bytes: bytes);
 }
 
 Future<PdfFile> buildThesisAssignmentPdf({

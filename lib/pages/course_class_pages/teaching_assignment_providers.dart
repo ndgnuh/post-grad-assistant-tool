@@ -125,7 +125,7 @@ final teachingAssignmentXlsxProvider = FutureProvider((ref) async {
   final model = await ref.watch(teachingAssignmentOutputModelProvider.future);
   if (model == null) return null;
 
-  return ExcelFile.msc.teachingAssignment(
+  return XlsxFactory.msc.teachingAssignment(
     semester: model.semester,
     courseClasses: model.courseClasses,
     mapCourses: model.mapCourses,

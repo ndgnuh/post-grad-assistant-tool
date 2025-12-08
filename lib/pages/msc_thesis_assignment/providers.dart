@@ -37,11 +37,11 @@ final assignmentPdfProvider = FutureProvider<PdfFile?>((Ref ref) async {
   return pdfFile;
 });
 
-final assignmentExcelProvider = FutureProvider<ExcelFile?>((Ref ref) async {
+final assignmentExcelProvider = FutureProvider<XlsxFile?>((Ref ref) async {
   final assignmentModel = await ref.watch(assignmentModelProvider.future);
   if (assignmentModel == null) return null;
 
-  final pdfFile = await ExcelFile.mscThesis.assignment(
+  final pdfFile = await XlsxFactory.mscThesis.assignment(
     theses: assignmentModel.theses,
     cohort: assignmentModel.cohort,
   );

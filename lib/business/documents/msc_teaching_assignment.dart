@@ -207,7 +207,7 @@ void _sheetBuilder({
   );
 }
 
-ExcelFile buildTeachingAssignmentXlsx({
+XlsxFile buildTeachingAssignmentXlsx({
   required SemesterData semester,
   required List<CourseClassData> courseClasses,
   required Map<int, CourseData> mapCourses,
@@ -226,5 +226,5 @@ ExcelFile buildTeachingAssignmentXlsx({
   );
 
   final name = "${semester.id}_PhanCongGiangDay_FaMI";
-  return ExcelFile(name: name, bytes: bytes);
+  return XlsxFile(name: name, bytes: bytes);
 }

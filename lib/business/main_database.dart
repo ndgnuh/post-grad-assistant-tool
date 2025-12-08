@@ -31,7 +31,21 @@ extension TeacherTitles on TeacherData {
     return {
       ...toJson(),
       "name_with_title": nameWithTitle,
+      "title": title,
     };
+  }
+
+  String get title {
+    switch ((academicRank, academicDegree)) {
+      case (AcademicRank rank, AcademicDegree degree):
+        return '${rank.short} ${degree.short}';
+      case (AcademicRank rank, null):
+        return rank.short;
+      case (null, AcademicDegree degree):
+        return degree.short;
+      case (null, null):
+        return '';
+    }
   }
 
   String get nameWithTitle {
@@ -66,7 +80,7 @@ class AppDatabase extends _$AppDatabase {
       name: 'fami-caohoc-drift',
       native: DriftNativeOptions(
         databasePath: () => Future.value(databasePath),
-        isolateDebugLog: true,
+        // isolateDebugLog: true,
       ),
     );
     final db = AppDatabase(executor);

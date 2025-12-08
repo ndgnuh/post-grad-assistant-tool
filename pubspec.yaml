@@ -132,7 +132,9 @@ flutter:
     - assets/fonts/Times_New_Roman_Bold_Italic.ttf
     - assets/fonts/Times_New_Roman_Italic.ttf
     - assets/copy-pasta.yaml
+
     - assets/templates/phd-admission-record.docx
+    - assets/templates/msc-thesis-council-decision.docx
     - assets/templates/sample.docx
 
   # An image asset can refer to one or more resolution-specific "variants", see

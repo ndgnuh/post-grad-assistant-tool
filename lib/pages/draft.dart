@@ -8,10 +8,11 @@ import 'package:fami_tools/gen/assets.gen.dart';
 
 // import '../business/domain_objects.dart';
 import '../business/db_v2_providers.dart';
+import '../business/main_database.dart';
 
 import 'package:fami_tools/business/documents/utilities/docx_template.dart';
 
-Future<ExcelFile> buildExcel(WidgetRef ref) async {
+Future<XlsxFile> buildExcel(WidgetRef ref) async {
   final thesisIds = await ref.watch(trackedThesisIdsProvider.future);
   final theses = await Future.wait([
     for (final id in thesisIds) ref.watch(thesisByIdProvider(id).future),
@@ -91,14 +92,14 @@ Future<ExcelFile> buildExcel(WidgetRef ref) async {
     reason: "HỘI ĐỒNG CHẤM LUẬN VĂN THẠC SĨ",
     entries: entries,
   );
-  final file = ExcelFile.payment.atmTable(model: model);
+  final file = XlsxFactory.payment.atmTable(model: model);
   return file;
 }
 
 Future<Uint8List?> buildDocx(WidgetRef ref) async {
   final docxAsset = await rootBundle.load(Assets.templates.phdAdmissionRecord);
 
-  final studentId = 18; // Example student ID
+  final studentId = 5; // Example student ID
   final student = await ref.read(phdStudentByIdProvider(studentId).future);
   final president = await ref.read(
     teacherByIdProvider(student.admissionPresidentId!).future,
@@ -119,6 +120,7 @@ Future<Uint8List?> buildDocx(WidgetRef ref) async {
     teacherByIdProvider(student.supervisorId).future,
   );
   final TeacherData? secondarySupervisor;
+
   if (student.secondarySupervisorId != null) {
     secondarySupervisor = await ref.read(
       teacherByIdProvider(student.secondarySupervisorId!).future,
@@ -131,14 +133,15 @@ Future<Uint8List?> buildDocx(WidgetRef ref) async {
   final template = DocxTemplate.fromBytes(docx);
   final context = {
     'student': student.toJson(),
-    'president': president.toJson(),
-    'secretary': secretary.toJson(),
-    'first_member': firstMember.toJson(),
-    'second_member': secondMember.toJson(),
-    'third_member': thirdMember.toJson(),
-    'supervisor': supervisor.toJson(),
-    'secondary_supervisor': secondarySupervisor?.toJson() ?? (name: ""),
+    'president': president.toJsonExt(),
+    'secretary': secretary.toJsonExt(),
+    'first_member': firstMember.toJsonExt(),
+    'second_member': secondMember.toJsonExt(),
+    'third_member': thirdMember.toJsonExt(),
+    'supervisor': supervisor.toJsonExt(),
+    'secondary_supervisor': secondarySupervisor?.toJsonExt() ?? (name: ""),
   };
+  print(context['president']);
   final output = template.render(context);
 
   return output;

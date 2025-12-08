@@ -6,6 +6,7 @@ import 'package:fami_tools/business/view_models.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -124,9 +125,11 @@ class ThesisDefenseRegisterPage extends StatelessWidget {
   }
 }
 
-class _ModerateTab extends StatelessWidget {
+class _ModerateTab extends HookWidget {
   @override
   Widget build(BuildContext context) {
+    final saveDirectory = useState<String?>(null);
+
     return SingleChildScrollView(
       padding: EdgeInsets.all(context.gutter),
       child: CardSection(
@@ -151,9 +154,56 @@ class _ModerateTab extends StatelessWidget {
             },
           ),
           ListTile(
-            title: Text("Lưu hồ sơ bảo vệ"),
-            trailing: Icon(Symbols.chevron_right),
-            onTap: () {},
+            title: DirectoryPicker(
+              name: "ho-so-bao-ve-luan-van",
+              labelText: "Thư mục lưu",
+              onDirectorySelected: (directory) {
+                saveDirectory.value = directory;
+              },
+            ),
+          ),
+
+          Consumer(
+            builder: (context, ref, child) => ListTile(
+              title: Text("Lưu hồ sơ bảo vệ"),
+              trailing: Icon(Symbols.chevron_right),
+              onTap: () async {
+                final directory = saveDirectory.value;
+                if (directory == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        "Vui lòng chọn thư mục lưu trước khi lưu hồ sơ",
+                      ),
+                    ),
+                  );
+                  return;
+                }
+
+                final pdfFiles = await Future.wait([
+                  ref.read(scoreSheetsPdfProvider.future),
+                  ref.read(councilSuggestionsPdfProvider.future),
+                ]);
+
+                final docxFiles = [
+                  ...(await ref.read(councilDecisionDocxFilesProvider.future)),
+                ];
+
+                for (final docx in docxFiles) {
+                  await docx.save(directory: directory);
+                }
+                for (final pdf in pdfFiles) {
+                  await pdf.save(directory: directory);
+                }
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      "Đã lưu hồ sơ bảo vệ luận văn vào $directory",
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),

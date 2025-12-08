@@ -5,10 +5,10 @@ import 'package:fami_tools/business/documents/utilities/xlsx_builder.dart';
 
 import '../models/payment_atm.dart';
 
-ExcelFile paymentTableExcel({required PaymentAtmModel model}) {
+XlsxFile paymentTableExcel({required PaymentAtmModel model}) {
   final builder = _PaymentAtmExcelBuilder(model);
   final bytes = buildSingleSheetExcel(builder: builder.call);
-  final file = ExcelFile(name: model.fileName, bytes: bytes);
+  final file = XlsxFile(name: model.fileName, bytes: bytes);
   return file;
 }
 

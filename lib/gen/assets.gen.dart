@@ -88,6 +88,10 @@ class $AssetsFontsGen {
 class $AssetsTemplatesGen {
   const $AssetsTemplatesGen();
 
+  /// File path: assets/templates/msc-thesis-council-decision.docx
+  String get mscThesisCouncilDecision =>
+      'assets/templates/msc-thesis-council-decision.docx';
+
   /// File path: assets/templates/phd-admission-record.docx
   String get phdAdmissionRecord => 'assets/templates/phd-admission-record.docx';
 
@@ -95,7 +99,11 @@ class $AssetsTemplatesGen {
   String get sample => 'assets/templates/sample.docx';
 
   /// List of all assets
-  List<String> get values => [phdAdmissionRecord, sample];
+  List<String> get values => [
+    mscThesisCouncilDecision,
+    phdAdmissionRecord,
+    sample,
+  ];
 }
 
 class Assets {

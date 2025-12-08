@@ -185,7 +185,7 @@ final initialRoute = switch (kReleaseMode) {
   // false => msc_thesis.ThesisDefensePaymentPage.routeName,
   // false => ThesisListPage.routeName,
   // false => msc_thesis.ThesisEverythingPage.routeName,
-  // false => msc_thesis.ThesisDefenseRegisterPage.routeName,
+  false => msc_thesis.ThesisDefenseRegisterPage.routeName,
   false => msc_thesis.MscThesisAssignmentPage.routeName,
   false => msc_thesis.MscThesisSelectionPage.routeName,
 

@@ -103,7 +103,7 @@ final paymentTablePdfProvider = FutureProvider<Uint8List>((ref) async {
   return admissionPaymentTablePdf(model: model);
 });
 
-final paymentAtmExcelProvider = FutureProvider<ExcelFile>((ref) async {
+final paymentAtmExcelProvider = FutureProvider<XlsxFile>((ref) async {
   final councilSelecionModel = await ref.watch(
     admissionCouncilSelectionProvider.future,
   );
@@ -159,7 +159,7 @@ final paymentAtmExcelProvider = FutureProvider<ExcelFile>((ref) async {
       ),
     ],
   );
-  return ExcelFile.payment.atmTable(
+  return XlsxFactory.payment.atmTable(
     model: model,
   );
 });

@@ -107,15 +107,92 @@ class DocxTemplate {
     //   <w:bookmarkEnd w:id="4"/>
     // </w:p>
 
-    /// Find all w.sdt fields
-    /// The content control must be pre-filled with jinja placeholder (without the {{ }})
+    // Find all w.sdt fields
+    // =====================
+    // <w:sdt>
+    //   <w:sdtPr>
+    //     <w:alias w:val="ct-title"/>
+    //     <w15:appearance w15:val="boundingBox"/>
+    //     <w:label w:val="0"/>
+    //     <w:lock w:val="unlocked"/>
+    //     <w:placeholder>
+    //       <w:docPart w:val="5067de56ce63492eaa8c236da629d290"/>
+    //     </w:placeholder>
+    //     <w:tag w:val="ct-tag"/>
+    //     <w:rPr>
+    //       <w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="Times New Roman" w:cs="Times New Roman"/>
+    //       <w:b w:val="0"/>
+    //     </w:rPr>
+    //   </w:sdtPr>
+    //   <w:sdtContent>
+    //     <w:r>
+    //       <w:rPr>
+    //         <w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="Times New Roman" w:cs="Times New Roman"/>
+    //         <w:b w:val="0"/>
+    //       </w:rPr>
+    //       <w:t xml:space="preserve">Ct-filled</w:t>
+    //     </w:r>
+    //   </w:sdtContent>
+    // </w:sdt>
     final contentControls = renderedDocument.findAllElements("w:sdt").toList();
     for (final element in contentControls) {
-      final text = element.findAllElements("w:t").first;
-      final name = text.innerText.trim();
-      final template = jinjaEnv.fromString("{{ $name }}");
-      final rendered = template.render(context);
-      text.innerText = rendered;
+      /// The name helps debugging the template
+      final innerText = element.innerText;
+
+      /// Find the w:tag element to get the name
+      /// This corresponds to the tag name of the content control
+      final tagElement = element.findAllElements("w:tag").firstOrNull;
+      assert(
+        tagElement != null,
+        "Content control without tag found nere $innerText",
+      );
+      final tagName = tagElement!.getAttribute("w:val");
+      assert(
+        tagName != null,
+        "Content control without tag name found nere $innerText",
+      );
+
+      // remove the "showing placeholder" element or set it to false
+      final showingPlcHdr = element
+          .findAllElements("w:showingPlcHdr")
+          .firstOrNull;
+      if (showingPlcHdr != null) {
+        showingPlcHdr.setAttribute("w:val", "false");
+      }
+
+      // Create jinja template to fill the value
+      // This is better than simple replacement because expressions can be used
+      final tagTemplate = jinjaEnv.fromString("{{ $tagName }}");
+      final tagValue = tagTemplate.render(context);
+
+      // Replace filled content with the rendered value
+      // the content are stored in w:sdtContent/w:t
+      final sdtContent = element.findAllElements("w:sdtContent").firstOrNull;
+      if (sdtContent == null) {
+        /// Create stdContent if not exists
+        final sdtContentElement = XmlElement(
+          XmlName('w:sdtContent'),
+          [],
+          [
+            XmlElement(
+              XmlName('w:r'),
+              [],
+              [
+                XmlElement(
+                  XmlName('w:t'),
+                  [XmlAttribute(XmlName('xml:space'), 'preserve')],
+                  [XmlText(tagValue)],
+                ),
+              ],
+            ),
+          ],
+        );
+        element.children.add(sdtContentElement);
+      } else {
+        final stdContentText = sdtContent.findAllElements("w:t").first;
+        stdContentText.innerText = tagValue;
+      }
+      print((tagName, tagValue));
     }
 
     // Replace simple placeholders
@@ -144,4 +221,12 @@ class DocxTemplate {
 
     return ZipEncoder().encode(result) as Uint8List;
   }
+}
+
+Uint8List fillDocxTemplate(
+  Uint8List templateBytes,
+  Map<String, Object?> context,
+) {
+  final template = DocxTemplate.fromBytes(templateBytes);
+  return template.render(context);
 }
