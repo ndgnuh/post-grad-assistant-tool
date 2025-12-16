@@ -80,9 +80,6 @@ class AdmissionCouncilArrangementEmailNotifier extends AsyncNotifier<Email> {
     final student = await ref.watch(
       phdStudentByIdProvider(phdStudentId).future,
     );
-    if (student == null) {
-      throw Exception("PhD student with id $phdStudentId not found");
-    }
 
     // Supervisor, cosupervisor
     final supervisorId = student.supervisorId;
@@ -153,7 +150,7 @@ Trong hội đồng phải có 1 thành viên không thuộc Đại học Bách 
 }
 
 class PhdStudentListViewModel {
-  final String? cohort;
+  final PhdCohortData? cohort;
   final List<PhdStudentData> students;
   final Map<PhdStudentData, TeacherData> supervisors;
   final Map<PhdStudentData, TeacherData?> secondarySupervisor;
@@ -177,7 +174,7 @@ class PhdStudentListViewModelNotifier
     // Get student of cohorts along with their supervisors
     final ids = switch (cohort) {
       null => await ref.watch(phdStudentIdsProvider.future),
-      String cohort => await ref.watch(
+      PhdCohortData cohort => await ref.watch(
         phdStudentIdsByCohortProvider(cohort).future,
       ),
     };
@@ -186,7 +183,6 @@ class PhdStudentListViewModelNotifier
     final secondarySupervisors = <PhdStudentData, TeacherData?>{};
     for (var id in ids) {
       final student = await ref.watch(phdStudentByIdProvider(id).future);
-      if (student == null) continue;
 
       final supervisor = await ref.watch(
         teacherByIdProvider(student.supervisorId).future,

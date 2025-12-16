@@ -1045,6 +1045,17 @@ class Teacher extends Table with TableInfo<Teacher, TeacherData> {
     requiredDuringInsert: false,
     $customConstraints: '',
   );
+  static const VerificationMeta _startTeachingYearMeta = const VerificationMeta(
+    'startTeachingYear',
+  );
+  late final GeneratedColumn<int> startTeachingYear = GeneratedColumn<int>(
+    'start_teaching_year',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
   static const VerificationMeta _teacherGroupIdMeta = const VerificationMeta(
     'teacherGroupId',
   );
@@ -1078,6 +1089,7 @@ class Teacher extends Table with TableInfo<Teacher, TeacherData> {
     bankName,
     deprecatedTaxCode,
     note,
+    startTeachingYear,
     teacherGroupId,
   ];
   @override
@@ -1214,6 +1226,15 @@ class Teacher extends Table with TableInfo<Teacher, TeacherData> {
         note.isAcceptableOrUnknown(data['note']!, _noteMeta),
       );
     }
+    if (data.containsKey('start_teaching_year')) {
+      context.handle(
+        _startTeachingYearMeta,
+        startTeachingYear.isAcceptableOrUnknown(
+          data['start_teaching_year']!,
+          _startTeachingYearMeta,
+        ),
+      );
+    }
     if (data.containsKey('teacher_group_id')) {
       context.handle(
         _teacherGroupIdMeta,
@@ -1318,6 +1339,10 @@ class Teacher extends Table with TableInfo<Teacher, TeacherData> {
         DriftSqlType.string,
         data['${effectivePrefix}note'],
       ),
+      startTeachingYear: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}start_teaching_year'],
+      ),
       teacherGroupId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}teacher_group_id'],
@@ -1361,6 +1386,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
   final String? bankName;
   final String? deprecatedTaxCode;
   final String? note;
+  final int? startTeachingYear;
   final int? teacherGroupId;
   const TeacherData({
     required this.id,
@@ -1383,6 +1409,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
     this.bankName,
     this.deprecatedTaxCode,
     this.note,
+    this.startTeachingYear,
     this.teacherGroupId,
   });
   @override
@@ -1448,6 +1475,9 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
     if (!nullToAbsent || note != null) {
       map['note'] = Variable<String>(note);
     }
+    if (!nullToAbsent || startTeachingYear != null) {
+      map['start_teaching_year'] = Variable<int>(startTeachingYear);
+    }
     if (!nullToAbsent || teacherGroupId != null) {
       map['teacher_group_id'] = Variable<int>(teacherGroupId);
     }
@@ -1507,6 +1537,9 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
           ? const Value.absent()
           : Value(deprecatedTaxCode),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      startTeachingYear: startTeachingYear == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startTeachingYear),
       teacherGroupId: teacherGroupId == null && nullToAbsent
           ? const Value.absent()
           : Value(teacherGroupId),
@@ -1547,6 +1580,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
         json['deprecated_tax_code'],
       ),
       note: serializer.fromJson<String?>(json['note']),
+      startTeachingYear: serializer.fromJson<int?>(json['start_teaching_year']),
       teacherGroupId: serializer.fromJson<int?>(json['teacher_group_id']),
     );
   }
@@ -1578,6 +1612,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
       'bank_name': serializer.toJson<String?>(bankName),
       'deprecated_tax_code': serializer.toJson<String?>(deprecatedTaxCode),
       'note': serializer.toJson<String?>(note),
+      'start_teaching_year': serializer.toJson<int?>(startTeachingYear),
       'teacher_group_id': serializer.toJson<int?>(teacherGroupId),
     };
   }
@@ -1603,6 +1638,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
     Value<String?> bankName = const Value.absent(),
     Value<String?> deprecatedTaxCode = const Value.absent(),
     Value<String?> note = const Value.absent(),
+    Value<int?> startTeachingYear = const Value.absent(),
     Value<int?> teacherGroupId = const Value.absent(),
   }) => TeacherData(
     id: id ?? this.id,
@@ -1635,6 +1671,9 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
         ? deprecatedTaxCode.value
         : this.deprecatedTaxCode,
     note: note.present ? note.value : this.note,
+    startTeachingYear: startTeachingYear.present
+        ? startTeachingYear.value
+        : this.startTeachingYear,
     teacherGroupId: teacherGroupId.present
         ? teacherGroupId.value
         : this.teacherGroupId,
@@ -1683,6 +1722,9 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
           ? data.deprecatedTaxCode.value
           : this.deprecatedTaxCode,
       note: data.note.present ? data.note.value : this.note,
+      startTeachingYear: data.startTeachingYear.present
+          ? data.startTeachingYear.value
+          : this.startTeachingYear,
       teacherGroupId: data.teacherGroupId.present
           ? data.teacherGroupId.value
           : this.teacherGroupId,
@@ -1712,6 +1754,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
           ..write('bankName: $bankName, ')
           ..write('deprecatedTaxCode: $deprecatedTaxCode, ')
           ..write('note: $note, ')
+          ..write('startTeachingYear: $startTeachingYear, ')
           ..write('teacherGroupId: $teacherGroupId')
           ..write(')'))
         .toString();
@@ -1739,6 +1782,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
     bankName,
     deprecatedTaxCode,
     note,
+    startTeachingYear,
     teacherGroupId,
   ]);
   @override
@@ -1765,6 +1809,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
           other.bankName == this.bankName &&
           other.deprecatedTaxCode == this.deprecatedTaxCode &&
           other.note == this.note &&
+          other.startTeachingYear == this.startTeachingYear &&
           other.teacherGroupId == this.teacherGroupId);
 }
 
@@ -1789,6 +1834,7 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
   final Value<String?> bankName;
   final Value<String?> deprecatedTaxCode;
   final Value<String?> note;
+  final Value<int?> startTeachingYear;
   final Value<int?> teacherGroupId;
   const TeacherCompanion({
     this.id = const Value.absent(),
@@ -1811,6 +1857,7 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
     this.bankName = const Value.absent(),
     this.deprecatedTaxCode = const Value.absent(),
     this.note = const Value.absent(),
+    this.startTeachingYear = const Value.absent(),
     this.teacherGroupId = const Value.absent(),
   });
   TeacherCompanion.insert({
@@ -1834,6 +1881,7 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
     this.bankName = const Value.absent(),
     this.deprecatedTaxCode = const Value.absent(),
     this.note = const Value.absent(),
+    this.startTeachingYear = const Value.absent(),
     this.teacherGroupId = const Value.absent(),
   }) : name = Value(name),
        gender = Value(gender);
@@ -1858,6 +1906,7 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
     Expression<String>? bankName,
     Expression<String>? deprecatedTaxCode,
     Expression<String>? note,
+    Expression<int>? startTeachingYear,
     Expression<int>? teacherGroupId,
   }) {
     return RawValuesInsertable({
@@ -1882,6 +1931,7 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
       if (bankName != null) 'bank_name': bankName,
       if (deprecatedTaxCode != null) 'deprecated_tax_code': deprecatedTaxCode,
       if (note != null) 'note': note,
+      if (startTeachingYear != null) 'start_teaching_year': startTeachingYear,
       if (teacherGroupId != null) 'teacher_group_id': teacherGroupId,
     });
   }
@@ -1907,6 +1957,7 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
     Value<String?>? bankName,
     Value<String?>? deprecatedTaxCode,
     Value<String?>? note,
+    Value<int?>? startTeachingYear,
     Value<int?>? teacherGroupId,
   }) {
     return TeacherCompanion(
@@ -1931,6 +1982,7 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
       bankName: bankName ?? this.bankName,
       deprecatedTaxCode: deprecatedTaxCode ?? this.deprecatedTaxCode,
       note: note ?? this.note,
+      startTeachingYear: startTeachingYear ?? this.startTeachingYear,
       teacherGroupId: teacherGroupId ?? this.teacherGroupId,
     );
   }
@@ -2006,6 +2058,9 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
     if (note.present) {
       map['note'] = Variable<String>(note.value);
     }
+    if (startTeachingYear.present) {
+      map['start_teaching_year'] = Variable<int>(startTeachingYear.value);
+    }
     if (teacherGroupId.present) {
       map['teacher_group_id'] = Variable<int>(teacherGroupId.value);
     }
@@ -2035,6 +2090,7 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
           ..write('bankName: $bankName, ')
           ..write('deprecatedTaxCode: $deprecatedTaxCode, ')
           ..write('note: $note, ')
+          ..write('startTeachingYear: $startTeachingYear, ')
           ..write('teacherGroupId: $teacherGroupId')
           ..write(')'))
         .toString();
@@ -3938,36 +3994,38 @@ class Document extends Table with TableInfo<Document, DocumentData> {
     requiredDuringInsert: true,
     $customConstraints: 'NOT NULL',
   );
-  static const VerificationMeta _officalCodeMeta = const VerificationMeta(
-    'officalCode',
+  static const VerificationMeta _officialCodeMeta = const VerificationMeta(
+    'officialCode',
   );
-  late final GeneratedColumn<String> officalCode = GeneratedColumn<String>(
-    'offical_code',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _signedDateMeta = const VerificationMeta(
-    'signedDate',
-  );
-  late final GeneratedColumn<String> signedDate = GeneratedColumn<String>(
-    'signed_date',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: '',
-  );
-  static const VerificationMeta _roleIdMeta = const VerificationMeta('roleId');
-  late final GeneratedColumn<int> roleId = GeneratedColumn<int>(
-    'role_id',
+  late final GeneratedColumn<int> officialCode = GeneratedColumn<int>(
+    'official_code',
     aliasedName,
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL REFERENCES document_role(id)',
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _officialTypeMeta = const VerificationMeta(
+    'officialType',
+  );
+  late final GeneratedColumn<String> officialType = GeneratedColumn<String>(
+    'official_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _signedDateMeta = const VerificationMeta(
+    'signedDate',
+  );
+  late final GeneratedColumn<DateTime> signedDate = GeneratedColumn<DateTime>(
+    'signed_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   static const VerificationMeta _contentIdMeta = const VerificationMeta(
     'contentId',
@@ -4019,9 +4077,9 @@ class Document extends Table with TableInfo<Document, DocumentData> {
   List<GeneratedColumn> get $columns => [
     id,
     title,
-    officalCode,
+    officialCode,
+    officialType,
     signedDate,
-    roleId,
     contentId,
     archiveId,
     createdTime,
@@ -4050,28 +4108,35 @@ class Document extends Table with TableInfo<Document, DocumentData> {
     } else if (isInserting) {
       context.missing(_titleMeta);
     }
-    if (data.containsKey('offical_code')) {
+    if (data.containsKey('official_code')) {
       context.handle(
-        _officalCodeMeta,
-        officalCode.isAcceptableOrUnknown(
-          data['offical_code']!,
-          _officalCodeMeta,
+        _officialCodeMeta,
+        officialCode.isAcceptableOrUnknown(
+          data['official_code']!,
+          _officialCodeMeta,
         ),
       );
+    } else if (isInserting) {
+      context.missing(_officialCodeMeta);
+    }
+    if (data.containsKey('official_type')) {
+      context.handle(
+        _officialTypeMeta,
+        officialType.isAcceptableOrUnknown(
+          data['official_type']!,
+          _officialTypeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_officialTypeMeta);
     }
     if (data.containsKey('signed_date')) {
       context.handle(
         _signedDateMeta,
         signedDate.isAcceptableOrUnknown(data['signed_date']!, _signedDateMeta),
       );
-    }
-    if (data.containsKey('role_id')) {
-      context.handle(
-        _roleIdMeta,
-        roleId.isAcceptableOrUnknown(data['role_id']!, _roleIdMeta),
-      );
     } else if (isInserting) {
-      context.missing(_roleIdMeta);
+      context.missing(_signedDateMeta);
     }
     if (data.containsKey('content_id')) {
       context.handle(
@@ -4120,17 +4185,17 @@ class Document extends Table with TableInfo<Document, DocumentData> {
         DriftSqlType.string,
         data['${effectivePrefix}title'],
       )!,
-      officalCode: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}offical_code'],
-      ),
-      signedDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}signed_date'],
-      ),
-      roleId: attachedDatabase.typeMapping.read(
+      officialCode: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}role_id'],
+        data['${effectivePrefix}official_code'],
+      )!,
+      officialType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}official_type'],
+      )!,
+      signedDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}signed_date'],
       )!,
       contentId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -4163,10 +4228,11 @@ class Document extends Table with TableInfo<Document, DocumentData> {
 class DocumentData extends DataClass implements Insertable<DocumentData> {
   final int id;
   final String title;
-  final String? officalCode;
-  final String? signedDate;
-  final int roleId;
+  final int officialCode;
+  final String officialType;
+  final DateTime signedDate;
 
+  /// role_id integer not null REFERENCES document_role(id),
   /// Content & archive
   final int? contentId;
   final String? archiveId;
@@ -4177,9 +4243,9 @@ class DocumentData extends DataClass implements Insertable<DocumentData> {
   const DocumentData({
     required this.id,
     required this.title,
-    this.officalCode,
-    this.signedDate,
-    required this.roleId,
+    required this.officialCode,
+    required this.officialType,
+    required this.signedDate,
     this.contentId,
     this.archiveId,
     required this.createdTime,
@@ -4190,13 +4256,9 @@ class DocumentData extends DataClass implements Insertable<DocumentData> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['title'] = Variable<String>(title);
-    if (!nullToAbsent || officalCode != null) {
-      map['offical_code'] = Variable<String>(officalCode);
-    }
-    if (!nullToAbsent || signedDate != null) {
-      map['signed_date'] = Variable<String>(signedDate);
-    }
-    map['role_id'] = Variable<int>(roleId);
+    map['official_code'] = Variable<int>(officialCode);
+    map['official_type'] = Variable<String>(officialType);
+    map['signed_date'] = Variable<DateTime>(signedDate);
     if (!nullToAbsent || contentId != null) {
       map['content_id'] = Variable<int>(contentId);
     }
@@ -4212,13 +4274,9 @@ class DocumentData extends DataClass implements Insertable<DocumentData> {
     return DocumentCompanion(
       id: Value(id),
       title: Value(title),
-      officalCode: officalCode == null && nullToAbsent
-          ? const Value.absent()
-          : Value(officalCode),
-      signedDate: signedDate == null && nullToAbsent
-          ? const Value.absent()
-          : Value(signedDate),
-      roleId: Value(roleId),
+      officialCode: Value(officialCode),
+      officialType: Value(officialType),
+      signedDate: Value(signedDate),
       contentId: contentId == null && nullToAbsent
           ? const Value.absent()
           : Value(contentId),
@@ -4238,9 +4296,9 @@ class DocumentData extends DataClass implements Insertable<DocumentData> {
     return DocumentData(
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
-      officalCode: serializer.fromJson<String?>(json['offical_code']),
-      signedDate: serializer.fromJson<String?>(json['signed_date']),
-      roleId: serializer.fromJson<int>(json['role_id']),
+      officialCode: serializer.fromJson<int>(json['official_code']),
+      officialType: serializer.fromJson<String>(json['official_type']),
+      signedDate: serializer.fromJson<DateTime>(json['signed_date']),
       contentId: serializer.fromJson<int?>(json['content_id']),
       archiveId: serializer.fromJson<String?>(json['archive_id']),
       createdTime: serializer.fromJson<DateTime>(json['created_time']),
@@ -4253,9 +4311,9 @@ class DocumentData extends DataClass implements Insertable<DocumentData> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
-      'offical_code': serializer.toJson<String?>(officalCode),
-      'signed_date': serializer.toJson<String?>(signedDate),
-      'role_id': serializer.toJson<int>(roleId),
+      'official_code': serializer.toJson<int>(officialCode),
+      'official_type': serializer.toJson<String>(officialType),
+      'signed_date': serializer.toJson<DateTime>(signedDate),
       'content_id': serializer.toJson<int?>(contentId),
       'archive_id': serializer.toJson<String?>(archiveId),
       'created_time': serializer.toJson<DateTime>(createdTime),
@@ -4266,9 +4324,9 @@ class DocumentData extends DataClass implements Insertable<DocumentData> {
   DocumentData copyWith({
     int? id,
     String? title,
-    Value<String?> officalCode = const Value.absent(),
-    Value<String?> signedDate = const Value.absent(),
-    int? roleId,
+    int? officialCode,
+    String? officialType,
+    DateTime? signedDate,
     Value<int?> contentId = const Value.absent(),
     Value<String?> archiveId = const Value.absent(),
     DateTime? createdTime,
@@ -4276,9 +4334,9 @@ class DocumentData extends DataClass implements Insertable<DocumentData> {
   }) => DocumentData(
     id: id ?? this.id,
     title: title ?? this.title,
-    officalCode: officalCode.present ? officalCode.value : this.officalCode,
-    signedDate: signedDate.present ? signedDate.value : this.signedDate,
-    roleId: roleId ?? this.roleId,
+    officialCode: officialCode ?? this.officialCode,
+    officialType: officialType ?? this.officialType,
+    signedDate: signedDate ?? this.signedDate,
     contentId: contentId.present ? contentId.value : this.contentId,
     archiveId: archiveId.present ? archiveId.value : this.archiveId,
     createdTime: createdTime ?? this.createdTime,
@@ -4288,13 +4346,15 @@ class DocumentData extends DataClass implements Insertable<DocumentData> {
     return DocumentData(
       id: data.id.present ? data.id.value : this.id,
       title: data.title.present ? data.title.value : this.title,
-      officalCode: data.officalCode.present
-          ? data.officalCode.value
-          : this.officalCode,
+      officialCode: data.officialCode.present
+          ? data.officialCode.value
+          : this.officialCode,
+      officialType: data.officialType.present
+          ? data.officialType.value
+          : this.officialType,
       signedDate: data.signedDate.present
           ? data.signedDate.value
           : this.signedDate,
-      roleId: data.roleId.present ? data.roleId.value : this.roleId,
       contentId: data.contentId.present ? data.contentId.value : this.contentId,
       archiveId: data.archiveId.present ? data.archiveId.value : this.archiveId,
       createdTime: data.createdTime.present
@@ -4311,9 +4371,9 @@ class DocumentData extends DataClass implements Insertable<DocumentData> {
     return (StringBuffer('DocumentData(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('officalCode: $officalCode, ')
+          ..write('officialCode: $officialCode, ')
+          ..write('officialType: $officialType, ')
           ..write('signedDate: $signedDate, ')
-          ..write('roleId: $roleId, ')
           ..write('contentId: $contentId, ')
           ..write('archiveId: $archiveId, ')
           ..write('createdTime: $createdTime, ')
@@ -4326,9 +4386,9 @@ class DocumentData extends DataClass implements Insertable<DocumentData> {
   int get hashCode => Object.hash(
     id,
     title,
-    officalCode,
+    officialCode,
+    officialType,
     signedDate,
-    roleId,
     contentId,
     archiveId,
     createdTime,
@@ -4340,9 +4400,9 @@ class DocumentData extends DataClass implements Insertable<DocumentData> {
       (other is DocumentData &&
           other.id == this.id &&
           other.title == this.title &&
-          other.officalCode == this.officalCode &&
+          other.officialCode == this.officialCode &&
+          other.officialType == this.officialType &&
           other.signedDate == this.signedDate &&
-          other.roleId == this.roleId &&
           other.contentId == this.contentId &&
           other.archiveId == this.archiveId &&
           other.createdTime == this.createdTime &&
@@ -4352,9 +4412,9 @@ class DocumentData extends DataClass implements Insertable<DocumentData> {
 class DocumentCompanion extends UpdateCompanion<DocumentData> {
   final Value<int> id;
   final Value<String> title;
-  final Value<String?> officalCode;
-  final Value<String?> signedDate;
-  final Value<int> roleId;
+  final Value<int> officialCode;
+  final Value<String> officialType;
+  final Value<DateTime> signedDate;
   final Value<int?> contentId;
   final Value<String?> archiveId;
   final Value<DateTime> createdTime;
@@ -4362,9 +4422,9 @@ class DocumentCompanion extends UpdateCompanion<DocumentData> {
   const DocumentCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
-    this.officalCode = const Value.absent(),
+    this.officialCode = const Value.absent(),
+    this.officialType = const Value.absent(),
     this.signedDate = const Value.absent(),
-    this.roleId = const Value.absent(),
     this.contentId = const Value.absent(),
     this.archiveId = const Value.absent(),
     this.createdTime = const Value.absent(),
@@ -4373,21 +4433,23 @@ class DocumentCompanion extends UpdateCompanion<DocumentData> {
   DocumentCompanion.insert({
     this.id = const Value.absent(),
     required String title,
-    this.officalCode = const Value.absent(),
-    this.signedDate = const Value.absent(),
-    required int roleId,
+    required int officialCode,
+    required String officialType,
+    required DateTime signedDate,
     this.contentId = const Value.absent(),
     this.archiveId = const Value.absent(),
     this.createdTime = const Value.absent(),
     this.updatedTime = const Value.absent(),
   }) : title = Value(title),
-       roleId = Value(roleId);
+       officialCode = Value(officialCode),
+       officialType = Value(officialType),
+       signedDate = Value(signedDate);
   static Insertable<DocumentData> custom({
     Expression<int>? id,
     Expression<String>? title,
-    Expression<String>? officalCode,
-    Expression<String>? signedDate,
-    Expression<int>? roleId,
+    Expression<int>? officialCode,
+    Expression<String>? officialType,
+    Expression<DateTime>? signedDate,
     Expression<int>? contentId,
     Expression<String>? archiveId,
     Expression<DateTime>? createdTime,
@@ -4396,9 +4458,9 @@ class DocumentCompanion extends UpdateCompanion<DocumentData> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
-      if (officalCode != null) 'offical_code': officalCode,
+      if (officialCode != null) 'official_code': officialCode,
+      if (officialType != null) 'official_type': officialType,
       if (signedDate != null) 'signed_date': signedDate,
-      if (roleId != null) 'role_id': roleId,
       if (contentId != null) 'content_id': contentId,
       if (archiveId != null) 'archive_id': archiveId,
       if (createdTime != null) 'created_time': createdTime,
@@ -4409,9 +4471,9 @@ class DocumentCompanion extends UpdateCompanion<DocumentData> {
   DocumentCompanion copyWith({
     Value<int>? id,
     Value<String>? title,
-    Value<String?>? officalCode,
-    Value<String?>? signedDate,
-    Value<int>? roleId,
+    Value<int>? officialCode,
+    Value<String>? officialType,
+    Value<DateTime>? signedDate,
     Value<int?>? contentId,
     Value<String?>? archiveId,
     Value<DateTime>? createdTime,
@@ -4420,9 +4482,9 @@ class DocumentCompanion extends UpdateCompanion<DocumentData> {
     return DocumentCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
-      officalCode: officalCode ?? this.officalCode,
+      officialCode: officialCode ?? this.officialCode,
+      officialType: officialType ?? this.officialType,
       signedDate: signedDate ?? this.signedDate,
-      roleId: roleId ?? this.roleId,
       contentId: contentId ?? this.contentId,
       archiveId: archiveId ?? this.archiveId,
       createdTime: createdTime ?? this.createdTime,
@@ -4439,14 +4501,14 @@ class DocumentCompanion extends UpdateCompanion<DocumentData> {
     if (title.present) {
       map['title'] = Variable<String>(title.value);
     }
-    if (officalCode.present) {
-      map['offical_code'] = Variable<String>(officalCode.value);
+    if (officialCode.present) {
+      map['official_code'] = Variable<int>(officialCode.value);
+    }
+    if (officialType.present) {
+      map['official_type'] = Variable<String>(officialType.value);
     }
     if (signedDate.present) {
-      map['signed_date'] = Variable<String>(signedDate.value);
-    }
-    if (roleId.present) {
-      map['role_id'] = Variable<int>(roleId.value);
+      map['signed_date'] = Variable<DateTime>(signedDate.value);
     }
     if (contentId.present) {
       map['content_id'] = Variable<int>(contentId.value);
@@ -4468,9 +4530,9 @@ class DocumentCompanion extends UpdateCompanion<DocumentData> {
     return (StringBuffer('DocumentCompanion(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('officalCode: $officalCode, ')
+          ..write('officialCode: $officialCode, ')
+          ..write('officialType: $officialType, ')
           ..write('signedDate: $signedDate, ')
-          ..write('roleId: $roleId, ')
           ..write('contentId: $contentId, ')
           ..write('archiveId: $archiveId, ')
           ..write('createdTime: $createdTime, ')
@@ -7429,6 +7491,17 @@ class Thesis extends Table with TableInfo<Thesis, ThesisData> {
     requiredDuringInsert: true,
     $customConstraints: 'NOT NULL',
   ).withConverter<enums.PaymentStatus>(Thesis.$converterpaymentStatus);
+  static const VerificationMeta _councilDecisionIdMeta = const VerificationMeta(
+    'councilDecisionId',
+  );
+  late final GeneratedColumn<int> councilDecisionId = GeneratedColumn<int>(
+    'defense_decision_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES document(id)',
+  );
   static const VerificationMeta _assignedDecisionNumberMeta =
       const VerificationMeta('assignedDecisionNumber');
   late final GeneratedColumn<String> assignedDecisionNumber =
@@ -7473,6 +7546,7 @@ class Thesis extends Table with TableInfo<Thesis, ThesisData> {
     year,
     defenseStatus,
     paymentStatus,
+    councilDecisionId,
     assignedDecisionNumber,
     defenseDecisionNumber,
   ];
@@ -7629,6 +7703,15 @@ class Thesis extends Table with TableInfo<Thesis, ThesisData> {
         year.isAcceptableOrUnknown(data['nam']!, _yearMeta),
       );
     }
+    if (data.containsKey('defense_decision_id')) {
+      context.handle(
+        _councilDecisionIdMeta,
+        councilDecisionId.isAcceptableOrUnknown(
+          data['defense_decision_id']!,
+          _councilDecisionIdMeta,
+        ),
+      );
+    }
     if (data.containsKey('soQdGiao')) {
       context.handle(
         _assignedDecisionNumberMeta,
@@ -7740,6 +7823,10 @@ class Thesis extends Table with TableInfo<Thesis, ThesisData> {
           data['${effectivePrefix}payment_status'],
         )!,
       ),
+      councilDecisionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}defense_decision_id'],
+      ),
       assignedDecisionNumber: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}soQdGiao'],
@@ -7785,6 +7872,7 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
   final String? year;
   final enums.ThesisStatus defenseStatus;
   final enums.PaymentStatus paymentStatus;
+  final int? councilDecisionId;
 
   /// Deprecated fields, probably to be removed later
   /// "ngayGiao"	datetime as assignedDate,
@@ -7811,6 +7899,7 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     this.year,
     required this.defenseStatus,
     required this.paymentStatus,
+    this.councilDecisionId,
     this.assignedDecisionNumber,
     this.defenseDecisionNumber,
   });
@@ -7865,6 +7954,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
         Thesis.$converterpaymentStatus.toSql(paymentStatus),
       );
     }
+    if (!nullToAbsent || councilDecisionId != null) {
+      map['defense_decision_id'] = Variable<int>(councilDecisionId);
+    }
     if (!nullToAbsent || assignedDecisionNumber != null) {
       map['soQdGiao'] = Variable<String>(assignedDecisionNumber);
     }
@@ -7914,6 +8006,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
       year: year == null && nullToAbsent ? const Value.absent() : Value(year),
       defenseStatus: Value(defenseStatus),
       paymentStatus: Value(paymentStatus),
+      councilDecisionId: councilDecisionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(councilDecisionId),
       assignedDecisionNumber: assignedDecisionNumber == null && nullToAbsent
           ? const Value.absent()
           : Value(assignedDecisionNumber),
@@ -7953,6 +8048,7 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
       paymentStatus: serializer.fromJson<enums.PaymentStatus>(
         json['payment_status'],
       ),
+      councilDecisionId: serializer.fromJson<int?>(json['defense_decision_id']),
       assignedDecisionNumber: serializer.fromJson<String?>(json['soQdGiao']),
       defenseDecisionNumber: serializer.fromJson<String?>(json['soQdBaoVe']),
     );
@@ -7981,6 +8077,7 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
       'nam': serializer.toJson<String?>(year),
       'defense_status': serializer.toJson<enums.ThesisStatus>(defenseStatus),
       'payment_status': serializer.toJson<enums.PaymentStatus>(paymentStatus),
+      'defense_decision_id': serializer.toJson<int?>(councilDecisionId),
       'soQdGiao': serializer.toJson<String?>(assignedDecisionNumber),
       'soQdBaoVe': serializer.toJson<String?>(defenseDecisionNumber),
     };
@@ -8007,6 +8104,7 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     Value<String?> year = const Value.absent(),
     enums.ThesisStatus? defenseStatus,
     enums.PaymentStatus? paymentStatus,
+    Value<int?> councilDecisionId = const Value.absent(),
     Value<String?> assignedDecisionNumber = const Value.absent(),
     Value<String?> defenseDecisionNumber = const Value.absent(),
   }) => ThesisData(
@@ -8036,6 +8134,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     year: year.present ? year.value : this.year,
     defenseStatus: defenseStatus ?? this.defenseStatus,
     paymentStatus: paymentStatus ?? this.paymentStatus,
+    councilDecisionId: councilDecisionId.present
+        ? councilDecisionId.value
+        : this.councilDecisionId,
     assignedDecisionNumber: assignedDecisionNumber.present
         ? assignedDecisionNumber.value
         : this.assignedDecisionNumber,
@@ -8091,6 +8192,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
       paymentStatus: data.paymentStatus.present
           ? data.paymentStatus.value
           : this.paymentStatus,
+      councilDecisionId: data.councilDecisionId.present
+          ? data.councilDecisionId.value
+          : this.councilDecisionId,
       assignedDecisionNumber: data.assignedDecisionNumber.present
           ? data.assignedDecisionNumber.value
           : this.assignedDecisionNumber,
@@ -8123,6 +8227,7 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
           ..write('year: $year, ')
           ..write('defenseStatus: $defenseStatus, ')
           ..write('paymentStatus: $paymentStatus, ')
+          ..write('councilDecisionId: $councilDecisionId, ')
           ..write('assignedDecisionNumber: $assignedDecisionNumber, ')
           ..write('defenseDecisionNumber: $defenseDecisionNumber')
           ..write(')'))
@@ -8151,6 +8256,7 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     year,
     defenseStatus,
     paymentStatus,
+    councilDecisionId,
     assignedDecisionNumber,
     defenseDecisionNumber,
   ]);
@@ -8178,6 +8284,7 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
           other.year == this.year &&
           other.defenseStatus == this.defenseStatus &&
           other.paymentStatus == this.paymentStatus &&
+          other.councilDecisionId == this.councilDecisionId &&
           other.assignedDecisionNumber == this.assignedDecisionNumber &&
           other.defenseDecisionNumber == this.defenseDecisionNumber);
 }
@@ -8203,6 +8310,7 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
   final Value<String?> year;
   final Value<enums.ThesisStatus> defenseStatus;
   final Value<enums.PaymentStatus> paymentStatus;
+  final Value<int?> councilDecisionId;
   final Value<String?> assignedDecisionNumber;
   final Value<String?> defenseDecisionNumber;
   const ThesisCompanion({
@@ -8226,6 +8334,7 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
     this.year = const Value.absent(),
     this.defenseStatus = const Value.absent(),
     this.paymentStatus = const Value.absent(),
+    this.councilDecisionId = const Value.absent(),
     this.assignedDecisionNumber = const Value.absent(),
     this.defenseDecisionNumber = const Value.absent(),
   });
@@ -8250,6 +8359,7 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
     this.year = const Value.absent(),
     required enums.ThesisStatus defenseStatus,
     required enums.PaymentStatus paymentStatus,
+    this.councilDecisionId = const Value.absent(),
     this.assignedDecisionNumber = const Value.absent(),
     this.defenseDecisionNumber = const Value.absent(),
   }) : supervisorId = Value(supervisorId),
@@ -8278,6 +8388,7 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
     Expression<String>? year,
     Expression<String>? defenseStatus,
     Expression<String>? paymentStatus,
+    Expression<int>? councilDecisionId,
     Expression<String>? assignedDecisionNumber,
     Expression<String>? defenseDecisionNumber,
   }) {
@@ -8302,6 +8413,7 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
       if (year != null) 'nam': year,
       if (defenseStatus != null) 'defense_status': defenseStatus,
       if (paymentStatus != null) 'payment_status': paymentStatus,
+      if (councilDecisionId != null) 'defense_decision_id': councilDecisionId,
       if (assignedDecisionNumber != null) 'soQdGiao': assignedDecisionNumber,
       if (defenseDecisionNumber != null) 'soQdBaoVe': defenseDecisionNumber,
     });
@@ -8328,6 +8440,7 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
     Value<String?>? year,
     Value<enums.ThesisStatus>? defenseStatus,
     Value<enums.PaymentStatus>? paymentStatus,
+    Value<int?>? councilDecisionId,
     Value<String?>? assignedDecisionNumber,
     Value<String?>? defenseDecisionNumber,
   }) {
@@ -8352,6 +8465,7 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
       year: year ?? this.year,
       defenseStatus: defenseStatus ?? this.defenseStatus,
       paymentStatus: paymentStatus ?? this.paymentStatus,
+      councilDecisionId: councilDecisionId ?? this.councilDecisionId,
       assignedDecisionNumber:
           assignedDecisionNumber ?? this.assignedDecisionNumber,
       defenseDecisionNumber:
@@ -8426,6 +8540,9 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
         Thesis.$converterpaymentStatus.toSql(paymentStatus.value),
       );
     }
+    if (councilDecisionId.present) {
+      map['defense_decision_id'] = Variable<int>(councilDecisionId.value);
+    }
     if (assignedDecisionNumber.present) {
       map['soQdGiao'] = Variable<String>(assignedDecisionNumber.value);
     }
@@ -8458,6 +8575,7 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
           ..write('year: $year, ')
           ..write('defenseStatus: $defenseStatus, ')
           ..write('paymentStatus: $paymentStatus, ')
+          ..write('councilDecisionId: $councilDecisionId, ')
           ..write('assignedDecisionNumber: $assignedDecisionNumber, ')
           ..write('defenseDecisionNumber: $defenseDecisionNumber')
           ..write(')'))
@@ -8986,6 +9104,393 @@ class PhdCohortCompanion extends UpdateCompanion<PhdCohortData> {
   }
 }
 
+class PhdAdmissionPaymentPolicy extends Table
+    with TableInfo<PhdAdmissionPaymentPolicy, PhdAdmissionPaymentPolicyData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  PhdAdmissionPaymentPolicy(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    true,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'PRIMARY KEY AUTOINCREMENT',
+  );
+  static const VerificationMeta _presidentPaymentMeta = const VerificationMeta(
+    'presidentPayment',
+  );
+  late final GeneratedColumn<int> presidentPayment = GeneratedColumn<int>(
+    'president_payment',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _secretaryPaymentMeta = const VerificationMeta(
+    'secretaryPayment',
+  );
+  late final GeneratedColumn<int> secretaryPayment = GeneratedColumn<int>(
+    'secretary_payment',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _memberPaymentMeta = const VerificationMeta(
+    'memberPayment',
+  );
+  late final GeneratedColumn<int> memberPayment = GeneratedColumn<int>(
+    'member_payment',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _helperPaymentMeta = const VerificationMeta(
+    'helperPayment',
+  );
+  late final GeneratedColumn<int> helperPayment = GeneratedColumn<int>(
+    'helper_payment',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    presidentPayment,
+    secretaryPayment,
+    memberPayment,
+    helperPayment,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'phd_admission_payment_policy';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PhdAdmissionPaymentPolicyData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('president_payment')) {
+      context.handle(
+        _presidentPaymentMeta,
+        presidentPayment.isAcceptableOrUnknown(
+          data['president_payment']!,
+          _presidentPaymentMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_presidentPaymentMeta);
+    }
+    if (data.containsKey('secretary_payment')) {
+      context.handle(
+        _secretaryPaymentMeta,
+        secretaryPayment.isAcceptableOrUnknown(
+          data['secretary_payment']!,
+          _secretaryPaymentMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_secretaryPaymentMeta);
+    }
+    if (data.containsKey('member_payment')) {
+      context.handle(
+        _memberPaymentMeta,
+        memberPayment.isAcceptableOrUnknown(
+          data['member_payment']!,
+          _memberPaymentMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_memberPaymentMeta);
+    }
+    if (data.containsKey('helper_payment')) {
+      context.handle(
+        _helperPaymentMeta,
+        helperPayment.isAcceptableOrUnknown(
+          data['helper_payment']!,
+          _helperPaymentMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_helperPaymentMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PhdAdmissionPaymentPolicyData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PhdAdmissionPaymentPolicyData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      ),
+      presidentPayment: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}president_payment'],
+      )!,
+      secretaryPayment: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}secretary_payment'],
+      )!,
+      memberPayment: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}member_payment'],
+      )!,
+      helperPayment: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}helper_payment'],
+      )!,
+    );
+  }
+
+  @override
+  PhdAdmissionPaymentPolicy createAlias(String alias) {
+    return PhdAdmissionPaymentPolicy(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class PhdAdmissionPaymentPolicyData extends DataClass
+    implements Insertable<PhdAdmissionPaymentPolicyData> {
+  final int? id;
+  final int presidentPayment;
+  final int secretaryPayment;
+  final int memberPayment;
+  final int helperPayment;
+  const PhdAdmissionPaymentPolicyData({
+    this.id,
+    required this.presidentPayment,
+    required this.secretaryPayment,
+    required this.memberPayment,
+    required this.helperPayment,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    map['president_payment'] = Variable<int>(presidentPayment);
+    map['secretary_payment'] = Variable<int>(secretaryPayment);
+    map['member_payment'] = Variable<int>(memberPayment);
+    map['helper_payment'] = Variable<int>(helperPayment);
+    return map;
+  }
+
+  PhdAdmissionPaymentPolicyCompanion toCompanion(bool nullToAbsent) {
+    return PhdAdmissionPaymentPolicyCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      presidentPayment: Value(presidentPayment),
+      secretaryPayment: Value(secretaryPayment),
+      memberPayment: Value(memberPayment),
+      helperPayment: Value(helperPayment),
+    );
+  }
+
+  factory PhdAdmissionPaymentPolicyData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PhdAdmissionPaymentPolicyData(
+      id: serializer.fromJson<int?>(json['id']),
+      presidentPayment: serializer.fromJson<int>(json['president_payment']),
+      secretaryPayment: serializer.fromJson<int>(json['secretary_payment']),
+      memberPayment: serializer.fromJson<int>(json['member_payment']),
+      helperPayment: serializer.fromJson<int>(json['helper_payment']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int?>(id),
+      'president_payment': serializer.toJson<int>(presidentPayment),
+      'secretary_payment': serializer.toJson<int>(secretaryPayment),
+      'member_payment': serializer.toJson<int>(memberPayment),
+      'helper_payment': serializer.toJson<int>(helperPayment),
+    };
+  }
+
+  PhdAdmissionPaymentPolicyData copyWith({
+    Value<int?> id = const Value.absent(),
+    int? presidentPayment,
+    int? secretaryPayment,
+    int? memberPayment,
+    int? helperPayment,
+  }) => PhdAdmissionPaymentPolicyData(
+    id: id.present ? id.value : this.id,
+    presidentPayment: presidentPayment ?? this.presidentPayment,
+    secretaryPayment: secretaryPayment ?? this.secretaryPayment,
+    memberPayment: memberPayment ?? this.memberPayment,
+    helperPayment: helperPayment ?? this.helperPayment,
+  );
+  PhdAdmissionPaymentPolicyData copyWithCompanion(
+    PhdAdmissionPaymentPolicyCompanion data,
+  ) {
+    return PhdAdmissionPaymentPolicyData(
+      id: data.id.present ? data.id.value : this.id,
+      presidentPayment: data.presidentPayment.present
+          ? data.presidentPayment.value
+          : this.presidentPayment,
+      secretaryPayment: data.secretaryPayment.present
+          ? data.secretaryPayment.value
+          : this.secretaryPayment,
+      memberPayment: data.memberPayment.present
+          ? data.memberPayment.value
+          : this.memberPayment,
+      helperPayment: data.helperPayment.present
+          ? data.helperPayment.value
+          : this.helperPayment,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PhdAdmissionPaymentPolicyData(')
+          ..write('id: $id, ')
+          ..write('presidentPayment: $presidentPayment, ')
+          ..write('secretaryPayment: $secretaryPayment, ')
+          ..write('memberPayment: $memberPayment, ')
+          ..write('helperPayment: $helperPayment')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    presidentPayment,
+    secretaryPayment,
+    memberPayment,
+    helperPayment,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PhdAdmissionPaymentPolicyData &&
+          other.id == this.id &&
+          other.presidentPayment == this.presidentPayment &&
+          other.secretaryPayment == this.secretaryPayment &&
+          other.memberPayment == this.memberPayment &&
+          other.helperPayment == this.helperPayment);
+}
+
+class PhdAdmissionPaymentPolicyCompanion
+    extends UpdateCompanion<PhdAdmissionPaymentPolicyData> {
+  final Value<int?> id;
+  final Value<int> presidentPayment;
+  final Value<int> secretaryPayment;
+  final Value<int> memberPayment;
+  final Value<int> helperPayment;
+  const PhdAdmissionPaymentPolicyCompanion({
+    this.id = const Value.absent(),
+    this.presidentPayment = const Value.absent(),
+    this.secretaryPayment = const Value.absent(),
+    this.memberPayment = const Value.absent(),
+    this.helperPayment = const Value.absent(),
+  });
+  PhdAdmissionPaymentPolicyCompanion.insert({
+    this.id = const Value.absent(),
+    required int presidentPayment,
+    required int secretaryPayment,
+    required int memberPayment,
+    required int helperPayment,
+  }) : presidentPayment = Value(presidentPayment),
+       secretaryPayment = Value(secretaryPayment),
+       memberPayment = Value(memberPayment),
+       helperPayment = Value(helperPayment);
+  static Insertable<PhdAdmissionPaymentPolicyData> custom({
+    Expression<int>? id,
+    Expression<int>? presidentPayment,
+    Expression<int>? secretaryPayment,
+    Expression<int>? memberPayment,
+    Expression<int>? helperPayment,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (presidentPayment != null) 'president_payment': presidentPayment,
+      if (secretaryPayment != null) 'secretary_payment': secretaryPayment,
+      if (memberPayment != null) 'member_payment': memberPayment,
+      if (helperPayment != null) 'helper_payment': helperPayment,
+    });
+  }
+
+  PhdAdmissionPaymentPolicyCompanion copyWith({
+    Value<int?>? id,
+    Value<int>? presidentPayment,
+    Value<int>? secretaryPayment,
+    Value<int>? memberPayment,
+    Value<int>? helperPayment,
+  }) {
+    return PhdAdmissionPaymentPolicyCompanion(
+      id: id ?? this.id,
+      presidentPayment: presidentPayment ?? this.presidentPayment,
+      secretaryPayment: secretaryPayment ?? this.secretaryPayment,
+      memberPayment: memberPayment ?? this.memberPayment,
+      helperPayment: helperPayment ?? this.helperPayment,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (presidentPayment.present) {
+      map['president_payment'] = Variable<int>(presidentPayment.value);
+    }
+    if (secretaryPayment.present) {
+      map['secretary_payment'] = Variable<int>(secretaryPayment.value);
+    }
+    if (memberPayment.present) {
+      map['member_payment'] = Variable<int>(memberPayment.value);
+    }
+    if (helperPayment.present) {
+      map['helper_payment'] = Variable<int>(helperPayment.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PhdAdmissionPaymentPolicyCompanion(')
+          ..write('id: $id, ')
+          ..write('presidentPayment: $presidentPayment, ')
+          ..write('secretaryPayment: $secretaryPayment, ')
+          ..write('memberPayment: $memberPayment, ')
+          ..write('helperPayment: $helperPayment')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -9008,7 +9513,7 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL',
+    $customConstraints: 'NOT NULL REFERENCES phd_cohort(cohort)',
   );
   static const VerificationMeta _managementIdMeta = const VerificationMeta(
     'managementId',
@@ -9179,17 +9684,43 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
     requiredDuringInsert: false,
     $customConstraints: '',
   );
-  static const VerificationMeta _admissionPaidMeta = const VerificationMeta(
-    'admissionPaid',
+  static const VerificationMeta _admissionHelperIdMeta = const VerificationMeta(
+    'admissionHelperId',
   );
-  late final GeneratedColumn<bool> admissionPaid = GeneratedColumn<bool>(
-    'admission_paid',
+  late final GeneratedColumn<int> admissionHelperId = GeneratedColumn<int>(
+    'admission_helper_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  late final GeneratedColumnWithTypeConverter<enums.PaymentStatus, String>
+  admissionPaymentStatus =
+      GeneratedColumn<String>(
+        'admission_payment_status',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints: 'NOT NULL DEFAULT \'unpaid\'',
+        defaultValue: const CustomExpression('\'unpaid\''),
+      ).withConverter<enums.PaymentStatus>(
+        PhdStudent.$converteradmissionPaymentStatus,
+      );
+  static const VerificationMeta _admissionPaymentPolicyMeta =
+      const VerificationMeta('admissionPaymentPolicy');
+  late final GeneratedColumn<int> admissionPaymentPolicy = GeneratedColumn<int>(
+    'admission_payment_policy',
     aliasedName,
     false,
-    type: DriftSqlType.bool,
+    type: DriftSqlType.int,
     requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT FALSE',
-    defaultValue: const CustomExpression('FALSE'),
+    $customConstraints:
+        'NOT NULL DEFAULT ("select max(id) from phd_admission_payment_policy") REFERENCES phd_admission_payment_policy(id)',
+    defaultValue: const CustomExpression(
+      '"select max(id) from phd_admission_payment_policy"',
+    ),
   );
   static const VerificationMeta _thesisMeta = const VerificationMeta('thesis');
   late final GeneratedColumn<String> thesis = GeneratedColumn<String>(
@@ -9285,7 +9816,9 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
     admission1stMemberId,
     admission2ndMemberId,
     admission3rdMemberId,
-    admissionPaid,
+    admissionHelperId,
+    admissionPaymentStatus,
+    admissionPaymentPolicy,
     thesis,
     supervisorId,
     secondarySupervisorId,
@@ -9439,12 +9972,21 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
         ),
       );
     }
-    if (data.containsKey('admission_paid')) {
+    if (data.containsKey('admission_helper_id')) {
       context.handle(
-        _admissionPaidMeta,
-        admissionPaid.isAcceptableOrUnknown(
-          data['admission_paid']!,
-          _admissionPaidMeta,
+        _admissionHelperIdMeta,
+        admissionHelperId.isAcceptableOrUnknown(
+          data['admission_helper_id']!,
+          _admissionHelperIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('admission_payment_policy')) {
+      context.handle(
+        _admissionPaymentPolicyMeta,
+        admissionPaymentPolicy.isAcceptableOrUnknown(
+          data['admission_payment_policy']!,
+          _admissionPaymentPolicyMeta,
         ),
       );
     }
@@ -9588,9 +10130,20 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
         DriftSqlType.int,
         data['${effectivePrefix}admission_3rd_member_id'],
       ),
-      admissionPaid: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}admission_paid'],
+      admissionHelperId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}admission_helper_id'],
+      ),
+      admissionPaymentStatus: PhdStudent.$converteradmissionPaymentStatus
+          .fromSql(
+            attachedDatabase.typeMapping.read(
+              DriftSqlType.string,
+              data['${effectivePrefix}admission_payment_status'],
+            )!,
+          ),
+      admissionPaymentPolicy: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}admission_payment_policy'],
       )!,
       thesis: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -9634,6 +10187,8 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
       const enums.GenderConverter();
   static TypeConverter<enums.PhdSpecialization, String>
   $convertermajorSpecialization = enums.phdSpecializationConverter;
+  static TypeConverter<enums.PaymentStatus, String>
+  $converteradmissionPaymentStatus = enums.paymentStatusConverter;
   static TypeConverter<enums.StudentStatus, String> $converterstatus =
       const enums.StudentStatusConverter();
   @override
@@ -9670,7 +10225,11 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
   final int? admission1stMemberId;
   final int? admission2ndMemberId;
   final int? admission3rdMemberId;
-  final bool admissionPaid;
+  final int? admissionHelperId;
+
+  /// "admission_paid" boolean not null default false,
+  final enums.PaymentStatus admissionPaymentStatus;
+  final int admissionPaymentPolicy;
   final String thesis;
   final int supervisorId;
   final int? secondarySupervisorId;
@@ -9697,7 +10256,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     this.admission1stMemberId,
     this.admission2ndMemberId,
     this.admission3rdMemberId,
-    required this.admissionPaid,
+    this.admissionHelperId,
+    required this.admissionPaymentStatus,
+    required this.admissionPaymentPolicy,
     required this.thesis,
     required this.supervisorId,
     this.secondarySupervisorId,
@@ -9751,7 +10312,17 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     if (!nullToAbsent || admission3rdMemberId != null) {
       map['admission_3rd_member_id'] = Variable<int>(admission3rdMemberId);
     }
-    map['admission_paid'] = Variable<bool>(admissionPaid);
+    if (!nullToAbsent || admissionHelperId != null) {
+      map['admission_helper_id'] = Variable<int>(admissionHelperId);
+    }
+    {
+      map['admission_payment_status'] = Variable<String>(
+        PhdStudent.$converteradmissionPaymentStatus.toSql(
+          admissionPaymentStatus,
+        ),
+      );
+    }
+    map['admission_payment_policy'] = Variable<int>(admissionPaymentPolicy);
     map['thesis'] = Variable<String>(thesis);
     map['supervisor_id'] = Variable<int>(supervisorId);
     if (!nullToAbsent || secondarySupervisorId != null) {
@@ -9806,7 +10377,11 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       admission3rdMemberId: admission3rdMemberId == null && nullToAbsent
           ? const Value.absent()
           : Value(admission3rdMemberId),
-      admissionPaid: Value(admissionPaid),
+      admissionHelperId: admissionHelperId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(admissionHelperId),
+      admissionPaymentStatus: Value(admissionPaymentStatus),
+      admissionPaymentPolicy: Value(admissionPaymentPolicy),
       thesis: Value(thesis),
       supervisorId: Value(supervisorId),
       secondarySupervisorId: secondarySupervisorId == null && nullToAbsent
@@ -9857,7 +10432,13 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       admission3rdMemberId: serializer.fromJson<int?>(
         json['admission_3rd_member_id'],
       ),
-      admissionPaid: serializer.fromJson<bool>(json['admission_paid']),
+      admissionHelperId: serializer.fromJson<int?>(json['admission_helper_id']),
+      admissionPaymentStatus: serializer.fromJson<enums.PaymentStatus>(
+        json['admission_payment_status'],
+      ),
+      admissionPaymentPolicy: serializer.fromJson<int>(
+        json['admission_payment_policy'],
+      ),
       thesis: serializer.fromJson<String>(json['thesis']),
       supervisorId: serializer.fromJson<int>(json['supervisor_id']),
       secondarySupervisorId: serializer.fromJson<int?>(
@@ -9893,7 +10474,13 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       'admission_1st_member_id': serializer.toJson<int?>(admission1stMemberId),
       'admission_2nd_member_id': serializer.toJson<int?>(admission2ndMemberId),
       'admission_3rd_member_id': serializer.toJson<int?>(admission3rdMemberId),
-      'admission_paid': serializer.toJson<bool>(admissionPaid),
+      'admission_helper_id': serializer.toJson<int?>(admissionHelperId),
+      'admission_payment_status': serializer.toJson<enums.PaymentStatus>(
+        admissionPaymentStatus,
+      ),
+      'admission_payment_policy': serializer.toJson<int>(
+        admissionPaymentPolicy,
+      ),
       'thesis': serializer.toJson<String>(thesis),
       'supervisor_id': serializer.toJson<int>(supervisorId),
       'secondary_supervisor_id': serializer.toJson<int?>(secondarySupervisorId),
@@ -9923,7 +10510,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     Value<int?> admission1stMemberId = const Value.absent(),
     Value<int?> admission2ndMemberId = const Value.absent(),
     Value<int?> admission3rdMemberId = const Value.absent(),
-    bool? admissionPaid,
+    Value<int?> admissionHelperId = const Value.absent(),
+    enums.PaymentStatus? admissionPaymentStatus,
+    int? admissionPaymentPolicy,
     String? thesis,
     int? supervisorId,
     Value<int?> secondarySupervisorId = const Value.absent(),
@@ -9960,7 +10549,13 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     admission3rdMemberId: admission3rdMemberId.present
         ? admission3rdMemberId.value
         : this.admission3rdMemberId,
-    admissionPaid: admissionPaid ?? this.admissionPaid,
+    admissionHelperId: admissionHelperId.present
+        ? admissionHelperId.value
+        : this.admissionHelperId,
+    admissionPaymentStatus:
+        admissionPaymentStatus ?? this.admissionPaymentStatus,
+    admissionPaymentPolicy:
+        admissionPaymentPolicy ?? this.admissionPaymentPolicy,
     thesis: thesis ?? this.thesis,
     supervisorId: supervisorId ?? this.supervisorId,
     secondarySupervisorId: secondarySupervisorId.present
@@ -10013,9 +10608,15 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       admission3rdMemberId: data.admission3rdMemberId.present
           ? data.admission3rdMemberId.value
           : this.admission3rdMemberId,
-      admissionPaid: data.admissionPaid.present
-          ? data.admissionPaid.value
-          : this.admissionPaid,
+      admissionHelperId: data.admissionHelperId.present
+          ? data.admissionHelperId.value
+          : this.admissionHelperId,
+      admissionPaymentStatus: data.admissionPaymentStatus.present
+          ? data.admissionPaymentStatus.value
+          : this.admissionPaymentStatus,
+      admissionPaymentPolicy: data.admissionPaymentPolicy.present
+          ? data.admissionPaymentPolicy.value
+          : this.admissionPaymentPolicy,
       thesis: data.thesis.present ? data.thesis.value : this.thesis,
       supervisorId: data.supervisorId.present
           ? data.supervisorId.value
@@ -10057,7 +10658,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
           ..write('admission1stMemberId: $admission1stMemberId, ')
           ..write('admission2ndMemberId: $admission2ndMemberId, ')
           ..write('admission3rdMemberId: $admission3rdMemberId, ')
-          ..write('admissionPaid: $admissionPaid, ')
+          ..write('admissionHelperId: $admissionHelperId, ')
+          ..write('admissionPaymentStatus: $admissionPaymentStatus, ')
+          ..write('admissionPaymentPolicy: $admissionPaymentPolicy, ')
           ..write('thesis: $thesis, ')
           ..write('supervisorId: $supervisorId, ')
           ..write('secondarySupervisorId: $secondarySupervisorId, ')
@@ -10089,7 +10692,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     admission1stMemberId,
     admission2ndMemberId,
     admission3rdMemberId,
-    admissionPaid,
+    admissionHelperId,
+    admissionPaymentStatus,
+    admissionPaymentPolicy,
     thesis,
     supervisorId,
     secondarySupervisorId,
@@ -10120,7 +10725,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
           other.admission1stMemberId == this.admission1stMemberId &&
           other.admission2ndMemberId == this.admission2ndMemberId &&
           other.admission3rdMemberId == this.admission3rdMemberId &&
-          other.admissionPaid == this.admissionPaid &&
+          other.admissionHelperId == this.admissionHelperId &&
+          other.admissionPaymentStatus == this.admissionPaymentStatus &&
+          other.admissionPaymentPolicy == this.admissionPaymentPolicy &&
           other.thesis == this.thesis &&
           other.supervisorId == this.supervisorId &&
           other.secondarySupervisorId == this.secondarySupervisorId &&
@@ -10149,7 +10756,9 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
   final Value<int?> admission1stMemberId;
   final Value<int?> admission2ndMemberId;
   final Value<int?> admission3rdMemberId;
-  final Value<bool> admissionPaid;
+  final Value<int?> admissionHelperId;
+  final Value<enums.PaymentStatus> admissionPaymentStatus;
+  final Value<int> admissionPaymentPolicy;
   final Value<String> thesis;
   final Value<int> supervisorId;
   final Value<int?> secondarySupervisorId;
@@ -10176,7 +10785,9 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     this.admission1stMemberId = const Value.absent(),
     this.admission2ndMemberId = const Value.absent(),
     this.admission3rdMemberId = const Value.absent(),
-    this.admissionPaid = const Value.absent(),
+    this.admissionHelperId = const Value.absent(),
+    this.admissionPaymentStatus = const Value.absent(),
+    this.admissionPaymentPolicy = const Value.absent(),
     this.thesis = const Value.absent(),
     this.supervisorId = const Value.absent(),
     this.secondarySupervisorId = const Value.absent(),
@@ -10204,7 +10815,9 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     this.admission1stMemberId = const Value.absent(),
     this.admission2ndMemberId = const Value.absent(),
     this.admission3rdMemberId = const Value.absent(),
-    this.admissionPaid = const Value.absent(),
+    this.admissionHelperId = const Value.absent(),
+    this.admissionPaymentStatus = const Value.absent(),
+    this.admissionPaymentPolicy = const Value.absent(),
     required String thesis,
     required int supervisorId,
     this.secondarySupervisorId = const Value.absent(),
@@ -10240,7 +10853,9 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     Expression<int>? admission1stMemberId,
     Expression<int>? admission2ndMemberId,
     Expression<int>? admission3rdMemberId,
-    Expression<bool>? admissionPaid,
+    Expression<int>? admissionHelperId,
+    Expression<String>? admissionPaymentStatus,
+    Expression<int>? admissionPaymentPolicy,
     Expression<String>? thesis,
     Expression<int>? supervisorId,
     Expression<int>? secondarySupervisorId,
@@ -10274,7 +10889,11 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
         'admission_2nd_member_id': admission2ndMemberId,
       if (admission3rdMemberId != null)
         'admission_3rd_member_id': admission3rdMemberId,
-      if (admissionPaid != null) 'admission_paid': admissionPaid,
+      if (admissionHelperId != null) 'admission_helper_id': admissionHelperId,
+      if (admissionPaymentStatus != null)
+        'admission_payment_status': admissionPaymentStatus,
+      if (admissionPaymentPolicy != null)
+        'admission_payment_policy': admissionPaymentPolicy,
       if (thesis != null) 'thesis': thesis,
       if (supervisorId != null) 'supervisor_id': supervisorId,
       if (secondarySupervisorId != null)
@@ -10305,7 +10924,9 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     Value<int?>? admission1stMemberId,
     Value<int?>? admission2ndMemberId,
     Value<int?>? admission3rdMemberId,
-    Value<bool>? admissionPaid,
+    Value<int?>? admissionHelperId,
+    Value<enums.PaymentStatus>? admissionPaymentStatus,
+    Value<int>? admissionPaymentPolicy,
     Value<String>? thesis,
     Value<int>? supervisorId,
     Value<int?>? secondarySupervisorId,
@@ -10333,7 +10954,11 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
       admission1stMemberId: admission1stMemberId ?? this.admission1stMemberId,
       admission2ndMemberId: admission2ndMemberId ?? this.admission2ndMemberId,
       admission3rdMemberId: admission3rdMemberId ?? this.admission3rdMemberId,
-      admissionPaid: admissionPaid ?? this.admissionPaid,
+      admissionHelperId: admissionHelperId ?? this.admissionHelperId,
+      admissionPaymentStatus:
+          admissionPaymentStatus ?? this.admissionPaymentStatus,
+      admissionPaymentPolicy:
+          admissionPaymentPolicy ?? this.admissionPaymentPolicy,
       thesis: thesis ?? this.thesis,
       supervisorId: supervisorId ?? this.supervisorId,
       secondarySupervisorId:
@@ -10414,8 +11039,20 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
         admission3rdMemberId.value,
       );
     }
-    if (admissionPaid.present) {
-      map['admission_paid'] = Variable<bool>(admissionPaid.value);
+    if (admissionHelperId.present) {
+      map['admission_helper_id'] = Variable<int>(admissionHelperId.value);
+    }
+    if (admissionPaymentStatus.present) {
+      map['admission_payment_status'] = Variable<String>(
+        PhdStudent.$converteradmissionPaymentStatus.toSql(
+          admissionPaymentStatus.value,
+        ),
+      );
+    }
+    if (admissionPaymentPolicy.present) {
+      map['admission_payment_policy'] = Variable<int>(
+        admissionPaymentPolicy.value,
+      );
     }
     if (thesis.present) {
       map['thesis'] = Variable<String>(thesis.value);
@@ -10466,7 +11103,9 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
           ..write('admission1stMemberId: $admission1stMemberId, ')
           ..write('admission2ndMemberId: $admission2ndMemberId, ')
           ..write('admission3rdMemberId: $admission3rdMemberId, ')
-          ..write('admissionPaid: $admissionPaid, ')
+          ..write('admissionHelperId: $admissionHelperId, ')
+          ..write('admissionPaymentStatus: $admissionPaymentStatus, ')
+          ..write('admissionPaymentPolicy: $admissionPaymentPolicy, ')
           ..write('thesis: $thesis, ')
           ..write('supervisorId: $supervisorId, ')
           ..write('secondarySupervisorId: $secondarySupervisorId, ')
@@ -12473,6 +13112,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final Thesis thesis = Thesis(this);
   late final AcademicGroup academicGroup = AcademicGroup(this);
   late final PhdCohort phdCohort = PhdCohort(this);
+  late final PhdAdmissionPaymentPolicy phdAdmissionPaymentPolicy =
+      PhdAdmissionPaymentPolicy(this);
   late final PhdStudent phdStudent = PhdStudent(this);
   late final TeachingRegistration teachingRegistration = TeachingRegistration(
     this,
@@ -12516,6 +13157,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     thesis,
     academicGroup,
     phdCohort,
+    phdAdmissionPaymentPolicy,
     phdStudent,
     teachingRegistration,
     courseLimiting,
@@ -13126,6 +13768,7 @@ typedef $TeacherCreateCompanionBuilder =
       Value<String?> bankName,
       Value<String?> deprecatedTaxCode,
       Value<String?> note,
+      Value<int?> startTeachingYear,
       Value<int?> teacherGroupId,
     });
 typedef $TeacherUpdateCompanionBuilder =
@@ -13150,6 +13793,7 @@ typedef $TeacherUpdateCompanionBuilder =
       Value<String?> bankName,
       Value<String?> deprecatedTaxCode,
       Value<String?> note,
+      Value<int?> startTeachingYear,
       Value<int?> teacherGroupId,
     });
 
@@ -13347,6 +13991,11 @@ class $TeacherFilterComposer extends Composer<_$AppDatabase, Teacher> {
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<int> get startTeachingYear => $composableBuilder(
+    column: $table.startTeachingYear,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $TeacherGroupFilterComposer get teacherGroupId {
     final $TeacherGroupFilterComposer composer = $composerBuilder(
       composer: this,
@@ -13529,6 +14178,11 @@ class $TeacherOrderingComposer extends Composer<_$AppDatabase, Teacher> {
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get startTeachingYear => $composableBuilder(
+    column: $table.startTeachingYear,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $TeacherGroupOrderingComposer get teacherGroupId {
     final $TeacherGroupOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -13644,6 +14298,11 @@ class $TeacherAnnotationComposer extends Composer<_$AppDatabase, Teacher> {
 
   GeneratedColumn<String> get note =>
       $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<int> get startTeachingYear => $composableBuilder(
+    column: $table.startTeachingYear,
+    builder: (column) => column,
+  );
 
   $TeacherGroupAnnotationComposer get teacherGroupId {
     final $TeacherGroupAnnotationComposer composer = $composerBuilder(
@@ -13773,6 +14432,7 @@ class $TeacherTableManager
                 Value<String?> bankName = const Value.absent(),
                 Value<String?> deprecatedTaxCode = const Value.absent(),
                 Value<String?> note = const Value.absent(),
+                Value<int?> startTeachingYear = const Value.absent(),
                 Value<int?> teacherGroupId = const Value.absent(),
               }) => TeacherCompanion(
                 id: id,
@@ -13795,6 +14455,7 @@ class $TeacherTableManager
                 bankName: bankName,
                 deprecatedTaxCode: deprecatedTaxCode,
                 note: note,
+                startTeachingYear: startTeachingYear,
                 teacherGroupId: teacherGroupId,
               ),
           createCompanionCallback:
@@ -13821,6 +14482,7 @@ class $TeacherTableManager
                 Value<String?> bankName = const Value.absent(),
                 Value<String?> deprecatedTaxCode = const Value.absent(),
                 Value<String?> note = const Value.absent(),
+                Value<int?> startTeachingYear = const Value.absent(),
                 Value<int?> teacherGroupId = const Value.absent(),
               }) => TeacherCompanion.insert(
                 id: id,
@@ -13843,6 +14505,7 @@ class $TeacherTableManager
                 bankName: bankName,
                 deprecatedTaxCode: deprecatedTaxCode,
                 note: note,
+                startTeachingYear: startTeachingYear,
                 teacherGroupId: teacherGroupId,
               ),
           withReferenceMapper: (p0) => p0
@@ -15002,30 +15665,6 @@ typedef $DocumentRoleUpdateCompanionBuilder =
       Value<String> category,
     });
 
-final class $DocumentRoleReferences
-    extends BaseReferences<_$AppDatabase, DocumentRole, DocumentRoleData> {
-  $DocumentRoleReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static MultiTypedResultKey<Document, List<DocumentData>> _documentRefsTable(
-    _$AppDatabase db,
-  ) => MultiTypedResultKey.fromTable(
-    db.document,
-    aliasName: $_aliasNameGenerator(db.documentRole.id, db.document.roleId),
-  );
-
-  $DocumentProcessedTableManager get documentRefs {
-    final manager = $DocumentTableManager(
-      $_db,
-      $_db.document,
-    ).filter((f) => f.roleId.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_documentRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-}
-
 class $DocumentRoleFilterComposer
     extends Composer<_$AppDatabase, DocumentRole> {
   $DocumentRoleFilterComposer({
@@ -15054,31 +15693,6 @@ class $DocumentRoleFilterComposer
     column: $table.category,
     builder: (column) => ColumnFilters(column),
   );
-
-  Expression<bool> documentRefs(
-    Expression<bool> Function($DocumentFilterComposer f) f,
-  ) {
-    final $DocumentFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.document,
-      getReferencedColumn: (t) => t.roleId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $DocumentFilterComposer(
-            $db: $db,
-            $table: $db.document,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
 }
 
 class $DocumentRoleOrderingComposer
@@ -15131,31 +15745,6 @@ class $DocumentRoleAnnotationComposer
 
   GeneratedColumn<String> get category =>
       $composableBuilder(column: $table.category, builder: (column) => column);
-
-  Expression<T> documentRefs<T extends Object>(
-    Expression<T> Function($DocumentAnnotationComposer a) f,
-  ) {
-    final $DocumentAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.document,
-      getReferencedColumn: (t) => t.roleId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $DocumentAnnotationComposer(
-            $db: $db,
-            $table: $db.document,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
 }
 
 class $DocumentRoleTableManager
@@ -15169,9 +15758,12 @@ class $DocumentRoleTableManager
           $DocumentRoleAnnotationComposer,
           $DocumentRoleCreateCompanionBuilder,
           $DocumentRoleUpdateCompanionBuilder,
-          (DocumentRoleData, $DocumentRoleReferences),
+          (
+            DocumentRoleData,
+            BaseReferences<_$AppDatabase, DocumentRole, DocumentRoleData>,
+          ),
           DocumentRoleData,
-          PrefetchHooks Function({bool documentRefs})
+          PrefetchHooks Function()
         > {
   $DocumentRoleTableManager(_$AppDatabase db, DocumentRole table)
     : super(
@@ -15209,37 +15801,9 @@ class $DocumentRoleTableManager
                 category: category,
               ),
           withReferenceMapper: (p0) => p0
-              .map(
-                (e) =>
-                    (e.readTable(table), $DocumentRoleReferences(db, table, e)),
-              )
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
-          prefetchHooksCallback: ({documentRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (documentRefs) db.document],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (documentRefs)
-                    await $_getPrefetchedData<
-                      DocumentRoleData,
-                      DocumentRole,
-                      DocumentData
-                    >(
-                      currentTable: table,
-                      referencedTable: $DocumentRoleReferences
-                          ._documentRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $DocumentRoleReferences(db, table, p0).documentRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.roleId == item.id),
-                      typedResults: items,
-                    ),
-                ];
-              },
-            );
-          },
+          prefetchHooksCallback: null,
         ),
       );
 }
@@ -15254,17 +15818,20 @@ typedef $DocumentRoleProcessedTableManager =
       $DocumentRoleAnnotationComposer,
       $DocumentRoleCreateCompanionBuilder,
       $DocumentRoleUpdateCompanionBuilder,
-      (DocumentRoleData, $DocumentRoleReferences),
+      (
+        DocumentRoleData,
+        BaseReferences<_$AppDatabase, DocumentRole, DocumentRoleData>,
+      ),
       DocumentRoleData,
-      PrefetchHooks Function({bool documentRefs})
+      PrefetchHooks Function()
     >;
 typedef $DocumentCreateCompanionBuilder =
     DocumentCompanion Function({
       Value<int> id,
       required String title,
-      Value<String?> officalCode,
-      Value<String?> signedDate,
-      required int roleId,
+      required int officialCode,
+      required String officialType,
+      required DateTime signedDate,
       Value<int?> contentId,
       Value<String?> archiveId,
       Value<DateTime> createdTime,
@@ -15274,9 +15841,9 @@ typedef $DocumentUpdateCompanionBuilder =
     DocumentCompanion Function({
       Value<int> id,
       Value<String> title,
-      Value<String?> officalCode,
-      Value<String?> signedDate,
-      Value<int> roleId,
+      Value<int> officialCode,
+      Value<String> officialType,
+      Value<DateTime> signedDate,
       Value<int?> contentId,
       Value<String?> archiveId,
       Value<DateTime> createdTime,
@@ -15287,22 +15854,25 @@ final class $DocumentReferences
     extends BaseReferences<_$AppDatabase, Document, DocumentData> {
   $DocumentReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static DocumentRole _roleIdTable(_$AppDatabase db) =>
-      db.documentRole.createAlias(
-        $_aliasNameGenerator(db.document.roleId, db.documentRole.id),
-      );
+  static MultiTypedResultKey<Thesis, List<ThesisData>> _thesisRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.thesis,
+    aliasName: $_aliasNameGenerator(
+      db.document.id,
+      db.thesis.councilDecisionId,
+    ),
+  );
 
-  $DocumentRoleProcessedTableManager get roleId {
-    final $_column = $_itemColumn<int>('role_id')!;
-
-    final manager = $DocumentRoleTableManager(
+  $ThesisProcessedTableManager get thesisRefs {
+    final manager = $ThesisTableManager(
       $_db,
-      $_db.documentRole,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_roleIdTable($_db));
-    if (item == null) return manager;
+      $_db.thesis,
+    ).filter((f) => f.councilDecisionId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_thesisRefsTable($_db));
     return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
+      manager.$state.copyWith(prefetchedData: cache),
     );
   }
 }
@@ -15325,12 +15895,17 @@ class $DocumentFilterComposer extends Composer<_$AppDatabase, Document> {
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get officalCode => $composableBuilder(
-    column: $table.officalCode,
+  ColumnFilters<int> get officialCode => $composableBuilder(
+    column: $table.officialCode,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get signedDate => $composableBuilder(
+  ColumnFilters<String> get officialType => $composableBuilder(
+    column: $table.officialType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get signedDate => $composableBuilder(
     column: $table.signedDate,
     builder: (column) => ColumnFilters(column),
   );
@@ -15355,27 +15930,29 @@ class $DocumentFilterComposer extends Composer<_$AppDatabase, Document> {
     builder: (column) => ColumnFilters(column),
   );
 
-  $DocumentRoleFilterComposer get roleId {
-    final $DocumentRoleFilterComposer composer = $composerBuilder(
+  Expression<bool> thesisRefs(
+    Expression<bool> Function($ThesisFilterComposer f) f,
+  ) {
+    final $ThesisFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.roleId,
-      referencedTable: $db.documentRole,
-      getReferencedColumn: (t) => t.id,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.thesis,
+      getReferencedColumn: (t) => t.councilDecisionId,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $DocumentRoleFilterComposer(
+          }) => $ThesisFilterComposer(
             $db: $db,
-            $table: $db.documentRole,
+            $table: $db.thesis,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
                 $removeJoinBuilderFromRootComposer,
           ),
     );
-    return composer;
+    return f(composer);
   }
 }
 
@@ -15397,12 +15974,17 @@ class $DocumentOrderingComposer extends Composer<_$AppDatabase, Document> {
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get officalCode => $composableBuilder(
-    column: $table.officalCode,
+  ColumnOrderings<int> get officialCode => $composableBuilder(
+    column: $table.officialCode,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get signedDate => $composableBuilder(
+  ColumnOrderings<String> get officialType => $composableBuilder(
+    column: $table.officialType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get signedDate => $composableBuilder(
     column: $table.signedDate,
     builder: (column) => ColumnOrderings(column),
   );
@@ -15426,29 +16008,6 @@ class $DocumentOrderingComposer extends Composer<_$AppDatabase, Document> {
     column: $table.updatedTime,
     builder: (column) => ColumnOrderings(column),
   );
-
-  $DocumentRoleOrderingComposer get roleId {
-    final $DocumentRoleOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.roleId,
-      referencedTable: $db.documentRole,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $DocumentRoleOrderingComposer(
-            $db: $db,
-            $table: $db.documentRole,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
 }
 
 class $DocumentAnnotationComposer extends Composer<_$AppDatabase, Document> {
@@ -15465,12 +16024,17 @@ class $DocumentAnnotationComposer extends Composer<_$AppDatabase, Document> {
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
-  GeneratedColumn<String> get officalCode => $composableBuilder(
-    column: $table.officalCode,
+  GeneratedColumn<int> get officialCode => $composableBuilder(
+    column: $table.officialCode,
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get signedDate => $composableBuilder(
+  GeneratedColumn<String> get officialType => $composableBuilder(
+    column: $table.officialType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get signedDate => $composableBuilder(
     column: $table.signedDate,
     builder: (column) => column,
   );
@@ -15491,27 +16055,29 @@ class $DocumentAnnotationComposer extends Composer<_$AppDatabase, Document> {
     builder: (column) => column,
   );
 
-  $DocumentRoleAnnotationComposer get roleId {
-    final $DocumentRoleAnnotationComposer composer = $composerBuilder(
+  Expression<T> thesisRefs<T extends Object>(
+    Expression<T> Function($ThesisAnnotationComposer a) f,
+  ) {
+    final $ThesisAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.roleId,
-      referencedTable: $db.documentRole,
-      getReferencedColumn: (t) => t.id,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.thesis,
+      getReferencedColumn: (t) => t.councilDecisionId,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $DocumentRoleAnnotationComposer(
+          }) => $ThesisAnnotationComposer(
             $db: $db,
-            $table: $db.documentRole,
+            $table: $db.thesis,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
                 $removeJoinBuilderFromRootComposer,
           ),
     );
-    return composer;
+    return f(composer);
   }
 }
 
@@ -15528,7 +16094,7 @@ class $DocumentTableManager
           $DocumentUpdateCompanionBuilder,
           (DocumentData, $DocumentReferences),
           DocumentData,
-          PrefetchHooks Function({bool roleId})
+          PrefetchHooks Function({bool thesisRefs})
         > {
   $DocumentTableManager(_$AppDatabase db, Document table)
     : super(
@@ -15545,9 +16111,9 @@ class $DocumentTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
-                Value<String?> officalCode = const Value.absent(),
-                Value<String?> signedDate = const Value.absent(),
-                Value<int> roleId = const Value.absent(),
+                Value<int> officialCode = const Value.absent(),
+                Value<String> officialType = const Value.absent(),
+                Value<DateTime> signedDate = const Value.absent(),
                 Value<int?> contentId = const Value.absent(),
                 Value<String?> archiveId = const Value.absent(),
                 Value<DateTime> createdTime = const Value.absent(),
@@ -15555,9 +16121,9 @@ class $DocumentTableManager
               }) => DocumentCompanion(
                 id: id,
                 title: title,
-                officalCode: officalCode,
+                officialCode: officialCode,
+                officialType: officialType,
                 signedDate: signedDate,
-                roleId: roleId,
                 contentId: contentId,
                 archiveId: archiveId,
                 createdTime: createdTime,
@@ -15567,9 +16133,9 @@ class $DocumentTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required String title,
-                Value<String?> officalCode = const Value.absent(),
-                Value<String?> signedDate = const Value.absent(),
-                required int roleId,
+                required int officialCode,
+                required String officialType,
+                required DateTime signedDate,
                 Value<int?> contentId = const Value.absent(),
                 Value<String?> archiveId = const Value.absent(),
                 Value<DateTime> createdTime = const Value.absent(),
@@ -15577,9 +16143,9 @@ class $DocumentTableManager
               }) => DocumentCompanion.insert(
                 id: id,
                 title: title,
-                officalCode: officalCode,
+                officialCode: officialCode,
+                officialType: officialType,
                 signedDate: signedDate,
-                roleId: roleId,
                 contentId: contentId,
                 archiveId: archiveId,
                 createdTime: createdTime,
@@ -15590,44 +16156,30 @@ class $DocumentTableManager
                 (e) => (e.readTable(table), $DocumentReferences(db, table, e)),
               )
               .toList(),
-          prefetchHooksCallback: ({roleId = false}) {
+          prefetchHooksCallback: ({thesisRefs = false}) {
             return PrefetchHooks(
               db: db,
-              explicitlyWatchedTables: [],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (roleId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.roleId,
-                                referencedTable: $DocumentReferences
-                                    ._roleIdTable(db),
-                                referencedColumn: $DocumentReferences
-                                    ._roleIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
-
-                    return state;
-                  },
+              explicitlyWatchedTables: [if (thesisRefs) db.thesis],
+              addJoins: null,
               getPrefetchedDataCallback: (items) async {
-                return [];
+                return [
+                  if (thesisRefs)
+                    await $_getPrefetchedData<
+                      DocumentData,
+                      Document,
+                      ThesisData
+                    >(
+                      currentTable: table,
+                      referencedTable: $DocumentReferences._thesisRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $DocumentReferences(db, table, p0).thesisRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where(
+                            (e) => e.councilDecisionId == item.id,
+                          ),
+                      typedResults: items,
+                    ),
+                ];
               },
             );
           },
@@ -15647,7 +16199,7 @@ typedef $DocumentProcessedTableManager =
       $DocumentUpdateCompanionBuilder,
       (DocumentData, $DocumentReferences),
       DocumentData,
-      PrefetchHooks Function({bool roleId})
+      PrefetchHooks Function({bool thesisRefs})
     >;
 typedef $CohortCreateCompanionBuilder =
     CohortCompanion Function({
@@ -17709,6 +18261,7 @@ typedef $ThesisCreateCompanionBuilder =
       Value<String?> year,
       required enums.ThesisStatus defenseStatus,
       required enums.PaymentStatus paymentStatus,
+      Value<int?> councilDecisionId,
       Value<String?> assignedDecisionNumber,
       Value<String?> defenseDecisionNumber,
     });
@@ -17734,6 +18287,7 @@ typedef $ThesisUpdateCompanionBuilder =
       Value<String?> year,
       Value<enums.ThesisStatus> defenseStatus,
       Value<enums.PaymentStatus> paymentStatus,
+      Value<int?> councilDecisionId,
       Value<String?> assignedDecisionNumber,
       Value<String?> defenseDecisionNumber,
     });
@@ -17864,6 +18418,25 @@ final class $ThesisReferences
       $_db.student,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_studentIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static Document _councilDecisionIdTable(_$AppDatabase db) =>
+      db.document.createAlias(
+        $_aliasNameGenerator(db.thesis.councilDecisionId, db.document.id),
+      );
+
+  $DocumentProcessedTableManager? get councilDecisionId {
+    final $_column = $_itemColumn<int>('defense_decision_id');
+    if ($_column == null) return null;
+    final manager = $DocumentTableManager(
+      $_db,
+      $_db.document,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_councilDecisionIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -18120,6 +18693,29 @@ class $ThesisFilterComposer extends Composer<_$AppDatabase, Thesis> {
     );
     return composer;
   }
+
+  $DocumentFilterComposer get councilDecisionId {
+    final $DocumentFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.councilDecisionId,
+      referencedTable: $db.document,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $DocumentFilterComposer(
+            $db: $db,
+            $table: $db.document,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $ThesisOrderingComposer extends Composer<_$AppDatabase, Thesis> {
@@ -18365,6 +18961,29 @@ class $ThesisOrderingComposer extends Composer<_$AppDatabase, Thesis> {
     );
     return composer;
   }
+
+  $DocumentOrderingComposer get councilDecisionId {
+    final $DocumentOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.councilDecisionId,
+      referencedTable: $db.document,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $DocumentOrderingComposer(
+            $db: $db,
+            $table: $db.document,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $ThesisAnnotationComposer extends Composer<_$AppDatabase, Thesis> {
@@ -18602,6 +19221,29 @@ class $ThesisAnnotationComposer extends Composer<_$AppDatabase, Thesis> {
     );
     return composer;
   }
+
+  $DocumentAnnotationComposer get councilDecisionId {
+    final $DocumentAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.councilDecisionId,
+      referencedTable: $db.document,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $DocumentAnnotationComposer(
+            $db: $db,
+            $table: $db.document,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $ThesisTableManager
@@ -18625,6 +19267,7 @@ class $ThesisTableManager
             bool secretaryId,
             bool memberId,
             bool studentId,
+            bool councilDecisionId,
           })
         > {
   $ThesisTableManager(_$AppDatabase db, Thesis table)
@@ -18660,6 +19303,7 @@ class $ThesisTableManager
                 Value<String?> year = const Value.absent(),
                 Value<enums.ThesisStatus> defenseStatus = const Value.absent(),
                 Value<enums.PaymentStatus> paymentStatus = const Value.absent(),
+                Value<int?> councilDecisionId = const Value.absent(),
                 Value<String?> assignedDecisionNumber = const Value.absent(),
                 Value<String?> defenseDecisionNumber = const Value.absent(),
               }) => ThesisCompanion(
@@ -18683,6 +19327,7 @@ class $ThesisTableManager
                 year: year,
                 defenseStatus: defenseStatus,
                 paymentStatus: paymentStatus,
+                councilDecisionId: councilDecisionId,
                 assignedDecisionNumber: assignedDecisionNumber,
                 defenseDecisionNumber: defenseDecisionNumber,
               ),
@@ -18708,6 +19353,7 @@ class $ThesisTableManager
                 Value<String?> year = const Value.absent(),
                 required enums.ThesisStatus defenseStatus,
                 required enums.PaymentStatus paymentStatus,
+                Value<int?> councilDecisionId = const Value.absent(),
                 Value<String?> assignedDecisionNumber = const Value.absent(),
                 Value<String?> defenseDecisionNumber = const Value.absent(),
               }) => ThesisCompanion.insert(
@@ -18731,6 +19377,7 @@ class $ThesisTableManager
                 year: year,
                 defenseStatus: defenseStatus,
                 paymentStatus: paymentStatus,
+                councilDecisionId: councilDecisionId,
                 assignedDecisionNumber: assignedDecisionNumber,
                 defenseDecisionNumber: defenseDecisionNumber,
               ),
@@ -18746,6 +19393,7 @@ class $ThesisTableManager
                 secretaryId = false,
                 memberId = false,
                 studentId = false,
+                councilDecisionId = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -18857,6 +19505,19 @@ class $ThesisTableManager
                                   )
                                   as T;
                         }
+                        if (councilDecisionId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.councilDecisionId,
+                                    referencedTable: $ThesisReferences
+                                        ._councilDecisionIdTable(db),
+                                    referencedColumn: $ThesisReferences
+                                        ._councilDecisionIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
 
                         return state;
                       },
@@ -18889,6 +19550,7 @@ typedef $ThesisProcessedTableManager =
         bool secretaryId,
         bool memberId,
         bool studentId,
+        bool councilDecisionId,
       })
     >;
 typedef $AcademicGroupCreateCompanionBuilder =
@@ -19055,6 +19717,29 @@ typedef $PhdCohortUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $PhdCohortReferences
+    extends BaseReferences<_$AppDatabase, PhdCohort, PhdCohortData> {
+  $PhdCohortReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<PhdStudent, List<PhdStudentData>>
+  _phdStudentRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.phdStudent,
+    aliasName: $_aliasNameGenerator(db.phdCohort.cohort, db.phdStudent.cohort),
+  );
+
+  $PhdStudentProcessedTableManager get phdStudentRefs {
+    final manager = $PhdStudentTableManager(
+      $_db,
+      $_db.phdStudent,
+    ).filter((f) => f.cohort.cohort.sqlEquals($_itemColumn<String>('cohort')!));
+
+    final cache = $_typedResult.readTableOrNull(_phdStudentRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
 class $PhdCohortFilterComposer extends Composer<_$AppDatabase, PhdCohort> {
   $PhdCohortFilterComposer({
     required super.$db,
@@ -19077,6 +19762,31 @@ class $PhdCohortFilterComposer extends Composer<_$AppDatabase, PhdCohort> {
     column: $table.updatedTime,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> phdStudentRefs(
+    Expression<bool> Function($PhdStudentFilterComposer f) f,
+  ) {
+    final $PhdStudentFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cohort,
+      referencedTable: $db.phdStudent,
+      getReferencedColumn: (t) => t.cohort,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $PhdStudentFilterComposer(
+            $db: $db,
+            $table: $db.phdStudent,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $PhdCohortOrderingComposer extends Composer<_$AppDatabase, PhdCohort> {
@@ -19123,6 +19833,31 @@ class $PhdCohortAnnotationComposer extends Composer<_$AppDatabase, PhdCohort> {
     column: $table.updatedTime,
     builder: (column) => column,
   );
+
+  Expression<T> phdStudentRefs<T extends Object>(
+    Expression<T> Function($PhdStudentAnnotationComposer a) f,
+  ) {
+    final $PhdStudentAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cohort,
+      referencedTable: $db.phdStudent,
+      getReferencedColumn: (t) => t.cohort,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $PhdStudentAnnotationComposer(
+            $db: $db,
+            $table: $db.phdStudent,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $PhdCohortTableManager
@@ -19136,12 +19871,9 @@ class $PhdCohortTableManager
           $PhdCohortAnnotationComposer,
           $PhdCohortCreateCompanionBuilder,
           $PhdCohortUpdateCompanionBuilder,
-          (
-            PhdCohortData,
-            BaseReferences<_$AppDatabase, PhdCohort, PhdCohortData>,
-          ),
+          (PhdCohortData, $PhdCohortReferences),
           PhdCohortData,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool phdStudentRefs})
         > {
   $PhdCohortTableManager(_$AppDatabase db, PhdCohort table)
     : super(
@@ -19179,9 +19911,36 @@ class $PhdCohortTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (e.readTable(table), $PhdCohortReferences(db, table, e)),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({phdStudentRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (phdStudentRefs) db.phdStudent],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (phdStudentRefs)
+                    await $_getPrefetchedData<
+                      PhdCohortData,
+                      PhdCohort,
+                      PhdStudentData
+                    >(
+                      currentTable: table,
+                      referencedTable: $PhdCohortReferences
+                          ._phdStudentRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $PhdCohortReferences(db, table, p0).phdStudentRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.cohort == item.cohort),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
         ),
       );
 }
@@ -19196,9 +19955,333 @@ typedef $PhdCohortProcessedTableManager =
       $PhdCohortAnnotationComposer,
       $PhdCohortCreateCompanionBuilder,
       $PhdCohortUpdateCompanionBuilder,
-      (PhdCohortData, BaseReferences<_$AppDatabase, PhdCohort, PhdCohortData>),
+      (PhdCohortData, $PhdCohortReferences),
       PhdCohortData,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool phdStudentRefs})
+    >;
+typedef $PhdAdmissionPaymentPolicyCreateCompanionBuilder =
+    PhdAdmissionPaymentPolicyCompanion Function({
+      Value<int?> id,
+      required int presidentPayment,
+      required int secretaryPayment,
+      required int memberPayment,
+      required int helperPayment,
+    });
+typedef $PhdAdmissionPaymentPolicyUpdateCompanionBuilder =
+    PhdAdmissionPaymentPolicyCompanion Function({
+      Value<int?> id,
+      Value<int> presidentPayment,
+      Value<int> secretaryPayment,
+      Value<int> memberPayment,
+      Value<int> helperPayment,
+    });
+
+final class $PhdAdmissionPaymentPolicyReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          PhdAdmissionPaymentPolicy,
+          PhdAdmissionPaymentPolicyData
+        > {
+  $PhdAdmissionPaymentPolicyReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static MultiTypedResultKey<PhdStudent, List<PhdStudentData>>
+  _phdStudentRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.phdStudent,
+    aliasName: $_aliasNameGenerator(
+      db.phdAdmissionPaymentPolicy.id,
+      db.phdStudent.admissionPaymentPolicy,
+    ),
+  );
+
+  $PhdStudentProcessedTableManager get phdStudentRefs {
+    final manager = $PhdStudentTableManager($_db, $_db.phdStudent).filter(
+      (f) => f.admissionPaymentPolicy.id.sqlEquals($_itemColumn<int>('id')),
+    );
+
+    final cache = $_typedResult.readTableOrNull(_phdStudentRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $PhdAdmissionPaymentPolicyFilterComposer
+    extends Composer<_$AppDatabase, PhdAdmissionPaymentPolicy> {
+  $PhdAdmissionPaymentPolicyFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get presidentPayment => $composableBuilder(
+    column: $table.presidentPayment,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get secretaryPayment => $composableBuilder(
+    column: $table.secretaryPayment,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get memberPayment => $composableBuilder(
+    column: $table.memberPayment,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get helperPayment => $composableBuilder(
+    column: $table.helperPayment,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> phdStudentRefs(
+    Expression<bool> Function($PhdStudentFilterComposer f) f,
+  ) {
+    final $PhdStudentFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.phdStudent,
+      getReferencedColumn: (t) => t.admissionPaymentPolicy,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $PhdStudentFilterComposer(
+            $db: $db,
+            $table: $db.phdStudent,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $PhdAdmissionPaymentPolicyOrderingComposer
+    extends Composer<_$AppDatabase, PhdAdmissionPaymentPolicy> {
+  $PhdAdmissionPaymentPolicyOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get presidentPayment => $composableBuilder(
+    column: $table.presidentPayment,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get secretaryPayment => $composableBuilder(
+    column: $table.secretaryPayment,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get memberPayment => $composableBuilder(
+    column: $table.memberPayment,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get helperPayment => $composableBuilder(
+    column: $table.helperPayment,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $PhdAdmissionPaymentPolicyAnnotationComposer
+    extends Composer<_$AppDatabase, PhdAdmissionPaymentPolicy> {
+  $PhdAdmissionPaymentPolicyAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get presidentPayment => $composableBuilder(
+    column: $table.presidentPayment,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get secretaryPayment => $composableBuilder(
+    column: $table.secretaryPayment,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get memberPayment => $composableBuilder(
+    column: $table.memberPayment,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get helperPayment => $composableBuilder(
+    column: $table.helperPayment,
+    builder: (column) => column,
+  );
+
+  Expression<T> phdStudentRefs<T extends Object>(
+    Expression<T> Function($PhdStudentAnnotationComposer a) f,
+  ) {
+    final $PhdStudentAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.phdStudent,
+      getReferencedColumn: (t) => t.admissionPaymentPolicy,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $PhdStudentAnnotationComposer(
+            $db: $db,
+            $table: $db.phdStudent,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $PhdAdmissionPaymentPolicyTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          PhdAdmissionPaymentPolicy,
+          PhdAdmissionPaymentPolicyData,
+          $PhdAdmissionPaymentPolicyFilterComposer,
+          $PhdAdmissionPaymentPolicyOrderingComposer,
+          $PhdAdmissionPaymentPolicyAnnotationComposer,
+          $PhdAdmissionPaymentPolicyCreateCompanionBuilder,
+          $PhdAdmissionPaymentPolicyUpdateCompanionBuilder,
+          (PhdAdmissionPaymentPolicyData, $PhdAdmissionPaymentPolicyReferences),
+          PhdAdmissionPaymentPolicyData,
+          PrefetchHooks Function({bool phdStudentRefs})
+        > {
+  $PhdAdmissionPaymentPolicyTableManager(
+    _$AppDatabase db,
+    PhdAdmissionPaymentPolicy table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $PhdAdmissionPaymentPolicyFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $PhdAdmissionPaymentPolicyOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $PhdAdmissionPaymentPolicyAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int?> id = const Value.absent(),
+                Value<int> presidentPayment = const Value.absent(),
+                Value<int> secretaryPayment = const Value.absent(),
+                Value<int> memberPayment = const Value.absent(),
+                Value<int> helperPayment = const Value.absent(),
+              }) => PhdAdmissionPaymentPolicyCompanion(
+                id: id,
+                presidentPayment: presidentPayment,
+                secretaryPayment: secretaryPayment,
+                memberPayment: memberPayment,
+                helperPayment: helperPayment,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int?> id = const Value.absent(),
+                required int presidentPayment,
+                required int secretaryPayment,
+                required int memberPayment,
+                required int helperPayment,
+              }) => PhdAdmissionPaymentPolicyCompanion.insert(
+                id: id,
+                presidentPayment: presidentPayment,
+                secretaryPayment: secretaryPayment,
+                memberPayment: memberPayment,
+                helperPayment: helperPayment,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $PhdAdmissionPaymentPolicyReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({phdStudentRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (phdStudentRefs) db.phdStudent],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (phdStudentRefs)
+                    await $_getPrefetchedData<
+                      PhdAdmissionPaymentPolicyData,
+                      PhdAdmissionPaymentPolicy,
+                      PhdStudentData
+                    >(
+                      currentTable: table,
+                      referencedTable: $PhdAdmissionPaymentPolicyReferences
+                          ._phdStudentRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $PhdAdmissionPaymentPolicyReferences(
+                            db,
+                            table,
+                            p0,
+                          ).phdStudentRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where(
+                            (e) => e.admissionPaymentPolicy == item.id,
+                          ),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $PhdAdmissionPaymentPolicyProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      PhdAdmissionPaymentPolicy,
+      PhdAdmissionPaymentPolicyData,
+      $PhdAdmissionPaymentPolicyFilterComposer,
+      $PhdAdmissionPaymentPolicyOrderingComposer,
+      $PhdAdmissionPaymentPolicyAnnotationComposer,
+      $PhdAdmissionPaymentPolicyCreateCompanionBuilder,
+      $PhdAdmissionPaymentPolicyUpdateCompanionBuilder,
+      (PhdAdmissionPaymentPolicyData, $PhdAdmissionPaymentPolicyReferences),
+      PhdAdmissionPaymentPolicyData,
+      PrefetchHooks Function({bool phdStudentRefs})
     >;
 typedef $PhdStudentCreateCompanionBuilder =
     PhdStudentCompanion Function({
@@ -19220,7 +20303,9 @@ typedef $PhdStudentCreateCompanionBuilder =
       Value<int?> admission1stMemberId,
       Value<int?> admission2ndMemberId,
       Value<int?> admission3rdMemberId,
-      Value<bool> admissionPaid,
+      Value<int?> admissionHelperId,
+      Value<enums.PaymentStatus> admissionPaymentStatus,
+      Value<int> admissionPaymentPolicy,
       required String thesis,
       required int supervisorId,
       Value<int?> secondarySupervisorId,
@@ -19249,7 +20334,9 @@ typedef $PhdStudentUpdateCompanionBuilder =
       Value<int?> admission1stMemberId,
       Value<int?> admission2ndMemberId,
       Value<int?> admission3rdMemberId,
-      Value<bool> admissionPaid,
+      Value<int?> admissionHelperId,
+      Value<enums.PaymentStatus> admissionPaymentStatus,
+      Value<int> admissionPaymentPolicy,
       Value<String> thesis,
       Value<int> supervisorId,
       Value<int?> secondarySupervisorId,
@@ -19258,6 +20345,54 @@ typedef $PhdStudentUpdateCompanionBuilder =
       Value<String> updatedTime,
       Value<enums.StudentStatus> status,
     });
+
+final class $PhdStudentReferences
+    extends BaseReferences<_$AppDatabase, PhdStudent, PhdStudentData> {
+  $PhdStudentReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static PhdCohort _cohortTable(_$AppDatabase db) => db.phdCohort.createAlias(
+    $_aliasNameGenerator(db.phdStudent.cohort, db.phdCohort.cohort),
+  );
+
+  $PhdCohortProcessedTableManager get cohort {
+    final $_column = $_itemColumn<String>('cohort')!;
+
+    final manager = $PhdCohortTableManager(
+      $_db,
+      $_db.phdCohort,
+    ).filter((f) => f.cohort.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_cohortTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static PhdAdmissionPaymentPolicy _admissionPaymentPolicyTable(
+    _$AppDatabase db,
+  ) => db.phdAdmissionPaymentPolicy.createAlias(
+    $_aliasNameGenerator(
+      db.phdStudent.admissionPaymentPolicy,
+      db.phdAdmissionPaymentPolicy.id,
+    ),
+  );
+
+  $PhdAdmissionPaymentPolicyProcessedTableManager get admissionPaymentPolicy {
+    final $_column = $_itemColumn<int>('admission_payment_policy')!;
+
+    final manager = $PhdAdmissionPaymentPolicyTableManager(
+      $_db,
+      $_db.phdAdmissionPaymentPolicy,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(
+      _admissionPaymentPolicyTable($_db),
+    );
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
 
 class $PhdStudentFilterComposer extends Composer<_$AppDatabase, PhdStudent> {
   $PhdStudentFilterComposer({
@@ -19269,11 +20404,6 @@ class $PhdStudentFilterComposer extends Composer<_$AppDatabase, PhdStudent> {
   });
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get cohort => $composableBuilder(
-    column: $table.cohort,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -19363,9 +20493,19 @@ class $PhdStudentFilterComposer extends Composer<_$AppDatabase, PhdStudent> {
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<bool> get admissionPaid => $composableBuilder(
-    column: $table.admissionPaid,
+  ColumnFilters<int> get admissionHelperId => $composableBuilder(
+    column: $table.admissionHelperId,
     builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<
+    enums.PaymentStatus,
+    enums.PaymentStatus,
+    String
+  >
+  get admissionPaymentStatus => $composableBuilder(
+    column: $table.admissionPaymentStatus,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnFilters<String> get thesis => $composableBuilder(
@@ -19407,6 +20547,52 @@ class $PhdStudentFilterComposer extends Composer<_$AppDatabase, PhdStudent> {
     column: $table.status,
     builder: (column) => ColumnWithTypeConverterFilters(column),
   );
+
+  $PhdCohortFilterComposer get cohort {
+    final $PhdCohortFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cohort,
+      referencedTable: $db.phdCohort,
+      getReferencedColumn: (t) => t.cohort,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $PhdCohortFilterComposer(
+            $db: $db,
+            $table: $db.phdCohort,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $PhdAdmissionPaymentPolicyFilterComposer get admissionPaymentPolicy {
+    final $PhdAdmissionPaymentPolicyFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.admissionPaymentPolicy,
+      referencedTable: $db.phdAdmissionPaymentPolicy,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $PhdAdmissionPaymentPolicyFilterComposer(
+            $db: $db,
+            $table: $db.phdAdmissionPaymentPolicy,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $PhdStudentOrderingComposer extends Composer<_$AppDatabase, PhdStudent> {
@@ -19419,11 +20605,6 @@ class $PhdStudentOrderingComposer extends Composer<_$AppDatabase, PhdStudent> {
   });
   ColumnOrderings<int> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get cohort => $composableBuilder(
-    column: $table.cohort,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -19507,8 +20688,13 @@ class $PhdStudentOrderingComposer extends Composer<_$AppDatabase, PhdStudent> {
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<bool> get admissionPaid => $composableBuilder(
-    column: $table.admissionPaid,
+  ColumnOrderings<int> get admissionHelperId => $composableBuilder(
+    column: $table.admissionHelperId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get admissionPaymentStatus => $composableBuilder(
+    column: $table.admissionPaymentStatus,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -19546,6 +20732,53 @@ class $PhdStudentOrderingComposer extends Composer<_$AppDatabase, PhdStudent> {
     column: $table.status,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $PhdCohortOrderingComposer get cohort {
+    final $PhdCohortOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cohort,
+      referencedTable: $db.phdCohort,
+      getReferencedColumn: (t) => t.cohort,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $PhdCohortOrderingComposer(
+            $db: $db,
+            $table: $db.phdCohort,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $PhdAdmissionPaymentPolicyOrderingComposer get admissionPaymentPolicy {
+    final $PhdAdmissionPaymentPolicyOrderingComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.admissionPaymentPolicy,
+          referencedTable: $db.phdAdmissionPaymentPolicy,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $PhdAdmissionPaymentPolicyOrderingComposer(
+                $db: $db,
+                $table: $db.phdAdmissionPaymentPolicy,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
 }
 
 class $PhdStudentAnnotationComposer
@@ -19559,9 +20792,6 @@ class $PhdStudentAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get cohort =>
-      $composableBuilder(column: $table.cohort, builder: (column) => column);
 
   GeneratedColumn<String> get managementId => $composableBuilder(
     column: $table.managementId,
@@ -19634,8 +20864,14 @@ class $PhdStudentAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<bool> get admissionPaid => $composableBuilder(
-    column: $table.admissionPaid,
+  GeneratedColumn<int> get admissionHelperId => $composableBuilder(
+    column: $table.admissionHelperId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumnWithTypeConverter<enums.PaymentStatus, String>
+  get admissionPaymentStatus => $composableBuilder(
+    column: $table.admissionPaymentStatus,
     builder: (column) => column,
   );
 
@@ -19669,6 +20905,53 @@ class $PhdStudentAnnotationComposer
 
   GeneratedColumnWithTypeConverter<enums.StudentStatus, String> get status =>
       $composableBuilder(column: $table.status, builder: (column) => column);
+
+  $PhdCohortAnnotationComposer get cohort {
+    final $PhdCohortAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cohort,
+      referencedTable: $db.phdCohort,
+      getReferencedColumn: (t) => t.cohort,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $PhdCohortAnnotationComposer(
+            $db: $db,
+            $table: $db.phdCohort,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $PhdAdmissionPaymentPolicyAnnotationComposer get admissionPaymentPolicy {
+    final $PhdAdmissionPaymentPolicyAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.admissionPaymentPolicy,
+          referencedTable: $db.phdAdmissionPaymentPolicy,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $PhdAdmissionPaymentPolicyAnnotationComposer(
+                $db: $db,
+                $table: $db.phdAdmissionPaymentPolicy,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
 }
 
 class $PhdStudentTableManager
@@ -19682,12 +20965,9 @@ class $PhdStudentTableManager
           $PhdStudentAnnotationComposer,
           $PhdStudentCreateCompanionBuilder,
           $PhdStudentUpdateCompanionBuilder,
-          (
-            PhdStudentData,
-            BaseReferences<_$AppDatabase, PhdStudent, PhdStudentData>,
-          ),
+          (PhdStudentData, $PhdStudentReferences),
           PhdStudentData,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool cohort, bool admissionPaymentPolicy})
         > {
   $PhdStudentTableManager(_$AppDatabase db, PhdStudent table)
     : super(
@@ -19721,7 +21001,10 @@ class $PhdStudentTableManager
                 Value<int?> admission1stMemberId = const Value.absent(),
                 Value<int?> admission2ndMemberId = const Value.absent(),
                 Value<int?> admission3rdMemberId = const Value.absent(),
-                Value<bool> admissionPaid = const Value.absent(),
+                Value<int?> admissionHelperId = const Value.absent(),
+                Value<enums.PaymentStatus> admissionPaymentStatus =
+                    const Value.absent(),
+                Value<int> admissionPaymentPolicy = const Value.absent(),
                 Value<String> thesis = const Value.absent(),
                 Value<int> supervisorId = const Value.absent(),
                 Value<int?> secondarySupervisorId = const Value.absent(),
@@ -19748,7 +21031,9 @@ class $PhdStudentTableManager
                 admission1stMemberId: admission1stMemberId,
                 admission2ndMemberId: admission2ndMemberId,
                 admission3rdMemberId: admission3rdMemberId,
-                admissionPaid: admissionPaid,
+                admissionHelperId: admissionHelperId,
+                admissionPaymentStatus: admissionPaymentStatus,
+                admissionPaymentPolicy: admissionPaymentPolicy,
                 thesis: thesis,
                 supervisorId: supervisorId,
                 secondarySupervisorId: secondarySupervisorId,
@@ -19777,7 +21062,10 @@ class $PhdStudentTableManager
                 Value<int?> admission1stMemberId = const Value.absent(),
                 Value<int?> admission2ndMemberId = const Value.absent(),
                 Value<int?> admission3rdMemberId = const Value.absent(),
-                Value<bool> admissionPaid = const Value.absent(),
+                Value<int?> admissionHelperId = const Value.absent(),
+                Value<enums.PaymentStatus> admissionPaymentStatus =
+                    const Value.absent(),
+                Value<int> admissionPaymentPolicy = const Value.absent(),
                 required String thesis,
                 required int supervisorId,
                 Value<int?> secondarySupervisorId = const Value.absent(),
@@ -19804,7 +21092,9 @@ class $PhdStudentTableManager
                 admission1stMemberId: admission1stMemberId,
                 admission2ndMemberId: admission2ndMemberId,
                 admission3rdMemberId: admission3rdMemberId,
-                admissionPaid: admissionPaid,
+                admissionHelperId: admissionHelperId,
+                admissionPaymentStatus: admissionPaymentStatus,
+                admissionPaymentPolicy: admissionPaymentPolicy,
                 thesis: thesis,
                 supervisorId: supervisorId,
                 secondarySupervisorId: secondarySupervisorId,
@@ -19814,9 +21104,66 @@ class $PhdStudentTableManager
                 status: status,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) =>
+                    (e.readTable(table), $PhdStudentReferences(db, table, e)),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({cohort = false, admissionPaymentPolicy = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (cohort) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.cohort,
+                                    referencedTable: $PhdStudentReferences
+                                        ._cohortTable(db),
+                                    referencedColumn: $PhdStudentReferences
+                                        ._cohortTable(db)
+                                        .cohort,
+                                  )
+                                  as T;
+                        }
+                        if (admissionPaymentPolicy) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.admissionPaymentPolicy,
+                                    referencedTable: $PhdStudentReferences
+                                        ._admissionPaymentPolicyTable(db),
+                                    referencedColumn: $PhdStudentReferences
+                                        ._admissionPaymentPolicyTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
         ),
       );
 }
@@ -19831,12 +21178,9 @@ typedef $PhdStudentProcessedTableManager =
       $PhdStudentAnnotationComposer,
       $PhdStudentCreateCompanionBuilder,
       $PhdStudentUpdateCompanionBuilder,
-      (
-        PhdStudentData,
-        BaseReferences<_$AppDatabase, PhdStudent, PhdStudentData>,
-      ),
+      (PhdStudentData, $PhdStudentReferences),
       PhdStudentData,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool cohort, bool admissionPaymentPolicy})
     >;
 typedef $TeachingRegistrationCreateCompanionBuilder =
     TeachingRegistrationCompanion Function({
@@ -21959,6 +23303,11 @@ class $AppDatabaseManager {
       $AcademicGroupTableManager(_db, _db.academicGroup);
   $PhdCohortTableManager get phdCohort =>
       $PhdCohortTableManager(_db, _db.phdCohort);
+  $PhdAdmissionPaymentPolicyTableManager get phdAdmissionPaymentPolicy =>
+      $PhdAdmissionPaymentPolicyTableManager(
+        _db,
+        _db.phdAdmissionPaymentPolicy,
+      );
   $PhdStudentTableManager get phdStudent =>
       $PhdStudentTableManager(_db, _db.phdStudent);
   $TeachingRegistrationTableManager get teachingRegistration =>

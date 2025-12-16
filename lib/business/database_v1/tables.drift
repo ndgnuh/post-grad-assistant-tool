@@ -15,9 +15,10 @@ CREATE TABLE document_role (
 CREATE TABLE document (
 	id integer not null primary key autoincrement,
 	title text not null,
-	offical_code text,
-	signed_date text,
-	role_id integer not null REFERENCES document_role(id),
+	official_code integer not null,
+	official_type text not null,
+	signed_date datetime not null,
+	-- role_id integer not null REFERENCES document_role(id),
 	-- Content & archive
 	content_id integer,
 	archive_id text,
@@ -116,6 +117,8 @@ create table thesis (
     "defense_status" text not null mapped by `thesisStatusConverter`,
     "payment_status" text not null mapped by `paymentStatusConverter`,
 
+    "defense_decision_id" INTEGER REFERENCES document(id) as councilDecisionId,
+
     -- Deprecated fields, probably to be removed later
 	-- "ngayGiao"	datetime as assignedDate,
 	"soQdGiao"	TEXT as assignedDecisionNumber,
@@ -157,6 +160,7 @@ create table teacher (
     bank_name text,
     deprecated_tax_code text,
 	note text,
+    start_teaching_year integer,
     teacher_group_id integer references teacher_group(id)
 );
 
@@ -166,9 +170,17 @@ create table "phd_cohort" (
     "updated_time" datetime not null default current_timestamp
 );
 
+create table "phd_admission_payment_policy" (
+	id integer primary key autoincrement,
+	president_payment integer not null,
+	secretary_payment integer not null,
+	member_payment integer not null,
+	helper_payment integer not null
+);
+
 create table "phd_student" (
     "id" integer not null primary key autoincrement,
-    "cohort" text not null,
+    "cohort" text not null references phd_cohort(cohort),
 	"management_id" text unique,
     "admission_id"  text unique not null,
     "name"  text not null,
@@ -185,7 +197,12 @@ create table "phd_student" (
     "admission_1st_member_id" integer,
     "admission_2nd_member_id" integer,
     "admission_3rd_member_id" integer,
-    "admission_paid" boolean not null default false,
+    "admission_helper_id" integer,
+    -- "admission_paid" boolean not null default false,
+    "admission_payment_status" text not null mapped by `paymentStatusConverter` default 'unpaid',
+    "admission_payment_policy" integer not null
+        default ("select max(id) from phd_admission_payment_policy")
+        references phd_admission_payment_policy(id),
     "thesis" text not null,
     "supervisor_id"	integer not null,
     "secondary_supervisor_id" integer,

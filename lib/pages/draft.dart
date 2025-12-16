@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:fami_tools/business/documents/models/payment_atm.dart';
 import 'package:fami_tools/business/documents.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +7,6 @@ import 'package:fami_tools/gen/assets.gen.dart';
 
 // import '../business/domain_objects.dart';
 import '../business/db_v2_providers.dart';
-import '../business/main_database.dart';
 
 import 'package:fami_tools/business/documents/utilities/docx_template.dart';
 
@@ -92,8 +90,7 @@ Future<XlsxFile> buildExcel(WidgetRef ref) async {
     reason: "HỘI ĐỒNG CHẤM LUẬN VĂN THẠC SĨ",
     entries: entries,
   );
-  final file = XlsxFactory.payment.atmTable(model: model);
-  return file;
+  return model.xlsx;
 }
 
 Future<Uint8List?> buildDocx(WidgetRef ref) async {

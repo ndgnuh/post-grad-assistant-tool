@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -593,11 +595,18 @@ class _DateTileState extends State<DateTile> {
           subtitle: Text(dateString),
           leading: widget.leading,
           onTap: () async {
+            final DatePickerEntryMode initialEntryMode;
+            if (Platform.isAndroid || Platform.isIOS) {
+              initialEntryMode = DatePickerEntryMode.calendar;
+            } else {
+              initialEntryMode = DatePickerEntryMode.input;
+            }
             final newValue = await showDatePicker(
               context: context,
               initialDate: value ?? DateTime.now(),
               firstDate: widget.firstDate ?? DateTime(1900),
               lastDate: widget.lastDate ?? DateTime(2100),
+              initialEntryMode: initialEntryMode,
             );
             if (newValue != null) {
               valueNotifier.value = newValue;

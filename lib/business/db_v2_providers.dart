@@ -12,4 +12,5 @@ export 'db_v2_providers/teachers.dart';
 export 'db_v2_providers/teaching_assignment.dart';
 export 'db_v2_providers/teaching_registration.dart';
 export 'db_v2_providers/thesis.dart';
+export 'db_v2_providers/documents.dart';
 export 'main_database.dart';

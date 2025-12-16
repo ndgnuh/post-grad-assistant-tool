@@ -268,4 +268,42 @@ class AppDatabase extends _$AppDatabase {
       ),
     );
   }
+
+  SimpleSelectStatement<PhdStudent, PhdStudentData> searchPhdStudents({
+    int? id,
+    String? searchText,
+    PhdCohortData? cohort,
+    PaymentStatus? admissionPaymentStatus,
+  }) {
+    final stmt = select(phdStudent);
+
+    if (id != null) {
+      stmt.where((p) => p.id.equals(id));
+    }
+
+    switch (searchText?.trim()) {
+      case String searchText when searchText.trim().isNotEmpty:
+        stmt.where(
+          (p) =>
+              p.name.contains(searchText) |
+              p.admissionId.contains(searchText) |
+              p.personalEmail.contains(searchText) |
+              p.phone.contains(searchText) |
+              p.cohort.contains(searchText),
+        );
+      default:
+    }
+
+    if (cohort != null) {
+      stmt.where((p) => p.cohort.equals(cohort.cohort));
+    }
+
+    switch (admissionPaymentStatus) {
+      case PaymentStatus status:
+        stmt.where((p) => p.admissionPaymentStatus.equals(status.value));
+      default:
+    }
+
+    return stmt;
+  }
 }

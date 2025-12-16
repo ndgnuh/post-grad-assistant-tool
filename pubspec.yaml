@@ -135,6 +135,7 @@ flutter:
 
     - assets/templates/phd-admission-record.docx
     - assets/templates/msc-thesis-council-decision.docx
+    - assets/templates/payment_request.docx
     - assets/templates/sample.docx
 
   # An image asset can refer to one or more resolution-specific "variants", see

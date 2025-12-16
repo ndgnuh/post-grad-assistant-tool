@@ -43,7 +43,7 @@ class CohortSelector extends ConsumerWidget {
 
     final model = modelAsync.value!;
 
-    return DropdownMenu<String?>(
+    return DropdownMenu<PhdCohortData?>(
       expandedInsets: EdgeInsets.zero,
       initialSelection: model.selected,
       label: const Text('Niên khóa NCS'),
@@ -51,10 +51,10 @@ class CohortSelector extends ConsumerWidget {
         for (final option in model.options)
           DropdownMenuEntry(
             value: option,
-            label: option ?? 'Tất cả',
+            label: option?.cohort ?? "Tất cả niên khóa",
           ),
       ],
-      onSelected: (String? value) {
+      onSelected: (PhdCohortData? value) {
         ref.read(cohortSelectionModelProvider.notifier).select(value);
       },
     );

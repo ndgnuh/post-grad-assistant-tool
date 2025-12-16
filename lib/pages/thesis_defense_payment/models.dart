@@ -1,6 +1,4 @@
 import 'package:fami_tools/business/db_v2_providers.dart';
-import 'package:fami_tools/business/documents/models/document_models.dart'
-    as document_models;
 import 'package:fami_tools/business/documents.dart';
 
 class ThesisViewModel {
@@ -46,21 +44,24 @@ class ThesisPaymentModel {
     return total;
   }
 
-  /// Payment request
-  Future<PdfFile> get paymentRequestPdf {
-    final model = document_models.PaymentRequestModel(
-      paymentReason: reason,
+  /// Payment request model
+  PaymentRequestModel get paymentRequestModel {
+    return PaymentRequestModel(
       requesterName: myName,
-      requesterOrganization: myFaculty,
+      requesterFalcuty: myFaculty,
+      paymentReason: reason,
       paymentAmount: totalPaymentAmount,
-    );
-    return PdfFile.payment.paymentRequest(
-      model: model,
     );
   }
 
+  /* All the generated documents */
+  Future<PdfFile> get paymentRequestPdf => paymentRequestModel.pdf;
+  Future<DocxFile> get paymentRequestDocx => paymentRequestModel.docx;
+  Future<PdfFile> get paymentAtmPdf => paymentAtmModel.pdf;
+  XlsxFile get paymentAtmXlsx => paymentAtmModel.xlsx;
+
   /// Model used to build Payment ATM document (PDF/Excel)
-  document_models.PaymentAtmModel get paymentAtmModel {
+  PaymentAtmModel get paymentAtmModel {
     final teachers = <TeacherData>{};
     final timesPresident = <TeacherData, int>{};
     final timesSecretary = <TeacherData, int>{};
@@ -94,7 +95,7 @@ class ThesisPaymentModel {
       member: 300_000,
     );
 
-    final entries = <document_models.PaymentAtmEntry>[];
+    final entries = <PaymentAtmEntry>[];
     final sortedTeachers = teachers.toList(growable: false);
     sortedTeachers.sort((a, b) {
       final c1 = a.isOutsider ? 1 : 0;
@@ -118,14 +119,14 @@ class ThesisPaymentModel {
           (timesAsReviewer * moneyPerRole.reviewer) +
           (timesAsMember * moneyPerRole.member);
 
-      final entry = document_models.PaymentAtmEntry(
+      final entry = PaymentAtmEntry(
         teacher: teacher,
         amount: totalAmount,
       );
       entries.add(entry);
     }
 
-    return document_models.PaymentAtmModel(
+    return PaymentAtmModel(
       reason: reason,
       entries: entries,
     );

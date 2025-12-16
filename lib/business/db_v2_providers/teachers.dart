@@ -57,6 +57,60 @@ class TeacherByIdNotifier extends AsyncNotifier<TeacherData> {
     return maybeTeacher as TeacherData;
   }
 
+  Future<void> updateInfo({
+    String? name,
+    String? staffId,
+    String? phoneNumber,
+    String? email,
+    Gender? gender,
+    String? specialization,
+    String? bankAccount,
+    String? bankName,
+    String? deprecatedTaxCode,
+    String? citizenId,
+    String? falcuty,
+    String? university,
+    int? startTeachingYear,
+    DateTime? dateOfBirth,
+  }) async {
+    Value<String> toStringValue(String? input) {
+      if (input == null) {
+        return const Value.absent();
+      } else if (input.trim().isEmpty) {
+        return const Value.absent();
+      } else {
+        return Value(input);
+      }
+    }
+
+    final companion = TeacherCompanion(
+      name: name != null ? Value(name) : const Value.absent(),
+      staffId: toStringValue(staffId),
+      gender: switch (gender) {
+        null => const Value.absent(),
+        Gender g => Value(g),
+      },
+      university: toStringValue(university),
+      phoneNumber: toStringValue(phoneNumber),
+      falcuty: toStringValue(falcuty),
+      specialization: toStringValue(specialization),
+      personalEmail: toStringValue(email),
+      bankAccount: toStringValue(bankAccount),
+      bankName: toStringValue(bankName),
+      deprecatedTaxCode: toStringValue(deprecatedTaxCode),
+      citizenId: toStringValue(citizenId),
+      startTeachingYear: switch (startTeachingYear) {
+        null => const Value.absent(),
+        int y => Value(y),
+      },
+      dateOfBirth: switch (dateOfBirth) {
+        null => const Value.absent(),
+        DateTime d => Value(d),
+      },
+    );
+    await updateTeacher(companion);
+  }
+
   Future<void> updateTeacher(TeacherCompanion newData) async {
     final db = await ref.read(mainDatabaseProvider.future);
     final stmt = db.teacher.update();

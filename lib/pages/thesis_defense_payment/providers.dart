@@ -6,10 +6,14 @@ import 'package:riverpod/riverpod.dart';
 import 'models.dart';
 
 /// Provide excel payment model
-final paymentAtmExcelProvider = FutureProvider<XlsxFile>((ref) async {
+final paymentAtmXlsxProvider = FutureProvider<XlsxFile>((ref) async {
   final paymentModel = await ref.watch(paymentModelProvider.future);
-  final atmModel = paymentModel.paymentAtmModel;
-  return XlsxFactory.payment.atmTable(model: atmModel);
+  return paymentModel.paymentAtmXlsx;
+});
+
+final paymentAtmPdfProvider = FutureProvider<PdfFile>((ref) async {
+  final paymentModel = await ref.watch(paymentModelProvider.future);
+  return paymentModel.paymentAtmPdf;
 });
 
 final paymentModelProvider = FutureProvider<ThesisPaymentModel>((ref) async {

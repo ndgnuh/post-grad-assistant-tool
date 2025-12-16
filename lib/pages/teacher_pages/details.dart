@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/db_v2_providers.dart';
-// import '../../business/domain_objects.dart';
+import '../../business/view_models.dart';
 import '../../custom_tiles.dart';
 import '../../custom_widgets.dart';
 import '../../shortcuts.dart';
@@ -259,13 +259,13 @@ class _TeacherDetailTab extends ConsumerWidget {
             leading: const Icon(Icons.male),
             options: Gender.values,
             initialValue: teacher.gender,
-            // onUpdate: teacherNotifier.updateGender,
+            onUpdate: (v) => teacherNotifier.updateInfo(gender: v),
           ),
           DateTile(
             titleText: "Ngày sinh",
             leading: const Icon(Icons.cake),
             initialValue: teacher.dateOfBirth,
-            // onUpdate: (value) => teacherNotifier.updateDateOfBirth(value),
+            onUpdate: (value) => teacherNotifier.updateInfo(dateOfBirth: value),
           ),
 
           // Thông tin công tác
@@ -275,18 +275,35 @@ class _TeacherDetailTab extends ConsumerWidget {
               titleText: "Mã cán bộ",
               leading: const Icon(Icons.card_membership),
               initialValue: teacher.staffId ?? "N/A",
-              // onUpdate: (value) => teacherNotifier.updateStaffId(value),
+              onUpdate: (value) => teacherNotifier.updateInfo(staffId: value),
             ),
           StringTile(
-            titleText: "Đơn vị",
+            titleText: "Đại học công tác",
             leading: const Icon(Icons.school),
-            initialValue: teacher.staffId ?? notAvailableText,
-            // onUpdate: (value) => teacherNotifier.updateUniversity(value!),
+            initialValue: teacher.university ?? notAvailableText,
+            onUpdate: (value) => teacherNotifier.updateInfo(university: value),
+          ),
+          StringTile(
+            leading: const Icon(null),
+            titleText: "Khoa/viện",
+            initialValue: teacher.falcuty ?? notAvailableText,
+            onUpdate: (value) => teacherNotifier.updateInfo(falcuty: value),
           ),
           StringTile(
             titleText: "Chuyên ngành",
             leading: const Icon(null),
-            initialValue: "TODO",
+            initialValue: teacher.specialization ?? notAvailableText,
+            onUpdate: (value) => teacherNotifier.updateInfo(
+              specialization: value,
+            ),
+          ),
+          IntegerTile(
+            titleText: "Năm bắt đầu công tác",
+            leading: const Icon(null),
+            initialValue: teacher.startTeachingYear ?? 0,
+            onUpdate: (value) => teacherNotifier.updateInfo(
+              startTeachingYear: value,
+            ),
           ),
 
           SingleSelectionTile<AcademicRank>(
@@ -310,13 +327,15 @@ class _TeacherDetailTab extends ConsumerWidget {
             titleText: "Email",
             leading: const Icon(Icons.email),
             initialValue: teacher.emails.join(", "),
-            // onUpdate: (value) => teacherNotifier.updateEmail(value),
+            onUpdate: (value) => teacherNotifier.updateInfo(
+              email: value,
+            ),
           ),
           StringTile(
             titleText: "Số điện thoại",
             leading: const Icon(Icons.phone),
             initialValue: teacher.phoneNumber ?? notAvailableText,
-            // onUpdate: (value) => teacherNotifier.updatePhone(value),
+            onUpdate: (value) => teacherNotifier.updateInfo(phoneNumber: value),
           ),
 
           // Thông tin thanh toán
@@ -326,25 +345,27 @@ class _TeacherDetailTab extends ConsumerWidget {
             titleText: "Tài khoản ngân hàng",
             leading: const Icon(Icons.account_balance_wallet),
             initialValue: teacher.bankAccount ?? notAvailableText,
-            // onUpdate: (value) => teacherNotifier.updateBankAccount(value),
+            onUpdate: (value) => teacherNotifier.updateInfo(bankAccount: value),
           ),
           StringTile(
             titleText: "Tên ngân hàng",
             leading: const Icon(Icons.location_city),
             initialValue: teacher.bankName ?? notAvailableText,
-            // onUpdate: (value) => teacherNotifier.updateBankName(value),
+            onUpdate: (value) => teacherNotifier.updateInfo(bankName: value),
           ),
           StringTile(
             titleText: "Mã số thuế (cũ)",
             leading: const Icon(Icons.account_balance),
             initialValue: teacher.deprecatedTaxCode ?? notAvailableText,
-            // onUpdate: (value) => teacherNotifier.updateTaxCode(value),
+            onUpdate: (value) => teacherNotifier.updateInfo(
+              deprecatedTaxCode: value,
+            ),
           ),
           StringTile(
             titleText: "CCCD",
             leading: const Icon(Icons.person),
             initialValue: teacher.citizenId ?? notAvailableText,
-            // onUpdate: (value) => teacherNotifier.updateCitizenId(value),
+            onUpdate: (value) => teacherNotifier.updateInfo(citizenId: value),
           ),
         ],
       ),

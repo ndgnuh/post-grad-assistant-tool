@@ -185,9 +185,9 @@ final initialRoute = switch (kReleaseMode) {
   // false => msc_thesis.ThesisDefensePaymentPage.routeName,
   // false => ThesisListPage.routeName,
   // false => msc_thesis.ThesisEverythingPage.routeName,
-  false => msc_thesis.ThesisDefenseRegisterPage.routeName,
-  false => msc_thesis.MscThesisAssignmentPage.routeName,
-  false => msc_thesis.MscThesisSelectionPage.routeName,
+  // false => msc_thesis.ThesisDefenseRegisterPage.routeName,
+  // false => msc_thesis.MscThesisAssignmentPage.routeName,
+  // false => msc_thesis.MscThesisSelectionPage.routeName,
 
   // PhD students pages
   // false => PhdStudentListPage.routeName,
@@ -323,7 +323,7 @@ final routesBySections = <String, List<RouteItem>>{
       subtitle: null,
     ),
     (
-      route: null,
+      route: phd_pages.PhdAdmissionPaymentPage.routeName,
       label: "Thanh toán xét tuyển",
       icon: Symbols.attach_money,
       subtitle: null,

@@ -3,6 +3,17 @@ import 'package:riverpod/riverpod.dart';
 
 import '../db_v2_providers.dart';
 
+final phdAdmissionPaymentPolicyByIdProvider = FutureProvider.family((
+  ref,
+  int policyId,
+) async {
+  final db = await ref.watch(mainDatabaseProvider.future);
+  final stmt = db.phdAdmissionPaymentPolicy.select()
+    ..where((p) => p.id.equals(policyId));
+  final policy = stmt.getSingle();
+  return policy;
+});
+
 final phdCohortsProvider = AsyncNotifierProvider(
   PhdCohorts.new,
 );
@@ -10,6 +21,16 @@ final phdCohortsProvider = AsyncNotifierProvider(
 final phdStudentsMutationProvider = NotifierProvider(
   PhdStudentsMutationNotifier.new,
 );
+
+final phdCohortByIdProvider = FutureProvider.family((
+  ref,
+  String cohortId,
+) async {
+  final db = await ref.watch(mainDatabaseProvider.future);
+  final stmt = db.phdCohort.select()..where((c) => c.cohort.equals(cohortId));
+  final cohort = stmt.getSingleOrNull();
+  return cohort;
+});
 
 final phdStudentByIdProvider = AsyncNotifierProvider.family(
   PhdStudentByIdNotifier.new,
@@ -20,18 +41,18 @@ final phdStudentIdsProvider = AsyncNotifierProvider(
 );
 
 final phdStudentIdsByCohortProvider = AsyncNotifierProvider.family(
-  (String cohort) => PhdStudentIdsNotifier(cohort: cohort),
+  (PhdCohortData cohort) => PhdStudentIdsNotifier(cohort: cohort),
 );
 
-class PhdCohorts extends AsyncNotifier<List<String>> {
+class PhdCohorts extends AsyncNotifier<List<PhdCohortData>> {
   @override
-  Future<List<String>> build() async {
+  Future<List<PhdCohortData>> build() async {
     final db = await ref.watch(mainDatabaseProvider.future);
     final stmt = db.phdCohort.select()
       ..orderBy([
         (x) => OrderingTerm(expression: x.cohort, mode: OrderingMode.desc),
       ]);
-    final result = await stmt.map((c) => c.cohort).get();
+    final result = await stmt.get();
     return result;
   }
 }
@@ -81,29 +102,22 @@ class PhdStudentByIdNotifier extends AsyncNotifier<PhdStudentData> {
 }
 
 class PhdStudentIdsNotifier extends AsyncNotifier<List<int>> {
-  final String? cohort;
+  final String? searchText;
+  final PhdCohortData? cohort;
+  final PaymentStatus? paymentStatus;
 
-  PhdStudentIdsNotifier({this.cohort});
+  PhdStudentIdsNotifier({this.searchText, this.cohort, this.paymentStatus});
 
   @override
   Future<List<int>> build() async {
     final db = await ref.watch(mainDatabaseProvider.future);
-    final stmt = db.phdStudent.select();
-
-    switch (cohort) {
-      case String cohort:
-        stmt.where((p) => p.cohort.equals(cohort));
-    }
-
-    stmt.orderBy([
-      (s) => OrderingTerm(expression: s.cohort, mode: OrderingMode.desc),
-      (s) => OrderingTerm(expression: s.status, mode: OrderingMode.asc),
-      (s) => OrderingTerm(expression: s.admissionId, mode: OrderingMode.asc),
-    ]);
-
-    final ids = await stmt.map((p) => p.id).get();
-
-    return ids.whereType<int>().toList();
+    final stmt = db.searchPhdStudents(
+      searchText: searchText,
+      cohort: cohort,
+      admissionPaymentStatus: paymentStatus,
+    );
+    final ids = await stmt.map((s) => s.id).get();
+    return ids;
   }
 }
 

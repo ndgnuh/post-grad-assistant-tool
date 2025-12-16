@@ -1,14 +1,15 @@
 import 'dart:async';
 
 import 'package:riverpod/riverpod.dart';
+import 'package:drift/drift.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../db_v2_providers.dart';
 import './common.dart';
 
-typedef PhdCohortSelectionModel = SelectionModel<String?>;
+typedef PhdCohortSelectionModel = SelectionModel<PhdCohortData?>;
 
-typedef _Mixin = SelectionModelMixin<String?>;
+typedef _Mixin = SelectionModelMixin<PhdCohortData?>;
 typedef _Notifier = AsyncNotifier<PhdCohortSelectionModel>;
 
 class PhdCohortSelectionModelNotifier extends _Notifier with _Mixin {
@@ -19,20 +20,28 @@ class PhdCohortSelectionModelNotifier extends _Notifier with _Mixin {
   String get prefKey => 'selection-model/phd-cohort/$name';
 
   @override
-  FutureOr<String?> load(SharedPreferences prefs) async {
+  FutureOr<PhdCohortData?> load(SharedPreferences prefs) async {
     final value = prefs.getString(prefKey);
-    return value;
+    if (value != null) {
+      for (final cohort in await options) {
+        if (cohort?.cohort == value) {
+          return cohort;
+        }
+      }
+    }
+    return null;
   }
 
   @override
-  FutureOr<List<String?>> get options => ref.watch(phdCohortsProvider.future);
+  FutureOr<List<PhdCohortData?>> get options =>
+      ref.watch(phdCohortsProvider.future);
 
   @override
-  void save(SharedPreferences prefs, String? item) async {
+  void save(SharedPreferences prefs, PhdCohortData? item) async {
     if (item == null) {
       await prefs.remove(prefKey);
     } else {
-      await prefs.setString(prefKey, item);
+      await prefs.setString(prefKey, item.cohort);
     }
   }
 }

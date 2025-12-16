@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import '../db_v2_providers.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -13,6 +15,9 @@ class ThesisViewModel {
   final TeacherData? secondReviewer;
   final TeacherData? member;
 
+  final DocumentData? councilDecision;
+  final Uint8List? councilDecisionContent;
+
   const ThesisViewModel({
     required this.student,
     required this.thesis,
@@ -22,6 +27,8 @@ class ThesisViewModel {
     this.firstReviewer,
     this.secondReviewer,
     this.member,
+    this.councilDecision,
+    this.councilDecisionContent,
   });
 
   /* Providers */
@@ -83,6 +90,16 @@ final _byIdProvider = FutureProvider.family(
       int id => await ref.watch(teacherByIdProvider(id).future),
     };
 
+    final councilDecision = switch (thesis.councilDecisionId) {
+      null => null,
+      int id => await ref.watch(documentByIdProvider(id).future),
+    };
+
+    final councilDecisionContent = switch (councilDecision?.contentId) {
+      null => null,
+      int id => await ref.watch(documentContentProvider(id).future),
+    };
+
     return ThesisViewModel(
       student: student,
       thesis: thesis,
@@ -92,6 +109,8 @@ final _byIdProvider = FutureProvider.family(
       firstReviewer: firstReviewer,
       secondReviewer: secondReviewer,
       member: member,
+      councilDecision: councilDecision,
+      councilDecisionContent: councilDecisionContent,
     );
   },
 );

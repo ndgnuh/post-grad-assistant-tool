@@ -1,9 +1,43 @@
 import 'package:fami_tools/business/documents/pdf_utils.dart';
+import 'package:fami_tools/gen/assets.gen.dart';
 import 'package:fami_tools/utilities/strings.dart';
+import 'package:flutter/services.dart';
 
 import '../common_widgets.dart';
-import '../models/payment_request.dart';
 import '../../documents.dart';
+import '../utilities/docx_template.dart';
+
+class PaymentRequestModel {
+  final String requesterName;
+  final String requesterFalcuty;
+  final String paymentReason;
+  final int paymentAmount;
+
+  const PaymentRequestModel({
+    required this.requesterName,
+    required this.requesterFalcuty,
+    required this.paymentReason,
+    required this.paymentAmount,
+  });
+
+  Future<PdfFile> get pdf => paymentRequestPdf(model: this);
+  Future<DocxFile> get docx => buildPaymentRequestDocx(model: this);
+
+  String get paymentAmountFormatted => paymentAmount.formatMoney();
+
+  String get paymentAmountInWords => paymentAmount.toVietnameseWords();
+
+  String get name => "Đề nghị thanh toán $paymentReason";
+
+  Map<String, String> get docxContext => {
+    'requester_name': requesterName,
+    'requester_falcuty': requesterFalcuty,
+    'payment_reason': paymentReason,
+    'payment_amount': paymentAmountFormatted,
+    'payment_amount_text': paymentAmountInWords,
+    'current_year': DateTime.now().year.toString(),
+  };
+}
 
 Future<PdfFile> paymentRequestPdf({
   required PaymentRequestModel model,
@@ -17,7 +51,7 @@ Future<PdfFile> paymentRequestPdf({
     ),
     build: (context) => PaymentRequestPdf(
       requesterName: model.requesterName,
-      requesterOrganization: model.requesterOrganization,
+      requesterFalcuty: model.requesterFalcuty,
       paymentReason: model.paymentReason,
       paymentAmount: model.paymentAmount,
     ),
@@ -27,15 +61,31 @@ Future<PdfFile> paymentRequestPdf({
   return PdfFile(name: name, bytes: bytes);
 }
 
+Future<DocxFile> buildPaymentRequestDocx({
+  required PaymentRequestModel model,
+}) async {
+  final templatePath = Assets.templates.paymentRequest;
+  final templateBytes = await rootBundle.load(templatePath);
+  final docxBytes = fillDocxTemplate(
+    templateBytes.buffer.asUint8List(),
+    model.docxContext,
+  );
+
+  return DocxFile(
+    name: model.name,
+    bytes: docxBytes,
+  );
+}
+
 class PaymentRequestPdf extends StatelessWidget {
   final String requesterName;
-  final String requesterOrganization;
+  final String requesterFalcuty;
   final String paymentReason;
   final int paymentAmount;
 
   PaymentRequestPdf({
     required this.requesterName,
-    required this.requesterOrganization,
+    required this.requesterFalcuty,
     required this.paymentReason,
     required this.paymentAmount,
   });
@@ -94,7 +144,7 @@ class PaymentRequestPdf extends StatelessWidget {
         InfoField(
           texts: [
             "Bộ phận (hoặc địa chỉ): ",
-            requesterOrganization,
+            requesterFalcuty,
           ],
         ),
         SizedBox(height: 6 * pt),

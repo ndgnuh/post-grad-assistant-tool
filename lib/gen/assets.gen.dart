@@ -92,6 +92,9 @@ class $AssetsTemplatesGen {
   String get mscThesisCouncilDecision =>
       'assets/templates/msc-thesis-council-decision.docx';
 
+  /// File path: assets/templates/payment_request.docx
+  String get paymentRequest => 'assets/templates/payment_request.docx';
+
   /// File path: assets/templates/phd-admission-record.docx
   String get phdAdmissionRecord => 'assets/templates/phd-admission-record.docx';
 
@@ -101,6 +104,7 @@ class $AssetsTemplatesGen {
   /// List of all assets
   List<String> get values => [
     mscThesisCouncilDecision,
+    paymentRequest,
     phdAdmissionRecord,
     sample,
   ];

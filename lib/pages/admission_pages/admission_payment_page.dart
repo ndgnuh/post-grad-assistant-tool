@@ -176,11 +176,14 @@ class _SaveButton extends ConsumerWidget {
       final paymentRequestPdf = await ref.read(
         paymentRequestPdfProvider.future,
       );
+      final paymentRequestDocx = await ref.read(
+        paymentRequestDocxProvider.future,
+      );
       final paymentAtmPdf = await ref.read(
         paymentAtmPdfProvider.future,
       );
-      final paymentAtmExcel = await ref.read(
-        paymentAtmExcelProvider.future,
+      final paymentAtmXlsx = await ref.read(
+        paymentAtmXlsxProvider.future,
       );
       final paymentListingPdf = await ref.read(
         paymentListingPdfProvider.future,
@@ -194,8 +197,9 @@ class _SaveButton extends ConsumerWidget {
 
       paymentListingPdf.save(directory: saveDirectory);
       paymentRequestPdf.save(directory: saveDirectory);
+      paymentRequestDocx.save(directory: saveDirectory);
       paymentAtmPdf.save(directory: saveDirectory);
-      paymentAtmExcel.save(directory: saveDirectory);
+      paymentAtmXlsx.save(directory: saveDirectory);
 
       messenger.showSnackBar(
         SnackBar(

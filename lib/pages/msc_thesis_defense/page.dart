@@ -98,7 +98,7 @@ class ThesisDefenseRegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: ConstrainedAppBar(
           withTabBar: true,
@@ -108,6 +108,7 @@ class ThesisDefenseRegisterPage extends StatelessWidget {
               tabs: [
                 Tab(text: "Nộp hồ sơ"),
                 Tab(text: "Quản trị"),
+                Tab(text: "Thông tin"),
               ],
             ),
           ),
@@ -117,6 +118,7 @@ class ThesisDefenseRegisterPage extends StatelessWidget {
             children: [
               _ApplyTab(),
               _ModerateTab(),
+              _InfomationTab(),
             ],
           ),
         ),
@@ -353,7 +355,8 @@ class _StudentThesisListTile extends ConsumerWidget {
     switch (viewModelAsync) {
       case AsyncLoading():
         return LinearProgressIndicator();
-      case AsyncError(:final error):
+      case AsyncError(:final error, :final stackTrace):
+        if (kDebugMode) print(stackTrace);
         return ListTile(
           title: Text(
             "Lỗi tải dữ liệu học viên $studentId: $error",
@@ -445,6 +448,124 @@ class _StudentSearchAdd extends ConsumerWidget {
       builder: (context, controller) => OutlinedButton(
         onPressed: () => controller.openView(),
         child: Text("Thêm học viên"),
+      ),
+    );
+  }
+}
+
+class _InfomationTab extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(context.gutter),
+      child: Column(
+        spacing: context.gutter,
+        children: [
+          CardSection(
+            title: "Hồ sơ học viên nộp",
+            subtitle: "Kiểm tra tên luận văn và thu hồ sơ",
+            children: [
+              ListTile(
+                title: Text("Lý lịch khoa học"),
+                subtitle: Text("Theo mẫu chính thức"),
+              ),
+              ListTile(
+                title: Text("Quyển luận văn & tóm tắt"),
+                subtitle: Text("Kiểm tra quy cách rồi trả học viên"),
+              ),
+              ListTile(
+                title: Text("Giấy nhận xét của giảng viên hướng dẫn"),
+                subtitle: Text("In từ hệ thống quản lý đào tạo"),
+              ),
+              ListTile(
+                title: Text("Chứng chỉ tiếng Anh"),
+                subtitle: Text("Bản sao có công chứng"),
+              ),
+              ListTile(
+                title: Text("Giấy chỉnh sửa tên đề tài (nếu có)"),
+                subtitle: Text("Đổi tên trên hệ thống"),
+              ),
+            ],
+          ),
+
+          // Tiếng Anh
+          CardSection(
+            title: "Kiểm tra tiếng Anh",
+            children: [
+              ListTile(
+                title: Text("Gửi danh sách học viên + khóa cho BĐT"),
+                subtitle: Text("Để kiểm tra hậu kiểm tiếng Anh"),
+              ),
+              ListTile(
+                title: Text("Trả hồ sơ nếu chưa hậu kiểm"),
+              ),
+            ],
+          ),
+
+          // Gửi BĐT
+          CardSection(
+            title: "Bước gửi hồ sơ lên Ban Đào tạo",
+            children: [
+              ListTile(
+                title: Text("Giấy đề xuất hội đồng"),
+                subtitle: Text("Theo mẫu chính thức"),
+              ),
+              ListTile(
+                title: Text("Nhập hội đồng lên hệ thống quản lý"),
+              ),
+              ListTile(
+                title: Text("Gửi hồ sơ lên BĐT"),
+              ),
+              ListTile(
+                title: Text("Nhận bảng điểm có chữ ký nháy"),
+              ),
+              ListTile(
+                title: Text("Tải quyết định thành lập hội đồng"),
+                subtitle: Text("Từ hệ thống tác nghiệp"),
+              ),
+              ListTile(
+                title: Text("Đăng quyết định lên BK Office trình ký"),
+                subtitle: Text(
+                  "Trưởng Khoa ký, Ban Đào tạo & Tài chính kế hoạch xem để biết",
+                ),
+              ),
+              ListTile(
+                title: Text("Sau khi quyết định ký"),
+                subtitle: Text(
+                  "Gửi QĐ cho học viên, GHVD, nhập lên hệ thống quản lý",
+                ),
+              ),
+            ],
+          ),
+
+          // Bảo vệ
+          CardSection(
+            title: "Hồ sơ gửi thư ký",
+            subtitle: "Bổ sung thêm rồi gửi thư ký hội đồng",
+            children: [
+              ListTile(
+                title: Text("Bảng thanh toán chấm luận văn"),
+                subtitle: Text("In từ hệ thống, nhập số QĐ trước khi tải"),
+              ),
+              ListTile(
+                title: Text("Quyết định thành lập hội đồng"),
+                subtitle: Text("In từ văn thư"),
+              ),
+              ListTile(
+                title: Text("Phiếu chấm điểm luận văn"),
+                subtitle: Text("Có dấu treo của Khoa"),
+              ),
+              ListTile(
+                title: Text("Biên bản họp hội đồng"),
+                subtitle: Text("Theo mẫu SĐH"),
+              ),
+              ListTile(
+                title: Text("Biên bản kiểm phiếu"),
+                subtitle: Text("Theo mẫu SĐH"),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

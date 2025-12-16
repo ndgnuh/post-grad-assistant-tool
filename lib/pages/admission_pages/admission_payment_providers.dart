@@ -103,7 +103,7 @@ final paymentTablePdfProvider = FutureProvider<Uint8List>((ref) async {
   return admissionPaymentTablePdf(model: model);
 });
 
-final paymentAtmExcelProvider = FutureProvider<XlsxFile>((ref) async {
+final paymentAtmProvider = FutureProvider<PaymentAtmModel>((ref) async {
   final councilSelecionModel = await ref.watch(
     admissionCouncilSelectionProvider.future,
   );
@@ -159,76 +159,21 @@ final paymentAtmExcelProvider = FutureProvider<XlsxFile>((ref) async {
       ),
     ],
   );
-  return XlsxFactory.payment.atmTable(
-    model: model,
-  );
+
+  return model;
 });
 
 final paymentAtmPdfProvider = FutureProvider<PdfFile>((ref) async {
-  final councilSelecionModel = await ref.watch(
-    admissionCouncilSelectionProvider.future,
-  );
-  final maybeCouncil = councilSelecionModel.selected;
-  assert(maybeCouncil != null, "Chưa chọn hội đồng tuyển sinh");
-  final council = maybeCouncil!;
-
-  // Number of students
-  final ids = await ref.watch(
-    paymentStudentIdsProvider(council).future,
-  );
-  final numStudents = ids.length;
-
-  // Teachers in the council
-  final president = await ref.watch(
-    teacherByIdProvider(council.presidentId).future,
-  );
-  final secretary = await ref.watch(
-    teacherByIdProvider(council.secretaryId).future,
-  );
-  final member1 = await ref.watch(
-    teacherByIdProvider(council.member1Id).future,
-  );
-  final member2 = await ref.watch(
-    teacherByIdProvider(council.member2Id).future,
-  );
-  final member3 = await ref.watch(
-    teacherByIdProvider(council.member3Id).future,
-  );
-
-  final model = PaymentAtmModel(
-    reason: _paymentReason(council.year),
-    entries: [
-      PaymentAtmEntry(
-        teacher: president,
-        amount: _presidentPay * numStudents,
-      ),
-      PaymentAtmEntry(
-        teacher: secretary,
-        amount: _secretaryPay * numStudents,
-      ),
-      PaymentAtmEntry(
-        teacher: member1,
-        amount: _memberPay * numStudents,
-      ),
-      PaymentAtmEntry(
-        teacher: member2,
-        amount: _memberPay * numStudents,
-      ),
-      PaymentAtmEntry(
-        teacher: member3,
-        amount: _memberPay * numStudents,
-      ),
-    ],
-  );
-  return paymentAtmPdf(
-    model: model,
-    baseFontSize: 12,
-    margin: EdgeInsets.all(1.5 * inch),
-    tableCellPadding: EdgeInsets.all(6 * pt),
-  );
+  final model = await ref.watch(paymentAtmProvider.future);
+  return model.pdf;
 });
 
-final paymentRequestPdfProvider = FutureProvider((ref) async {
+final paymentAtmXlsxProvider = FutureProvider<XlsxFile>((ref) async {
+  final model = await ref.watch(paymentAtmProvider.future);
+  return model.xlsx;
+});
+
+final paymentRequestProvider = FutureProvider((ref) async {
   final myName = await ref.watch(myNameProvider.future);
   final myOrganization = await ref.watch(myFacultyProvider.future);
   final councilSelecionModel = await ref.watch(
@@ -245,12 +190,21 @@ final paymentRequestPdfProvider = FutureProvider((ref) async {
   final reason = _paymentReason(council.year);
   final model = PaymentRequestModel(
     requesterName: myName!,
-    requesterOrganization: myOrganization!,
+    requesterFalcuty: myOrganization!,
     paymentReason: reason,
     paymentAmount: amount,
   );
-  final pdf = paymentRequestPdf(model: model);
-  return pdf;
+  return model;
+});
+
+final paymentRequestPdfProvider = FutureProvider((ref) async {
+  final model = await ref.watch(paymentRequestProvider.future);
+  return model.pdf;
+});
+
+final paymentRequestDocxProvider = FutureProvider((ref) async {
+  final model = await ref.watch(paymentRequestProvider.future);
+  return model.docx;
 });
 
 final paymentStudentIdsProvider = AsyncNotifierProvider.family(
