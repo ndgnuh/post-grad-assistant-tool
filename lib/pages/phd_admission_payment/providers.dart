@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show OrderingTerm;
 import 'package:fami_tools/business/db_v2_providers.dart';
 import 'package:fami_tools/business/selection_models.dart';
 import 'package:riverpod/riverpod.dart';
@@ -37,6 +38,23 @@ class PaymentModel {
       requesterFalcuty: myFaculty,
       paymentReason: paymentReason,
       paymentAmount: paymentAmount,
+    );
+  }
+
+  PaymentDoubleCheckModel get doubleCheckModel {
+    return PaymentDoubleCheckModel.forPhdAdmission(
+      helpers: viewModels
+          .map((vm) => vm.admissionHelper)
+          .whereType<TeacherData>()
+          .toList(),
+      presidents: viewModels.map((vm) => vm.admissionPresident!).toList(),
+      secretaries: viewModels.map((vm) => vm.admissionSecretary!).toList(),
+      firstMembers: viewModels.map((vm) => vm.admissionMember1!).toList(),
+      secondMembers: viewModels.map((vm) => vm.admissionMember2!).toList(),
+      thirdMembers: viewModels.map((vm) => vm.admissionMember3!).toList(),
+      paymentPolicies: viewModels
+          .map((vm) => vm.admissionPaymentPolicy)
+          .toList(),
     );
   }
 
@@ -111,6 +129,9 @@ final _idsProvider = AsyncNotifierProvider.family(
   (PhdCohortData cohort) => PhdStudentIdsNotifier(
     cohort: cohort,
     paymentStatus: PaymentStatus.unpaid,
+    orderBy: [
+      (p) => OrderingTerm(expression: p.admissionCouncilDecisionNumber),
+    ],
   ),
 );
 
@@ -176,3 +197,18 @@ final paymentAtmXlsxProvider = FutureProvider(
     return model.xlsx;
   },
 );
+
+final paymentDoubleCheckProvider = FutureProvider((ref) async {
+  final model = await ref.watch(paymentModelProvider.future);
+  return model.doubleCheckModel;
+});
+
+final paymentDoubleCheckSummaryPdfProvider = FutureProvider((ref) async {
+  final model = await ref.watch(paymentDoubleCheckProvider.future);
+  return model.summaryPdf;
+});
+
+final paymentDoubleCheckPdfProvider = FutureProvider((ref) async {
+  final model = await ref.watch(paymentDoubleCheckProvider.future);
+  return model.pdf;
+});

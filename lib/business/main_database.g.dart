@@ -9537,6 +9537,17 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
     requiredDuringInsert: true,
     $customConstraints: 'UNIQUE NOT NULL',
   );
+  static const VerificationMeta _admissionCouncilDecisionNumberMeta =
+      const VerificationMeta('admissionCouncilDecisionNumber');
+  late final GeneratedColumn<int> admissionCouncilDecisionNumber =
+      GeneratedColumn<int>(
+        'admission_council_decision_number',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
     'name',
@@ -9802,6 +9813,7 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
     cohort,
     managementId,
     admissionId,
+    admissionCouncilDecisionNumber,
     name,
     gender,
     dateOfBirth,
@@ -9869,6 +9881,15 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
       );
     } else if (isInserting) {
       context.missing(_admissionIdMeta);
+    }
+    if (data.containsKey('admission_council_decision_number')) {
+      context.handle(
+        _admissionCouncilDecisionNumberMeta,
+        admissionCouncilDecisionNumber.isAcceptableOrUnknown(
+          data['admission_council_decision_number']!,
+          _admissionCouncilDecisionNumberMeta,
+        ),
+      );
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -10070,6 +10091,10 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
         DriftSqlType.string,
         data['${effectivePrefix}admission_id'],
       )!,
+      admissionCouncilDecisionNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}admission_council_decision_number'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -10211,6 +10236,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
   final String cohort;
   final String? managementId;
   final String admissionId;
+  final int? admissionCouncilDecisionNumber;
   final String name;
   final enums.Gender gender;
   final DateTime? dateOfBirth;
@@ -10242,6 +10268,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     required this.cohort,
     this.managementId,
     required this.admissionId,
+    this.admissionCouncilDecisionNumber,
     required this.name,
     required this.gender,
     this.dateOfBirth,
@@ -10276,6 +10303,11 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       map['management_id'] = Variable<String>(managementId);
     }
     map['admission_id'] = Variable<String>(admissionId);
+    if (!nullToAbsent || admissionCouncilDecisionNumber != null) {
+      map['admission_council_decision_number'] = Variable<int>(
+        admissionCouncilDecisionNumber,
+      );
+    }
     map['name'] = Variable<String>(name);
     {
       map['gender'] = Variable<String>(
@@ -10349,6 +10381,10 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
           ? const Value.absent()
           : Value(managementId),
       admissionId: Value(admissionId),
+      admissionCouncilDecisionNumber:
+          admissionCouncilDecisionNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(admissionCouncilDecisionNumber),
       name: Value(name),
       gender: Value(gender),
       dateOfBirth: dateOfBirth == null && nullToAbsent
@@ -10406,6 +10442,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       cohort: serializer.fromJson<String>(json['cohort']),
       managementId: serializer.fromJson<String?>(json['management_id']),
       admissionId: serializer.fromJson<String>(json['admission_id']),
+      admissionCouncilDecisionNumber: serializer.fromJson<int?>(
+        json['admission_council_decision_number'],
+      ),
       name: serializer.fromJson<String>(json['name']),
       gender: serializer.fromJson<enums.Gender>(json['gender']),
       dateOfBirth: serializer.fromJson<DateTime?>(json['date_of_birth']),
@@ -10458,6 +10497,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       'cohort': serializer.toJson<String>(cohort),
       'management_id': serializer.toJson<String?>(managementId),
       'admission_id': serializer.toJson<String>(admissionId),
+      'admission_council_decision_number': serializer.toJson<int?>(
+        admissionCouncilDecisionNumber,
+      ),
       'name': serializer.toJson<String>(name),
       'gender': serializer.toJson<enums.Gender>(gender),
       'date_of_birth': serializer.toJson<DateTime?>(dateOfBirth),
@@ -10496,6 +10538,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     String? cohort,
     Value<String?> managementId = const Value.absent(),
     String? admissionId,
+    Value<int?> admissionCouncilDecisionNumber = const Value.absent(),
     String? name,
     enums.Gender? gender,
     Value<DateTime?> dateOfBirth = const Value.absent(),
@@ -10525,6 +10568,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     cohort: cohort ?? this.cohort,
     managementId: managementId.present ? managementId.value : this.managementId,
     admissionId: admissionId ?? this.admissionId,
+    admissionCouncilDecisionNumber: admissionCouncilDecisionNumber.present
+        ? admissionCouncilDecisionNumber.value
+        : this.admissionCouncilDecisionNumber,
     name: name ?? this.name,
     gender: gender ?? this.gender,
     dateOfBirth: dateOfBirth.present ? dateOfBirth.value : this.dateOfBirth,
@@ -10576,6 +10622,10 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       admissionId: data.admissionId.present
           ? data.admissionId.value
           : this.admissionId,
+      admissionCouncilDecisionNumber:
+          data.admissionCouncilDecisionNumber.present
+          ? data.admissionCouncilDecisionNumber.value
+          : this.admissionCouncilDecisionNumber,
       name: data.name.present ? data.name.value : this.name,
       gender: data.gender.present ? data.gender.value : this.gender,
       dateOfBirth: data.dateOfBirth.present
@@ -10644,6 +10694,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
           ..write('cohort: $cohort, ')
           ..write('managementId: $managementId, ')
           ..write('admissionId: $admissionId, ')
+          ..write(
+            'admissionCouncilDecisionNumber: $admissionCouncilDecisionNumber, ',
+          )
           ..write('name: $name, ')
           ..write('gender: $gender, ')
           ..write('dateOfBirth: $dateOfBirth, ')
@@ -10678,6 +10731,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     cohort,
     managementId,
     admissionId,
+    admissionCouncilDecisionNumber,
     name,
     gender,
     dateOfBirth,
@@ -10711,6 +10765,8 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
           other.cohort == this.cohort &&
           other.managementId == this.managementId &&
           other.admissionId == this.admissionId &&
+          other.admissionCouncilDecisionNumber ==
+              this.admissionCouncilDecisionNumber &&
           other.name == this.name &&
           other.gender == this.gender &&
           other.dateOfBirth == this.dateOfBirth &&
@@ -10742,6 +10798,7 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
   final Value<String> cohort;
   final Value<String?> managementId;
   final Value<String> admissionId;
+  final Value<int?> admissionCouncilDecisionNumber;
   final Value<String> name;
   final Value<enums.Gender> gender;
   final Value<DateTime?> dateOfBirth;
@@ -10771,6 +10828,7 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     this.cohort = const Value.absent(),
     this.managementId = const Value.absent(),
     this.admissionId = const Value.absent(),
+    this.admissionCouncilDecisionNumber = const Value.absent(),
     this.name = const Value.absent(),
     this.gender = const Value.absent(),
     this.dateOfBirth = const Value.absent(),
@@ -10801,6 +10859,7 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     required String cohort,
     this.managementId = const Value.absent(),
     required String admissionId,
+    this.admissionCouncilDecisionNumber = const Value.absent(),
     required String name,
     this.gender = const Value.absent(),
     this.dateOfBirth = const Value.absent(),
@@ -10839,6 +10898,7 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     Expression<String>? cohort,
     Expression<String>? managementId,
     Expression<String>? admissionId,
+    Expression<int>? admissionCouncilDecisionNumber,
     Expression<String>? name,
     Expression<String>? gender,
     Expression<DateTime>? dateOfBirth,
@@ -10869,6 +10929,8 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
       if (cohort != null) 'cohort': cohort,
       if (managementId != null) 'management_id': managementId,
       if (admissionId != null) 'admission_id': admissionId,
+      if (admissionCouncilDecisionNumber != null)
+        'admission_council_decision_number': admissionCouncilDecisionNumber,
       if (name != null) 'name': name,
       if (gender != null) 'gender': gender,
       if (dateOfBirth != null) 'date_of_birth': dateOfBirth,
@@ -10910,6 +10972,7 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     Value<String>? cohort,
     Value<String?>? managementId,
     Value<String>? admissionId,
+    Value<int?>? admissionCouncilDecisionNumber,
     Value<String>? name,
     Value<enums.Gender>? gender,
     Value<DateTime?>? dateOfBirth,
@@ -10940,6 +11003,8 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
       cohort: cohort ?? this.cohort,
       managementId: managementId ?? this.managementId,
       admissionId: admissionId ?? this.admissionId,
+      admissionCouncilDecisionNumber:
+          admissionCouncilDecisionNumber ?? this.admissionCouncilDecisionNumber,
       name: name ?? this.name,
       gender: gender ?? this.gender,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
@@ -10984,6 +11049,11 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     }
     if (admissionId.present) {
       map['admission_id'] = Variable<String>(admissionId.value);
+    }
+    if (admissionCouncilDecisionNumber.present) {
+      map['admission_council_decision_number'] = Variable<int>(
+        admissionCouncilDecisionNumber.value,
+      );
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -11089,6 +11159,9 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
           ..write('cohort: $cohort, ')
           ..write('managementId: $managementId, ')
           ..write('admissionId: $admissionId, ')
+          ..write(
+            'admissionCouncilDecisionNumber: $admissionCouncilDecisionNumber, ',
+          )
           ..write('name: $name, ')
           ..write('gender: $gender, ')
           ..write('dateOfBirth: $dateOfBirth, ')
@@ -20289,6 +20362,7 @@ typedef $PhdStudentCreateCompanionBuilder =
       required String cohort,
       Value<String?> managementId,
       required String admissionId,
+      Value<int?> admissionCouncilDecisionNumber,
       required String name,
       Value<enums.Gender> gender,
       Value<DateTime?> dateOfBirth,
@@ -20320,6 +20394,7 @@ typedef $PhdStudentUpdateCompanionBuilder =
       Value<String> cohort,
       Value<String?> managementId,
       Value<String> admissionId,
+      Value<int?> admissionCouncilDecisionNumber,
       Value<String> name,
       Value<enums.Gender> gender,
       Value<DateTime?> dateOfBirth,
@@ -20414,6 +20489,11 @@ class $PhdStudentFilterComposer extends Composer<_$AppDatabase, PhdStudent> {
 
   ColumnFilters<String> get admissionId => $composableBuilder(
     column: $table.admissionId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get admissionCouncilDecisionNumber => $composableBuilder(
+    column: $table.admissionCouncilDecisionNumber,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -20618,6 +20698,11 @@ class $PhdStudentOrderingComposer extends Composer<_$AppDatabase, PhdStudent> {
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get admissionCouncilDecisionNumber => $composableBuilder(
+    column: $table.admissionCouncilDecisionNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -20800,6 +20885,11 @@ class $PhdStudentAnnotationComposer
 
   GeneratedColumn<String> get admissionId => $composableBuilder(
     column: $table.admissionId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get admissionCouncilDecisionNumber => $composableBuilder(
+    column: $table.admissionCouncilDecisionNumber,
     builder: (column) => column,
   );
 
@@ -20986,6 +21076,8 @@ class $PhdStudentTableManager
                 Value<String> cohort = const Value.absent(),
                 Value<String?> managementId = const Value.absent(),
                 Value<String> admissionId = const Value.absent(),
+                Value<int?> admissionCouncilDecisionNumber =
+                    const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<enums.Gender> gender = const Value.absent(),
                 Value<DateTime?> dateOfBirth = const Value.absent(),
@@ -21017,6 +21109,7 @@ class $PhdStudentTableManager
                 cohort: cohort,
                 managementId: managementId,
                 admissionId: admissionId,
+                admissionCouncilDecisionNumber: admissionCouncilDecisionNumber,
                 name: name,
                 gender: gender,
                 dateOfBirth: dateOfBirth,
@@ -21048,6 +21141,8 @@ class $PhdStudentTableManager
                 required String cohort,
                 Value<String?> managementId = const Value.absent(),
                 required String admissionId,
+                Value<int?> admissionCouncilDecisionNumber =
+                    const Value.absent(),
                 required String name,
                 Value<enums.Gender> gender = const Value.absent(),
                 Value<DateTime?> dateOfBirth = const Value.absent(),
@@ -21078,6 +21173,7 @@ class $PhdStudentTableManager
                 cohort: cohort,
                 managementId: managementId,
                 admissionId: admissionId,
+                admissionCouncilDecisionNumber: admissionCouncilDecisionNumber,
                 name: name,
                 gender: gender,
                 dateOfBirth: dateOfBirth,

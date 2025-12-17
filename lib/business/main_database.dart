@@ -274,6 +274,7 @@ class AppDatabase extends _$AppDatabase {
     String? searchText,
     PhdCohortData? cohort,
     PaymentStatus? admissionPaymentStatus,
+    List<OrderingTerm Function(PhdStudent)>? orderBy,
   }) {
     final stmt = select(phdStudent);
 
@@ -292,6 +293,13 @@ class AppDatabase extends _$AppDatabase {
               p.cohort.contains(searchText),
         );
       default:
+    }
+
+    switch (orderBy) {
+      case null:
+        break;
+      default:
+        stmt.orderBy(orderBy);
     }
 
     if (cohort != null) {

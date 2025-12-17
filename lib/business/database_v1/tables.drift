@@ -183,6 +183,7 @@ create table "phd_student" (
     "cohort" text not null references phd_cohort(cohort),
 	"management_id" text unique,
     "admission_id"  text unique not null,
+    "admission_council_decision_number"  integer,
     "name"  text not null,
     "gender" text not null mapped by `const GenderConverter()` default 'M',
     "date_of_birth"	datetime,

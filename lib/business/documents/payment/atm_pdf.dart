@@ -13,7 +13,10 @@ const _taxPercent = 0.1;
 Future<PdfFile> _pdf({
   required PaymentAtmModel model,
   double baseFontSize = 10,
-  EdgeInsets margin = const EdgeInsets.all(1.0 * PdfPageFormat.cm),
+  EdgeInsets margin = const EdgeInsets.symmetric(
+    vertical: 1 * inch,
+    horizontal: 0.79 * inch,
+  ),
   EdgeInsets tableCellPadding = const EdgeInsets.symmetric(
     vertical: 2 * pt,
     horizontal: 3 * pt,
@@ -23,6 +26,9 @@ Future<PdfFile> _pdf({
     pageFormat: PdfPageFormat.a4.transpose,
     margin: margin,
     baseFontSize: baseFontSize,
+    footer: (context) => Footer(
+      leading: Text("Trang ${context.pageNumber}/${context.pagesCount}"),
+    ),
     build: (context) {
       final paymentReason = model.reason.toUpperCase();
       final year = DateTime.now().year;
@@ -33,22 +39,6 @@ Future<PdfFile> _pdf({
       final defaultFontSize = defaultTextStyle.fontSize ?? 10;
 
       final totalAfterTax = model.totalAfterTax;
-
-      /// Sort entries by foreign and then by name
-      // payments = Map.fromEntries(
-      //   payments.entries.toList()..sort((a, b) {
-      //     final isForeignA = a.key.isForeign;
-      //     final isForeignB = b.key.isForeign;
-      //     if (isForeignA != isForeignB) {
-      //       return isForeignA ? 1 : -1; // Foreign teachers come last
-      //     }
-      //
-      //     // If both are foreign or both are local, sort by name
-      //     final aFirstName = a.key.hoTen.split(" ").last;
-      //     final bFirstName = b.key.hoTen.split(" ").last;
-      //     return aFirstName.compareTo(bFirstName);
-      //   }),
-      // );
 
       final summaryTable = model.dataRows;
       final headers = model.dataHeaders;
@@ -79,25 +69,67 @@ Future<PdfFile> _pdf({
 
         // The summary table
         SizedBox(height: 12 * pt),
-        TableHelper.fromTextArray(
-          headerAlignments: {
+        EzTable(
+          data: model.dataRows,
+          headers: model.dataHeaders,
+          alignments: {
             for (int i = 0; i < 8; i++) i: Alignment.center,
+            1: Alignment.centerLeft,
           },
-          cellPadding: tableCellPadding,
-          cellAlignment: Alignment.center,
-          cellAlignments: {1: Alignment.centerLeft},
-          headerStyle: TextStyle(fontWeight: FontWeight.bold),
-          data: [headers, ...summaryTable],
-          textStyleBuilder: (col, data, row) {
-            if (row == 0 || (row == summaryTable.length && col != 3)) {
-              return TextStyle(
-                fontSize: defaultFontSize,
+          textStyleBuilder: (rowIndex, colIndex, data, defaultStyle) {
+            if (rowIndex == model.dataRows.length - 1) {
+              return defaultStyle.copyWith(
                 fontWeight: FontWeight.bold,
               );
             }
-            return TextStyle(fontSize: defaultFontSize);
+            return defaultStyle;
+          },
+          rowBuilder: (int rowIndex, rowData) {
+            if (rowIndex == model.dataRows.length - 1) {
+              // Summary row style
+              return [
+                "",
+                "Tổng",
+                model.totalBeforeTax.formatMoney(),
+                model.totalTax == 0 ? "" : model.totalTax.formatMoney(),
+                model.totalAfterTax.formatMoney(),
+                "",
+                "",
+                "",
+              ];
+            }
+
+            return <String>[
+              rowData[0].toString(),
+              rowData[1].toString(),
+              (rowData[2] as int).formatMoney(),
+              switch (rowData[3] as int) {
+                int n when n == 0 => "",
+                int n => n.formatMoney(),
+              },
+              (rowData[4] as int).formatMoney(),
+              for (int i = 5; i < rowData.length; i++) rowData[i].toString(),
+            ];
           },
         ),
+        //   headerAlignments: {
+        //     for (int i = 0; i < 8; i++) i: Alignment.center,
+        //   },
+        //   cellPadding: tableCellPadding,
+        //   cellAlignment: Alignment.center,
+        //   cellAlignments: {1: Alignment.centerLeft},
+        //   headerStyle: TextStyle(fontWeight: FontWeight.bold),
+        //   data: [headers, ...summaryTable],
+        //   textStyleBuilder: (col, data, row) {
+        //     if (row == 0 || (row == summaryTable.length && col != 3)) {
+        //       return TextStyle(
+        //         fontSize: defaultFontSize,
+        //         fontWeight: FontWeight.bold,
+        //       );
+        //     }
+        //     return TextStyle(fontSize: defaultFontSize);
+        //   },
+        // ),
 
         // Summary text
         SizedBox(height: 12 * pt), // Space between table and summary text
@@ -116,44 +148,51 @@ Future<PdfFile> _pdf({
 
         // The date & the signing area
         SizedBox(height: 12 * pt), // Space between title and content
-        Footer(
-          leading: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              children: [
-                TextSpan(text: "\n"),
-                TextSpan(
-                  text: "DUYỆT CỦA BAN GIÁM ĐỐC",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+        Column(
+          children: [
+            Footer(
+              leading: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  children: [
+                    TextSpan(text: "\n"),
+                    TextSpan(
+                      text: "DUYỆT CỦA BAN GIÁM ĐỐC",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(text: "\n" * 5),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          title: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              children: [
-                TextSpan(text: "\n"),
-                TextSpan(
-                  text: "BAN TÀI CHÍNH - KẾ HOẠCH",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              title: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  children: [
+                    TextSpan(text: "\n"),
+                    TextSpan(
+                      text: "BAN TÀI CHÍNH - KẾ HOẠCH",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(text: "\n" * 5),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          trailing: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              children: [
-                TextSpan(text: "Hà Nội, ngày .... tháng .... năm $year"),
-                TextSpan(text: "\n"),
-                TextSpan(
-                  text: "TRƯỞNG KHOA KHOA TOÁN - TIN",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              trailing: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  children: [
+                    TextSpan(text: "Hà Nội, ngày .... tháng .... năm $year"),
+                    TextSpan(text: "\n"),
+                    TextSpan(
+                      text: "TRƯỞNG KHOA KHOA TOÁN - TIN",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(text: "\n" * 5),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ];
     },
@@ -265,16 +304,12 @@ class PaymentAtmModel {
       // }
 
       // Create summary row for each teacher
-      final unknown = Text(
-        "Thiếu",
-        style: TextStyle(color: PdfColors.red, fontWeight: FontWeight.bold),
-      );
-
+      final unknown = "Thiếu";
       final rows = <Object>[
         (i + 1).toString(),
         teacher.name,
         amount,
-        tax == 0 ? "" : tax,
+        tax,
         afterTaxAmount,
         bankAccount ?? unknown,
         bankName ?? unknown,
@@ -287,9 +322,9 @@ class PaymentAtmModel {
     summaryTable.add([
       "",
       "Tổng",
-      totalBeforeTax.formatMoney(),
-      totalTax == 0 ? "" : totalTax.formatMoney(),
-      totalAfterTax.formatMoney(),
+      totalBeforeTax,
+      totalTax == 0 ? "" : totalTax,
+      totalAfterTax,
       "",
       "",
       "",

@@ -105,8 +105,14 @@ class PhdStudentIdsNotifier extends AsyncNotifier<List<int>> {
   final String? searchText;
   final PhdCohortData? cohort;
   final PaymentStatus? paymentStatus;
+  final List<OrderingTerm Function(PhdStudent)>? orderBy;
 
-  PhdStudentIdsNotifier({this.searchText, this.cohort, this.paymentStatus});
+  PhdStudentIdsNotifier({
+    this.searchText,
+    this.cohort,
+    this.paymentStatus,
+    this.orderBy,
+  });
 
   @override
   Future<List<int>> build() async {
@@ -115,7 +121,9 @@ class PhdStudentIdsNotifier extends AsyncNotifier<List<int>> {
       searchText: searchText,
       cohort: cohort,
       admissionPaymentStatus: paymentStatus,
+      orderBy: orderBy,
     );
+
     final ids = await stmt.map((s) => s.id).get();
     return ids;
   }

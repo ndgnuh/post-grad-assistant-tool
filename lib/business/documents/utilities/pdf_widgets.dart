@@ -114,6 +114,13 @@ class EzTable<T> extends StatelessWidget {
   final Map<int, TableColumnWidth>? columnWidths;
   final Map<int, Alignment>? alignments;
   final Map<int, TextAlign>? textAligns;
+  final TextStyle? Function(
+    int rowIndex,
+    int colIndex,
+    Object? data,
+    TextStyle defaultStyle,
+  )?
+  textStyleBuilder;
 
   EzTable({
     required this.data,
@@ -131,6 +138,7 @@ class EzTable<T> extends StatelessWidget {
     this.headerForeground,
     this.columnWidths,
     this.alignments,
+    this.textStyleBuilder,
   });
 
   @override
@@ -153,6 +161,7 @@ class EzTable<T> extends StatelessWidget {
 
   List<TableRow> _dataRows(Context context) {
     final rows = <TableRow>[];
+    final defaultTextStyle = Theme.of(context).defaultTextStyle;
 
     for (final (rowCount, row) in data.indexed) {
       final cells = <Widget>[];
@@ -160,6 +169,12 @@ class EzTable<T> extends StatelessWidget {
         if (data is Widget) {
           cells.add(data);
         } else {
+          final style = textStyleBuilder?.call(
+            rowCount,
+            colCount,
+            data,
+            defaultTextStyle,
+          );
           cells.add(
             Container(
               padding: padding,
@@ -168,7 +183,7 @@ class EzTable<T> extends StatelessWidget {
                 data?.toString() ?? "",
                 softWrap: dataWraps[colCount] ?? defaultDataWrap,
                 textAlign: textAligns?[colCount] ?? TextAlign.center,
-                style: Theme.of(context).defaultTextStyle.copyWith(),
+                style: style ?? defaultTextStyle,
               ),
             ),
           );

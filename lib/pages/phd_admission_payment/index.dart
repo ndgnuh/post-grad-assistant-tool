@@ -1,5 +1,6 @@
 import 'package:fami_tools/custom_widgets.dart';
 import 'package:fami_tools/custom_widgets/pdf_preview_tile.dart';
+import 'package:fami_tools/custom_widgets/pref_hooks.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
@@ -61,22 +62,19 @@ class _ActionTab extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final saveDirectory = useState<String?>(null);
+    final messenger = ScaffoldMessenger.of(context);
+    final saveDirectory = usePreference<String?>(
+      'phd_admission_payment_save_directory',
+      defaultValue: null,
+    );
 
-    final buttons = [
+    final paymentProfileButtons = [
       Consumer(
         builder: (context, ref, _) => PdfPreviewTile(
           title: Text("Đề nghị thanh toán"),
           subtitle: Text("Xem trước PDF"),
           pdfFileAsync: ref.watch(paymentRequestPdfProvider),
         ),
-      ),
-
-      ListTile(
-        title: Text("Bản kê thanh toán"),
-        subtitle: Text("Xem trước PDF"),
-        trailing: Icon(Symbols.chevron_forward),
-        onTap: () {},
       ),
 
       Consumer(
@@ -87,11 +85,20 @@ class _ActionTab extends HookWidget {
         ),
       ),
 
-      ListTile(
-        title: Text("Bảng kiểm tra thanh toán"),
-        subtitle: Text("Xem trước PDF"),
-        trailing: Icon(Symbols.chevron_forward),
-        onTap: () {},
+      Consumer(
+        builder: (context, ref, _) => PdfPreviewTile(
+          title: Text("Bảng kiểm tra thanh toán"),
+          subtitle: Text("Xem trước PDF"),
+          pdfFileAsync: ref.watch(paymentDoubleCheckPdfProvider),
+        ),
+      ),
+
+      Consumer(
+        builder: (context, ref, _) => PdfPreviewTile(
+          title: Text("Bảng kiểm tra thanh toán (tổng hợp)"),
+          subtitle: Text("Xem trước PDF"),
+          pdfFileAsync: ref.watch(paymentDoubleCheckSummaryPdfProvider),
+        ),
       ),
 
       ListTile(
@@ -110,20 +117,75 @@ class _ActionTab extends HookWidget {
         },
       ),
 
+      Consumer(
+        builder: (context, ref, _) => ListTile(
+          title: Text("Lưu hồ sơ"),
+          subtitle: Text("Lưu các file liên quan"),
+          trailing: Icon(Symbols.chevron_forward),
+          onTap: () async {
+            final saveDir = saveDirectory.value;
+            if (saveDir == null) {
+              messenger.showSnackBar(
+                SnackBar(content: Text("Vui lòng chọn thư mục lưu trước")),
+              );
+              return;
+            }
+            final requestPdf = ref.read(paymentRequestPdfProvider.future);
+            final requestDocx = ref.read(paymentRequestDocxProvider.future);
+            final atmPdf = ref.read(paymentAtmPdfProvider.future);
+            final atmXlsx = ref.read(paymentAtmXlsxProvider.future);
+            final checkPdf = ref.read(paymentDoubleCheckPdfProvider.future);
+
+            final checkModel = await ref.read(
+              paymentDoubleCheckProvider.future,
+            );
+
+            (await requestDocx).save(directory: saveDir);
+            (await requestPdf).save(directory: saveDir);
+            (await atmXlsx).save(directory: saveDir);
+            (await atmPdf).save(directory: saveDir);
+            (await checkPdf).save(directory: saveDir);
+            (await checkModel.summaryPdf).save(directory: saveDir);
+
+            checkModel.xlsx.save(directory: saveDir);
+            messenger.showSnackBar(
+              SnackBar(content: Text("Đã lưu hồ sơ vào $saveDir")),
+            );
+          },
+        ),
+      ),
+    ];
+
+    final troubleshootingButtons = [
       ListTile(
-        title: Text("Lưu hồ sơ"),
-        subtitle: Text("Lưu các file liên quan"),
+        title: Text("Mail bổ sung thông tin (ngoài trường)"),
+        subtitle: Text("Bổ sung STK, Ngân hàng, CCCD"),
+        trailing: Icon(Symbols.chevron_forward),
+        onTap: () {},
+      ),
+
+      ListTile(
+        title: Text("Mail bổ sung trong trường"),
+        subtitle: Text("Bổ sung STK và ngân hàng"),
         trailing: Icon(Symbols.chevron_forward),
         onTap: () {},
       ),
     ];
 
-    return Padding(
+    return SingleChildScrollView(
       padding: EdgeInsets.all(context.gutter),
-      child: ListView.separated(
-        itemCount: buttons.length,
-        separatorBuilder: (context, index) => Divider(),
-        itemBuilder: (context, index) => buttons[index],
+      child: Column(
+        children: [
+          CardSection(
+            title: "Hồ sơ thanh toán",
+            children: paymentProfileButtons,
+          ),
+
+          CardSection(
+            title: "Sự cố",
+            children: troubleshootingButtons,
+          ),
+        ],
       ),
     );
   }

@@ -73,6 +73,28 @@ class CellPointer {
   }
 }
 
+Uint8List buildExcel({
+  required Map<String, Function(Sheet)> builders,
+}) {
+  final excel = Excel.createExcel();
+
+  // Build sheets
+  for (final entry in builders.entries) {
+    final sheetName = entry.key;
+    final builder = entry.value;
+
+    final sheet = excel[sheetName];
+    builder(sheet);
+  }
+
+  // Remove default sheet
+  final previousDefaultSheetName = excel.sheets.keys.first;
+  excel.setDefaultSheet(builders.keys.first);
+  excel.delete(previousDefaultSheetName);
+
+  return excel.encode() as Uint8List;
+}
+
 Uint8List buildSingleSheetExcel({
   required Function(Sheet) builder,
 }) {
@@ -144,6 +166,7 @@ extension SheetHelpers on Sheet {
     BorderStyle borderStyle = BorderStyle.Thin,
     CellStyle Function(int row, int col, Object? value, CellStyle defaultStyle)?
     cellStyleBuilder,
+    Object? Function(int row, int col, Object? value)? cellValueBuilder,
   }) {
     final border = Border(borderStyle: borderStyle);
 
@@ -192,19 +215,23 @@ extension SheetHelpers on Sheet {
       }
     }
 
-    for (var rowOffset = 0; rowOffset < data.length; rowOffset++) {
-      final row = data[rowOffset];
-      for (var colOffset = 0; colOffset < row.length; colOffset++) {
+    for (var rowIndex = 0; rowIndex < data.length; rowIndex++) {
+      final row = data[rowIndex];
+      for (var colIndex = 0; colIndex < row.length; colIndex++) {
         final cellIndex = CellIndex.indexByColumnRow(
-          columnIndex: topLeftIndex.columnIndex + colOffset,
-          rowIndex:
-              topLeftIndex.rowIndex + rowOffset + (header != null ? 1 : 0),
+          columnIndex: topLeftIndex.columnIndex + colIndex,
+          rowIndex: topLeftIndex.rowIndex + rowIndex + (header != null ? 1 : 0),
         );
-        final value = row[colOffset];
+
+        /// Custom value transformation
+        final rawValue = row[colIndex];
+        final value =
+            cellValueBuilder?.call(rowIndex, colIndex, rawValue) ?? rawValue;
+
         if (cellStyleBuilder != null) {
           final style = cellStyleBuilder(
-            rowOffset + 1,
-            colOffset,
+            rowIndex,
+            colIndex,
             value,
             tableCellStyle,
           );
