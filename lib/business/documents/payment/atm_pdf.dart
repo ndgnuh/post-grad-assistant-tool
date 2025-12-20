@@ -288,25 +288,10 @@ class PaymentAtmModel {
       final bankName = teacher.bankName;
       final citizenId = teacher.citizenId;
 
-      // assert(
-      //   bankAccount != null && bankAccount.isNotEmpty,
-      //   "Teacher ${teacher.name} does not have a bank account",
-      // );
-      // assert(
-      //   bankName != null && bankName.isNotEmpty,
-      //   "Teacher ${teacher.name} does not have a bank name",
-      // );
-      // if (teacher.isOutsider) {
-      //   assert(
-      //     citizenId != null && citizenId.isNotEmpty,
-      //     "Teacher ${teacher.name} does not have citizen ID",
-      //   );
-      // }
-
       // Create summary row for each teacher
       final unknown = "Thiếu";
       final rows = <Object>[
-        (i + 1).toString(),
+        (i + 1),
         teacher.name,
         amount,
         tax,
@@ -396,36 +381,23 @@ class _PaymentAtmExcelBuilder {
       headerStyle: style.bold.center,
       cellStyle: style.center,
       cellStyleBuilder: (row, col, value, defaultStyle) {
-        // Keep heading styles
-        if (row == 0) {
-          return defaultStyle.bold.center;
+        final style = switch (col) {
+          0 => defaultStyle.center,
+          1 => defaultStyle.flushLeft,
+          2 || 3 || 4 => defaultStyle.flushRight.centerVertically.formatMoney,
+          _ => defaultStyle,
+        };
+
+        if (col == 2 || col == 3 || col == 4) {
+          // Format money columns
+          print("Value type: ${value.runtimeType}");
         }
 
         /// Summary row style
-        if (row == model.entries.length + 1) {
-          switch (col) {
-            case 1:
-              return defaultStyle.bold.flushLeft;
-            case 2:
-            case 3:
-            case 4:
-              return defaultStyle.bold.flushRight.centerVertically;
-            default:
-              return defaultStyle;
-          }
+        if (row == model.dataRows.length - 1) {
+          return style.bold;
         }
-
-        // Other cells
-        switch (col) {
-          case 1:
-            return defaultStyle.flushLeft;
-          case 2:
-          case 3:
-          case 4:
-            return defaultStyle.flushRight.centerVertically;
-          default:
-            return defaultStyle;
-        }
+        return style;
       },
     );
 

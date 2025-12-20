@@ -6863,6 +6863,21 @@ class Semester extends Table with TableInfo<Semester, SemesterData> {
     requiredDuringInsert: true,
     $customConstraints: 'NOT NULL',
   );
+  static const VerificationMeta _sequenceMeta = const VerificationMeta(
+    'sequence',
+  );
+  late final GeneratedColumn<int> sequence = GeneratedColumn<int>(
+    'sequence',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints:
+        'NOT NULL DEFAULT ("select coalesce(max(sequence), 1) from semester")',
+    defaultValue: const CustomExpression(
+      '"select coalesce(max(sequence), 1) from semester"',
+    ),
+  );
   static const VerificationMeta _gradeSubmissionDeadlineMeta =
       const VerificationMeta('gradeSubmissionDeadline');
   late final GeneratedColumn<DateTime> gradeSubmissionDeadline =
@@ -6881,6 +6896,7 @@ class Semester extends Table with TableInfo<Semester, SemesterData> {
     registrationEndDate,
     classBeginDate,
     classEndDate,
+    sequence,
     gradeSubmissionDeadline,
   ];
   @override
@@ -6944,6 +6960,12 @@ class Semester extends Table with TableInfo<Semester, SemesterData> {
     } else if (isInserting) {
       context.missing(_classEndDateMeta);
     }
+    if (data.containsKey('sequence')) {
+      context.handle(
+        _sequenceMeta,
+        sequence.isAcceptableOrUnknown(data['sequence']!, _sequenceMeta),
+      );
+    }
     if (data.containsKey('grade_submission_deadline')) {
       context.handle(
         _gradeSubmissionDeadlineMeta,
@@ -6984,6 +7006,10 @@ class Semester extends Table with TableInfo<Semester, SemesterData> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}class_end_date'],
       )!,
+      sequence: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sequence'],
+      )!,
       gradeSubmissionDeadline: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}grade_submission_deadline'],
@@ -7006,6 +7032,7 @@ class SemesterData extends DataClass implements Insertable<SemesterData> {
   final DateTime registrationEndDate;
   final DateTime classBeginDate;
   final DateTime classEndDate;
+  final int sequence;
   final DateTime gradeSubmissionDeadline;
   const SemesterData({
     required this.id,
@@ -7013,6 +7040,7 @@ class SemesterData extends DataClass implements Insertable<SemesterData> {
     required this.registrationEndDate,
     required this.classBeginDate,
     required this.classEndDate,
+    required this.sequence,
     required this.gradeSubmissionDeadline,
   });
   @override
@@ -7023,6 +7051,7 @@ class SemesterData extends DataClass implements Insertable<SemesterData> {
     map['registration_end_date'] = Variable<DateTime>(registrationEndDate);
     map['class_begin_date'] = Variable<DateTime>(classBeginDate);
     map['class_end_date'] = Variable<DateTime>(classEndDate);
+    map['sequence'] = Variable<int>(sequence);
     map['grade_submission_deadline'] = Variable<DateTime>(
       gradeSubmissionDeadline,
     );
@@ -7036,6 +7065,7 @@ class SemesterData extends DataClass implements Insertable<SemesterData> {
       registrationEndDate: Value(registrationEndDate),
       classBeginDate: Value(classBeginDate),
       classEndDate: Value(classEndDate),
+      sequence: Value(sequence),
       gradeSubmissionDeadline: Value(gradeSubmissionDeadline),
     );
   }
@@ -7055,6 +7085,7 @@ class SemesterData extends DataClass implements Insertable<SemesterData> {
       ),
       classBeginDate: serializer.fromJson<DateTime>(json['class_begin_date']),
       classEndDate: serializer.fromJson<DateTime>(json['class_end_date']),
+      sequence: serializer.fromJson<int>(json['sequence']),
       gradeSubmissionDeadline: serializer.fromJson<DateTime>(
         json['grade_submission_deadline'],
       ),
@@ -7071,6 +7102,7 @@ class SemesterData extends DataClass implements Insertable<SemesterData> {
       'registration_end_date': serializer.toJson<DateTime>(registrationEndDate),
       'class_begin_date': serializer.toJson<DateTime>(classBeginDate),
       'class_end_date': serializer.toJson<DateTime>(classEndDate),
+      'sequence': serializer.toJson<int>(sequence),
       'grade_submission_deadline': serializer.toJson<DateTime>(
         gradeSubmissionDeadline,
       ),
@@ -7083,6 +7115,7 @@ class SemesterData extends DataClass implements Insertable<SemesterData> {
     DateTime? registrationEndDate,
     DateTime? classBeginDate,
     DateTime? classEndDate,
+    int? sequence,
     DateTime? gradeSubmissionDeadline,
   }) => SemesterData(
     id: id ?? this.id,
@@ -7090,6 +7123,7 @@ class SemesterData extends DataClass implements Insertable<SemesterData> {
     registrationEndDate: registrationEndDate ?? this.registrationEndDate,
     classBeginDate: classBeginDate ?? this.classBeginDate,
     classEndDate: classEndDate ?? this.classEndDate,
+    sequence: sequence ?? this.sequence,
     gradeSubmissionDeadline:
         gradeSubmissionDeadline ?? this.gradeSubmissionDeadline,
   );
@@ -7108,6 +7142,7 @@ class SemesterData extends DataClass implements Insertable<SemesterData> {
       classEndDate: data.classEndDate.present
           ? data.classEndDate.value
           : this.classEndDate,
+      sequence: data.sequence.present ? data.sequence.value : this.sequence,
       gradeSubmissionDeadline: data.gradeSubmissionDeadline.present
           ? data.gradeSubmissionDeadline.value
           : this.gradeSubmissionDeadline,
@@ -7122,6 +7157,7 @@ class SemesterData extends DataClass implements Insertable<SemesterData> {
           ..write('registrationEndDate: $registrationEndDate, ')
           ..write('classBeginDate: $classBeginDate, ')
           ..write('classEndDate: $classEndDate, ')
+          ..write('sequence: $sequence, ')
           ..write('gradeSubmissionDeadline: $gradeSubmissionDeadline')
           ..write(')'))
         .toString();
@@ -7134,6 +7170,7 @@ class SemesterData extends DataClass implements Insertable<SemesterData> {
     registrationEndDate,
     classBeginDate,
     classEndDate,
+    sequence,
     gradeSubmissionDeadline,
   );
   @override
@@ -7145,6 +7182,7 @@ class SemesterData extends DataClass implements Insertable<SemesterData> {
           other.registrationEndDate == this.registrationEndDate &&
           other.classBeginDate == this.classBeginDate &&
           other.classEndDate == this.classEndDate &&
+          other.sequence == this.sequence &&
           other.gradeSubmissionDeadline == this.gradeSubmissionDeadline);
 }
 
@@ -7154,6 +7192,7 @@ class SemesterCompanion extends UpdateCompanion<SemesterData> {
   final Value<DateTime> registrationEndDate;
   final Value<DateTime> classBeginDate;
   final Value<DateTime> classEndDate;
+  final Value<int> sequence;
   final Value<DateTime> gradeSubmissionDeadline;
   final Value<int> rowid;
   const SemesterCompanion({
@@ -7162,6 +7201,7 @@ class SemesterCompanion extends UpdateCompanion<SemesterData> {
     this.registrationEndDate = const Value.absent(),
     this.classBeginDate = const Value.absent(),
     this.classEndDate = const Value.absent(),
+    this.sequence = const Value.absent(),
     this.gradeSubmissionDeadline = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -7171,6 +7211,7 @@ class SemesterCompanion extends UpdateCompanion<SemesterData> {
     required DateTime registrationEndDate,
     required DateTime classBeginDate,
     required DateTime classEndDate,
+    this.sequence = const Value.absent(),
     required DateTime gradeSubmissionDeadline,
     this.rowid = const Value.absent(),
   }) : id = Value(id),
@@ -7185,6 +7226,7 @@ class SemesterCompanion extends UpdateCompanion<SemesterData> {
     Expression<DateTime>? registrationEndDate,
     Expression<DateTime>? classBeginDate,
     Expression<DateTime>? classEndDate,
+    Expression<int>? sequence,
     Expression<DateTime>? gradeSubmissionDeadline,
     Expression<int>? rowid,
   }) {
@@ -7196,6 +7238,7 @@ class SemesterCompanion extends UpdateCompanion<SemesterData> {
         'registration_end_date': registrationEndDate,
       if (classBeginDate != null) 'class_begin_date': classBeginDate,
       if (classEndDate != null) 'class_end_date': classEndDate,
+      if (sequence != null) 'sequence': sequence,
       if (gradeSubmissionDeadline != null)
         'grade_submission_deadline': gradeSubmissionDeadline,
       if (rowid != null) 'rowid': rowid,
@@ -7208,6 +7251,7 @@ class SemesterCompanion extends UpdateCompanion<SemesterData> {
     Value<DateTime>? registrationEndDate,
     Value<DateTime>? classBeginDate,
     Value<DateTime>? classEndDate,
+    Value<int>? sequence,
     Value<DateTime>? gradeSubmissionDeadline,
     Value<int>? rowid,
   }) {
@@ -7218,6 +7262,7 @@ class SemesterCompanion extends UpdateCompanion<SemesterData> {
       registrationEndDate: registrationEndDate ?? this.registrationEndDate,
       classBeginDate: classBeginDate ?? this.classBeginDate,
       classEndDate: classEndDate ?? this.classEndDate,
+      sequence: sequence ?? this.sequence,
       gradeSubmissionDeadline:
           gradeSubmissionDeadline ?? this.gradeSubmissionDeadline,
       rowid: rowid ?? this.rowid,
@@ -7246,6 +7291,9 @@ class SemesterCompanion extends UpdateCompanion<SemesterData> {
     if (classEndDate.present) {
       map['class_end_date'] = Variable<DateTime>(classEndDate.value);
     }
+    if (sequence.present) {
+      map['sequence'] = Variable<int>(sequence.value);
+    }
     if (gradeSubmissionDeadline.present) {
       map['grade_submission_deadline'] = Variable<DateTime>(
         gradeSubmissionDeadline.value,
@@ -7265,6 +7313,7 @@ class SemesterCompanion extends UpdateCompanion<SemesterData> {
           ..write('registrationEndDate: $registrationEndDate, ')
           ..write('classBeginDate: $classBeginDate, ')
           ..write('classEndDate: $classEndDate, ')
+          ..write('sequence: $sequence, ')
           ..write('gradeSubmissionDeadline: $gradeSubmissionDeadline, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -17994,6 +18043,7 @@ typedef $SemesterCreateCompanionBuilder =
       required DateTime registrationEndDate,
       required DateTime classBeginDate,
       required DateTime classEndDate,
+      Value<int> sequence,
       required DateTime gradeSubmissionDeadline,
       Value<int> rowid,
     });
@@ -18004,6 +18054,7 @@ typedef $SemesterUpdateCompanionBuilder =
       Value<DateTime> registrationEndDate,
       Value<DateTime> classBeginDate,
       Value<DateTime> classEndDate,
+      Value<int> sequence,
       Value<DateTime> gradeSubmissionDeadline,
       Value<int> rowid,
     });
@@ -18064,6 +18115,11 @@ class $SemesterFilterComposer extends Composer<_$AppDatabase, Semester> {
 
   ColumnFilters<DateTime> get classEndDate => $composableBuilder(
     column: $table.classEndDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sequence => $composableBuilder(
+    column: $table.sequence,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -18131,6 +18187,11 @@ class $SemesterOrderingComposer extends Composer<_$AppDatabase, Semester> {
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get sequence => $composableBuilder(
+    column: $table.sequence,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get gradeSubmissionDeadline => $composableBuilder(
     column: $table.gradeSubmissionDeadline,
     builder: (column) => ColumnOrderings(column),
@@ -18167,6 +18228,9 @@ class $SemesterAnnotationComposer extends Composer<_$AppDatabase, Semester> {
     column: $table.classEndDate,
     builder: (column) => column,
   );
+
+  GeneratedColumn<int> get sequence =>
+      $composableBuilder(column: $table.sequence, builder: (column) => column);
 
   GeneratedColumn<DateTime> get gradeSubmissionDeadline => $composableBuilder(
     column: $table.gradeSubmissionDeadline,
@@ -18232,6 +18296,7 @@ class $SemesterTableManager
                 Value<DateTime> registrationEndDate = const Value.absent(),
                 Value<DateTime> classBeginDate = const Value.absent(),
                 Value<DateTime> classEndDate = const Value.absent(),
+                Value<int> sequence = const Value.absent(),
                 Value<DateTime> gradeSubmissionDeadline = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SemesterCompanion(
@@ -18240,6 +18305,7 @@ class $SemesterTableManager
                 registrationEndDate: registrationEndDate,
                 classBeginDate: classBeginDate,
                 classEndDate: classEndDate,
+                sequence: sequence,
                 gradeSubmissionDeadline: gradeSubmissionDeadline,
                 rowid: rowid,
               ),
@@ -18250,6 +18316,7 @@ class $SemesterTableManager
                 required DateTime registrationEndDate,
                 required DateTime classBeginDate,
                 required DateTime classEndDate,
+                Value<int> sequence = const Value.absent(),
                 required DateTime gradeSubmissionDeadline,
                 Value<int> rowid = const Value.absent(),
               }) => SemesterCompanion.insert(
@@ -18258,6 +18325,7 @@ class $SemesterTableManager
                 registrationEndDate: registrationEndDate,
                 classBeginDate: classBeginDate,
                 classEndDate: classEndDate,
+                sequence: sequence,
                 gradeSubmissionDeadline: gradeSubmissionDeadline,
                 rowid: rowid,
               ),

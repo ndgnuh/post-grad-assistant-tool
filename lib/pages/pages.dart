@@ -161,6 +161,9 @@ final initialRoute = switch (kReleaseMode) {
   // false => InitialSetupPage.routeName,
   // false => SettingsPage.routeName,
 
+  // Semester pages
+  // false => SemesterListPage.routeName,
+
   // Student pages
   // false => StudentListPage.routeName,
 
@@ -175,7 +178,7 @@ final initialRoute = switch (kReleaseMode) {
   // Course classes pages
   // ====================
   // false => CourseClassListPage.routeName,
-  // false => SemesterListPage.routeName,
+  false => CourseLimitingPage.routeName,
 
   // Course pages
   // false => CourseListPage.routeName,
@@ -191,7 +194,7 @@ final initialRoute = switch (kReleaseMode) {
 
   // PhD students pages
   // false => PhdStudentListPage.routeName,
-  false => phd_pages.PhdAdmissionPaymentPage.routeName,
+  // false => phd_pages.PhdAdmissionPaymentPage.routeName,
 
   // Teacher pages
   // false => TeacherSearchPage.routeName,
@@ -398,6 +401,8 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     /// Academic year pages
     case SemesterListPage.routeName:
       return const SemesterListPage();
+    case SemesterCreatePage.routeName:
+      return const SemesterCreatePage();
     case SemesterDetailsPage.routeName:
       switch (args) {
         case String semesterId:

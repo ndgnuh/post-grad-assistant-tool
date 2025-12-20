@@ -13,6 +13,15 @@ final semesterByIdProvider = AsyncNotifierProvider.family(
   SemesterByIdNotifier.new,
 );
 
+final previousSemesterProvider =
+    FutureProvider.family<SemesterData?, SemesterData>(
+      (ref, SemesterData semester) async {
+        final db = await ref.watch(mainDatabaseProvider.future);
+        final prev = await db.previousSemester(semester).getSingleOrNull();
+        return prev;
+      },
+    );
+
 class SemesterIdsNotifier extends AsyncNotifier<List<String>> {
   @override
   FutureOr<List<String>> build() async {
@@ -29,6 +38,12 @@ class SemesterIdsNotifier extends AsyncNotifier<List<String>> {
     required DateTime classEndDate,
     required DateTime gradeSubmissionDeadline,
   }) async {
+    final db = await ref.read(mainDatabaseProvider.future);
+    final sequences = await db.semester.select().map((c) => c.sequence).get();
+    final maxSequence = sequences.isEmpty
+        ? 0
+        : sequences.reduce((a, b) => a > b ? a : b);
+
     final companion = SemesterCompanion.insert(
       id: id,
       registrationBeginDate: registrationBeginDate,
@@ -36,9 +51,9 @@ class SemesterIdsNotifier extends AsyncNotifier<List<String>> {
       classBeginDate: classBeginDate,
       classEndDate: classEndDate,
       gradeSubmissionDeadline: gradeSubmissionDeadline,
+      sequence: Value(maxSequence + 1),
     );
 
-    final db = await ref.read(mainDatabaseProvider.future);
     db.semester.insertReturning(companion);
     state = AsyncValue.data([...state.value!, id]);
   }

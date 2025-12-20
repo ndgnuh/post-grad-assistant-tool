@@ -3,6 +3,8 @@ library;
 
 import 'dart:typed_data';
 import 'package:excel/excel.dart';
+
+import '../../../utilities/strings.dart';
 export 'package:excel/excel.dart';
 
 class CellPointer {
@@ -148,6 +150,12 @@ extension CellStyleHelper on CellStyle {
       copyWith(horizontalAlignVal: HorizontalAlign.Right);
 
   CellStyle get center => centerVertically.centerHorizontally;
+
+  CellStyle get formatMoney => copyWith(
+    numberFormat: NumFormat.custom(
+      formatCode: "###,###,###,###,###,###,###,###,###",
+    ),
+  );
 }
 
 extension SheetHelpers on Sheet {
@@ -164,6 +172,8 @@ extension SheetHelpers on Sheet {
     CellStyle? headerStyle,
     CellStyle? cellStyle,
     BorderStyle borderStyle = BorderStyle.Thin,
+    CellStyle Function(int col, Object? value, CellStyle defaultStyle)?
+    headerStyleBuilder,
     CellStyle Function(int row, int col, Object? value, CellStyle defaultStyle)?
     cellStyleBuilder,
     Object? Function(int row, int col, Object? value)? cellValueBuilder,
@@ -192,57 +202,49 @@ extension SheetHelpers on Sheet {
           rowIndex: topLeftIndex.rowIndex,
         );
         final value = header[colOffset];
-
-        if (cellStyleBuilder != null) {
-          final style = cellStyleBuilder(
-            0,
-            colOffset,
-            value,
-            tableHeaderStyle,
-          );
-          setCell(
-            cellIndex: cellIndex,
-            value: value,
-            style: style,
-          );
-        } else {
-          setCell(
-            cellIndex: cellIndex,
-            value: value,
-            style: tableHeaderStyle,
-          );
-        }
+        final style = headerStyleBuilder?.call(
+          colOffset,
+          value,
+          tableHeaderStyle,
+        );
+        setCell(
+          cellIndex: cellIndex,
+          value: value,
+          style: style ?? tableHeaderStyle,
+        );
       }
     }
 
+    final rowIndexOffset = header != null ? 1 : 0;
     for (var rowIndex = 0; rowIndex < data.length; rowIndex++) {
       final row = data[rowIndex];
       for (var colIndex = 0; colIndex < row.length; colIndex++) {
         final cellIndex = CellIndex.indexByColumnRow(
           columnIndex: topLeftIndex.columnIndex + colIndex,
-          rowIndex: topLeftIndex.rowIndex + rowIndex + (header != null ? 1 : 0),
+          rowIndex: topLeftIndex.rowIndex + rowIndex + rowIndexOffset,
         );
 
         /// Custom value transformation
         final rawValue = row[colIndex];
-        final value =
-            cellValueBuilder?.call(rowIndex, colIndex, rawValue) ?? rawValue;
 
-        if (cellStyleBuilder != null) {
-          final style = cellStyleBuilder(
-            rowIndex,
-            colIndex,
-            value,
-            tableCellStyle,
-          );
-          setCell(
-            cellIndex: cellIndex,
-            value: value,
-            style: style,
-          );
-        } else {
-          setCell(cellIndex: cellIndex, value: value, style: tableCellStyle);
-        }
+        final value = cellValueBuilder?.call(
+          rowIndex,
+          colIndex,
+          rawValue,
+        );
+
+        final style = cellStyleBuilder?.call(
+          rowIndex,
+          colIndex,
+          value,
+          tableCellStyle,
+        );
+
+        setCell(
+          cellIndex: cellIndex,
+          value: value ?? rawValue,
+          style: style ?? tableCellStyle,
+        );
       }
     }
   }

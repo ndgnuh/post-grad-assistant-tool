@@ -9,7 +9,7 @@ final cohortIdsProvider = AsyncNotifierProvider(
 );
 
 final cohortByIdProvider = AsyncNotifierProvider.family(
-  CohortByIdNotifier.new,
+  (String id) => CohortByIdNotifier(id),
 );
 
 class CohortIdsNotifer extends AsyncNotifier<List<String>> {

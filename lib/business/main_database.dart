@@ -314,4 +314,12 @@ class AppDatabase extends _$AppDatabase {
 
     return stmt;
   }
+
+  SimpleSelectStatement<Semester, SemesterData> previousSemester(
+    SemesterData semester,
+  ) {
+    final stmt = this.semester.select();
+    stmt.where((s) => s.sequence.equals(semester.sequence - 1));
+    return stmt;
+  }
 }

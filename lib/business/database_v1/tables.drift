@@ -80,6 +80,7 @@ create table "semester" (
     "registration_end_date" datetime NOT NULL,
     "class_begin_date" datetime NOT NULL,
     "class_end_date" datetime NOT NULL,
+    "sequence" integer not null default ("select coalesce(max(sequence), 1) from semester"),
     "grade_submission_deadline" datetime NOT NULL
 ) as SemesterData;
 

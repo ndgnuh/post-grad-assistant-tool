@@ -73,14 +73,14 @@ enum CourseClassStatus {
 }
 
 enum CourseCategory {
-  etc('khac', 'Khác'),
-  bacheor('cn', 'Học phần cử nhân'),
-  masterGeneralEducation('dc-ths', 'Đại cương'),
-  masterMajorKnowledge('nganh-rong', 'Kiến thức ngành (rộng)'),
-  masterAdvancedSpecialized('nganh-nangcao', 'Kiến thức ngành (nâng cao)'),
-  masterPracticalElection('tc-batbuoc', 'Tự chọn bắt buộc'),
-  masterNonrestrictedElection('tc-tudo', 'Tự chọn tự do'),
-  phd('phd', 'Học phần tiến sĩ');
+  etc('99-khac', 'Khác'),
+  bacheor('10-cn', 'Học phần cử nhân'),
+  masterGeneralEducation('20-dc-ths', 'Đại cương'),
+  masterMajorKnowledge('31-nganh-rong', 'Kiến thức ngành (rộng)'),
+  masterAdvancedSpecialized('32-nganh-nangcao', 'Kiến thức ngành (nâng cao)'),
+  masterPracticalElection('41-tc-batbuoc', 'Tự chọn bắt buộc'),
+  masterNonrestrictedElection('42-tc-tudo', 'Tự chọn tự do'),
+  phd('40-phd', 'Học phần tiến sĩ');
 
   final String value;
   final String label;

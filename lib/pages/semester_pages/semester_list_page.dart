@@ -57,15 +57,11 @@ class _SemesterTile extends ConsumerWidget {
     ];
 
     final navigator = Navigator.of(context);
-    final messenger = ScaffoldMessenger.of(context);
 
     return ListTile(
       title: Text(semester.id),
       subtitle: Text(subtiles.join('\n')),
       onTap: () async {
-        messenger.showSnackBar(
-          SnackBar(content: Text("Chức năng đang được phát triển.")),
-        );
         final route = MaterialPageRoute(
           builder: (context) => SemesterDetailsPage(semesterId: semesterId),
         );
@@ -91,7 +87,7 @@ class SemesterListPage extends StatelessWidget {
               onPressed: () async {
                 await Navigator.pushNamed(
                   context,
-                  PageAcademicYearCreate.routeName,
+                  SemesterCreatePage.routeName,
                 );
               },
             ),

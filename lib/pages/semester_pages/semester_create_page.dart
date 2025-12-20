@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 
 import 'package:fami_tools/custom_widgets.dart';
+import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:fami_tools/business/db_v2_providers.dart';
 
-class PageAcademicYearCreate extends StatefulWidget {
+class SemesterCreatePage extends StatefulWidget {
   static const routeName = '/academic_year/create';
 
-  const PageAcademicYearCreate({super.key});
+  const SemesterCreatePage({super.key});
 
   @override
-  State<PageAcademicYearCreate> createState() => _PageAcademicYearCreateState();
+  State<SemesterCreatePage> createState() => _SemesterCreatePageState();
 }
 
-class _PageAcademicYearCreateState extends State<PageAcademicYearCreate> {
+class _SemesterCreatePageState extends State<SemesterCreatePage> {
   final TextEditingController _nameController = TextEditingController();
   final ValueNotifier<DateTime> _moDangKy = ValueNotifier(DateTime.now());
   final ValueNotifier<DateTime> _dongDangKy = ValueNotifier(DateTime.now());
@@ -53,124 +54,133 @@ class _PageAcademicYearCreateState extends State<PageAcademicYearCreate> {
     final navigator = Navigator.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Tạo đợt học mới")),
-      body: ListView(
-        children: [
-          ListTile(
-            title: EzTextInput(
-              label: "Tên đợt học",
-              controller: _nameController,
-            ),
-          ),
+      appBar: ConstrainedAppBar(
+        child: AppBar(
+          title: const Text("Tạo đợt học mới"),
+        ),
+      ),
+      body: ConstrainedBody(
+        child: Padding(
+          padding: EdgeInsets.all(context.gutter),
+          child: Column(
+            children: [
+              ListTile(
+                title: EzTextInput(
+                  label: "Tên đợt học",
+                  controller: _nameController,
+                ),
+              ),
 
-          // Ngày bắt đầu mở đăng ký
-          ListTile(
-            title: const Text("Mở đăng ký học"),
-            subtitle: Text(dateFormat.format(_moDangKy.value)),
-            onTap: () async {
-              final newDate = await showDatePicker(
-                context: context,
-                initialDate: _moDangKy.value,
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-                helpText: "Chọn ngày mở đăng ký học",
-              );
-              if (newDate != null) {
-                _moDangKy.value = newDate;
-                setState(() {});
-              }
-            },
-          ),
+              // Ngày bắt đầu mở đăng ký
+              ListTile(
+                title: const Text("Mở đăng ký học"),
+                subtitle: Text(dateFormat.format(_moDangKy.value)),
+                onTap: () async {
+                  final newDate = await showDatePicker(
+                    context: context,
+                    initialDate: _moDangKy.value,
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                    helpText: "Chọn ngày mở đăng ký học",
+                  );
+                  if (newDate != null) {
+                    _moDangKy.value = newDate;
+                    setState(() {});
+                  }
+                },
+              ),
 
-          // Ngày đóng đăng ký
-          ListTile(
-            title: const Text("Đóng đăng ký học"),
-            subtitle: Text(dateFormat.format(_dongDangKy.value)),
-            onTap: () async {
-              final newDate = await showDatePicker(
-                context: context,
-                initialDate: _dongDangKy.value,
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-                helpText: "Chọn ngày đóng đăng ký học",
-              );
-              if (newDate != null) {
-                _dongDangKy.value = newDate;
-                setState(() {});
-              }
-            },
-          ),
+              // Ngày đóng đăng ký
+              ListTile(
+                title: const Text("Đóng đăng ký học"),
+                subtitle: Text(dateFormat.format(_dongDangKy.value)),
+                onTap: () async {
+                  final newDate = await showDatePicker(
+                    context: context,
+                    initialDate: _dongDangKy.value,
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                    helpText: "Chọn ngày đóng đăng ký học",
+                  );
+                  if (newDate != null) {
+                    _dongDangKy.value = newDate;
+                    setState(() {});
+                  }
+                },
+              ),
 
-          // Ngày bắt đầu học
-          ListTile(
-            title: const Text("Bắt đầu học"),
-            subtitle: Text(dateFormat.format(_batDauHoc.value)),
-            onTap: () async {
-              final newDate = await showDatePicker(
-                context: context,
-                initialDate: _batDauHoc.value,
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-                helpText: "Chọn ngày bắt đầu học",
-              );
-              if (newDate != null) {
-                _batDauHoc.value = newDate;
-                setState(() {});
-              }
-            },
-          ),
+              // Ngày bắt đầu học
+              ListTile(
+                title: const Text("Bắt đầu học"),
+                subtitle: Text(dateFormat.format(_batDauHoc.value)),
+                onTap: () async {
+                  final newDate = await showDatePicker(
+                    context: context,
+                    initialDate: _batDauHoc.value,
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                    helpText: "Chọn ngày bắt đầu học",
+                  );
+                  if (newDate != null) {
+                    _batDauHoc.value = newDate;
+                    setState(() {});
+                  }
+                },
+              ),
 
-          // Ngày kết thúc học
-          ListTile(
-            title: const Text("Kết thúc học"),
-            subtitle: Text(dateFormat.format(_ketThucHoc.value)),
-            onTap: () async {
-              final newDate = await showDatePicker(
-                context: context,
-                initialDate: _ketThucHoc.value,
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-                helpText: "Chọn ngày kết thúc học",
-              );
-              if (newDate != null) {
-                _ketThucHoc.value = newDate;
-                setState(() {});
-              }
-            },
-          ),
+              // Ngày kết thúc học
+              ListTile(
+                title: const Text("Kết thúc học"),
+                subtitle: Text(dateFormat.format(_ketThucHoc.value)),
+                onTap: () async {
+                  final newDate = await showDatePicker(
+                    context: context,
+                    initialDate: _ketThucHoc.value,
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                    helpText: "Chọn ngày kết thúc học",
+                  );
+                  if (newDate != null) {
+                    _ketThucHoc.value = newDate;
+                    setState(() {});
+                  }
+                },
+              ),
 
-          // Ngày hạn nhập điểm
-          ListTile(
-            title: const Text("Hạn nhập điểm"),
-            subtitle: Text(dateFormat.format(_hanNhapDiem.value)),
-            onTap: () async {
-              final newDate = await showDatePicker(
-                context: context,
-                initialDate: _hanNhapDiem.value,
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-                helpText: "Chọn hạn nhập điểm",
-              );
-              if (newDate != null) {
-                _hanNhapDiem.value = newDate;
-                setState(() {});
-              }
-            },
-          ),
+              // Ngày hạn nhập điểm
+              ListTile(
+                title: const Text("Hạn nhập điểm"),
+                subtitle: Text(dateFormat.format(_hanNhapDiem.value)),
+                onTap: () async {
+                  final newDate = await showDatePicker(
+                    context: context,
+                    initialDate: _hanNhapDiem.value,
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                    helpText: "Chọn hạn nhập điểm",
+                  );
+                  if (newDate != null) {
+                    _hanNhapDiem.value = newDate;
+                    setState(() {});
+                  }
+                },
+              ),
 
-          // Button to create the academic year
-          ListTile(
-            title: _CreateNewButton(
-              nameController: _nameController,
-              moDangKy: _moDangKy,
-              dongDangKy: _dongDangKy,
-              batDauHoc: _batDauHoc,
-              ketThucHoc: _ketThucHoc,
-              hanNhapDiem: _hanNhapDiem,
-              navigator: navigator,
-            ),
+              // Button to create the academic year
+              ListTile(
+                title: _CreateNewButton(
+                  nameController: _nameController,
+                  moDangKy: _moDangKy,
+                  dongDangKy: _dongDangKy,
+                  batDauHoc: _batDauHoc,
+                  ketThucHoc: _ketThucHoc,
+                  hanNhapDiem: _hanNhapDiem,
+                  navigator: navigator,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
