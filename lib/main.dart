@@ -146,6 +146,22 @@ Future<void> setupHotKeys() async {
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
+  static final shortcuts = {
+    SingleActivator(LogicalKeyboardKey.arrowLeft, alt: true):
+        const GoBackIntent(),
+    SingleActivator(LogicalKeyboardKey.keyW, control: true):
+        const OpenMenuIntent(),
+    SingleActivator(LogicalKeyboardKey.keyF, control: true):
+        const SearchIntent(),
+    SingleActivator(LogicalKeyboardKey.keyN, control: true):
+        const CreateNewIntent(),
+    SingleActivator(LogicalKeyboardKey.slash): const SearchIntent(),
+    SingleActivator(LogicalKeyboardKey.tab, control: true):
+        const NextTabIntent(),
+    SingleActivator(LogicalKeyboardKey.tab, shift: true, control: true):
+        const PreviousTabIntent(),
+  };
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkModeState = ref.watch(isDarkModeProvider);
@@ -155,6 +171,13 @@ class MyApp extends ConsumerWidget {
       _ => false,
     };
 
+    final actions = <Type, Action<Intent>>{
+      SearchIntent: SearchAction(context: context, ref: ref),
+      GoBackIntent: GoBackAction(context: context),
+      NextTabIntent: ChangeTabAction(context: context, offset: 1),
+      PreviousTabIntent: ChangeTabAction(context: context, offset: -1),
+    };
+
     // Function to get lighter color from a color
     final themes = Themes(context);
     final locale = Locale('vi', 'VN');
@@ -162,6 +185,8 @@ class MyApp extends ConsumerWidget {
     return SafeArea(
       child: MaterialApp(
         scaffoldMessengerKey: messengerKey,
+        shortcuts: shortcuts,
+        actions: actions,
         navigatorKey: navigationKey,
         locale: locale,
         darkTheme: themes.dark,

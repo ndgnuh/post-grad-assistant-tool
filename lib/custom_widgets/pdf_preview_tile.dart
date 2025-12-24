@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod/riverpod.dart';
 
+@Deprecated('Use [PdfViewerTile] from custom_widgets/pdf_viewer.dart instead')
 class PdfPreviewTile extends StatelessWidget {
   final AsyncValue<PdfFile?> pdfFileAsync;
   final Widget title;

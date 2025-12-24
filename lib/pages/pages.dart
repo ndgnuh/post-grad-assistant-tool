@@ -171,14 +171,14 @@ final initialRoute = switch (kReleaseMode) {
   // false => HomePage.routeName,
 
   // Admission
-  // false => AdmissionListPage.routeName,
+  false => AdmissionListPage.routeName,
   // false => AdmissionEnrollmentPage.routeName,
   // false => AdmissionPaymentPage.routeName,
 
   // Course classes pages
   // ====================
   // false => CourseClassListPage.routeName,
-  false => CourseLimitingPage.routeName,
+  // false => CourseLimitingPage.routeName,
 
   // Course pages
   // false => CourseListPage.routeName,
@@ -194,7 +194,7 @@ final initialRoute = switch (kReleaseMode) {
 
   // PhD students pages
   // false => PhdStudentListPage.routeName,
-  // false => phd_pages.PhdAdmissionPaymentPage.routeName,
+  false => phd_pages.PhdAdmissionPaymentPage.routeName,
 
   // Teacher pages
   // false => TeacherSearchPage.routeName,
@@ -446,9 +446,8 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     case msc_thesis.MscThesisAssignmentPage.routeName:
       return const msc_thesis.MscThesisAssignmentPage();
     case msc_thesis.MscThesisSelectionPage.routeName:
-
-      // Draft
       return const msc_thesis.MscThesisSelectionPage(studentId: 61);
+
     // case ThesisDefensePaymentPage.routeName:
     //   return const ThesisDefensePaymentPage();
 

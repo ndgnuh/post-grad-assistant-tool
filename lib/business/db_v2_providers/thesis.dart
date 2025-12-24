@@ -25,6 +25,29 @@ class ThesisByIdNotifier extends AsyncNotifier<ThesisData> {
   final int id;
   ThesisByIdNotifier(this.id);
 
+  Future<void> updateInfo({
+    String? vietnameseTitle,
+    String? englishTitle,
+    int? secondarySupervisorId,
+    int? supervisorId,
+  }) async {
+    final companion = ThesisCompanion(
+      vietnameseTitle: vietnameseTitle != null
+          ? Value(vietnameseTitle)
+          : const Value.absent(),
+      englishTitle: englishTitle != null
+          ? Value(englishTitle)
+          : const Value.absent(),
+      secondarySupervisorId: secondarySupervisorId != null
+          ? Value(secondarySupervisorId)
+          : const Value.absent(),
+      supervisorId: supervisorId != null
+          ? Value(supervisorId)
+          : const Value.absent(),
+    );
+    updateThesis(companion);
+  }
+
   void applyForDefense() => updateThesis(
     ThesisCompanion(
       defenseStatus: Value(ThesisStatus.defenseApplied),

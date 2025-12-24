@@ -38,40 +38,40 @@ class StudentDetailPage extends ConsumerWidget {
     final children = [
       StringTile(
         leading: Icon(Symbols.numbers),
-        titleText: "UUID",
+        title: "UUID",
         initialValue: (student.id).toString(),
         readOnly: true,
       ),
       StringTile(
         leading: Icon(Symbols.person),
-        titleText: "Họ tên",
+        title: "Họ tên",
         initialValue: student.name,
         readOnly: true,
       ),
 
       StringTile(
         leading: Icon(Symbols.id_card),
-        titleText: "Mã học viên",
+        title: "Mã học viên",
         initialValue: student.studentId ?? "",
         onUpdate: (value) => notifier.updateManagementId(value!),
       ),
 
       StringTile(
         leading: Icon(Symbols.email),
-        titleText: "Email HUST",
+        title: "Email HUST",
         initialValue: student.schoolEmail ?? "",
         onUpdate: (value) => notifier.updateSchoolEmail(value),
       ),
       StringTile(
         leading: Icon(null),
-        titleText: "Email cá nhân",
+        title: "Email cá nhân",
         initialValue: student.personalEmail ?? "",
         onUpdate: (value) => notifier.updatePersonalEmail(value),
       ),
 
       StringTile(
         leading: Icon(Symbols.phone),
-        titleText: "Điện thoại",
+        title: "Điện thoại",
         initialValue: student.phone ?? "",
         onUpdate: (value) => notifier.updatePhoneNumber(value),
       ),

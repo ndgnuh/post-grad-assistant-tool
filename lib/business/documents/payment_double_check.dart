@@ -375,8 +375,13 @@ class PaymentDoubleCheckModel<R extends PaymentRole> {
   XlsxFile get xlsx => _xlsx(this);
 
   /// Build [PdfFile] for payment ATM
-  Future<PdfFile> get pdf => _pdf(this, false);
-  Future<PdfFile> get summaryPdf => _pdf(this, true);
+  Future<PdfFile> pdf({
+    PdfConfig config = const PdfConfig(),
+  }) => _pdf(model: this, summary: false, config: config);
+
+  Future<PdfFile> summaryPdf({
+    PdfConfig config = const PdfConfig(),
+  }) => _pdf(model: this, summary: true, config: config);
 }
 
 mixin PaymentRole {
@@ -409,6 +414,7 @@ enum ThesisPaymentRole with PaymentRole {
 List<Widget> _pdfBuilder({
   required Context context,
   required PaymentDoubleCheckModel model,
+  required PdfConfig config,
   required bool summary,
 }) {
   final formalTitle = FormalTitle(
@@ -428,6 +434,10 @@ List<Widget> _pdfBuilder({
   final table = EzTable(
     headers: tableHeaders,
     data: tableData,
+    padding: EdgeInsets.symmetric(
+      vertical: config.verticalTableCellPadding,
+      horizontal: config.horizontalTableCellPadding,
+    ),
     textStyleBuilder: (rowIndex, colIndex, data, defaultTextStyle) {
       if (rowIndex == tableData.length - 1 || tableData[rowIndex][0] == "") {
         return defaultTextStyle.copyWith(fontWeight: FontWeight.bold);
@@ -514,26 +524,32 @@ List<Widget> _pdfBuilder({
   ];
 }
 
-Future<PdfFile> _pdf(
-  PaymentDoubleCheckModel model,
-  bool summary,
-) async {
+Future<PdfFile> _pdf({
+  required PaymentDoubleCheckModel model,
+  required bool summary,
+  PdfConfig config = const PdfConfig(),
+}) async {
   final bytes = await buildMultiPageDocument(
     pageFormat: PdfPageFormat.a4.landscape,
-    baseFontSize: 12 * pt,
+    baseFontSize: config.baseFontSize,
     footer: (context) {
       return Footer(
         trailing: Text("Trang ${context.pageNumber} / ${context.pagesCount}"),
       );
     },
     margin: EdgeInsets.symmetric(
-      horizontal: 0.79 * inch,
-      vertical: 0.79 * inch,
+      horizontal: config.horizontalMargin,
+      vertical: config.verticalMargin,
     ),
     build: (context) {
-      return _pdfBuilder(context: context, model: model, summary: summary);
+      return _pdfBuilder(
+        context: context,
+        model: model,
+        summary: summary,
+        config: config,
+      );
     },
   );
   final name = summary ? model.name : "${model.name}_ChiTiet";
-  return PdfFile(name: name, bytes: bytes);
+  return PdfFile(name: name, bytes: bytes, config: config);
 }

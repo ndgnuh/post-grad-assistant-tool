@@ -99,6 +99,7 @@ create table course (
 create table thesis (
 	"id" INTEGER PRIMARY KEY AUTOINCREMENT,
 	"supervisor_id"	INTEGER NOT NULL REFERENCES "teacher"("id"),
+	"secondary_supervisor_id" INTEGER REFERENCES "teacher"("id"),
 	"president_id"	INTEGER REFERENCES "teacher"("id"),
 	"first_reviewer_id"	INTEGER REFERENCES "teacher"("id") as firstReviewerId,
 	"second_reviewer_id" INTEGER REFERENCES "teacher"("id") as secondReviewerId,

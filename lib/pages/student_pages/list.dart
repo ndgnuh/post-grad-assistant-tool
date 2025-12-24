@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -9,10 +8,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import './student_pages.dart';
 import './providers.dart';
 import './widgets.dart';
-import '../../shortcuts.dart';
 import '../../custom_widgets.dart';
-
-final FocusNode searchFocusNode = FocusNode();
 
 class StudentListPage extends StatelessWidget {
   static const String routeName = '/students/list';
@@ -27,66 +23,52 @@ class StudentListPage extends StatelessWidget {
     final isMobile = Platform.isAndroid || Platform.isIOS;
     final direction = isMobile ? VerticalDirection.down : VerticalDirection.up;
 
-    return CommonShortcuts(
-      onSearch: () => searchFocusNode.requestFocus(),
-      child: Scaffold(
-        appBar: ConstrainedAppBar(child: AppBar(title: Text("Học viên"))),
-        body: ConstrainedBody(
-          child: Padding(
-            padding: EdgeInsets.all(gutter),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              verticalDirection: direction,
-              spacing: gutter,
-              children: [
-                Expanded(
-                  child: _StudentListView(),
-                ),
-                Column(
-                  spacing: gutter,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IntrinsicHeight(
-                      child: Flex(
-                        direction: Axis.horizontal,
-                        spacing: gutter,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Flexible(
-                            fit: FlexFit.tight,
-                            flex: 2,
-                            child: CohortSelector(),
-                          ),
-                          CohortReset(),
-                        ],
-                      ),
+    return Scaffold(
+      appBar: ConstrainedAppBar(child: AppBar(title: Text("Học viên"))),
+      body: ConstrainedBody(
+        child: Padding(
+          padding: EdgeInsets.all(gutter),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            verticalDirection: direction,
+            spacing: gutter,
+            children: [
+              Expanded(
+                child: _StudentListView(),
+              ),
+              Column(
+                spacing: gutter,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IntrinsicHeight(
+                    child: Flex(
+                      direction: Axis.horizontal,
+                      spacing: gutter,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Flexible(
+                          fit: FlexFit.tight,
+                          flex: 2,
+                          child: CohortSelector(),
+                        ),
+                        CohortReset(),
+                      ],
                     ),
-                    IntrinsicHeight(
-                      child: Row(
-                        spacing: gutter,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          FilterModeButton(),
-                          Expanded(child: StudentSearchBar()),
-                          StudentReloadButton(),
-                        ],
-                      ),
+                  ),
+                  IntrinsicHeight(
+                    child: Row(
+                      spacing: gutter,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        FilterModeButton(),
+                        Expanded(child: StudentSearchBar()),
+                        StudentReloadButton(),
+                      ],
                     ),
-                  ],
-                ),
-                // IntrinsicHeight(
-                //   child: Row(
-                //     spacing: gutter,
-                //     crossAxisAlignment: CrossAxisAlignment.stretch,
-                //     children: [
-                //       FilterModeButton(),
-                //       StudentSearchBar(),
-                //       StudentReloadButton(),
-                //     ],
-                //   ),
-                // ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),

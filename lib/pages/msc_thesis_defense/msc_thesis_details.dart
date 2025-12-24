@@ -1,4 +1,6 @@
+// TODO: move this to a seprate package
 import 'package:fami_tools/business/db_v2_providers.dart';
+import 'package:fami_tools/custom_tiles.dart';
 import 'package:fami_tools/custom_widgets.dart';
 import 'package:fami_tools/business/view_models.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
@@ -65,7 +67,8 @@ class _AssignCouncilTab extends StatelessWidget {
       child: Column(
         children: [
           _InformationSection(thesisId: thesisId),
-          _AssignmentSection(thesisId: thesisId),
+          _TeachingAssignmentSection(thesisId: thesisId),
+          _CouncilAssignmentSection(thesisId: thesisId),
         ],
       ),
     );
@@ -91,29 +94,112 @@ class _InformationSection extends ConsumerWidget {
     final student = model.student;
     final thesis = model.thesis;
     final supervisor = model.supervisor;
+    final notifier = ref.read(thesisByIdProvider(thesisId).notifier);
 
     return CardSection(
       title: 'Thông tin luận văn',
       children: [
-        ListTile(
-          title: Text('Học viên'),
-          subtitle: Text(student?.name ?? "Chưa giao"),
+        StringTile(
+          title: 'Tên đề tài (Việt)',
+          initialValue: thesis.vietnameseTitle,
+          onUpdate: (value) => notifier.updateInfo(vietnameseTitle: value),
         ),
-        ListTile(
-          title: Text('Giảng viên hướng dẫn'),
-          subtitle: Text(supervisor.name),
-        ),
-        ListTile(
-          title: Text('Luận văn'),
-          subtitle: Text(thesis.vietnameseTitle),
+        StringTile(
+          title: 'Tên đề tài (Anh)',
+          initialValue: thesis.englishTitle,
+          onUpdate: (value) => notifier.updateInfo(englishTitle: value),
         ),
       ],
     );
   }
 }
 
-class _AssignmentSection extends StatelessWidget {
-  const _AssignmentSection({required this.thesisId});
+class _TeachingAssignmentSection extends ConsumerWidget {
+  final int thesisId;
+  const _TeachingAssignmentSection({required this.thesisId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final modelAsync = ref.watch(ThesisViewModel.providerById(thesisId));
+    switch (modelAsync) {
+      case AsyncLoading():
+        return LinearProgressIndicator();
+      case AsyncError():
+        return Text('Error loading thesis information');
+      default:
+    }
+
+    final model = modelAsync.value!;
+    final student = model.student;
+    final thesis = model.thesis;
+    final supervisor = model.supervisor;
+    final secondarySupervisor = model.secondarySupervisor;
+    final notifier = ref.read(thesisByIdProvider(thesisId).notifier);
+
+    Future<List<Widget>> Function(BuildContext, SearchController)
+    teacherSuggestionBuilder(bool firstSupervisor) {
+      return (BuildContext context, SearchController controller) async {
+        final db = await ref.read(mainDatabaseProvider.future);
+        final teachers = await db
+            .searchTeachers(
+              searchText: controller.text,
+              isOutsider: firstSupervisor ? false : null,
+            )
+            .get();
+
+        return teachers.map((teacher) {
+          final subtitle = [
+            "Cơ quan: ${teacher.university}",
+            "Email: ${teacher.workEmail ?? teacher.personalEmail ?? 'No email'}",
+          ].join("\n");
+          return ListTile(
+            title: Text(teacher.name),
+            subtitle: Text(subtitle),
+            onTap: () {
+              if (firstSupervisor) {
+                notifier.updateInfo(supervisorId: teacher.id);
+              } else {
+                notifier.updateInfo(secondarySupervisorId: teacher.id);
+              }
+              controller.closeView("");
+            },
+          );
+        }).toList();
+      };
+    }
+
+    return CardSection(
+      title: 'Thông tin luận văn',
+      children: [
+        StringTile(
+          title: 'Học viên',
+          initialValue: student?.name ?? "Chưa giao",
+          readOnly: true,
+        ),
+
+        SearchAnchor(
+          suggestionsBuilder: teacherSuggestionBuilder(true),
+          builder: (_, controller) => ListTile(
+            title: Text('Giảng viên hướng dẫn'),
+            subtitle: Text(supervisor.name),
+            onTap: () => controller.openView(),
+          ),
+        ),
+        SearchAnchor(
+          suggestionsBuilder: teacherSuggestionBuilder(false),
+          builder: (context, controller) => ListTile(
+            title: Text('Giảng viên hướng dẫn 2'),
+            subtitle: Text(secondarySupervisor?.name ?? "Không"),
+            onTap: () => controller.openView(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CouncilAssignmentSection extends StatelessWidget {
+  const _CouncilAssignmentSection({required this.thesisId});
 
   final int thesisId;
 

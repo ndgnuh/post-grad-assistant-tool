@@ -244,7 +244,7 @@ class _TeacherDetailTab extends ConsumerWidget {
         children: [
           HeadingListTile(title: "Thông tin cơ bản"),
           StringTile(
-            titleText: "Họ tên",
+            title: "Họ tên",
             leading: const Icon(Icons.person),
             initialValue: teacher.name,
             onUpdate: (value) => teacherNotifier.updateTeacher(
@@ -255,7 +255,7 @@ class _TeacherDetailTab extends ConsumerWidget {
           ),
 
           SingleSelectionTile<Gender>(
-            titleText: "Giới tính",
+            title: "Giới tính",
             leading: const Icon(Icons.male),
             options: Gender.values,
             initialValue: teacher.gender,
@@ -272,25 +272,25 @@ class _TeacherDetailTab extends ConsumerWidget {
           HeadingListTile(title: "Thông tin công tác"),
           if (!teacher.isOutsider)
             StringTile(
-              titleText: "Mã cán bộ",
+              title: "Mã cán bộ",
               leading: const Icon(Icons.card_membership),
               initialValue: teacher.staffId ?? "N/A",
               onUpdate: (value) => teacherNotifier.updateInfo(staffId: value),
             ),
           StringTile(
-            titleText: "Đại học công tác",
+            title: "Đại học công tác",
             leading: const Icon(Icons.school),
             initialValue: teacher.university ?? notAvailableText,
             onUpdate: (value) => teacherNotifier.updateInfo(university: value),
           ),
           StringTile(
             leading: const Icon(null),
-            titleText: "Khoa/viện",
+            title: "Khoa/viện",
             initialValue: teacher.falcuty ?? notAvailableText,
             onUpdate: (value) => teacherNotifier.updateInfo(falcuty: value),
           ),
           StringTile(
-            titleText: "Chuyên ngành",
+            title: "Chuyên ngành",
             leading: const Icon(null),
             initialValue: teacher.specialization ?? notAvailableText,
             onUpdate: (value) => teacherNotifier.updateInfo(
@@ -298,7 +298,7 @@ class _TeacherDetailTab extends ConsumerWidget {
             ),
           ),
           IntegerTile(
-            titleText: "Năm bắt đầu công tác",
+            title: "Năm bắt đầu công tác",
             leading: const Icon(null),
             initialValue: teacher.startTeachingYear ?? 0,
             onUpdate: (value) => teacherNotifier.updateInfo(
@@ -308,13 +308,13 @@ class _TeacherDetailTab extends ConsumerWidget {
 
           SingleSelectionTile<AcademicRank>(
             options: AcademicRank.values,
-            titleText: "Học hàm",
+            title: "Học hàm",
             leading: const Icon(null),
             initialValue: teacher.academicRank,
             onUpdate: (rank) => teacherNotifier.updateAcademicRank(rank),
           ),
           SingleSelectionTile<AcademicDegree>(
-            titleText: "Học vị",
+            title: "Học vị",
             leading: const Icon(null),
             options: AcademicDegree.values,
             initialValue: teacher.academicDegree,
@@ -324,7 +324,7 @@ class _TeacherDetailTab extends ConsumerWidget {
           // Thông tin liên hệ
           HeadingListTile(title: "Thông tin liên hệ"),
           StringTile(
-            titleText: "Email",
+            title: "Email",
             leading: const Icon(Icons.email),
             initialValue: teacher.emails.join(", "),
             onUpdate: (value) => teacherNotifier.updateInfo(
@@ -332,7 +332,7 @@ class _TeacherDetailTab extends ConsumerWidget {
             ),
           ),
           StringTile(
-            titleText: "Số điện thoại",
+            title: "Số điện thoại",
             leading: const Icon(Icons.phone),
             initialValue: teacher.phoneNumber ?? notAvailableText,
             onUpdate: (value) => teacherNotifier.updateInfo(phoneNumber: value),
@@ -342,19 +342,19 @@ class _TeacherDetailTab extends ConsumerWidget {
           // Mã số thuế, tài khoản ngân hàng, tên ngân hàng, chi nhánh
           HeadingListTile(title: "Thông tin thanh toán"),
           StringTile(
-            titleText: "Tài khoản ngân hàng",
+            title: "Tài khoản ngân hàng",
             leading: const Icon(Icons.account_balance_wallet),
             initialValue: teacher.bankAccount ?? notAvailableText,
             onUpdate: (value) => teacherNotifier.updateInfo(bankAccount: value),
           ),
           StringTile(
-            titleText: "Tên ngân hàng",
+            title: "Tên ngân hàng",
             leading: const Icon(Icons.location_city),
             initialValue: teacher.bankName ?? notAvailableText,
             onUpdate: (value) => teacherNotifier.updateInfo(bankName: value),
           ),
           StringTile(
-            titleText: "Mã số thuế (cũ)",
+            title: "Mã số thuế (cũ)",
             leading: const Icon(Icons.account_balance),
             initialValue: teacher.deprecatedTaxCode ?? notAvailableText,
             onUpdate: (value) => teacherNotifier.updateInfo(
@@ -362,7 +362,7 @@ class _TeacherDetailTab extends ConsumerWidget {
             ),
           ),
           StringTile(
-            titleText: "CCCD",
+            title: "CCCD",
             leading: const Icon(Icons.person),
             initialValue: teacher.citizenId ?? notAvailableText,
             onUpdate: (value) => teacherNotifier.updateInfo(citizenId: value),

@@ -1,7 +1,40 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:path/path.dart' as p;
+
+import '../documents.dart';
+import 'utilities/pdf_widgets.dart';
+export 'utilities/pdf_widgets.dart' show pt, inch, cm;
+
+typedef PdfBuilder = FutureOr<PdfFile> Function(PdfConfig config);
+
+class PdfConfig {
+  final double baseFontSize;
+  // pdf and flutter have different EdgeInsets classes.
+  // so we assume symmetric margins here for simplicity.
+
+  final double verticalMargin;
+  final double horizontalMargin;
+  final PdfPageFormat pageFormat;
+  final double verticalTableCellPadding;
+  final double horizontalTableCellPadding;
+
+  const PdfConfig({
+    this.baseFontSize = 12 * pt,
+    this.verticalMargin = 1 * inch,
+    this.horizontalMargin = 1 * inch,
+    this.verticalTableCellPadding = 6 * pt,
+    this.horizontalTableCellPadding = 6 * pt,
+    this.pageFormat = PdfPageFormat.a4,
+  });
+
+  @override
+  String toString() {
+    return 'PdfConfig(baseFontSize: $baseFontSize, verticalMargin: $verticalMargin, horizontalMargin: $horizontalMargin, pageFormat: $pageFormat, verticalTableCellPadding: $verticalTableCellPadding, horizontalTableCellPadding: $horizontalTableCellPadding)';
+  }
+}
 
 sealed class InMemoryDocument {
   final String name;
@@ -33,4 +66,3 @@ class DocxFile extends InMemoryDocument {
   @override
   String get extension => ".docx";
 }
-

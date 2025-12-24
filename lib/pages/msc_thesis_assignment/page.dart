@@ -1,5 +1,4 @@
 import 'package:fami_tools/business/copy_pasta.dart';
-import 'package:fami_tools/business/documents.dart';
 import 'package:fami_tools/custom_widgets.dart';
 import 'package:fami_tools/custom_widgets/pdf_preview_tile.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/db_v2_providers.dart';
+import '../../business/view_models.dart';
+import '../msc_thesis_defense/msc_thesis_details.dart';
 import 'providers.dart';
 import 'selection_page.dart';
 
@@ -21,7 +22,7 @@ class MscThesisAssignmentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 1,
+      initialIndex: 0,
       length: 2,
       child: Scaffold(
         appBar: ConstrainedAppBar(
@@ -29,6 +30,7 @@ class MscThesisAssignmentPage extends StatelessWidget {
           child: AppBar(
             title: Text('Giao đề tài'),
             bottom: TabBar(
+              isScrollable: true,
               tabs: [
                 Tab(text: 'Danh sách'),
                 Tab(text: 'Quản trị'),
@@ -109,7 +111,7 @@ class _ActionTabView extends HookWidget {
                       assignmentPdfProvider.future,
                     );
                     final assignmentExcel = await ref.read(
-                      assignmentExcelProvider.future,
+                      assignmentXlsxProvider.future,
                     );
 
                     if (assignmentPdf == null || assignmentExcel == null) {
@@ -131,6 +133,14 @@ class _ActionTabView extends HookWidget {
                   },
                 ),
               ),
+            ],
+          ),
+
+          CardSection(
+            title: "Email",
+            children: [
+              _EmailToSupervisorsButton(),
+
               Consumer(
                 builder: (context, ref, _) => ListTile(
                   title: Text("Gửi email cho BĐT"),
@@ -161,6 +171,41 @@ class _ActionTabView extends HookWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _EmailToSupervisorsButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final emailAsync = ref.watch(supervisorsEmailProvider);
+    switch (emailAsync) {
+      case AsyncLoading():
+        return ListTile(
+          title: Text("Gửi email cho giảng viên hướng dẫn"),
+          subtitle: Text("Đang tải thông tin email..."),
+          enabled: false,
+        );
+      case AsyncError(:final error):
+        return ListTile(
+          title: Text("Gửi email cho giảng viên hướng dẫn"),
+          subtitle: ErrorWidget(error),
+          enabled: false,
+        );
+      default:
+    }
+
+    final email = emailAsync.value!;
+
+    return ListTile(
+      title: Text("Gửi email cho giảng viên hướng dẫn"),
+      subtitle: Text("Gửi file giao đề tài cho giảng viên hướng dẫn"),
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) => EmailCopyDialog(email: email),
+        );
+      },
     );
   }
 }
@@ -236,7 +281,7 @@ class StudentThesisItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final modelAsync = ref.watch(assignmentViewModelProvider(studentId));
+    final modelAsync = ref.watch(StudentViewModel.providerById(studentId));
     switch (modelAsync) {
       case AsyncLoading():
         return ListTile(
@@ -253,12 +298,35 @@ class StudentThesisItem extends ConsumerWidget {
 
     final model = modelAsync.value!;
     final supervisor = model.supervisor;
+    final secondarySupervisor = model.secondarySupervisor;
     final thesis = model.thesis;
     final student = model.student;
     final subtitle = [
       thesis?.vietnameseTitle ?? 'Chưa có đề tài',
       if (supervisor != null) 'Giảng viên hướng dẫn: ${supervisor.name}',
+      if (secondarySupervisor != null)
+        'Giảng viên hướng dẫn 2: ${secondarySupervisor.name}',
     ].join('\n');
+
+    void goToAssignPage() {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => MscThesisSelectionPage(
+            studentId: studentId,
+          ),
+        ),
+      );
+    }
+
+    void goToDetailsPage() {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => MscThesisDetailsPage(
+            thesisId: thesis!.id,
+          ),
+        ),
+      );
+    }
 
     return ListTile(
       title: Text(student.name),
@@ -272,13 +340,11 @@ class StudentThesisItem extends ConsumerWidget {
       ),
       subtitle: Text(subtitle),
       onTap: () async {
-        await Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => MscThesisSelectionPage(
-              studentId: studentId,
-            ),
-          ),
-        );
+        if (thesis == null) {
+          goToAssignPage();
+        } else {
+          goToDetailsPage();
+        }
       },
     );
   }

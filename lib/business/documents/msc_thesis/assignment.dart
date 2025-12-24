@@ -227,6 +227,9 @@ List<Widget> _build({
       columnWidths: model.tableColumnWidths,
       defaultDataWrap: false,
       dataWraps: {
+        // outer supervisor workplace has university + faculty
+        // therefore may be long
+        4: true,
         5: true,
         6: true,
         10: true,
@@ -294,27 +297,57 @@ class ThesisAssignmentModel {
     required this.theses,
   });
 
+  Future<PdfFile> get pdf => buildThesisAssignmentPdf(
+    theses: theses,
+    cohort: cohort,
+  );
+
+  Future<XlsxFile> get xlsx => buildThesisAssignmentExcel(
+    theses: theses,
+    cohort: cohort,
+  );
+
   List<List<String>> get tableData {
+    int skipped = 0;
     final rows = <List<String>>[];
     for (var i = 0; i < theses.length; i++) {
       final model = theses[i];
       final thesis = model.thesis;
       final supervisor = model.supervisor;
       final student = model.student;
+      final secondarySupervisor = model.secondarySupervisor;
 
-      /// TODO: proper implementation for secondary supervisor
-      // final coSupervisor = null;
       final group = switch (supervisor?.teacherGroupId) {
         int id when id > 0 && id <= teacherGroup.length => teacherGroup[id - 1],
         _ => "",
       };
 
+      if (supervisor == null || student.studentId == null) {
+        skipped++;
+        continue;
+      }
+
+      final String secondarySupervisorWorkplace;
+      switch ((secondarySupervisor?.university, secondarySupervisor?.falcuty)) {
+        case (String u, String f) when u.isNotEmpty && f.isNotEmpty:
+          secondarySupervisorWorkplace = "$u; $f";
+          break;
+        case (String u, _) when u.isNotEmpty:
+          secondarySupervisorWorkplace = u;
+          break;
+        case (_, String f) when f.isNotEmpty:
+          secondarySupervisorWorkplace = "??; f";
+          break;
+        default:
+          secondarySupervisorWorkplace = "??";
+      }
+
       rows.add([
-        (i + 1).toString(),
-        supervisor?.name ?? "-",
-        supervisor?.falcuty ?? "-",
-        "",
-        "",
+        (i - skipped + 1).toString(),
+        supervisor.name,
+        supervisor.falcuty ?? "??",
+        secondarySupervisor?.name ?? "",
+        secondarySupervisor != null ? secondarySupervisorWorkplace : "",
         thesis?.vietnameseTitle ?? "-",
         thesis?.englishTitle ?? "-",
         student.name,
@@ -345,7 +378,7 @@ class ThesisAssignmentModel {
     1: IntrinsicColumnWidth(),
     2: IntrinsicColumnWidth(),
     3: IntrinsicColumnWidth(),
-    4: IntrinsicColumnWidth(),
+    4: FlexColumnWidth(2),
     5: FlexColumnWidth(3),
     6: FlexColumnWidth(3),
     7: IntrinsicColumnWidth(),

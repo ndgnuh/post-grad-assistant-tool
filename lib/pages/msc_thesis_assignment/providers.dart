@@ -2,9 +2,8 @@ import 'package:fami_tools/business/copy_pasta.dart';
 import 'package:fami_tools/business/selection_models.dart';
 import 'package:fami_tools/business/view_models.dart';
 import 'package:riverpod/riverpod.dart';
-import '../../business/db_v2_providers.dart';
-import 'package:fami_tools/business/documents.dart';
 
+import '../../business/db_v2_providers.dart';
 import '../../business/documents.dart';
 
 final _name = "msc-thesis-assignment";
@@ -23,29 +22,20 @@ final assignmentModelProvider = FutureProvider((Ref ref) async {
     thesesVms.add(vm);
   }
 
-  return (theses: thesesVms, cohort: selectedCohort);
+  return ThesisAssignmentModel(
+    theses: thesesVms,
+    cohort: selectedCohort,
+  );
 });
 
 final assignmentPdfProvider = FutureProvider<PdfFile?>((Ref ref) async {
-  final assignmentModel = await ref.watch(assignmentModelProvider.future);
-  if (assignmentModel == null) return null;
-
-  final pdfFile = await PdfFile.mscThesis.assignment(
-    theses: assignmentModel.theses,
-    cohort: assignmentModel.cohort,
-  );
-  return pdfFile;
+  final model = await ref.watch(assignmentModelProvider.future);
+  return model?.pdf;
 });
 
-final assignmentExcelProvider = FutureProvider<XlsxFile?>((Ref ref) async {
-  final assignmentModel = await ref.watch(assignmentModelProvider.future);
-  if (assignmentModel == null) return null;
-
-  final pdfFile = await XlsxFactory.mscThesis.assignment(
-    theses: assignmentModel.theses,
-    cohort: assignmentModel.cohort,
-  );
-  return pdfFile;
+final assignmentXlsxProvider = FutureProvider<XlsxFile?>((Ref ref) async {
+  final model = await ref.watch(assignmentModelProvider.future);
+  return model?.xlsx;
 });
 
 final cohortSelectionProvider = AsyncNotifierProvider(
@@ -153,3 +143,61 @@ class AssignmentModel {
     this.supervisor,
   });
 }
+
+final supervisorsEmailProvider = FutureProvider<Email>((ref) async {
+  final model = await ref.watch(assignmentModelProvider.future);
+
+  if (model == null) {
+    return Email(
+      recipients: {},
+      ccRecipients: {},
+      subject: "",
+      body: "",
+    );
+  }
+
+  // Cohort information
+  final cohort = model.cohort.id;
+
+  // Supervisor emails
+  final supervisorEmails = <String>{};
+  for (final thesis in model.theses) {
+    final supervisor = thesis.supervisor;
+    if (supervisor == null) continue;
+
+    final supervisorEmail = supervisor!.workEmail ?? supervisor.personalEmail;
+    assert(
+      supervisorEmail != null,
+      "Giảng viên hướng dẫn ${supervisor.name} không có email",
+    );
+    supervisorEmails.add(supervisorEmail!);
+
+    final secondarySupervisor = thesis.secondarySupervisor;
+    if (secondarySupervisor?.email != null) {
+      supervisorEmails.add(secondarySupervisor!.email!);
+    }
+  }
+
+  // My information
+  final myName = await ref.watch(myNameProvider.future);
+  final myFaculty = await ref.watch(myFacultyProvider.future);
+
+  // My supervisor
+  final mySupervisor = await ref.watch(mySupervisorProvider.future);
+
+  return Email(
+    recipients: supervisorEmails,
+    ccRecipients: {mySupervisor.workEmail ?? mySupervisor.personalEmail ?? ""},
+    subject: "Thông tin giao đề tài luận văn thạc sĩ khóa $cohort - $myFaculty",
+    body:
+        """Kính gửi các Thầy, Cô,
+Em gửi danh sách học viên, đề tài luận văn cao học và người hướng dẫn của học viên cao học khóa $cohort. File danh sách được đính kèm trong email ạ.
+
+Trước đó em có yêu cầu học viên bàn bạc chi tiết với Thầy, Cô để đăng ký tên đề tài chính xác.
+Tuy nhiên vẫn mong Thầy, Cô kiểm tra lại và phản hồi giúp em nếu có sai sót trước khi gửi lên Ban Đào tạo ạ.
+Em cảm ơn Thầy, Cô ạ.
+
+Trân trọng,
+$myName""",
+  );
+});

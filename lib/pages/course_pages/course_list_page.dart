@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
+import '../../shortcuts.dart';
 import 'course_pages.dart';
 import 'providers.dart';
 
@@ -13,27 +15,39 @@ class CourseListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: ConstrainedAppBar(
-        child: AppBar(
-          title: Text("Danh sách học phần"),
+    final focusNode = FocusNode();
+    return Actions(
+      actions: {
+        SearchIntent: CallbackAction<SearchIntent>(
+          onInvoke: (intent) {
+            print("Search shortcut invoked");
+            focusNode.requestFocus();
+            return null;
+          },
         ),
-      ),
-      body: ConstrainedBody(
-        child: Padding(
-          padding: EdgeInsets.all(context.gutter),
-          child: Column(
-            verticalDirection: context.verticalDirection,
-            spacing: context.gutter,
-            children: [
-              ListTile(
-                leading: Icon(Icons.search),
-                title: _SearchBar(),
-              ),
-              Expanded(
-                child: _CourseListView(),
-              ),
-            ],
+      },
+      child: Scaffold(
+        appBar: ConstrainedAppBar(
+          child: AppBar(
+            title: Text("Danh sách học phần"),
+          ),
+        ),
+        body: ConstrainedBody(
+          child: Padding(
+            padding: EdgeInsets.all(context.gutter),
+            child: Column(
+              verticalDirection: context.verticalDirection,
+              spacing: context.gutter,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.search),
+                  title: _SearchBar(),
+                ),
+                Expanded(
+                  child: _CourseListView(),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -122,8 +136,10 @@ class _CourseListView extends ConsumerWidget {
 class _SearchBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final focusNode = ref.watch(focusNodeProvider);
     final notifier = ref.read(searchTextProvider.notifier);
     return TextFormField(
+      focusNode: focusNode,
       onChanged: notifier.setDebounce,
       onFieldSubmitted: notifier.set,
       decoration: InputDecoration(

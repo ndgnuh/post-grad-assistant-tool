@@ -43,8 +43,12 @@ final _byId = FutureProvider.family(
         teacherByIdProvider(thesis.supervisorId).future,
       );
 
-      // TODO: proper implementation for secondary supervisor
-      secondarySupervisor = null;
+      switch (thesis.secondarySupervisorId) {
+        case int id:
+          secondarySupervisor = await ref.watch(teacherByIdProvider(id).future);
+        default:
+          secondarySupervisor = null;
+      }
       // secondarySupervisor = switch (thesis.secondarySupervisorId) {
       //   int sId => await ref.watch(teacherByIdProvider(sId).future),
       //   null => null,

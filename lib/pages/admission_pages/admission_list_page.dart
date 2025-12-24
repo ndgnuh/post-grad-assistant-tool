@@ -1,9 +1,8 @@
-import 'package:fami_tools/business/db_v2_providers.dart';
+import 'package:fami_tools/shortcuts.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:material_symbols_icons/symbols.dart';
 
-import '../../business/copy_pasta.dart';
+import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
 import 'admission_list_action_tab.dart';
 import 'admission_list_list_tab.dart';
@@ -16,13 +15,14 @@ class AdmissionListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
+    return TrackedTabController(
       length: 3,
       child: Scaffold(
         appBar: ConstrainedAppBar(
           withTabBar: true,
           child: AppBar(
             bottom: const TabBar(
+              isScrollable: true,
               tabs: [
                 Tab(text: "Danh sách"),
                 Tab(text: "Hành động"),

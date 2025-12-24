@@ -24,7 +24,7 @@ class DialogValue<T> {
 
 class InformationTile<T> extends StatefulWidget {
   final bool editOnTap;
-  final String titleText;
+  final String title;
   final Widget? leading;
   final Widget? trailing;
   final T? initialValue;
@@ -40,7 +40,7 @@ class InformationTile<T> extends StatefulWidget {
 
   const InformationTile({
     super.key,
-    required this.titleText,
+    required this.title,
     required this.initialValue,
     this.editOnTap = false,
     this.trailing,
@@ -98,7 +98,7 @@ class _InformationTileState<T> extends State<InformationTile<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final titleText = widget.titleText;
+    final title = widget.title;
     final readOnly = widget.readOnly;
 
     final editButton = readOnly
@@ -119,7 +119,7 @@ class _InformationTileState<T> extends State<InformationTile<T>> {
           };
 
           return ListTile(
-            title: Text(titleText),
+            title: Text(title),
             subtitle: Text(valueText),
             leading: widget.leading,
             trailing: widget.trailing ?? editButton,
@@ -217,7 +217,7 @@ class TextEditingDialog2 extends StatelessWidget {
 }
 
 class StringTile extends StatelessWidget {
-  final String titleText;
+  final String title;
   final bool editOnTap;
   final Widget? leading;
   final Widget? trailing;
@@ -230,7 +230,7 @@ class StringTile extends StatelessWidget {
 
   const StringTile({
     super.key,
-    required this.titleText,
+    required this.title,
     this.editOnTap = false,
     this.onUpdate,
     this.readOnly = false,
@@ -245,7 +245,7 @@ class StringTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InformationTile<String>(
-      titleText: titleText,
+      title: title,
       initialValue: initialValue,
       valueNotifier: valueNotifier,
       editOnTap: editOnTap,
@@ -256,7 +256,7 @@ class StringTile extends StatelessWidget {
       formatValue: (value) => value ?? "",
       showEditingDialog: (context, valueNotifier) async {
         return await TextEditingDialog2.show(
-          title: titleText,
+          title: title,
           context: context,
           initialValue: valueNotifier.value,
           inputFormatters: inputFormatters,
@@ -268,7 +268,7 @@ class StringTile extends StatelessWidget {
 }
 
 class IntegerTile extends StatelessWidget {
-  final String titleText;
+  final String title;
   final Widget? leading;
   final int initialValue;
   final ValueNotifier<int>? valueNotifier;
@@ -277,7 +277,7 @@ class IntegerTile extends StatelessWidget {
 
   const IntegerTile({
     super.key,
-    required this.titleText,
+    required this.title,
     this.onUpdate,
     this.valueNotifier,
     this.leading,
@@ -288,7 +288,7 @@ class IntegerTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InformationTile<int>(
-      titleText: titleText,
+      title: this.title,
       initialValue: initialValue,
       valueNotifier: valueNotifier,
       onUpdate: onUpdate,
@@ -297,7 +297,7 @@ class IntegerTile extends StatelessWidget {
       formatValue: (value) => value?.toString() ?? "0",
       showEditingDialog: (context, valueNotifier) async {
         final dialogValue = await TextEditingDialog2.show(
-          title: titleText,
+          title: this.title,
           context: context,
           initialValue: valueNotifier.value.toString(),
           keyboardType: TextInputType.number,
@@ -316,7 +316,7 @@ class IntegerTile extends StatelessWidget {
 }
 
 class SingleSelectionTile<T> extends StatelessWidget {
-  final String titleText;
+  final String title;
   final Widget? leading;
   final T? initialValue;
   final List<T?> options;
@@ -326,7 +326,7 @@ class SingleSelectionTile<T> extends StatelessWidget {
 
   const SingleSelectionTile({
     super.key,
-    required this.titleText,
+    required this.title,
     required this.options,
     this.initialValue,
     this.onUpdate,
@@ -338,7 +338,7 @@ class SingleSelectionTile<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InformationTile<T>(
-      titleText: titleText,
+      title: title,
       initialValue: initialValue,
       valueNotifier: valueNotifier,
       onUpdate: onUpdate,
@@ -348,7 +348,7 @@ class SingleSelectionTile<T> extends StatelessWidget {
         return await showDialog<DialogValue<T>?>(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text(titleText),
+            title: Text(title),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,

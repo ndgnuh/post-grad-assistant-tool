@@ -26,13 +26,11 @@ final studentListViewModelProvider = AsyncNotifierProvider(
 typedef CohortSelectionModel = SelectionModel<CohortData?>;
 
 class SearchModelNotifier extends Notifier<String> {
-  late FocusNode focusNode;
   late Duration duration;
   late Timer timer;
 
   SearchModelNotifier() {
     duration = Duration(milliseconds: 250);
-    focusNode = FocusNode();
     timer = Timer(Duration(seconds: 0), () {});
   }
 

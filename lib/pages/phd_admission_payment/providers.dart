@@ -103,7 +103,8 @@ class PaymentModel {
   }
 
   Future<PdfFile> get paymentRequestPdf => paymentRequestModel.pdf;
-  Future<PdfFile> get paymentAtmPdf => paymentAtmModel.pdf;
+  Future<PdfFile> paymentAtmPdf(PdfConfig config) =>
+      paymentAtmModel.pdf(config);
   XlsxFile get paymentAtmXlsx => paymentAtmModel.xlsx;
 }
 
@@ -184,10 +185,10 @@ final paymentAtmProvider = FutureProvider(
   },
 );
 
-final paymentAtmPdfProvider = FutureProvider(
-  (ref) async {
+final paymentAtmPdfProvider = FutureProvider.family(
+  (ref, PdfConfig config) async {
     final model = await ref.watch(paymentAtmProvider.future);
-    return model.pdf;
+    return model.pdf(config);
   },
 );
 
@@ -203,12 +204,18 @@ final paymentDoubleCheckProvider = FutureProvider((ref) async {
   return model.doubleCheckModel;
 });
 
-final paymentDoubleCheckSummaryPdfProvider = FutureProvider((ref) async {
+final paymentDoubleCheckSummaryPdfProvider = FutureProvider.family((
+  ref,
+  PdfConfig config,
+) async {
   final model = await ref.watch(paymentDoubleCheckProvider.future);
-  return model.summaryPdf;
+  return model.summaryPdf(config: config);
 });
 
-final paymentDoubleCheckPdfProvider = FutureProvider((ref) async {
+final paymentDoubleCheckPdfProvider = FutureProvider.family((
+  ref,
+  PdfConfig config,
+) async {
   final model = await ref.watch(paymentDoubleCheckProvider.future);
-  return model.pdf;
+  return model.pdf(config: config);
 });

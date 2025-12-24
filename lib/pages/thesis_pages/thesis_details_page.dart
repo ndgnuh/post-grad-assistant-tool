@@ -1,4 +1,5 @@
 /// TODO: depreceate this page, use a tabbed design version
+/// in the msc_thesis_details.dart file
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -35,11 +36,11 @@ class ThesisDetailPage extends ConsumerWidget {
       body: ListView(
         children: [
           StringTile(
-            titleText: "Tên tiếng Việt",
+            title: "Tên tiếng Việt",
             initialValue: thesis.vietnameseTitle,
           ),
           StringTile(
-            titleText: "Tên tiếng Anh",
+            title: "Tên tiếng Anh",
             initialValue: thesis.englishTitle,
           ),
           // StringTile(

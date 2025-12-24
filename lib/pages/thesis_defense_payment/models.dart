@@ -57,7 +57,7 @@ class ThesisPaymentModel {
   /* All the generated documents */
   Future<PdfFile> get paymentRequestPdf => paymentRequestModel.pdf;
   Future<DocxFile> get paymentRequestDocx => paymentRequestModel.docx;
-  Future<PdfFile> get paymentAtmPdf => paymentAtmModel.pdf;
+  Future<PdfFile> get paymentAtmPdf => paymentAtmModel.pdf();
   XlsxFile get paymentAtmXlsx => paymentAtmModel.xlsx;
 
   /// Model used to build Payment ATM document (PDF/Excel)

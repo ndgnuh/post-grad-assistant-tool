@@ -5,7 +5,6 @@ import 'package:path/path.dart' as p;
 
 import 'documents/common.dart';
 import 'documents/msc_teaching_assignment.dart' as msc_xlsx;
-import 'documents/msc_thesis/assignment.dart' as msc_thesis;
 import 'documents/msc_thesis/council_suggestion.dart' as msc_thesis;
 import 'documents/msc_thesis/score_sheet.dart' as msc_thesis;
 import 'documents/msc_thesis/council_decision.dart' as msc_thesis;
@@ -25,6 +24,8 @@ export 'documents/payment/atm_pdf.dart' show PaymentAtmModel, PaymentAtmEntry;
 export 'documents/payment/listing_pdf.dart';
 export 'documents/payment/request_pdf.dart' show PaymentRequestModel;
 
+export 'documents/msc_thesis/assignment.dart' show ThesisAssignmentModel;
+
 /// The idea is to have a single place for model
 /// The model holds constructor for pdf, excel or docx file
 /// This way, the info retrival code does not need to be
@@ -41,6 +42,7 @@ class DocumentFactory {
 class PdfFile {
   final String name;
   final Uint8List bytes;
+  final PdfConfig config;
 
   String get fileName => name.endsWith('.pdf') ? name : '$name.pdf';
 
@@ -64,7 +66,6 @@ class PdfFile {
     councilSuggestion: msc_thesis.councilSuggestionPdf,
     multipleScoreSheets: msc_thesis.thesisScoreSheetsMultiplePdf,
     multipleCouncilSuggestion: msc_thesis.multipleCouncilSuggestionPdfs,
-    assignment: msc_thesis.buildThesisAssignmentPdf,
   );
 
   static const payment = (
@@ -74,16 +75,13 @@ class PdfFile {
   PdfFile({
     required this.name,
     required this.bytes,
+    this.config = const PdfConfig(),
   });
 }
 
 extension XlsxFactory on XlsxFile {
   static const msc = (
     teachingAssignment: msc_xlsx.buildTeachingAssignmentXlsx,
-  );
-
-  static const mscThesis = (
-    assignment: msc_thesis.buildThesisAssignmentExcel,
   );
 }
 

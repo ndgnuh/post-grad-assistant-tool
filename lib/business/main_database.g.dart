@@ -7347,6 +7347,16 @@ class Thesis extends Table with TableInfo<Thesis, ThesisData> {
     requiredDuringInsert: true,
     $customConstraints: 'NOT NULL REFERENCES teacher(id)',
   );
+  static const VerificationMeta _secondarySupervisorIdMeta =
+      const VerificationMeta('secondarySupervisorId');
+  late final GeneratedColumn<int> secondarySupervisorId = GeneratedColumn<int>(
+    'secondary_supervisor_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES teacher(id)',
+  );
   static const VerificationMeta _presidentIdMeta = const VerificationMeta(
     'presidentId',
   );
@@ -7577,6 +7587,7 @@ class Thesis extends Table with TableInfo<Thesis, ThesisData> {
   List<GeneratedColumn> get $columns => [
     id,
     supervisorId,
+    secondarySupervisorId,
     presidentId,
     firstReviewerId,
     secondReviewerId,
@@ -7624,6 +7635,15 @@ class Thesis extends Table with TableInfo<Thesis, ThesisData> {
       );
     } else if (isInserting) {
       context.missing(_supervisorIdMeta);
+    }
+    if (data.containsKey('secondary_supervisor_id')) {
+      context.handle(
+        _secondarySupervisorIdMeta,
+        secondarySupervisorId.isAcceptableOrUnknown(
+          data['secondary_supervisor_id']!,
+          _secondarySupervisorIdMeta,
+        ),
+      );
     }
     if (data.containsKey('president_id')) {
       context.handle(
@@ -7796,6 +7816,10 @@ class Thesis extends Table with TableInfo<Thesis, ThesisData> {
         DriftSqlType.int,
         data['${effectivePrefix}supervisor_id'],
       )!,
+      secondarySupervisorId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}secondary_supervisor_id'],
+      ),
       presidentId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}president_id'],
@@ -7903,6 +7927,7 @@ class Thesis extends Table with TableInfo<Thesis, ThesisData> {
 class ThesisData extends DataClass implements Insertable<ThesisData> {
   final int id;
   final int supervisorId;
+  final int? secondarySupervisorId;
   final int? presidentId;
   final int? firstReviewerId;
   final int? secondReviewerId;
@@ -7930,6 +7955,7 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
   const ThesisData({
     required this.id,
     required this.supervisorId,
+    this.secondarySupervisorId,
     this.presidentId,
     this.firstReviewerId,
     this.secondReviewerId,
@@ -7957,6 +7983,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['supervisor_id'] = Variable<int>(supervisorId);
+    if (!nullToAbsent || secondarySupervisorId != null) {
+      map['secondary_supervisor_id'] = Variable<int>(secondarySupervisorId);
+    }
     if (!nullToAbsent || presidentId != null) {
       map['president_id'] = Variable<int>(presidentId);
     }
@@ -8019,6 +8048,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     return ThesisCompanion(
       id: Value(id),
       supervisorId: Value(supervisorId),
+      secondarySupervisorId: secondarySupervisorId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(secondarySupervisorId),
       presidentId: presidentId == null && nullToAbsent
           ? const Value.absent()
           : Value(presidentId),
@@ -8075,6 +8107,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     return ThesisData(
       id: serializer.fromJson<int>(json['id']),
       supervisorId: serializer.fromJson<int>(json['supervisor_id']),
+      secondarySupervisorId: serializer.fromJson<int?>(
+        json['secondary_supervisor_id'],
+      ),
       presidentId: serializer.fromJson<int?>(json['president_id']),
       firstReviewerId: serializer.fromJson<int?>(json['first_reviewer_id']),
       secondReviewerId: serializer.fromJson<int?>(json['second_reviewer_id']),
@@ -8108,6 +8143,7 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'supervisor_id': serializer.toJson<int>(supervisorId),
+      'secondary_supervisor_id': serializer.toJson<int?>(secondarySupervisorId),
       'president_id': serializer.toJson<int?>(presidentId),
       'first_reviewer_id': serializer.toJson<int?>(firstReviewerId),
       'second_reviewer_id': serializer.toJson<int?>(secondReviewerId),
@@ -8135,6 +8171,7 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
   ThesisData copyWith({
     int? id,
     int? supervisorId,
+    Value<int?> secondarySupervisorId = const Value.absent(),
     Value<int?> presidentId = const Value.absent(),
     Value<int?> firstReviewerId = const Value.absent(),
     Value<int?> secondReviewerId = const Value.absent(),
@@ -8159,6 +8196,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
   }) => ThesisData(
     id: id ?? this.id,
     supervisorId: supervisorId ?? this.supervisorId,
+    secondarySupervisorId: secondarySupervisorId.present
+        ? secondarySupervisorId.value
+        : this.secondarySupervisorId,
     presidentId: presidentId.present ? presidentId.value : this.presidentId,
     firstReviewerId: firstReviewerId.present
         ? firstReviewerId.value
@@ -8199,6 +8239,9 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
       supervisorId: data.supervisorId.present
           ? data.supervisorId.value
           : this.supervisorId,
+      secondarySupervisorId: data.secondarySupervisorId.present
+          ? data.secondarySupervisorId.value
+          : this.secondarySupervisorId,
       presidentId: data.presidentId.present
           ? data.presidentId.value
           : this.presidentId,
@@ -8258,6 +8301,7 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
     return (StringBuffer('ThesisData(')
           ..write('id: $id, ')
           ..write('supervisorId: $supervisorId, ')
+          ..write('secondarySupervisorId: $secondarySupervisorId, ')
           ..write('presidentId: $presidentId, ')
           ..write('firstReviewerId: $firstReviewerId, ')
           ..write('secondReviewerId: $secondReviewerId, ')
@@ -8287,6 +8331,7 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
   int get hashCode => Object.hashAll([
     id,
     supervisorId,
+    secondarySupervisorId,
     presidentId,
     firstReviewerId,
     secondReviewerId,
@@ -8315,6 +8360,7 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
       (other is ThesisData &&
           other.id == this.id &&
           other.supervisorId == this.supervisorId &&
+          other.secondarySupervisorId == this.secondarySupervisorId &&
           other.presidentId == this.presidentId &&
           other.firstReviewerId == this.firstReviewerId &&
           other.secondReviewerId == this.secondReviewerId &&
@@ -8341,6 +8387,7 @@ class ThesisData extends DataClass implements Insertable<ThesisData> {
 class ThesisCompanion extends UpdateCompanion<ThesisData> {
   final Value<int> id;
   final Value<int> supervisorId;
+  final Value<int?> secondarySupervisorId;
   final Value<int?> presidentId;
   final Value<int?> firstReviewerId;
   final Value<int?> secondReviewerId;
@@ -8365,6 +8412,7 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
   const ThesisCompanion({
     this.id = const Value.absent(),
     this.supervisorId = const Value.absent(),
+    this.secondarySupervisorId = const Value.absent(),
     this.presidentId = const Value.absent(),
     this.firstReviewerId = const Value.absent(),
     this.secondReviewerId = const Value.absent(),
@@ -8390,6 +8438,7 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
   ThesisCompanion.insert({
     this.id = const Value.absent(),
     required int supervisorId,
+    this.secondarySupervisorId = const Value.absent(),
     this.presidentId = const Value.absent(),
     this.firstReviewerId = const Value.absent(),
     this.secondReviewerId = const Value.absent(),
@@ -8419,6 +8468,7 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
   static Insertable<ThesisData> custom({
     Expression<int>? id,
     Expression<int>? supervisorId,
+    Expression<int>? secondarySupervisorId,
     Expression<int>? presidentId,
     Expression<int>? firstReviewerId,
     Expression<int>? secondReviewerId,
@@ -8444,6 +8494,8 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (supervisorId != null) 'supervisor_id': supervisorId,
+      if (secondarySupervisorId != null)
+        'secondary_supervisor_id': secondarySupervisorId,
       if (presidentId != null) 'president_id': presidentId,
       if (firstReviewerId != null) 'first_reviewer_id': firstReviewerId,
       if (secondReviewerId != null) 'second_reviewer_id': secondReviewerId,
@@ -8471,6 +8523,7 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
   ThesisCompanion copyWith({
     Value<int>? id,
     Value<int>? supervisorId,
+    Value<int?>? secondarySupervisorId,
     Value<int?>? presidentId,
     Value<int?>? firstReviewerId,
     Value<int?>? secondReviewerId,
@@ -8496,6 +8549,8 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
     return ThesisCompanion(
       id: id ?? this.id,
       supervisorId: supervisorId ?? this.supervisorId,
+      secondarySupervisorId:
+          secondarySupervisorId ?? this.secondarySupervisorId,
       presidentId: presidentId ?? this.presidentId,
       firstReviewerId: firstReviewerId ?? this.firstReviewerId,
       secondReviewerId: secondReviewerId ?? this.secondReviewerId,
@@ -8530,6 +8585,11 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
     }
     if (supervisorId.present) {
       map['supervisor_id'] = Variable<int>(supervisorId.value);
+    }
+    if (secondarySupervisorId.present) {
+      map['secondary_supervisor_id'] = Variable<int>(
+        secondarySupervisorId.value,
+      );
     }
     if (presidentId.present) {
       map['president_id'] = Variable<int>(presidentId.value);
@@ -8606,6 +8666,7 @@ class ThesisCompanion extends UpdateCompanion<ThesisData> {
     return (StringBuffer('ThesisCompanion(')
           ..write('id: $id, ')
           ..write('supervisorId: $supervisorId, ')
+          ..write('secondarySupervisorId: $secondarySupervisorId, ')
           ..write('presidentId: $presidentId, ')
           ..write('firstReviewerId: $firstReviewerId, ')
           ..write('secondReviewerId: $secondReviewerId, ')
@@ -18384,6 +18445,7 @@ typedef $ThesisCreateCompanionBuilder =
     ThesisCompanion Function({
       Value<int> id,
       required int supervisorId,
+      Value<int?> secondarySupervisorId,
       Value<int?> presidentId,
       Value<int?> firstReviewerId,
       Value<int?> secondReviewerId,
@@ -18410,6 +18472,7 @@ typedef $ThesisUpdateCompanionBuilder =
     ThesisCompanion Function({
       Value<int> id,
       Value<int> supervisorId,
+      Value<int?> secondarySupervisorId,
       Value<int?> presidentId,
       Value<int?> firstReviewerId,
       Value<int?> secondReviewerId,
@@ -18449,6 +18512,27 @@ final class $ThesisReferences
       $_db.teacher,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_supervisorIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static Teacher _secondarySupervisorIdTable(_$AppDatabase db) =>
+      db.teacher.createAlias(
+        $_aliasNameGenerator(db.thesis.secondarySupervisorId, db.teacher.id),
+      );
+
+  $TeacherProcessedTableManager? get secondarySupervisorId {
+    final $_column = $_itemColumn<int>('secondary_supervisor_id');
+    if ($_column == null) return null;
+    final manager = $TeacherTableManager(
+      $_db,
+      $_db.teacher,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(
+      _secondarySupervisorIdTable($_db),
+    );
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -18678,6 +18762,29 @@ class $ThesisFilterComposer extends Composer<_$AppDatabase, Thesis> {
     final $TeacherFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.supervisorId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherFilterComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $TeacherFilterComposer get secondarySupervisorId {
+    final $TeacherFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.secondarySupervisorId,
       referencedTable: $db.teacher,
       getReferencedColumn: (t) => t.id,
       builder:
@@ -18965,6 +19072,29 @@ class $ThesisOrderingComposer extends Composer<_$AppDatabase, Thesis> {
     return composer;
   }
 
+  $TeacherOrderingComposer get secondarySupervisorId {
+    final $TeacherOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.secondarySupervisorId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherOrderingComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $TeacherOrderingComposer get presidentId {
     final $TeacherOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -19225,6 +19355,29 @@ class $ThesisAnnotationComposer extends Composer<_$AppDatabase, Thesis> {
     return composer;
   }
 
+  $TeacherAnnotationComposer get secondarySupervisorId {
+    final $TeacherAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.secondarySupervisorId,
+      referencedTable: $db.teacher,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $TeacherAnnotationComposer(
+            $db: $db,
+            $table: $db.teacher,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $TeacherAnnotationComposer get presidentId {
     final $TeacherAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -19402,6 +19555,7 @@ class $ThesisTableManager
           ThesisData,
           PrefetchHooks Function({
             bool supervisorId,
+            bool secondarySupervisorId,
             bool presidentId,
             bool firstReviewerId,
             bool secondReviewerId,
@@ -19426,6 +19580,7 @@ class $ThesisTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int> supervisorId = const Value.absent(),
+                Value<int?> secondarySupervisorId = const Value.absent(),
                 Value<int?> presidentId = const Value.absent(),
                 Value<int?> firstReviewerId = const Value.absent(),
                 Value<int?> secondReviewerId = const Value.absent(),
@@ -19450,6 +19605,7 @@ class $ThesisTableManager
               }) => ThesisCompanion(
                 id: id,
                 supervisorId: supervisorId,
+                secondarySupervisorId: secondarySupervisorId,
                 presidentId: presidentId,
                 firstReviewerId: firstReviewerId,
                 secondReviewerId: secondReviewerId,
@@ -19476,6 +19632,7 @@ class $ThesisTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required int supervisorId,
+                Value<int?> secondarySupervisorId = const Value.absent(),
                 Value<int?> presidentId = const Value.absent(),
                 Value<int?> firstReviewerId = const Value.absent(),
                 Value<int?> secondReviewerId = const Value.absent(),
@@ -19500,6 +19657,7 @@ class $ThesisTableManager
               }) => ThesisCompanion.insert(
                 id: id,
                 supervisorId: supervisorId,
+                secondarySupervisorId: secondarySupervisorId,
                 presidentId: presidentId,
                 firstReviewerId: firstReviewerId,
                 secondReviewerId: secondReviewerId,
@@ -19528,6 +19686,7 @@ class $ThesisTableManager
           prefetchHooksCallback:
               ({
                 supervisorId = false,
+                secondarySupervisorId = false,
                 presidentId = false,
                 firstReviewerId = false,
                 secondReviewerId = false,
@@ -19564,6 +19723,19 @@ class $ThesisTableManager
                                         ._supervisorIdTable(db),
                                     referencedColumn: $ThesisReferences
                                         ._supervisorIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+                        if (secondarySupervisorId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.secondarySupervisorId,
+                                    referencedTable: $ThesisReferences
+                                        ._secondarySupervisorIdTable(db),
+                                    referencedColumn: $ThesisReferences
+                                        ._secondarySupervisorIdTable(db)
                                         .id,
                                   )
                                   as T;
@@ -19685,6 +19857,7 @@ typedef $ThesisProcessedTableManager =
       ThesisData,
       PrefetchHooks Function({
         bool supervisorId,
+        bool secondarySupervisorId,
         bool presidentId,
         bool firstReviewerId,
         bool secondReviewerId,

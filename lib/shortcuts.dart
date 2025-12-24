@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod/riverpod.dart';
 
 final navigationKey = GlobalKey<NavigatorState>();
 final searchAnchorKey = GlobalKey<State<SearchAnchor>>();
@@ -8,6 +9,88 @@ final scaffoldKey = GlobalKey<ScaffoldState>();
 final globalFocusKey = GlobalKey<State<Focus>>();
 final searchFieldKey = GlobalKey<State<TextField>>();
 final shortcutStateKey = GlobalKey<State<CommonShortcuts>>();
+
+final focusNodeProvider = Provider.autoDispose<FocusNode>((ref) {
+  final focusNode = FocusNode();
+  ref.onDispose(() => focusNode.dispose());
+  return focusNode;
+});
+
+final tabControllerNotifier = ValueNotifier<TabController?>(null);
+
+extension TabControllerExt on BuildContext {
+  TabController? get tabController => tabControllerNotifier.value;
+}
+
+class TrackedTabController extends StatelessWidget {
+  final int length;
+  final int initialIndex;
+  final Widget child;
+  final Duration? animationDuration;
+
+  const TrackedTabController({
+    super.key,
+    required this.length,
+    this.initialIndex = 0,
+    required this.child,
+    this.animationDuration,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: length,
+      initialIndex: initialIndex,
+      animationDuration: animationDuration,
+      child: Builder(
+        builder: (context) {
+          final controller = DefaultTabController.of(context);
+          tabControllerNotifier.value = controller;
+          return child;
+        },
+      ),
+    );
+  }
+}
+
+class NextTabIntent extends Intent {
+  const NextTabIntent();
+}
+
+class PreviousTabIntent extends Intent {
+  const PreviousTabIntent();
+}
+
+class ChangeTabAction extends Action<NextTabIntent> {
+  final BuildContext context;
+  final int offset;
+
+  ChangeTabAction({
+    required this.context,
+    required this.offset,
+  });
+
+  @override
+  Object? invoke(NextTabIntent intent) {
+    print("Invoking [ChangeTabAction] with offset $offset");
+    final tabController = context.tabController;
+    switch (tabController) {
+      case null:
+        print("No TabController found in context");
+        return null;
+      case TabController controller:
+        int newIndex = controller.index + offset;
+        print(("Current tab index: ${controller.index}, new index: $newIndex"));
+        if (newIndex < 0) {
+          newIndex = controller.length - 1;
+        } else if (newIndex >= controller.length) {
+          newIndex = 0;
+        }
+        controller.animateTo(newIndex);
+        return null;
+    }
+  }
+}
 
 class QuickActions {
   final String title;
@@ -75,10 +158,18 @@ class CreateNewIntent extends Intent {
 }
 
 class GoBackAction extends Action<GoBackIntent> {
+  final BuildContext context;
+  GoBackAction({required this.context});
+
   @override
   Object? invoke(GoBackIntent intent) {
-    final navigator = navigationKey.currentState!;
     print("Invoking GoBackAction");
+    final navigator = Navigator.maybeOf(context);
+    if (navigator == null) {
+      print("No navigator found in context");
+      return null;
+    }
+
     if (navigator.canPop()) {
       navigator.pop();
     } else {
@@ -89,14 +180,16 @@ class GoBackAction extends Action<GoBackIntent> {
 }
 
 class SearchAction extends Action<SearchIntent> {
-  final SearchController controller;
+  final BuildContext context;
+  final WidgetRef ref;
 
-  SearchAction(this.controller);
+  SearchAction({required this.context, required this.ref});
 
   @override
   Object? invoke(SearchIntent intent) {
     print("Invoking SearchAction");
-    controller.openView();
+    final focusNode = ref.read(focusNodeProvider);
+    focusNode.requestFocus();
     return null;
   }
 }
@@ -110,11 +203,11 @@ final keys = (
 );
 
 Map<LogicalKeySet, Intent> defaultShortcuts() => {
-      keys.ctrlC: const CopyIntent(),
-      keys.ctrlF: const SearchIntent(),
-      keys.altLeft: const GoBackIntent(),
-      keys.ctrlN: const CreateNewIntent(),
-    };
+  keys.ctrlC: const CopyIntent(),
+  keys.ctrlF: const SearchIntent(),
+  keys.altLeft: const GoBackIntent(),
+  keys.ctrlN: const CreateNewIntent(),
+};
 
 class LoggingShortcutManager extends ShortcutManager {
   @override
@@ -147,7 +240,7 @@ class MyShortcuts extends StatelessWidget {
         autofocus: true,
         child: Actions(
           actions: {
-            GoBackIntent: GoBackAction(),
+            GoBackIntent: GoBackAction(context: context),
           },
           child: child,
         ),

@@ -8,6 +8,7 @@ class ThesisViewModel {
   final StudentData? student;
   final ThesisData thesis;
   final TeacherData supervisor;
+  final TeacherData? secondarySupervisor;
 
   final TeacherData? president;
   final TeacherData? secretary;
@@ -22,6 +23,7 @@ class ThesisViewModel {
     required this.student,
     required this.thesis,
     required this.supervisor,
+    this.secondarySupervisor,
     this.president,
     this.secretary,
     this.firstReviewer,
@@ -65,6 +67,11 @@ final _byIdProvider = FutureProvider.family(
       teacherByIdProvider(thesis.supervisorId).future,
     );
 
+    final secondarySupervisor = switch (thesis.secondarySupervisorId) {
+      null => null,
+      int id => await ref.watch(teacherByIdProvider(id).future),
+    };
+
     final president = switch (thesis.presidentId) {
       null => null,
       int id => await ref.watch(teacherByIdProvider(id).future),
@@ -104,6 +111,7 @@ final _byIdProvider = FutureProvider.family(
       student: student,
       thesis: thesis,
       supervisor: supervisor,
+      secondarySupervisor: secondarySupervisor,
       president: president,
       secretary: secretary,
       firstReviewer: firstReviewer,

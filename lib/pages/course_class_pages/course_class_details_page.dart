@@ -135,7 +135,7 @@ class CourseClassDetailsTab extends ConsumerWidget {
               ),
 
               StringTile(
-                titleText: 'Nhóm lớp',
+                title: 'Nhóm lớp',
                 initialValue: courseClass.accessUrl ?? "",
                 editOnTap: true,
                 trailing: Icon(Symbols.edit),
@@ -158,7 +158,7 @@ class CourseClassDetailsTab extends ConsumerWidget {
             title: "Lịch học",
             children: [
               StringTile(
-                titleText: "Phòng học",
+                title: "Phòng học",
                 editOnTap: true,
                 trailing: Icon(Symbols.edit),
                 initialValue: courseClass.classroom ?? "",

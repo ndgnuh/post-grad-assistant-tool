@@ -3,7 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/db_v2_providers.dart';
+import '../../shortcuts.dart';
 import './providers.dart';
+
+final FocusNode searchFocusNode = FocusNode();
 
 class CohortReset extends ConsumerWidget {
   const CohortReset({super.key});
@@ -121,10 +124,10 @@ class StudentSearchBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.watch(searchModelProvider.notifier);
-
+    final focusNode = ref.watch(focusNodeProvider);
     return IntrinsicWidth(
       child: TextField(
-        focusNode: notifier.focusNode,
+        focusNode: focusNode,
         onChanged: (text) => notifier.debounceSet(text),
         onSubmitted: (text) => notifier.set(text),
         // onFieldSubmitted: (text) => notifier.set(text),

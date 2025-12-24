@@ -165,7 +165,7 @@ final paymentAtmProvider = FutureProvider<PaymentAtmModel>((ref) async {
 
 final paymentAtmPdfProvider = FutureProvider<PdfFile>((ref) async {
   final model = await ref.watch(paymentAtmProvider.future);
-  return model.pdf;
+  return model.pdf();
 });
 
 final paymentAtmXlsxProvider = FutureProvider<XlsxFile>((ref) async {

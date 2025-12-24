@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:drift/drift.dart' hide Column;
+import 'package:fami_tools/shortcuts.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -295,7 +296,7 @@ class CourseLimitingPage extends StatelessWidget {
 
     final gutter = context.responsiveGutter;
 
-    return DefaultTabController(
+    return TrackedTabController(
       length: 2,
       child: Scaffold(
         appBar: ConstrainedAppBar(

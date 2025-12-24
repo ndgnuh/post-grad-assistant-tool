@@ -8,24 +8,30 @@ import '../xlsx_utils.dart' hide TextSpan;
 
 export '../models/payment_atm.dart';
 
+final defaultDocumentConfig = PdfConfig(
+  baseFontSize: 12 * pt,
+  verticalMargin: 1 * inch,
+  horizontalMargin: 1 * inch,
+  verticalTableCellPadding: 3 * pt,
+  horizontalTableCellPadding: 3 * pt,
+  pageFormat: PdfPageFormat.a4.transpose,
+);
+
 const _taxPercent = 0.1;
 
 Future<PdfFile> _pdf({
   required PaymentAtmModel model,
-  double baseFontSize = 10,
-  EdgeInsets margin = const EdgeInsets.symmetric(
-    vertical: 1 * inch,
-    horizontal: 0.79 * inch,
-  ),
-  EdgeInsets tableCellPadding = const EdgeInsets.symmetric(
-    vertical: 2 * pt,
-    horizontal: 3 * pt,
-  ),
+  PdfConfig config = const PdfConfig(),
 }) async {
+  final baseFontSize = config.baseFontSize;
+
   final bytes = await buildMultiPageDocument(
     pageFormat: PdfPageFormat.a4.transpose,
-    margin: margin,
-    baseFontSize: baseFontSize,
+    margin: EdgeInsets.symmetric(
+      vertical: config.verticalMargin,
+      horizontal: config.horizontalMargin,
+    ),
+    baseFontSize: config.baseFontSize,
     footer: (context) => Footer(
       leading: Text("Trang ${context.pageNumber}/${context.pagesCount}"),
     ),
@@ -34,14 +40,7 @@ Future<PdfFile> _pdf({
       final year = DateTime.now().year;
 
       // Default theme
-      final theme = Theme.of(context);
-      final defaultTextStyle = theme.defaultTextStyle;
-      final defaultFontSize = defaultTextStyle.fontSize ?? 10;
-
       final totalAfterTax = model.totalAfterTax;
-
-      final summaryTable = model.dataRows;
-      final headers = model.dataHeaders;
 
       final titleStyle = TextStyle(
         fontSize: baseFontSize + 2,
@@ -72,6 +71,10 @@ Future<PdfFile> _pdf({
         EzTable(
           data: model.dataRows,
           headers: model.dataHeaders,
+          padding: EdgeInsets.symmetric(
+            vertical: config.verticalTableCellPadding,
+            horizontal: config.horizontalTableCellPadding,
+          ),
           alignments: {
             for (int i = 0; i < 8; i++) i: Alignment.center,
             1: Alignment.centerLeft,
@@ -112,24 +115,6 @@ Future<PdfFile> _pdf({
             ];
           },
         ),
-        //   headerAlignments: {
-        //     for (int i = 0; i < 8; i++) i: Alignment.center,
-        //   },
-        //   cellPadding: tableCellPadding,
-        //   cellAlignment: Alignment.center,
-        //   cellAlignments: {1: Alignment.centerLeft},
-        //   headerStyle: TextStyle(fontWeight: FontWeight.bold),
-        //   data: [headers, ...summaryTable],
-        //   textStyleBuilder: (col, data, row) {
-        //     if (row == 0 || (row == summaryTable.length && col != 3)) {
-        //       return TextStyle(
-        //         fontSize: defaultFontSize,
-        //         fontWeight: FontWeight.bold,
-        //       );
-        //     }
-        //     return TextStyle(fontSize: defaultFontSize);
-        //   },
-        // ),
 
         // Summary text
         SizedBox(height: 12 * pt), // Space between table and summary text
@@ -199,7 +184,7 @@ Future<PdfFile> _pdf({
   );
 
   final name = model.fileName;
-  return PdfFile(name: name, bytes: bytes);
+  return PdfFile(name: name, bytes: bytes, config: config);
 }
 
 XlsxFile _xlsx({required PaymentAtmModel model}) {
@@ -263,7 +248,8 @@ class PaymentAtmModel {
     return sorted;
   }
 
-  Future<PdfFile> get pdf => _pdf(model: this);
+  Future<PdfFile> pdf([PdfConfig config = const PdfConfig()]) =>
+      _pdf(model: this, config: config);
   XlsxFile get xlsx => _xlsx(model: this);
 
   List<String> get dataHeaders => [

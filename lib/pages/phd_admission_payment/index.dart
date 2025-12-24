@@ -1,7 +1,10 @@
+import 'package:fami_tools/business/documents.dart';
+import 'package:fami_tools/business/documents/common.dart' show PdfConfig;
 import 'package:fami_tools/custom_widgets.dart';
-import 'package:fami_tools/custom_widgets/pdf_preview_tile.dart';
+import 'package:fami_tools/custom_widgets/pdf_viewer.dart';
 import 'package:fami_tools/custom_widgets/pref_hooks.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -17,6 +20,7 @@ class PhdAdmissionPaymentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+      initialIndex: (kReleaseMode ? 0 : 1),
       length: 2,
       child: Scaffold(
         appBar: ConstrainedAppBar(
@@ -68,36 +72,60 @@ class _ActionTab extends HookWidget {
       defaultValue: null,
     );
 
+    final configs = (
+      atm: useState(PdfConfig()),
+      doubleCheck: useState(PdfConfig()),
+      paymentRequest: useState(PdfConfig()),
+    );
+
     final paymentProfileButtons = [
       Consumer(
-        builder: (context, ref, _) => PdfPreviewTile(
+        builder: (context, ref, _) => PdfViewerTile(
           title: Text("Đề nghị thanh toán"),
           subtitle: Text("Xem trước PDF"),
-          pdfFileAsync: ref.watch(paymentRequestPdfProvider),
+          initialConfig: configs.paymentRequest.value,
+          pdfBuilder: (config) => ref.read(paymentRequestPdfProvider.future),
         ),
       ),
 
       Consumer(
-        builder: (context, ref, _) => PdfPreviewTile(
-          title: Text("Bảng ATM (x2)"),
-          subtitle: Text("Xem trước PDF"),
-          pdfFileAsync: ref.watch(paymentAtmPdfProvider),
-        ),
+        builder: (context, ref, _) {
+          final title = Text("Bảng ATM");
+          final subtitle = Text("Xem trước PDF");
+          return PdfViewerTile(
+            title: title,
+            subtitle: subtitle,
+            initialConfig: configs.atm.value,
+            onConfigChanged: (newConfig) => configs.atm.value = newConfig,
+            pdfBuilder: (config) =>
+                ref.read(paymentAtmPdfProvider(configs.atm.value).future),
+          );
+        },
       ),
 
       Consumer(
-        builder: (context, ref, _) => PdfPreviewTile(
+        builder: (context, ref, _) => PdfViewerTile(
           title: Text("Bảng kiểm tra thanh toán"),
           subtitle: Text("Xem trước PDF"),
-          pdfFileAsync: ref.watch(paymentDoubleCheckPdfProvider),
+          initialConfig: configs.doubleCheck.value,
+          onConfigChanged: (newConfig) => configs.doubleCheck.value = newConfig,
+          pdfBuilder: (config) => ref.read(
+            paymentDoubleCheckPdfProvider(configs.doubleCheck.value).future,
+          ),
         ),
       ),
 
       Consumer(
-        builder: (context, ref, _) => PdfPreviewTile(
+        builder: (context, ref, _) => PdfViewerTile(
           title: Text("Bảng kiểm tra thanh toán (tổng hợp)"),
           subtitle: Text("Xem trước PDF"),
-          pdfFileAsync: ref.watch(paymentDoubleCheckSummaryPdfProvider),
+          initialConfig: configs.doubleCheck.value,
+          onConfigChanged: (newConfig) => configs.doubleCheck.value = newConfig,
+          pdfBuilder: (config) => ref.read(
+            paymentDoubleCheckSummaryPdfProvider(
+              configs.doubleCheck.value,
+            ).future,
+          ),
         ),
       ),
 
@@ -132,9 +160,18 @@ class _ActionTab extends HookWidget {
             }
             final requestPdf = ref.read(paymentRequestPdfProvider.future);
             final requestDocx = ref.read(paymentRequestDocxProvider.future);
-            final atmPdf = ref.read(paymentAtmPdfProvider.future);
+            final atmPdf = ref.read(
+              paymentAtmPdfProvider(configs.atm.value).future,
+            );
             final atmXlsx = ref.read(paymentAtmXlsxProvider.future);
-            final checkPdf = ref.read(paymentDoubleCheckPdfProvider.future);
+            final checkPdf = ref.read(
+              paymentDoubleCheckPdfProvider(configs.doubleCheck.value).future,
+            );
+            final checkSummaryPdf = ref.read(
+              paymentDoubleCheckSummaryPdfProvider(
+                configs.doubleCheck.value,
+              ).future,
+            );
 
             final checkModel = await ref.read(
               paymentDoubleCheckProvider.future,
@@ -145,7 +182,7 @@ class _ActionTab extends HookWidget {
             (await atmXlsx).save(directory: saveDir);
             (await atmPdf).save(directory: saveDir);
             (await checkPdf).save(directory: saveDir);
-            (await checkModel.summaryPdf).save(directory: saveDir);
+            (await checkSummaryPdf).save(directory: saveDir);
 
             checkModel.xlsx.save(directory: saveDir);
             messenger.showSnackBar(

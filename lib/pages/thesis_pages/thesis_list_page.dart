@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,7 +7,6 @@ import '../../custom_widgets.dart';
 import './providers.dart';
 import './widgets.dart';
 import 'thesis_list_action_tab.dart' show ThesisListActionTab;
-import 'thesis_pages.dart';
 
 class ThesisListPage extends StatelessWidget {
   static const routeName = '/thesis/topic/list';
