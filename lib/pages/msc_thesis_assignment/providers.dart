@@ -10,8 +10,8 @@ final _name = "msc-thesis-assignment";
 
 final assignmentModelProvider = FutureProvider((Ref ref) async {
   final cohortModel = await ref.watch(cohortSelectionProvider.future);
-  final selectedCohort = cohortModel.selected;
-  if (selectedCohort == null) return null;
+  assert(cohortModel.selected != null, "Chưa chọn khóa học");
+  final selectedCohort = cohortModel.selected!;
 
   final studentIds = await ref.watch(
     studentIdsByCohortProvider(selectedCohort).future,
@@ -28,14 +28,16 @@ final assignmentModelProvider = FutureProvider((Ref ref) async {
   );
 });
 
-final assignmentPdfProvider = FutureProvider<PdfFile?>((Ref ref) async {
-  final model = await ref.watch(assignmentModelProvider.future);
-  return model?.pdf;
-});
+final assignmentPdfProvider = FutureProvider.family<PdfFile, PdfConfig>(
+  (Ref ref, PdfConfig config) async {
+    final model = await ref.watch(assignmentModelProvider.future);
+    return model.pdf(config);
+  },
+);
 
 final assignmentXlsxProvider = FutureProvider<XlsxFile?>((Ref ref) async {
   final model = await ref.watch(assignmentModelProvider.future);
-  return model?.xlsx;
+  return model.xlsx;
 });
 
 final cohortSelectionProvider = AsyncNotifierProvider(

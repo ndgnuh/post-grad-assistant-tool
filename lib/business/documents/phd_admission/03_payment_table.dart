@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:fami_tools/business/documents/pdf_utils.dart';
 import 'package:fami_tools/utilities/strings.dart';
 
@@ -49,13 +47,7 @@ class PaymentTable extends StatelessWidget {
   final TeacherData firstMember;
   final TeacherData secondMember;
   final TeacherData thirdMember;
-  final TeacherData? asisstant = TeacherData(
-    id: -1,
-    isOutsider: false,
-    name: "Nguyễn Đức Hùng",
-    university: "Đại học Bách khoa Hà Nội",
-    gender: Gender.male,
-  );
+  final TeacherData? asisstant;
 
   PaymentTable({
     required this.student,
@@ -64,6 +56,7 @@ class PaymentTable extends StatelessWidget {
     required this.firstMember,
     required this.secondMember,
     required this.thirdMember,
+    this.asisstant,
   });
 
   @override

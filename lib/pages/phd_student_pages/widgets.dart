@@ -1,3 +1,4 @@
+import 'package:fami_tools/shortcuts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -44,6 +45,8 @@ class CohortSelector extends ConsumerWidget {
     final model = modelAsync.value!;
 
     return DropdownMenu<PhdCohortData?>(
+      focusNode: FocusNodeProvider.maybeOf(context),
+      enableFilter: true,
       expandedInsets: EdgeInsets.zero,
       initialSelection: model.selected,
       label: const Text('Niên khóa NCS'),

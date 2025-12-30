@@ -1,48 +1,19 @@
 import 'package:fami_tools/business/selection_models.dart';
+import 'package:fami_tools/shortcuts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
-import './providers.dart';
-
-const _lastCohortKey = '$_pagePreferenceKey/cohort';
-const _pagePreferenceKey = 'phd_student/create';
-final _viewModelProvider = NotifierProvider(_ViewModelNotifier.new);
 
 final specializationSelectionProvider = AsyncNotifierProvider(
   () => PhdSpecializationSelectionModelNotifier('admission'),
 );
-
-Future<String> _getLastCohort() async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getString(_lastCohortKey) ?? '';
-}
-
-Future<void> _setLastCohort(String cohort) async {
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setString(_lastCohortKey, cohort);
-}
-
-class GenderPicker extends StatefulWidget {
-  final Gender initialSelection;
-  final ValueChanged<Gender?>? onChanged;
-  final ValueNotifier<Gender>? valueNotifier;
-
-  const GenderPicker({
-    super.key,
-    this.onChanged,
-    this.valueNotifier,
-    this.initialSelection = Gender.unknown,
-  });
-
-  @override
-  State<GenderPicker> createState() => _GenderPickerState();
-}
 
 class PhdStudentCreatePage extends StatelessWidget {
   static const routeName = '/phd-students/create';
@@ -57,153 +28,226 @@ class PhdStudentCreatePage extends StatelessWidget {
           title: const Text('Tuyển sinh NCS'),
         ),
       ),
-      body: ConstrainedBody(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: gutter,
-          children: [
-            Expanded(
-              child: _InformationForm(),
+      body: CommonShortcuts(
+        child: ConstrainedBody(
+          child: _FormStateProvider(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: gutter,
+              children: [
+                Expanded(
+                  child: _InformationForm(),
+                ),
+                IntrinsicHeight(
+                  child: Padding(
+                    padding: EdgeInsets.all(gutter),
+                    child: Row(
+                      spacing: gutter,
+                      children: [
+                        Expanded(child: _SaveButton()),
+                        _ClearButton(),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-            IntrinsicHeight(
-              child: Padding(
-                padding: EdgeInsets.all(gutter),
-                child: _SaveButton(),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _GenderPickerState extends State<GenderPicker> {
-  late ValueNotifier<Gender> notifier;
+class _GenderPicker extends StatelessWidget {
+  final ValueNotifier<Gender> notifier;
+  const _GenderPicker({required this.notifier});
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField(
-      validator: (gender) {
-        if (gender == null) return "Không được để trống";
-        return null;
+    return ValueListenableBuilder(
+      valueListenable: notifier,
+      builder: (context, value, child) {
+        return DropdownMenuFormField(
+          enableFilter: true,
+          validator: (gender) {
+            if (gender == null || gender == Gender.unknown) {
+              return "Không được để trống";
+            }
+            return null;
+          },
+          label: Text("Giới tính"),
+          expandedInsets: EdgeInsets.zero,
+          initialSelection: value,
+          onSelected: (gender) {
+            notifier.value = gender ?? notifier.value;
+          },
+          dropdownMenuEntries: [
+            DropdownMenuEntry(value: Gender.male, label: "Nam"),
+            DropdownMenuEntry(value: Gender.female, label: "Nữ"),
+            DropdownMenuEntry(value: Gender.unknown, label: "Không rõ"),
+          ],
+        );
       },
-      decoration: InputDecoration(
-        labelText: "Giới tính",
-      ),
-      onChanged: (gender) {
-        notifier.value = gender ?? notifier.value;
-        widget.onChanged?.call(gender);
-      },
-      items: [
-        DropdownMenuItem(value: Gender.male, child: Text("Nam")),
-        DropdownMenuItem(value: Gender.female, child: Text("Nữ")),
-        DropdownMenuItem(value: Gender.unknown, child: Text("Không rõ")),
-      ],
     );
-  }
-
-  @override
-  dispose() {
-    super.dispose();
-    if (widget.valueNotifier == null) {
-      notifier.dispose();
-    }
-  }
-
-  @override
-  initState() {
-    final widgetNotifier = widget.valueNotifier;
-    if (widgetNotifier != null) {
-      notifier = widgetNotifier;
-    } else {
-      notifier = ValueNotifier<Gender>(widget.initialSelection);
-    }
-    super.initState();
   }
 }
 
 class _InformationForm extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final model = ref.watch(_viewModelProvider);
-    final specializationSelectionAsync = ref.watch(
-      specializationSelectionProvider,
-    );
-    final specializationSelectionWidget = specializationSelectionAsync
-        .maybeWhen(
-          data: (selectionModel) {
-            return DropdownMenu<PhdSpecialization>(
-              label: Text('Hướng chuyên sâu'),
-              dropdownMenuEntries: [
-                for (final option in selectionModel.options)
-                  DropdownMenuEntry(
-                    value: option,
-                    label: option.label,
-                  ),
-              ],
-              controller: model.specializationController,
-              onSelected: (selection) {
-                final notifier = ref.read(
-                  specializationSelectionProvider.notifier,
-                );
-                notifier.select(selection);
-              },
-            );
-          },
-          orElse: () => const CircularProgressIndicator(),
-        );
-
-    final formKey = model.formKey;
+    final form = _FormStateProvider.of(context);
     final gutter = context.gutter;
 
     return Form(
-      key: formKey,
+      key: form.formKey,
       child: SingleChildScrollView(
         padding: EdgeInsets.all(gutter),
         child: FocusScope(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: gutter,
             children: [
               // Thông tin quản lý chung
-              TextFormField(
-                controller: model.cohortController,
-                decoration: labelText('Khóa tuyển sinh'),
-                validator: notEmptyValidator('Vui lòng nhập khóa học'),
-                onFieldSubmitted: (value) => {
-                  model.cohortController.text = value.trim(),
-                },
-                onChanged: (value) => _setLastCohort(value),
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  spacing: gutter,
+                  children: [
+                    Expanded(
+                      child: _CohortSelector(
+                        controller: form.cohortNotifier,
+                      ),
+                    ),
+                  ],
+                ),
               ),
 
-              Divider(),
+              // Thạng thái NCS
+              ValueListenableBuilder(
+                valueListenable: form.statusNotifier,
+                builder: (context, value, child) {
+                  return SegmentedButton<StudentStatus>(
+                    selected: {value},
+                    multiSelectionEnabled: false,
+                    onSelectionChanged: (newSelection) {
+                      final status = newSelection.first;
+                      form.statusNotifier.value = status;
+                    },
+                    segments: [
+                      ButtonSegment(
+                        icon: Icon(Symbols.person_add),
+                        value: StudentStatus.admission,
+                        label: Text('Tuyển sinh'),
+                      ),
+                      ButtonSegment(
+                        icon: Icon(Symbols.pending),
+                        value: StudentStatus.studying,
+                        label: Text('đang học'),
+                      ),
+                      ButtonSegment(
+                        icon: Icon(Symbols.school),
+                        value: StudentStatus.graduated,
+                        label: Text('Tốt nghiệp'),
+                      ),
+                      ButtonSegment(
+                        icon: Icon(Symbols.person_cancel),
+                        value: StudentStatus.quit,
+                        label: Text('Thôi học'),
+                      ),
+                    ],
+                  );
+                },
+              ),
 
               // Thông tin cơ bản
-              TextFormField(
-                controller: model.admissionIdController,
-                decoration: labelText('Mã số hồ sơ tuyển sinh'),
-                validator: notEmptyValidator('Vui lòng nhập mã số NCS'),
-              ),
-              TextFormField(
-                controller: model.nameController,
-                validator: notEmptyValidator('Vui lòng nhập họ tên NCS'),
-                decoration: labelText('Họ tên NCS'),
-              ),
-              DateTimePicker(
-                labelText: 'Ngày sinh',
-                validator: (date) =>
-                    date == null ? 'Vui lòng chọn ngày sinh' : null,
-                controller: model.dateOfBirthController,
-              ),
-              TextFormField(
-                controller: model.placeOfBirthController,
-                decoration: labelText('Nơi sinh'),
-                validator: notEmptyValidator('Vui lòng chọn ngày sinh'),
+              ValueListenableBuilder(
+                valueListenable: form.statusNotifier,
+                builder: (context, value, child) {
+                  final enables = switch (value) {
+                    StudentStatus.admission => [true, false],
+                    _ => [true, true],
+                  };
+
+                  return IntrinsicHeight(
+                    child: Row(
+                      spacing: gutter,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            enabled: enables[0],
+                            controller: form.admissionIdController,
+                            decoration: labelText('Mã số hồ sơ tuyển sinh'),
+                            validator: notEmptyValidator(
+                              'Vui lòng nhập mã hồ sơ NCS',
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            enabled: enables[1],
+                            controller: form.managementIdController,
+                            decoration: labelText('Mã NCS'),
+                            validator: notEmptyValidator(
+                              'Vui lòng nhập mã số NCS',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
 
-              GenderPicker(
-                valueNotifier: model.genderController,
+              IntrinsicHeight(
+                child: Row(
+                  spacing: gutter,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: TextFormField(
+                        controller: form.nameController,
+                        validator: notEmptyValidator(
+                          'Vui lòng nhập họ tên NCS',
+                        ),
+                        decoration: labelText('Họ tên NCS'),
+                      ),
+                    ),
+                    Expanded(
+                      child: _GenderPicker(
+                        notifier: form.genderNotifier,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  spacing: gutter,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: form.placeOfBirthController,
+                        decoration: labelText('Nơi sinh'),
+                        validator: notEmptyValidator('Vui lòng chọn ngày sinh'),
+                      ),
+                    ),
+                    Expanded(
+                      child: DateTimePicker(
+                        labelText: 'Ngày sinh',
+                        validator: (date) =>
+                            date == null ? 'Vui lòng chọn ngày sinh' : null,
+                        controller: form.dateOfBirthNotifier,
+                      ),
+                    ),
+                  ],
+                ),
               ),
 
               // TextFormField(
@@ -215,35 +259,90 @@ class _InformationForm extends ConsumerWidget {
               // Thông tin liên lạc
               TextFormField(
                 decoration: labelText('Số điện thoại'),
-                controller: model.phoneController,
+                controller: form.phoneController,
                 validator: notEmptyValidator('Không được bỏ trống'),
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 keyboardType: TextInputType.phone,
               ),
               TextFormField(
                 decoration: labelText('Email cá nhân'),
-                controller: model.emailController,
+                controller: form.emailController,
                 validator: emailValidator('Không được bỏ trống'),
               ),
 
               Divider(),
 
-              specializationSelectionWidget,
+              ValueListenableBuilder(
+                valueListenable: form.specializationNotifier,
+                builder: (context, value, child) {
+                  return DropdownMenuFormField(
+                    expandedInsets: EdgeInsets.zero,
+                    label: Text('Hướng chuyên sâu'),
+                    onSelected: (value) {
+                      form.specializationNotifier.value = value;
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Vui lòng chọn hướng chuyên sâu';
+                      }
+                      return null;
+                    },
+                    dropdownMenuEntries: [
+                      for (final option in PhdSpecialization.values)
+                        DropdownMenuEntry(
+                          value: option,
+                          label: option.label,
+                        ),
+                    ],
+                  );
+                },
+              ),
 
               // Thông tin đề tài nghiên cứu
               TextFormField(
-                controller: model.thesisController,
+                controller: form.thesisController,
                 decoration: labelText('Tên đề tài dự kiến'),
                 validator: notEmptyValidator('Không được để trống'),
               ),
 
-              _TeacherSelector(
-                secondary: false,
-                valueController: model.supervisorNotifier,
+              // Giảng viên hướng dẫn
+              Row(
+                spacing: gutter,
+                children: [
+                  Expanded(
+                    child: _SupervisorSearch(
+                      notifier: form.supervisorNotifier,
+                      title: "Giảng viên hướng dẫn",
+                      required: true,
+                    ),
+                  ),
+                  Expanded(
+                    child: _SupervisorSearch(
+                      notifier: form.secondarySupervisorNotifier,
+                      title: "Giảng viên đồng hướng dẫn (nếu có)",
+                      required: false,
+                    ),
+                  ),
+                ],
               ),
-              _TeacherSelector(
-                secondary: true,
-                valueController: model.secondarySupervisorNotifier,
+
+              // Thêm NCS khác hoặc quay về danh sách
+              ValueListenableBuilder(
+                valueListenable: form.addAnotherNotifier,
+                builder: (context, value, child) {
+                  return CheckboxListTile(
+                    controlAffinity: ListTileControlAffinity.leading,
+                    value: value,
+                    onChanged: (value) {
+                      form.addAnotherNotifier.value = value ?? false;
+                    },
+                    title: Text('Thêm NCS khác'),
+                    subtitle: switch (value) {
+                      true => Text('Ở lại trang này sau khi lưu'),
+                      false => Text('Quay về trang danh sách sau khi lưu'),
+                    },
+                  );
+                },
               ),
             ],
           ),
@@ -274,161 +373,270 @@ class _InformationForm extends ConsumerWidget {
   }
 }
 
-class _SaveButton extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final model = ref.watch(_viewModelProvider);
-    final messenger = ScaffoldMessenger.of(context);
-    final formKey = model.formKey;
-
-    return FilledButton(
-      onPressed: () async {
-        if (formKey.currentState?.validate() ?? false) {
-          final mutation = ref.read(phdStudentsMutationProvider.notifier);
-          final specializationSelection = await ref.read(
-            specializationSelectionProvider.future,
-          );
-          if (specializationSelection.selected == null) {
-            messenger.showSnackBar(
-              const SnackBar(
-                content: Text('Vui lòng chọn hướng chuyên sâu'),
-              ),
-            );
-            return;
-          }
-
-          mutation.addPhdStudent(
-            cohort: model.cohortController.text.trim(),
-            admissionId: (model.admissionIdController.text.trim()),
-
-            // basic information
-            name: model.nameController.text.trim(),
-            gender: model.genderController.value,
-            dateOfBirth: model.dateOfBirthController.value!,
-            placeOfBirth: model.placeOfBirthController.text.trim(),
-
-            // contact information
-            personalEmail: model.emailController.text.trim(),
-            phone: model.phoneController.text.trim(),
-
-            supervisorId: model.supervisorNotifier.value!.id,
-            secondarySupervisorId: model.secondarySupervisorNotifier.value?.id,
-            thesis: model.thesisController.text.trim(),
-            majorSpecialization: specializationSelection.selected!,
-          );
-          ref.invalidate(_viewModelProvider);
-          Navigator.of(context).pop();
-        }
-      },
-      child: const Text('Save'),
-    );
-  }
-}
-
-class _TeacherSelector extends ConsumerWidget {
-  final bool secondary;
-  final ValueNotifier<TeacherData?> valueController;
-
-  const _TeacherSelector({
-    this.secondary = false,
-    required this.valueController,
+class _SupervisorSearch extends StatelessWidget {
+  const _SupervisorSearch({
+    required this.notifier,
+    required this.title,
+    required this.required,
   });
 
+  final ValueNotifier<TeacherData?> notifier;
+  final bool required;
+  final String title;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final dbState = ref.watch(mainDatabaseProvider);
-    switch (dbState) {
-      case AsyncError(:final error, :final stackTrace):
-        return Text('Error: $error\n$stackTrace');
-      case AsyncLoading():
-        return const CircularProgressIndicator();
-      default:
-    }
-
-    final db = dbState.value!;
-    final formatController = TextEditingController(
-      text: valueController.value?.name ?? '',
-    );
-
+  Widget build(BuildContext context) {
     return SearchAnchor(
-      suggestionsBuilder: (context, controller) async {
-        if (controller.text.isEmpty) {
-          return const [
-            ListTile(
-              title: Text('Vui lòng nhập tên giáo viên'),
+      suggestionsBuilder: _teacherSuggestionsBuilder(
+        onTap: (teacher) => notifier.value = teacher,
+      ),
+      builder: (context, controller) => ValueListenableBuilder(
+        valueListenable: notifier,
+        builder: (context, value, child) {
+          return TextFormField(
+            controller: TextEditingController(
+              text: value?.name ?? '',
             ),
-          ];
-        }
-
-        final query = db.searchTeachers(
-          searchText: controller.text,
-          isOutsider: false,
-        );
-
-        final teachers = await query.get();
-
-        return [
-          for (final teacher in teachers)
-            ListTile(
-              title: Text(teacher.name),
-              subtitle: Text(teacher.email ?? ''),
-              onTap: () {
-                valueController.value = teacher;
-                formatController.text = teacher.name;
-                controller.closeView(null);
-              },
+            decoration: InputDecoration(
+              labelText: title,
             ),
-        ];
-      },
-      builder: (context, controller) => TextFormField(
-        controller: formatController,
-        decoration: InputDecoration(
-          labelText: secondary
-              ? 'Giáo viên hướng dẫn phụ'
-              : 'Giáo viên hướng dẫn',
-        ),
-        readOnly: true,
-        onTap: () {
-          controller.clear();
-          controller.openView();
-        },
-        validator: (value) {
-          if (secondary) return null;
-          if (valueController.value == null) return 'Không được bỏ trống';
-          return null;
+            readOnly: true,
+            onTap: () {
+              controller.clear();
+              controller.openView();
+            },
+            validator: (value) {
+              if (notifier.value == null && required) {
+                return 'Không được bỏ trống';
+              }
+              return null;
+            },
+          );
         },
       ),
     );
   }
 }
 
-class _ViewModelNotifier extends Notifier<_ViewModel> {
+class _ClearButton extends StatelessWidget {
   @override
-  _ViewModel build() {
-    return _ViewModel();
+  Widget build(BuildContext context) {
+    final form = _FormStateProvider.of(context);
+    return OutlinedButton.icon(
+      icon: const Icon(Symbols.clear),
+      label: const Text('Xóa form'),
+      onPressed: () => form.clear(),
+    );
   }
 }
 
-class _ViewModel {
-  final formKey = GlobalKey<FormState>();
-  final supervisorNotifier = ValueNotifier<TeacherData?>(null);
-  final secondarySupervisorNotifier = ValueNotifier<TeacherData?>(null);
-  final specializationController = TextEditingController();
-  final thesisController = TextEditingController();
+class _SaveButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
 
-  final cohortController = TextEditingController();
+    return FilledButton(
+      onPressed: () async {
+        final form = _FormStateProvider.of(context);
+        final formKey = form.formKey;
+        if (formKey.currentState?.validate() != true) {
+          return;
+        }
 
-  final admissionIdController = TextEditingController();
-  final nameController = TextEditingController();
-  final genderController = ValueNotifier<Gender>(Gender.unknown);
+        final db = await ref.read(mainDatabaseProvider.future);
 
-  final dateOfBirthController = ValueNotifier<DateTime?>(null);
-  final placeOfBirthController = TextEditingController();
+        // final specializationSelection = await ref.read(
+        //   specializationSelectionProvider.future,
+        // );
+        // if (specializationSelection.selected == null) {
+        //   messenger.showSnackBar(
+        //     const SnackBar(
+        //       content: Text('Vui lòng chọn hướng chuyên sâu'),
+        //     ),
+        //   );
+        //   return;
+        // }
 
-  final emailController = TextEditingController();
-  final phoneController = TextEditingController();
+        final status = form.statusNotifier.value;
+        db.addPhdStudent(
+          cohort: form.cohortNotifier.value!.cohort,
+          admissionId: form.admissionIdController.text.trim(),
+          managementId: form.managementIdController.nonEmptyText,
 
-  _ViewModel() {
-    _getLastCohort().then((value) => cohortController.text = value);
+          // basic information
+          name: form.nameController.text.trim(),
+          gender: form.genderNotifier.value,
+          dateOfBirth: form.dateOfBirthNotifier.value!,
+          placeOfBirth: form.placeOfBirthController.text.trim(),
+
+          // contact information
+          personalEmail: form.emailController.text.trim(),
+          phone: form.phoneController.text.trim(),
+
+          supervisorId: form.supervisorNotifier.value!.id,
+          secondarySupervisorId: form.secondarySupervisorNotifier.value?.id,
+          thesis: form.thesisController.text.trim(),
+          majorSpecialization: form.specializationNotifier.value!,
+
+          status: form.statusNotifier.value,
+          admissionPaymentStatus: switch (status) {
+            StudentStatus.admission => PaymentStatus.unpaid,
+            _ => PaymentStatus.paid,
+          },
+        );
+
+        if (form.addAnotherNotifier.value) {
+          // Clear form for next entry
+          form.clear();
+        } else {
+          navigator.pop();
+        }
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          messenger.showSnackBar(
+            const SnackBar(
+              content: Text('Đã thêm NCS thành công'),
+            ),
+          );
+        });
+      },
+      child: const Text('Save'),
+    );
+  }
+}
+
+Future<List<Widget>> Function(BuildContext context, SearchController controller)
+_teacherSuggestionsBuilder({required ValueChanged<TeacherData> onTap}) {
+  Future<List<Widget>> builder(
+    BuildContext context,
+    SearchController controller,
+  ) async {
+    final searchText = controller.text;
+    if (searchText.isEmpty) {
+      return const [
+        ListTile(
+          title: Text('Vui lòng nhập tên giáo viên'),
+        ),
+      ];
+    }
+
+    final ref = ProviderScope.containerOf(context);
+    final db = await ref.read(mainDatabaseProvider.future);
+    final teachers = await db.searchTeachers(searchText: searchText).get();
+
+    return [
+      for (final teacher in teachers)
+        ListTile(
+          title: Text(teacher.name),
+          subtitle: Text(teacher.email ?? ''),
+          onTap: () {
+            onTap(teacher);
+            controller.closeView(null);
+          },
+        ),
+    ];
+  }
+
+  return builder;
+}
+
+class _FormStateProvider extends InheritedWidget {
+  final GlobalKey<FormState> formKey = .new();
+  final ValueNotifier<bool> addAnotherNotifier = .new(false);
+  final ValueNotifier<TeacherData?> supervisorNotifier = .new(null);
+  final ValueNotifier<TeacherData?> secondarySupervisorNotifier = .new(null);
+  final ValueNotifier<PhdCohortData?> cohortNotifier = .new(null);
+  final ValueNotifier<PhdSpecialization?> specializationNotifier = .new(null);
+  final ValueNotifier<Gender> genderNotifier = .new(Gender.unknown);
+  final ValueNotifier<DateTime?> dateOfBirthNotifier = .new(null);
+  final ValueNotifier<StudentStatus> statusNotifier = .new(
+    StudentStatus.admission,
+  );
+
+  final TextEditingController managementIdController = .new();
+  final TextEditingController thesisController = .new();
+  final TextEditingController admissionIdController = .new();
+  final TextEditingController nameController = .new();
+  final TextEditingController placeOfBirthController = .new();
+  final TextEditingController emailController = .new();
+  final TextEditingController phoneController = .new();
+
+  _FormStateProvider({
+    required super.child,
+  });
+
+  void clear() {
+    supervisorNotifier.value = null;
+    secondarySupervisorNotifier.value = null;
+    genderNotifier.value = Gender.unknown;
+    dateOfBirthNotifier.value = null;
+    statusNotifier.value = StudentStatus.admission;
+
+    thesisController.clear();
+    managementIdController.clear();
+    admissionIdController.clear();
+    nameController.clear();
+    placeOfBirthController.clear();
+    emailController.clear();
+    phoneController.clear();
+
+    // We don't clear these fields to preserve user convenience
+    // statusController.value = StudentStatus.admission;
+    // cohortController.value = null;
+    // specializationController.value = null;
+  }
+
+  static _FormStateProvider? maybeOf(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<_FormStateProvider>();
+  }
+
+  static _FormStateProvider of(BuildContext context) {
+    final instance = maybeOf(context);
+    assert(instance != null, 'No _CreateForm found in context');
+    return instance!;
+  }
+
+  @override
+  bool updateShouldNotify(covariant _FormStateProvider oldWidget) => false;
+}
+
+class _CohortSelector extends ConsumerWidget {
+  final ValueNotifier<PhdCohortData?> controller;
+  const _CohortSelector({required this.controller});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cohortsAsync = ref.watch(phdCohortsProvider);
+    final cohorts = cohortsAsync.value ?? [];
+
+    return Skeletonizer(
+      enabled: cohortsAsync.isLoading,
+      child: ValueListenableBuilder(
+        valueListenable: controller,
+        builder: (context, value, child) {
+          return DropdownMenuFormField<PhdCohortData?>(
+            enableFilter: true,
+            expandedInsets: EdgeInsets.zero,
+            initialSelection: controller.value,
+            label: const Text('Niên khóa NCS'),
+            validator: (cohort) {
+              if (cohort == null) return "Vui lòng chọn niên khóa";
+              return null;
+            },
+            dropdownMenuEntries: [
+              for (final option in cohorts)
+                DropdownMenuEntry(
+                  value: option,
+                  label: option.cohort,
+                ),
+            ],
+            onSelected: (PhdCohortData? value) {
+              controller.value = value;
+            },
+          );
+        },
+      ),
+    );
   }
 }

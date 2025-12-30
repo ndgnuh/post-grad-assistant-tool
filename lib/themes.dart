@@ -7,10 +7,13 @@ ThemeData getTheme({
 }) {
   final radius = context.gutterSmall;
   final buttonShape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(
-      Radius.circular(radius),
-    ),
+    borderRadius: BorderRadius.zero,
+    // borderRadius: BorderRadius.all(
+    //   Radius.circular(radius),
+    // ),
   );
+
+  final buttonSize = Size.fromHeight(context.gutterLarge * 0.8);
 
   final buttonPadding = EdgeInsets.symmetric(
     horizontal: context.gutter,
@@ -19,8 +22,10 @@ ThemeData getTheme({
 
   final segmentedButtonTheme = SegmentedButtonThemeData(
     style: SegmentedButton.styleFrom(
+      visualDensity: VisualDensity.comfortable,
       shape: buttonShape,
       padding: buttonPadding,
+      fixedSize: buttonSize,
     ),
   );
 
@@ -28,13 +33,22 @@ ThemeData getTheme({
     style: FilledButton.styleFrom(
       shape: buttonShape,
       padding: buttonPadding,
+      fixedSize: buttonSize,
     ),
   );
 
   final outlinedButtonTheme = OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      shape: buttonShape,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
+      ),
       padding: buttonPadding,
+      side: BorderSide(
+        width: 1.0,
+        color: baseTheme.colorScheme.primary,
+      ),
+      fixedSize: buttonSize,
+      foregroundColor: baseTheme.colorScheme.primary,
     ),
   );
 
@@ -42,6 +56,7 @@ ThemeData getTheme({
     style: ElevatedButton.styleFrom(
       shape: buttonShape,
       padding: buttonPadding,
+      fixedSize: buttonSize,
     ),
   );
 
@@ -49,6 +64,7 @@ ThemeData getTheme({
     style: TextButton.styleFrom(
       shape: buttonShape,
       padding: buttonPadding,
+      fixedSize: buttonSize,
     ),
   );
 
@@ -56,6 +72,7 @@ ThemeData getTheme({
     style: IconButton.styleFrom(
       shape: buttonShape,
       padding: EdgeInsets.all(context.gutterTiny),
+      fixedSize: buttonSize,
     ),
   );
 
@@ -69,13 +86,21 @@ ThemeData getTheme({
 
   final inputDecorationTheme = InputDecorationTheme(
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(context.gutterSmall),
+      borderRadius: BorderRadius.zero,
+      // borderRadius: BorderRadius.only(
+      //   topLeft: Radius.circular(context.gutterTiny),
+      //   topRight: Radius.circular(context.gutterTiny),
+      // ),
+      borderSide: BorderSide(width: 1.0),
     ),
     contentPadding: EdgeInsets.symmetric(
       horizontal: context.gutter,
       vertical: context.gutterTiny,
     ),
-    // floatingLabelBehavior: FloatingLabelBehavior.always,
+    // filled: true,
+    fillColor: baseTheme.inputDecorationTheme.fillColor,
+    visualDensity: VisualDensity.comfortable,
+    floatingLabelBehavior: FloatingLabelBehavior.always,
   );
 
   final searchBarTheme = SearchBarThemeData(

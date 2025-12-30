@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:fami_tools/shortcuts.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,10 +14,6 @@ import '../business/documents.dart';
 
 class _SaveIntent extends Intent {
   const _SaveIntent();
-}
-
-class _EditIntent extends Intent {
-  const _EditIntent();
 }
 
 typedef OnConfigChanged = void Function(PdfConfig config);
@@ -147,48 +144,35 @@ class _PdfViewerPage extends HookWidget {
       );
     }
 
-    return Shortcuts(
-      shortcuts: {
-        SingleActivator(LogicalKeyboardKey.keyE, control: true):
-            const _EditIntent(),
-        SingleActivator(LogicalKeyboardKey.keyS, control: true):
-            const _SaveIntent(),
-      },
-      child: Actions(
-        actions: {
-          _SaveIntent: CallbackAction<_SaveIntent>(
-            onInvoke: (intent) => saveFile(),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(pdfFile.name),
+        actions: [
+          IconButton(
+            onPressed: showEditDialog,
+            icon: const Icon(Symbols.settings),
+            tooltip: "Lưu file",
           ),
-          _EditIntent: CallbackAction<_EditIntent>(
-            onInvoke: (intent) => showEditDialog(),
-          ),
-        },
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(pdfFile.name),
-            actions: [
-              IconButton(
-                onPressed: showEditDialog,
-                icon: const Icon(Symbols.settings),
-                tooltip: "Lưu file",
+        ],
+      ),
+      body: CommonShortcuts(
+        navigator: Navigator.of(context),
+        onEdit: (_) => showEditDialog(),
+        onSave: (_) => saveFile(),
+        child: Column(
+          children: [
+            Expanded(
+              child: PdfViewer.data(
+                pdfFile.bytes,
+                sourceName: pdfFile.fileName,
               ),
-            ],
-          ),
-          body: Column(
-            children: [
-              Expanded(
-                child: PdfViewer.data(
-                  pdfFile.bytes,
-                  sourceName: pdfFile.fileName,
-                ),
-              ),
-            ],
-          ),
-          floatingActionButton: fabClass(
-            onPressed: saveFile,
-            child: const Icon(Symbols.save),
-          ),
+            ),
+          ],
         ),
+      ),
+      floatingActionButton: fabClass(
+        onPressed: saveFile,
+        child: const Icon(Symbols.save),
       ),
     );
   }
@@ -252,7 +236,7 @@ class _PdfConfigDialog extends HookWidget {
       }
 
       // new config
-      final config = PdfConfig(
+      final config = initialConfig.copyWith(
         baseFontSize: double.parse(baseFontSizeController.text) * pt,
         verticalMargin: double.parse(verticalMarginController.text) * inch,
         horizontalMargin: double.parse(horizontalMarginController.text) * inch,
@@ -269,7 +253,7 @@ class _PdfConfigDialog extends HookWidget {
 
     return Shortcuts(
       shortcuts: {
-        LogicalKeySet(LogicalKeyboardKey.enter): const _SaveIntent(),
+        SingleActivator(LogicalKeyboardKey.enter): const _SaveIntent(),
       },
       child: FocusScope(
         child: AlertDialog(

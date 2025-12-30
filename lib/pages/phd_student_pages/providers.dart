@@ -36,40 +36,40 @@ final phdStudentListViewModelProvider = AsyncNotifierProvider(
   PhdStudentListViewModelNotifier.new,
 );
 
-final phdStudentViewModelByIdProvider = FutureProvider.family(
-  (Ref ref, int studentId) async {
-    final student = await ref.watch(
-      phdStudentByIdProvider(studentId).future,
-    );
+// final phdStudentViewModelByIdProvider = FutureProvider.family(
+//   (Ref ref, int studentId) async {
+//     final student = await ref.watch(
+//       phdStudentByIdProvider(studentId).future,
+//     );
+//
+//     final teacher = await ref.watch(
+//       teacherByIdProvider(student.supervisorId).future,
+//     );
+//
+//     final secondarySupervisor = switch (student.secondarySupervisorId) {
+//       null => null,
+//       int id => await ref.watch(teacherByIdProvider(id).future),
+//     };
+//
+//     return PhdStudentViewModel(
+//       student: student,
+//       supervisor: teacher,
+//       secondarySupervisor: secondarySupervisor,
+//     );
+//   },
+// );
 
-    final teacher = await ref.watch(
-      teacherByIdProvider(student.supervisorId).future,
-    );
-
-    final secondarySupervisor = switch (student.secondarySupervisorId) {
-      null => null,
-      int id => await ref.watch(teacherByIdProvider(id).future),
-    };
-
-    return PhdStudentViewModel(
-      student: student,
-      supervisor: teacher,
-      secondarySupervisor: secondarySupervisor,
-    );
-  },
-);
-
-class PhdStudentViewModel {
-  final PhdStudentData student;
-  final TeacherData supervisor;
-  final TeacherData? secondarySupervisor;
-
-  PhdStudentViewModel({
-    required this.student,
-    required this.supervisor,
-    required this.secondarySupervisor,
-  });
-}
+// class PhdStudentViewModel {
+//   final PhdStudentData student;
+//   final TeacherData supervisor;
+//   final TeacherData? secondarySupervisor;
+//
+//   PhdStudentViewModel({
+//     required this.student,
+//     required this.supervisor,
+//     required this.secondarySupervisor,
+//   });
+// }
 
 class AdmissionCouncilArrangementEmailNotifier extends AsyncNotifier<Email> {
   final int phdStudentId;

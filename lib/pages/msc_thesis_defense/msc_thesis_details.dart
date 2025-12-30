@@ -3,6 +3,7 @@ import 'package:fami_tools/business/db_v2_providers.dart';
 import 'package:fami_tools/custom_tiles.dart';
 import 'package:fami_tools/custom_widgets.dart';
 import 'package:fami_tools/business/view_models.dart';
+import 'package:fami_tools/shortcuts.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,11 @@ class MscThesisDetailsPage extends ConsumerWidget {
     this.initialTabIndex = 0,
   });
 
+  static const tabs = [
+    Tab(text: 'Thông tin chung'),
+    Tab(text: 'Bảo vệ'),
+  ];
+
   factory MscThesisDetailsPage.assignDefenseCouncil({
     required int thesisId,
   }) {
@@ -29,14 +35,30 @@ class MscThesisDetailsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: ConstrainedAppBar(
-        child: AppBar(
-          title: const Text('Thông tin luận văn'),
+    return DefaultTabController(
+      length: tabs.length,
+      initialIndex: initialTabIndex,
+      child: CommonShortcuts(
+        child: Scaffold(
+          appBar: ConstrainedAppBar(
+            withTabBar: true,
+            child: AppBar(
+              title: const Text('Thông tin luận văn'),
+              bottom: const TabBar(
+                isScrollable: true,
+                tabs: tabs,
+              ),
+            ),
+          ),
+          body: ConstrainedBody(
+            child: TabBarView(
+              children: [
+                _GeneralInformationTab(thesisId: thesisId),
+                _AssignCouncilTab(thesisId: thesisId),
+              ],
+            ),
+          ),
         ),
-      ),
-      body: ConstrainedBody(
-        child: _AssignCouncilTab(thesisId: thesisId),
       ),
     );
   }
@@ -49,8 +71,14 @@ class _GeneralInformationTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('General Information for Thesis ID: $thesisId'),
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(context.gutter),
+      child: Column(
+        children: [
+          _InformationSection(thesisId: thesisId),
+          _TeachingAssignmentSection(thesisId: thesisId),
+        ],
+      ),
     );
   }
 }
@@ -66,11 +94,62 @@ class _AssignCouncilTab extends StatelessWidget {
       padding: EdgeInsets.all(context.gutter),
       child: Column(
         children: [
-          _InformationSection(thesisId: thesisId),
-          _TeachingAssignmentSection(thesisId: thesisId),
           _CouncilAssignmentSection(thesisId: thesisId),
+          _DefenseInformationSection(thesisId: thesisId),
         ],
       ),
+    );
+  }
+}
+
+class _DefenseInformationSection extends ConsumerWidget {
+  final int thesisId;
+  const _DefenseInformationSection({required this.thesisId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final modelAsync = ref.watch(ThesisViewModel.providerById(thesisId));
+    switch (modelAsync) {
+      case AsyncLoading():
+        return LinearProgressIndicator();
+      case AsyncError():
+        return Text('Error loading thesis information');
+      default:
+    }
+
+    final model = modelAsync.value!;
+    final thesis = model.thesis;
+
+    return CardSection(
+      title: 'Thông tin bảo vệ',
+      children: [
+        DateTile(
+          titleText: 'Ngày bảo vệ',
+          initialValue: thesis.defenseDate,
+          onUpdate: (value) async {
+            final db = await ref.read(mainDatabaseProvider.future);
+            final companion = ThesisCompanion(
+              defenseDate: Value(value),
+            );
+            final stmt = db.thesis.update();
+            stmt.where((r) => r.id.equals(thesisId));
+            await stmt.write(companion);
+          },
+        ),
+        StringTile(
+          title: "Quyết định bảo vệ",
+          initialValue: thesis.defenseDecisionNumber ?? "",
+          onUpdate: (value) async {
+            final db = await ref.read(mainDatabaseProvider.future);
+            final companion = ThesisCompanion(
+              defenseDecisionNumber: valueOrAbsent(value),
+            );
+            final stmt = db.thesis.update();
+            stmt.where((r) => r.id.equals(thesisId));
+            await stmt.write(companion);
+          },
+        ),
+      ],
     );
   }
 }
@@ -91,9 +170,7 @@ class _InformationSection extends ConsumerWidget {
     }
 
     final model = modelAsync.value!;
-    final student = model.student;
     final thesis = model.thesis;
-    final supervisor = model.supervisor;
     final notifier = ref.read(thesisByIdProvider(thesisId).notifier);
 
     return CardSection(
@@ -131,7 +208,6 @@ class _TeachingAssignmentSection extends ConsumerWidget {
 
     final model = modelAsync.value!;
     final student = model.student;
-    final thesis = model.thesis;
     final supervisor = model.supervisor;
     final secondarySupervisor = model.secondarySupervisor;
     final notifier = ref.read(thesisByIdProvider(thesisId).notifier);

@@ -3,7 +3,8 @@ import 'package:drift/drift.dart';
 enum Gender {
   male("M", "Nam"),
   female("F", "Nữ"),
-  unknown("-", "Không xác định");
+  unknown("-", "Không xác định")
+  ;
 
   final String value;
   final String label;
@@ -47,6 +48,22 @@ class GenderConverter extends TypeConverter<Gender, String> {
   String toSql(Gender gender) => gender.value;
 }
 
+class PronounConverter extends TypeConverter<Pronoun, String> {
+  const PronounConverter();
+  @override
+  Pronoun fromSql(String fromDb) {
+    for (final pronoun in Pronoun.values) {
+      if (pronoun.pronoun == fromDb) {
+        return pronoun;
+      }
+    }
+    throw ArgumentError("Unknown pronoun value: $fromDb");
+  }
+
+  @override
+  String toSql(Pronoun pronoun) => pronoun.pronoun;
+}
+
 /// Cách xưng hô với giảng viên khác
 enum Pronoun {
   anh(
@@ -73,13 +90,20 @@ enum Pronoun {
     greeting: "Em thưa cô",
     gender: Gender.female,
   ),
+  em(
+    pronoun: "em",
+    capitalized: "Em",
+    greeting: "Chào em",
+    gender: Gender.unknown,
+  ),
   sir(
     // A fun fallback case
     gender: Gender.unknown,
     pronoun: "ngài",
     capitalized: "Ngài",
     greeting: "Kính chào ngài",
-  );
+  )
+  ;
 
   final String pronoun;
   final String capitalized;

@@ -1,3 +1,4 @@
+import 'package:fami_tools/business/copy_pasta.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:drift/drift.dart';
 import '../../business/documents.dart';
@@ -25,6 +26,11 @@ final registeredStudentIdsProvider = FutureProvider<List<int>>((ref) async {
     OrderingTerm.asc(db.student.cohort),
   ]);
 
+  if (ref.isFirstBuild) {
+    studentIdStmt.watch().listen((event) {
+      ref.invalidateSelf();
+    });
+  }
   final ids = await studentIdStmt.map((row) {
     final studentId = row.read(db.thesis.studentId);
     return studentId as int;
@@ -84,3 +90,71 @@ final councilSuggestionsPdfProvider = FutureProvider<PdfFile>(
 /// Get thesis view model from [thesisId]
 
 /// Get thesis view model from [studentId]
+
+final thesisFinishingEmailProvider = FutureProvider<Email>(
+  (Ref ref) async {
+    final ids = await ref.watch(registeredStudentIdsProvider.future);
+    final viewModels = <StudentViewModel>[];
+    for (final studentId in ids) {
+      final studentViewModel = await ref.watch(
+        StudentViewModel.providerById(studentId).future,
+      );
+      viewModels.add(studentViewModel);
+    }
+
+    // my name and supervisor
+    final myName = await ref.watch(myNameProvider.future);
+    final mySupervisor = await ref.watch(mySupervisorProvider.future);
+    final ccRecipients = {mySupervisor.requireEmail};
+
+    // Tiêu đề, người nhận, nội dung email
+    final title = "Về việc tính GD cho các luận văn thạc sĩ đã bảo vệ";
+    final recipients = <String>{};
+
+    final body = StringBuffer();
+    body.writeln("Kính gửi các Thầy/Cô hướng dẫn luận văn thạc sĩ,");
+    body.writeln("");
+    body.writeln(
+      "Luận văn thạc sĩ của các học viên mà Thầy/Cô hướng dẫn đã hoàn thành bảo vệ:",
+    );
+
+    for (final model in viewModels) {
+      // Write body
+      final student = model.student;
+      final supervisor = model.supervisor!;
+      final secondary = model.secondarySupervisor;
+      body.write(
+        "- ${student.name} (${student.studentId}), GVHD: ${supervisor.nameWithTitle}",
+      );
+      switch (secondary?.nameWithTitle) {
+        case String name:
+          body.writeln(", GVHD2: $name");
+        default:
+          body.writeln("");
+      }
+
+      // Collect recipients
+      recipients.add(supervisor.requireEmail);
+      if (secondary != null) {
+        recipients.add(secondary.requireEmail);
+      }
+    }
+    body.writeln("");
+    body.writeln(
+      "Kính mời Thầy/Cô xem danh sách kèm theo ở trên và thực hiện chọn kỳ kết thúc, kỳ tính GD trên hệ thống Quản lý Đào tạo. "
+      "Kỳ tính GD phải là kỳ kết thúc hoặc nằm trước kỳ kết thúc. Kỳ hè không được chọn là kỳ tính GD ạ.",
+    );
+    body.writeln("Em cảm ơn Thầy/Cô ạ.");
+    body.writeln("");
+    body.writeln("Trân trọng,");
+    body.writeln(myName);
+
+    final email = Email(
+      subject: title,
+      body: body.toString(),
+      ccRecipients: ccRecipients,
+      recipients: recipients,
+    );
+    return email;
+  },
+);

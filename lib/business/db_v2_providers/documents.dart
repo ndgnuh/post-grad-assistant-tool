@@ -10,6 +10,12 @@ final documentByIdProvider = FutureProvider.family<DocumentData, int>(
     final stmt = db.document.select();
     stmt.where((d) => d.id.equals(id));
 
+    if (ref.isFirstBuild) {
+      stmt.watch().listen((event) {
+        ref.invalidateSelf();
+      });
+    }
+
     final doc = await stmt.getSingleOrNull();
     if (doc == null) {
       throw Exception('Document with ID $id not found');
@@ -27,6 +33,11 @@ final documentContentProvider = FutureProvider.family<Uint8List?, int>(
 
     final stmt = db.documentContent.select();
     stmt.where((c) => c.id.equals(contentId));
+    if (ref.isFirstBuild) {
+      stmt.watch().listen((event) {
+        ref.invalidateSelf();
+      });
+    }
 
     final content = await stmt.getSingleOrNull();
     return content?.content;

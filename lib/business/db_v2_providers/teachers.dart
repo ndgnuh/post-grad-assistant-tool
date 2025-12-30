@@ -34,9 +34,7 @@ class InsiderTeachers extends AsyncNotifier<List<TeacherData>> {
     final results = <TeacherData>[];
     for (var id in insiderIds) {
       final teacherData = await ref.watch(teacherByIdProvider(id).future);
-      if (teacherData != null) {
-        results.add(teacherData);
-      }
+      results.add(teacherData);
     }
     return results;
   }
@@ -44,14 +42,24 @@ class InsiderTeachers extends AsyncNotifier<List<TeacherData>> {
 
 class TeacherByIdNotifier extends AsyncNotifier<TeacherData> {
   final int teacherId;
+  late Stream<TeacherData> teacherStream;
   TeacherByIdNotifier(this.teacherId);
 
   @override
   Future<TeacherData> build() async {
     final db = await ref.watch(mainDatabaseProvider.future);
-    final maybeTeacher = await db.managers.teacher
-        .filter((t) => t.id.equals(teacherId))
-        .getSingleOrNull();
+    final stmt = db.managers.teacher.filter(
+      (t) => t.id.equals(teacherId),
+    );
+
+    final maybeTeacher = await stmt.getSingleOrNull();
+
+    // Automatially update the state when the teacher data changes
+    if (ref.isFirstBuild) {
+      stmt.watchSingle().listen((teacherData) {
+        state = AsyncData(teacherData);
+      });
+    }
 
     assert(maybeTeacher != null, "Không tìm thấy giảng viên với ID $teacherId");
     return maybeTeacher as TeacherData;
@@ -71,67 +79,29 @@ class TeacherByIdNotifier extends AsyncNotifier<TeacherData> {
     String? falcuty,
     String? university,
     int? startTeachingYear,
+    AcademicRank? academicRank,
+    AcademicDegree? academicDegree,
     DateTime? dateOfBirth,
   }) async {
-    Value<String> toStringValue(String? input) {
-      if (input == null) {
-        return const Value.absent();
-      } else if (input.trim().isEmpty) {
-        return const Value.absent();
-      } else {
-        return Value(input);
-      }
-    }
-
-    final companion = TeacherCompanion(
-      name: name != null ? Value(name) : const Value.absent(),
-      staffId: toStringValue(staffId),
-      gender: switch (gender) {
-        null => const Value.absent(),
-        Gender g => Value(g),
-      },
-      university: toStringValue(university),
-      phoneNumber: toStringValue(phoneNumber),
-      falcuty: toStringValue(falcuty),
-      specialization: toStringValue(specialization),
-      personalEmail: toStringValue(email),
-      bankAccount: toStringValue(bankAccount),
-      bankName: toStringValue(bankName),
-      deprecatedTaxCode: toStringValue(deprecatedTaxCode),
-      citizenId: toStringValue(citizenId),
-      startTeachingYear: switch (startTeachingYear) {
-        null => const Value.absent(),
-        int y => Value(y),
-      },
-      dateOfBirth: switch (dateOfBirth) {
-        null => const Value.absent(),
-        DateTime d => Value(d),
-      },
-    );
-    await updateTeacher(companion);
-  }
-
-  Future<void> updateTeacher(TeacherCompanion newData) async {
     final db = await ref.read(mainDatabaseProvider.future);
-    final stmt = db.teacher.update();
-    stmt.where((t) => t.id.equals(teacherId));
-    final newTeacherData = await stmt.writeReturning(newData);
-    state = AsyncData(newTeacherData.first);
-  }
-
-  Future<void> updateAcademicRank(AcademicRank? rank) async {
-    updateTeacher(
-      TeacherCompanion(
-        academicRank: Value(rank),
-      ),
-    );
-  }
-
-  Future<void> updateAcademicDegree(AcademicDegree? degree) async {
-    updateTeacher(
-      TeacherCompanion(
-        academicDegree: Value(degree),
-      ),
+    db.updateTeacher(
+      id: teacherId,
+      name: name,
+      staffId: staffId,
+      phoneNumber: phoneNumber,
+      email: email,
+      gender: gender,
+      specialization: specialization,
+      bankAccount: bankAccount,
+      bankName: bankName,
+      deprecatedTaxCode: deprecatedTaxCode,
+      citizenId: citizenId,
+      falcuty: falcuty,
+      university: university,
+      startTeachingYear: startTeachingYear,
+      academicRank: academicRank,
+      academicDegree: academicDegree,
+      dateOfBirth: dateOfBirth,
     );
   }
 }

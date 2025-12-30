@@ -101,6 +101,7 @@ class _DateTimePickerState extends State<DateTimePicker> {
 
   void tryParseDateAndUpdate(String text) {
     final altDateFormat = DateFormat('dd/MM/yyyy');
+
     final parsedDate =
         _dateFormat.tryParseLoose(text) ?? altDateFormat.tryParseLoose(text);
     if (parsedDate == null) {
@@ -119,15 +120,6 @@ class _DateTimePickerState extends State<DateTimePicker> {
   @override
   Widget build(BuildContext context) {
     final iconData = widget.iconData ?? Icons.calendar_today;
-
-    // // show date picker when focus is gained
-    // final focusNode = FocusNode();
-    // focusNode.addListener(() {
-    //   if (focusNode.hasFocus) {
-    //     focusNode.unfocus();
-    //     _showDatePicker(context);
-    //   }
-    // });
 
     return ValueListenableBuilder(
       valueListenable: valueNotifier,
@@ -153,7 +145,7 @@ class _DateTimePickerState extends State<DateTimePicker> {
               ),
             ),
 
-            FilledButton.icon(
+            OutlinedButton.icon(
               label: const Text('Select'),
               icon: Icon(iconData),
               onPressed: () => _showDatePicker(context),
@@ -190,6 +182,16 @@ class _DateTimePickerState extends State<DateTimePicker> {
     } else {
       valueNotifier = ValueNotifier(widget.initialDateTime);
     }
+
+    // Make the formatting controller reflect the value notifier
+    valueNotifier.addListener(() {
+      final dateTime = valueNotifier.value;
+      if (dateTime != null) {
+        formatController.text = _dateFormat.format(dateTime);
+      } else {
+        formatController.text = '';
+      }
+    });
 
     // Load initial datetime from preferences if name is provided
     switch (widget.name) {

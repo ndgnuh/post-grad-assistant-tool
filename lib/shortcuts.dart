@@ -1,14 +1,12 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod/riverpod.dart';
 
 final navigationKey = GlobalKey<NavigatorState>();
 final searchAnchorKey = GlobalKey<State<SearchAnchor>>();
 final scaffoldKey = GlobalKey<ScaffoldState>();
 final globalFocusKey = GlobalKey<State<Focus>>();
 final searchFieldKey = GlobalKey<State<TextField>>();
-final shortcutStateKey = GlobalKey<State<CommonShortcuts>>();
 
 final focusNodeProvider = Provider.autoDispose<FocusNode>((ref) {
   final focusNode = FocusNode();
@@ -61,6 +59,14 @@ class PreviousTabIntent extends Intent {
   const PreviousTabIntent();
 }
 
+class SaveIntent extends Intent {
+  const SaveIntent();
+}
+
+class EditIntent extends Intent {
+  const EditIntent();
+}
+
 class ChangeTabAction extends Action<NextTabIntent> {
   final BuildContext context;
   final int offset;
@@ -72,64 +78,165 @@ class ChangeTabAction extends Action<NextTabIntent> {
 
   @override
   Object? invoke(NextTabIntent intent) {
-    print("Invoking [ChangeTabAction] with offset $offset");
-    final tabController = context.tabController;
-    switch (tabController) {
-      case null:
-        print("No TabController found in context");
-        return null;
-      case TabController controller:
-        int newIndex = controller.index + offset;
-        print(("Current tab index: ${controller.index}, new index: $newIndex"));
-        if (newIndex < 0) {
-          newIndex = controller.length - 1;
-        } else if (newIndex >= controller.length) {
-          newIndex = 0;
-        }
-        controller.animateTo(newIndex);
-        return null;
+    final controller = DefaultTabController.of(context);
+    int newIndex = controller.index + offset;
+    if (newIndex < 0) {
+      newIndex = controller.length - 1;
+    } else if (newIndex >= controller.length) {
+      newIndex = 0;
     }
+    controller.animateTo(newIndex);
+    return null;
   }
 }
 
-class QuickActions {
-  final String title;
-  final IconData? icon;
-  final VoidCallback? onPressed;
+class UnfocusAction extends Action<EscapeIntent> {
+  final BuildContext context;
+  UnfocusAction({required this.context});
 
-  QuickActions({
-    required this.title,
-    this.icon,
-    this.onPressed,
-  });
+  @override
+  Object? invoke(EscapeIntent intent) {
+    final focusScope = FocusScope.of(context);
+    for (final node in focusScope.traversalDescendants) {
+      if (node.hasPrimaryFocus) {
+        node.unfocus();
+        return null;
+      }
+    }
+    return null;
+  }
 }
 
-class CommonShortcuts extends StatefulWidget {
+class _CbAction extends Action<Intent> {
+  final BuildContext context;
+  final Function(BuildContext) onInvokeCallback;
+
+  _CbAction({required this.onInvokeCallback, required this.context});
+
+  @override
+  Object? invoke(Intent intent) {
+    onInvokeCallback(context);
+    return null;
+  }
+}
+
+void noop(BuildContext _) {}
+
+class FocusNodeProvider extends InheritedWidget {
+  final FocusNode focusNode = FocusNode();
+
+  FocusNodeProvider({
+    super.key,
+    required super.child,
+  });
+
+  static FocusNode of(BuildContext context) {
+    final node = maybeOf(context);
+    assert(
+      node != null,
+      'FocusNodeProvider.of() called with a context that does not contain a FocusNodeProvider.',
+    );
+    return node!;
+  }
+
+  static FocusNode? maybeOf(BuildContext context) {
+    final provider = context
+        .dependOnInheritedWidgetOfExactType<FocusNodeProvider>();
+    return provider?.focusNode;
+  }
+
+  @override
+  bool updateShouldNotify(FocusNodeProvider oldWidget) {
+    return focusNode != oldWidget.focusNode;
+  }
+}
+
+class CommonShortcuts extends StatelessWidget {
   final Widget child;
-  final VoidCallback? onCreateNew;
-  final VoidCallback? onSearch;
-  final VoidCallback? onPaste;
-  final VoidCallback? onImport;
+  final bool? enableTabSwitching;
+
+  /// Allow passing navigator from previous context
+  final NavigatorState? navigator;
+
+  // The function should depends on the context so we can
+  // pass states from inherited widgets if needed.
+  final void Function(BuildContext)? onCreateNew;
+  final void Function(BuildContext)? onSearch;
+  final void Function(BuildContext)? onEdit;
+  final void Function(BuildContext)? onSave;
+  final void Function(BuildContext)? onPaste;
+  final void Function(BuildContext)? onImport;
 
   const CommonShortcuts({
     super.key,
     required this.child,
+    this.navigator,
+    this.onEdit,
+    this.onSave,
+    this.onCreateNew,
     this.onSearch,
     this.onPaste,
-    this.onCreateNew,
     this.onImport,
+    this.enableTabSwitching,
   });
 
   @override
-  State<CommonShortcuts> createState() => _CommonShortcutsState();
-}
-
-class _CommonShortcutsState extends State<CommonShortcuts> {
-  VoidCallback? get onCreateNew => widget.onCreateNew;
-
-  @override
   Widget build(BuildContext context) {
-    return widget.child;
+    final enableTs =
+        enableTabSwitching ?? DefaultTabController.maybeOf(context) != null;
+
+    return Shortcuts(
+      shortcuts: {
+        SingleActivator(LogicalKeyboardKey.escape): const EscapeIntent(),
+        SingleActivator(LogicalKeyboardKey.arrowLeft, alt: true):
+            const GoBackIntent(),
+        SingleActivator(LogicalKeyboardKey.keyF, control: true):
+            const SearchIntent(),
+        // Do not override the default copy shortcut for no reason
+        // SingleActivator(LogicalKeyboardKey.keyC, control: true):
+        //     const CopyIntent(),
+        SingleActivator(LogicalKeyboardKey.keyN, control: true):
+            const CreateNewIntent(),
+        SingleActivator(LogicalKeyboardKey.keyE, control: true):
+            const EditIntent(),
+        SingleActivator(LogicalKeyboardKey.keyS, control: true):
+            const SaveIntent(),
+        if (enableTs)
+          SingleActivator(LogicalKeyboardKey.tab, control: true):
+              const NextTabIntent(),
+      },
+      child: Actions(
+        actions: {
+          EscapeIntent: UnfocusAction(context: context),
+          GoBackIntent: GoBackAction(context: context, navigator: navigator),
+          CreateNewIntent: _CbAction(
+            context: context,
+            onInvokeCallback: onCreateNew ?? noop,
+          ),
+          SearchIntent: _CbAction(
+            context: context,
+            onInvokeCallback: onSearch ?? noop,
+          ),
+          CopyIntent: _CbAction(
+            context: context,
+            onInvokeCallback: onPaste ?? noop,
+          ),
+          EditIntent: _CbAction(
+            context: context,
+            onInvokeCallback: onEdit ?? noop,
+          ),
+          SaveIntent: _CbAction(
+            context: context,
+            onInvokeCallback: onSave ?? noop,
+          ),
+          NextTabIntent: ChangeTabAction(context: context, offset: 1),
+        },
+        child: FocusScope(
+          autofocus: true,
+          child: child,
+        ),
+      ),
+    );
   }
 }
 
@@ -159,12 +266,13 @@ class CreateNewIntent extends Intent {
 
 class GoBackAction extends Action<GoBackIntent> {
   final BuildContext context;
-  GoBackAction({required this.context});
+  final NavigatorState? navigator;
+  GoBackAction({required this.context, this.navigator});
 
   @override
   Object? invoke(GoBackIntent intent) {
     print("Invoking GoBackAction");
-    final navigator = Navigator.maybeOf(context);
+    final navigator = this.navigator ?? Navigator.maybeOf(context);
     if (navigator == null) {
       print("No navigator found in context");
       return null;
@@ -176,75 +284,5 @@ class GoBackAction extends Action<GoBackIntent> {
       print("No route to pop");
     }
     return null;
-  }
-}
-
-class SearchAction extends Action<SearchIntent> {
-  final BuildContext context;
-  final WidgetRef ref;
-
-  SearchAction({required this.context, required this.ref});
-
-  @override
-  Object? invoke(SearchIntent intent) {
-    print("Invoking SearchAction");
-    final focusNode = ref.read(focusNodeProvider);
-    focusNode.requestFocus();
-    return null;
-  }
-}
-
-final keys = (
-  ctrlF: LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyF),
-  ctrlC: LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyC),
-  altLeft: LogicalKeySet(LogicalKeyboardKey.alt, LogicalKeyboardKey.arrowLeft),
-  esc: LogicalKeySet(LogicalKeyboardKey.escape),
-  ctrlN: LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyN),
-);
-
-Map<LogicalKeySet, Intent> defaultShortcuts() => {
-  keys.ctrlC: const CopyIntent(),
-  keys.ctrlF: const SearchIntent(),
-  keys.altLeft: const GoBackIntent(),
-  keys.ctrlN: const CreateNewIntent(),
-};
-
-class LoggingShortcutManager extends ShortcutManager {
-  @override
-  get shortcuts => defaultShortcuts();
-
-  @override
-  KeyEventResult handleKeypress(BuildContext context, KeyEvent event) {
-    final KeyEventResult result = super.handleKeypress(context, event);
-    print('Handled shortcut $event in $context');
-    if (result == KeyEventResult.handled) {
-      print('Handled shortcut $event in $context');
-    }
-    return result;
-  }
-}
-
-class MyShortcuts extends StatelessWidget {
-  final Widget child;
-  const MyShortcuts({super.key, required this.child});
-  @override
-  Widget build(BuildContext context) {
-    return Shortcuts(
-      includeSemantics: true,
-      shortcuts: {
-        SingleActivator(LogicalKeyboardKey.escape): const EscapeIntent(),
-        SingleActivator(LogicalKeyboardKey.keyF, control: true):
-            const SearchIntent(),
-      },
-      child: FocusScope(
-        autofocus: true,
-        child: Actions(
-          actions: {
-            GoBackIntent: GoBackAction(context: context),
-          },
-          child: child,
-        ),
-      ),
-    );
   }
 }

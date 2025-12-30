@@ -1,18 +1,22 @@
 // TODO: refactor
-import 'package:fami_tools/business/db_v2_providers/database.dart';
-import 'package:fami_tools/business/db_v2_providers/thesis.dart';
-import 'package:fami_tools/business/main_database.dart';
-import 'package:fami_tools/business/documents.dart';
-import 'package:fami_tools/business/view_models.dart';
+import 'package:fami_tools/business/copy_pasta.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../pages.dart';
+import '../../business/db_v2_providers/database.dart';
+import '../../business/db_v2_providers/thesis.dart';
+import '../../business/documents.dart';
+import '../../business/main_database.dart';
+import '../../business/view_models.dart';
 import '../../custom_widgets.dart';
+import '../../shortcuts.dart';
+import '../pages.dart';
+import '../thesis_pages/payment_page.dart';
 import 'providers.dart';
 
 class ThesisEverythingPage extends StatelessWidget {
@@ -37,10 +41,16 @@ class ThesisEverythingPage extends StatelessWidget {
         title: "Bảo vệ luận văn",
         callback: (nav) => nav.toThesisDefenseRegisterPage(),
       ),
-      _NavigationTile(
+      ListTile(
         leading: const Icon(Symbols.currency_exchange),
-        title: "Thanh toán chấm luận văn",
-        callback: (_) {},
+        trailing: const Icon(Symbols.chevron_right),
+        title: Text("Thanh toán chấm luận văn"),
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            ThesisDefensePaymentPage.routeName,
+          );
+        },
       ),
     ];
 
@@ -50,13 +60,15 @@ class ThesisEverythingPage extends StatelessWidget {
           title: const Text('Luận văn thạc sĩ'),
         ),
       ),
-      body: ConstrainedBody(
-        child: Padding(
-          padding: EdgeInsets.all(context.gutter),
-          child: ListView.separated(
-            itemCount: items.length,
-            separatorBuilder: (context, index) => Divider(),
-            itemBuilder: (context, index) => items[index],
+      body: CommonShortcuts(
+        child: ConstrainedBody(
+          child: Padding(
+            padding: EdgeInsets.all(context.gutter),
+            child: ListView.separated(
+              itemCount: items.length,
+              separatorBuilder: (context, index) => Divider(),
+              itemBuilder: (context, index) => items[index],
+            ),
           ),
         ),
       ),
@@ -106,6 +118,7 @@ class ThesisDefenseRegisterPage extends StatelessWidget {
           child: AppBar(
             title: const Text('Bảo vệ luận văn'),
             bottom: TabBar(
+              isScrollable: true,
               tabs: [
                 Tab(text: "Nộp hồ sơ"),
                 Tab(text: "Quản trị"),
@@ -114,13 +127,15 @@ class ThesisDefenseRegisterPage extends StatelessWidget {
             ),
           ),
         ),
-        body: ConstrainedBody(
-          child: TabBarView(
-            children: [
-              _ApplyTab(),
-              _ModerateTab(),
-              _InfomationTab(),
-            ],
+        body: CommonShortcuts(
+          child: ConstrainedBody(
+            child: TabBarView(
+              children: [
+                _ApplyTab(),
+                _ModerateTab(),
+                _InfomationTab(),
+              ],
+            ),
           ),
         ),
       ),
@@ -135,81 +150,172 @@ class _ModerateTab extends HookWidget {
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(context.gutter),
-      child: CardSection(
-        title: "Chuẩn bị hồ sơ",
+      child: Column(
+        spacing: context.gutter,
         children: [
-          Consumer(
-            builder: (context, ref, _) {
-              final pdfAsync = ref.watch(scoreSheetsPdfProvider);
-              return _PdfPreviewButton(
-                title: "Phiếu điểm bảo vệ luận văn",
-                pdfAsync: pdfAsync,
-              );
-            },
-          ),
-          Consumer(
-            builder: (context, ref, _) {
-              final pdfAsync = ref.watch(councilSuggestionsPdfProvider);
-              return _PdfPreviewButton(
-                title: "Đề xuất hội đồng chấm luận văn",
-                pdfAsync: pdfAsync,
-              );
-            },
-          ),
-          ListTile(
-            title: DirectoryPicker(
-              name: "ho-so-bao-ve-luan-van",
-              labelText: "Thư mục lưu",
-              onDirectorySelected: (directory) {
-                saveDirectory.value = directory;
-              },
+          FramedSection(
+            title: "Chuẩn bị hồ sơ",
+            padding: EdgeInsets.all(context.gutter),
+            child: Column(
+              spacing: context.gutterSmall,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Consumer(
+                  builder: (context, ref, _) {
+                    final pdfAsync = ref.watch(scoreSheetsPdfProvider);
+                    return _PdfPreviewButton(
+                      title: "Phiếu điểm bảo vệ luận văn",
+                      pdfAsync: pdfAsync,
+                    );
+                  },
+                ),
+                Consumer(
+                  builder: (context, ref, _) {
+                    final pdfAsync = ref.watch(councilSuggestionsPdfProvider);
+                    return _PdfPreviewButton(
+                      title: "Đề xuất hội đồng chấm luận văn",
+                      pdfAsync: pdfAsync,
+                    );
+                  },
+                ),
+
+                DirectoryPicker(
+                  name: "ho-so-bao-ve-luan-van",
+                  labelText: "Thư mục lưu",
+                  onDirectorySelected: (directory) {
+                    saveDirectory.value = directory;
+                  },
+                ),
+
+                Consumer(
+                  builder: (context, ref, child) => OutlinedButton.icon(
+                    label: Text("Lưu hồ sơ bảo vệ"),
+                    icon: Icon(Symbols.download),
+                    onPressed: () async {
+                      final directory = saveDirectory.value;
+                      if (directory == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "Vui lòng chọn thư mục lưu trước khi lưu hồ sơ",
+                            ),
+                          ),
+                        );
+                        return;
+                      }
+
+                      final pdfFiles = await Future.wait([
+                        ref.read(scoreSheetsPdfProvider.future),
+                        ref.read(councilSuggestionsPdfProvider.future),
+                      ]);
+
+                      final docxFiles = [
+                        ...(await ref.read(
+                          councilDecisionDocxFilesProvider.future,
+                        )),
+                      ];
+
+                      for (final docx in docxFiles) {
+                        await docx.save(directory: directory);
+                      }
+                      for (final pdf in pdfFiles) {
+                        await pdf.save(directory: directory);
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "Đã lưu hồ sơ bảo vệ luận văn vào $directory",
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
 
-          Consumer(
-            builder: (context, ref, child) => ListTile(
-              title: Text("Lưu hồ sơ bảo vệ"),
-              trailing: Icon(Symbols.chevron_right),
-              onTap: () async {
-                final directory = saveDirectory.value;
-                if (directory == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        "Vui lòng chọn thư mục lưu trước khi lưu hồ sơ",
-                      ),
+          // Thông báo kết thúc
+          FramedSection(
+            title: "Hoàn thiện",
+            padding: EdgeInsets.all(context.gutterSmall),
+            child: Column(
+              children: [
+                () {
+                  final msg = [
+                    "Chúc mừng các bạn đã bảo vệ luận văn thành công.",
+                    "Bước tiếp theo các bạn cần hoàn thiện luận văn theo đóng góp của hội đồng, nộp quyển hoàn chỉnh về Thư viện và về Khoa.",
+                    "",
+                    "Hướng dẫn chi tiết các bước các bạn xem trong file PDF nhé.",
+                  ].join("\n");
+                  return ListTile(
+                    titleAlignment: .titleHeight,
+                    title: Text("Thông báo hoàn tất"),
+                    subtitle: Text(msg),
+                    trailing: OutlinedButton(
+                      child: Text("Copy"),
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(text: msg));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "Đã sao chép thông báo vào clipboard",
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   );
-                  return;
-                }
-
-                final pdfFiles = await Future.wait([
-                  ref.read(scoreSheetsPdfProvider.future),
-                  ref.read(councilSuggestionsPdfProvider.future),
-                ]);
-
-                final docxFiles = [
-                  ...(await ref.read(councilDecisionDocxFilesProvider.future)),
-                ];
-
-                for (final docx in docxFiles) {
-                  await docx.save(directory: directory);
-                }
-                for (final pdf in pdfFiles) {
-                  await pdf.save(directory: directory);
-                }
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      "Đã lưu hồ sơ bảo vệ luận văn vào $directory",
-                    ),
+                }(),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.gutterSmall,
                   ),
-                );
-              },
+                  child: Divider(),
+                ),
+                _FinishingEmailButton(),
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _FinishingEmailButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final emailAsync = ref.watch(thesisFinishingEmailProvider);
+    switch (emailAsync) {
+      case AsyncLoading():
+        return LinearProgressIndicator();
+      case AsyncError(:final error, :final stackTrace):
+        if (kDebugMode) {
+          print(stackTrace);
+        }
+        return ListTile(
+          title: Text("Lỗi tạo email: $error"),
+          enabled: false,
+        );
+      default:
+    }
+
+    final email = emailAsync.value!;
+    return ListTile(
+      title: Text("Gửi thông báo tính GD"),
+      subtitle: Text(
+        "Gửi email cho giảng viên hướng dẫn chọn kỳ kết thúc và kỳ tính GD",
+      ),
+      trailing: Icon(Symbols.send),
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) => EmailCopyDialog(
+            email: email,
+          ),
+        );
+      },
     );
   }
 }
@@ -287,13 +393,17 @@ class _StudentListView extends ConsumerWidget {
 
     final studentIds = studentIdsAsync.value!;
 
-    return ListView.separated(
-      itemCount: studentIds.length,
-      separatorBuilder: (context, index) => Divider(),
-      itemBuilder: (context, index) {
-        final studentId = studentIds[index];
-        return _StudentThesisListTile(studentId: studentId);
-      },
+    return FramedSection(
+      title: "Học viên đã nộp hồ sơ",
+      padding: EdgeInsets.all(context.gutterSmall),
+      child: ListView.separated(
+        itemCount: studentIds.length,
+        separatorBuilder: (context, index) => Divider(),
+        itemBuilder: (context, index) {
+          final studentId = studentIds[index];
+          return _StudentThesisListTile(studentId: studentId);
+        },
+      ),
     );
   }
 }
@@ -306,46 +416,9 @@ class _StudentThesisListTile extends ConsumerWidget {
   });
 
   void onTapAction(BuildContext context, WidgetRef ref, ThesisData thesis) {
-    /// Hủy đăng ký bảo vệ
-    void cancelDefenseRegistration() {
-      final notifier = ref.read(
-        thesisByIdProvider(thesis.id).notifier,
-      );
-      notifier.cancelDefenseRegistration();
-      ref.invalidate(registeredStudentIdsProvider);
-    }
-
-    /// Thu hồ sơ
-    void collectDefenseApplication() {
-      final notifier = ref.read(
-        thesisByIdProvider(thesis.id).notifier,
-      );
-      notifier.applyForDefense();
-      ref.invalidate(registeredStudentIdsProvider);
-    }
-
     /// Đi tới trang chi tiết
     final navigator = AppNavigator(context);
-
-    showDialog<void>(
-      context: context,
-      builder: (context) => MenuDialog(
-        items: [
-          MenuDialogItem(title: "Bỏ đăng ký", onTap: cancelDefenseRegistration),
-          MenuDialogItem(title: "Thu hồ sơ", onTap: collectDefenseApplication),
-          // MenuDialogItem(
-          //   title: "Xem chi tiết",
-          //   onTap: () => navigator.toThesisDetailsPage(thesisId: thesis.id),
-          // ),
-          MenuDialogItem(
-            title: "Xếp hội đồng",
-            onTap: () => navigator.toThesisDefenseCouncilAssignmentPage(
-              thesisId: thesis.id,
-            ),
-          ),
-        ],
-      ),
-    );
+    navigator.toThesisDetailsPage(thesisId: thesis.id);
   }
 
   @override
@@ -371,17 +444,61 @@ class _StudentThesisListTile extends ConsumerWidget {
     final thesis = model.thesis;
     final supervisor = model.supervisor;
 
-    return ListTile(
-      title: Text(
-        "[${student.cohort}] ${student.name} - ${student.studentId}",
+    return Padding(
+      padding: EdgeInsets.all(context.gutterSmall),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${student.cohort} - ${student.name} - ${student.studentId}",
+                  style: TextTheme.of(context).titleMedium,
+                ),
+                SizedBox(height: context.gutterTiny),
+                Text(
+                  "${thesis.vietnameseTitle}\n"
+                  "GVHD: ${supervisor.name}\n"
+                  "Trạng thái: ${thesis.defenseStatus.label}",
+                ),
+              ],
+            ),
+          ),
+          VerticalDivider(),
+          IntrinsicWidth(
+            child: Column(
+              spacing: context.gutterSmall,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                OutlinedButton(
+                  onPressed: () => onTapAction(context, ref, thesis),
+                  child: Text("Chi tiết"),
+                ),
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.redAccent,
+                    side: BorderSide(color: Colors.redAccent),
+                  ),
+                  onPressed: () async {
+                    final db = await ref.read(mainDatabaseProvider.future);
+                    final stmt = db.thesis.update();
+                    stmt.where((s) => s.studentId.equals(student.id));
+                    stmt.write(
+                      ThesisCompanion(
+                        defenseStatus: Value(ThesisStatus.assigned),
+                      ),
+                    );
+                  },
+                  child: Text("Bỏ theo dõi"),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-      subtitle: Text(
-        "Đề tài: ${thesis.vietnameseTitle}\n"
-        "GVHD: ${supervisor.name}\n"
-        "Trạng thái: ${thesis.defenseStatus.label}",
-      ),
-      trailing: const Icon(Symbols.chevron_right),
-      onTap: () => onTapAction(context, ref, thesis),
     );
   }
 }
@@ -462,109 +579,128 @@ class _InfomationTab extends StatelessWidget {
       child: Column(
         spacing: context.gutter,
         children: [
-          CardSection(
+          FramedSection(
             title: "Hồ sơ học viên nộp",
-            subtitle: "Kiểm tra tên luận văn và thu hồ sơ",
-            children: [
-              ListTile(
-                title: Text("Lý lịch khoa học"),
-                subtitle: Text("Theo mẫu chính thức"),
-              ),
-              ListTile(
-                title: Text("Quyển luận văn & tóm tắt"),
-                subtitle: Text("Kiểm tra quy cách rồi trả học viên"),
-              ),
-              ListTile(
-                title: Text("Giấy nhận xét của giảng viên hướng dẫn"),
-                subtitle: Text("In từ hệ thống quản lý đào tạo"),
-              ),
-              ListTile(
-                title: Text("Chứng chỉ tiếng Anh"),
-                subtitle: Text("Bản sao có công chứng"),
-              ),
-              ListTile(
-                title: Text("Giấy chỉnh sửa tên đề tài (nếu có)"),
-                subtitle: Text("Đổi tên trên hệ thống"),
-              ),
-            ],
+            padding: EdgeInsets.all(context.gutterSmall),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.transparent,
+                      child: Text("1"),
+                    ),
+                  ),
+                  title: Text("Lý lịch khoa học"),
+                  subtitle: Text("Theo mẫu chính thức"),
+                ),
+                ListTile(
+                  title: Text("Quyển luận văn & tóm tắt"),
+                  subtitle: Text("Kiểm tra quy cách rồi trả học viên"),
+                ),
+                ListTile(
+                  title: Text("Giấy nhận xét của giảng viên hướng dẫn"),
+                  subtitle: Text("In từ hệ thống quản lý đào tạo"),
+                ),
+                ListTile(
+                  title: Text("Chứng chỉ tiếng Anh"),
+                  subtitle: Text("Bản sao có công chứng"),
+                ),
+                ListTile(
+                  title: Text("Giấy chỉnh sửa tên đề tài (nếu có)"),
+                  subtitle: Text("Đổi tên trên hệ thống"),
+                ),
+              ],
+            ),
           ),
 
           // Tiếng Anh
-          CardSection(
+          FramedSection(
             title: "Kiểm tra tiếng Anh",
-            children: [
-              ListTile(
-                title: Text("Gửi danh sách học viên + khóa cho BĐT"),
-                subtitle: Text("Để kiểm tra hậu kiểm tiếng Anh"),
-              ),
-              ListTile(
-                title: Text("Trả hồ sơ nếu chưa hậu kiểm"),
-              ),
-            ],
+            padding: EdgeInsets.all(context.gutterSmall),
+            child: Column(
+              children: [
+                ListTile(
+                  title: Text("Gửi danh sách học viên + khóa cho BĐT"),
+                  subtitle: Text("Để kiểm tra hậu kiểm tiếng Anh"),
+                ),
+                ListTile(
+                  title: Text("Trả hồ sơ nếu chưa hậu kiểm"),
+                ),
+              ],
+            ),
           ),
 
           // Gửi BĐT
-          CardSection(
+          FramedSection(
             title: "Bước gửi hồ sơ lên Ban Đào tạo",
-            children: [
-              ListTile(
-                title: Text("Giấy đề xuất hội đồng"),
-                subtitle: Text("Theo mẫu chính thức"),
-              ),
-              ListTile(
-                title: Text("Nhập hội đồng lên hệ thống quản lý"),
-              ),
-              ListTile(
-                title: Text("Gửi hồ sơ lên BĐT"),
-              ),
-              ListTile(
-                title: Text("Nhận bảng điểm có chữ ký nháy"),
-              ),
-              ListTile(
-                title: Text("Tải quyết định thành lập hội đồng"),
-                subtitle: Text("Từ hệ thống tác nghiệp"),
-              ),
-              ListTile(
-                title: Text("Đăng quyết định lên BK Office trình ký"),
-                subtitle: Text(
-                  "Trưởng Khoa ký, Ban Đào tạo & Tài chính kế hoạch xem để biết",
+            padding: EdgeInsets.all(context.gutterSmall),
+            child: Column(
+              children: [
+                ListTile(
+                  title: Text("Giấy đề xuất hội đồng"),
+                  subtitle: Text("Theo mẫu chính thức"),
                 ),
-              ),
-              ListTile(
-                title: Text("Sau khi quyết định ký"),
-                subtitle: Text(
-                  "Gửi QĐ cho học viên, GHVD, nhập lên hệ thống quản lý",
+                ListTile(
+                  title: Text("Nhập hội đồng lên hệ thống quản lý"),
                 ),
-              ),
-            ],
+                ListTile(
+                  title: Text("Gửi hồ sơ lên BĐT"),
+                ),
+                ListTile(
+                  title: Text("Nhận bảng điểm có chữ ký nháy"),
+                ),
+                ListTile(
+                  title: Text("Tải quyết định thành lập hội đồng"),
+                  subtitle: Text("Từ hệ thống tác nghiệp"),
+                ),
+                ListTile(
+                  title: Text("Đăng quyết định lên BK Office trình ký"),
+                  subtitle: Text(
+                    "Trưởng Khoa ký, Ban Đào tạo & Tài chính kế hoạch xem để biết",
+                  ),
+                ),
+                ListTile(
+                  title: Text("Sau khi quyết định ký"),
+                  subtitle: Text(
+                    "Gửi QĐ cho học viên, GHVD, nhập lên hệ thống quản lý",
+                  ),
+                ),
+              ],
+            ),
           ),
 
           // Bảo vệ
-          CardSection(
+          FramedSection(
             title: "Hồ sơ gửi thư ký",
-            subtitle: "Bổ sung thêm rồi gửi thư ký hội đồng",
-            children: [
-              ListTile(
-                title: Text("Bảng thanh toán chấm luận văn"),
-                subtitle: Text("In từ hệ thống, nhập số QĐ trước khi tải"),
-              ),
-              ListTile(
-                title: Text("Quyết định thành lập hội đồng"),
-                subtitle: Text("In từ văn thư"),
-              ),
-              ListTile(
-                title: Text("Phiếu chấm điểm luận văn"),
-                subtitle: Text("Có dấu treo của Khoa"),
-              ),
-              ListTile(
-                title: Text("Biên bản họp hội đồng"),
-                subtitle: Text("Theo mẫu SĐH"),
-              ),
-              ListTile(
-                title: Text("Biên bản kiểm phiếu"),
-                subtitle: Text("Theo mẫu SĐH"),
-              ),
-            ],
+            padding: EdgeInsets.all(context.gutterSmall),
+            child: Column(
+              children: [
+                ListTile(
+                  title: Text("Bảng thanh toán chấm luận văn"),
+                  subtitle: Text("In từ hệ thống, nhập số QĐ trước khi tải"),
+                ),
+                ListTile(
+                  title: Text("Quyết định thành lập hội đồng"),
+                  subtitle: Text("In từ văn thư"),
+                ),
+                ListTile(
+                  title: Text("Phiếu chấm điểm luận văn"),
+                  subtitle: Text("Có dấu treo của Khoa"),
+                ),
+                ListTile(
+                  title: Text("Biên bản họp hội đồng"),
+                  subtitle: Text("Theo mẫu SĐH"),
+                ),
+                ListTile(
+                  title: Text("Biên bản kiểm phiếu"),
+                  subtitle: Text("Theo mẫu SĐH"),
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -22,7 +22,7 @@ import 'thesis_defense_payment/page.dart' as msc_thesis;
 
 import 'phd_admission_payment/index.dart' as phd_pages;
 
-const initialLoadingRotue = InitialLoadingPage.routeName;
+const initialLoadingRoute = InitialLoadingPage.routeName;
 const intialSettingsRoute = InitialSetupPage.routeName;
 
 class AppRoute {
@@ -129,9 +129,8 @@ class AppNavigator {
       navigator.pushNamed(msc_thesis.ThesisDefensePaymentPage.routeName);
 
   /// Navigate to thesis details page
-  void toThesisDetailsPage({required int thesisId}) => moveTo(
-    (context) => ThesisDetailPage(thesisId: thesisId),
-  );
+  void toThesisDetailsPage({required int thesisId}) =>
+      moveTo((context) => MscThesisDetailsPage(thesisId: thesisId));
 
   /// Navigate to thesis defense council assignment page
   void toThesisDefenseCouncilAssignmentPage({required int thesisId}) => moveTo(
@@ -155,6 +154,9 @@ class AppNavigator {
 final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
 
+  // Document management pages
+  // false => DocumentManagementPage.routeName,
+
   // false => DraftPage.routeName,
 
   // Settings
@@ -171,7 +173,7 @@ final initialRoute = switch (kReleaseMode) {
   // false => HomePage.routeName,
 
   // Admission
-  false => AdmissionListPage.routeName,
+  // false => AdmissionListPage.routeName,
   // false => AdmissionEnrollmentPage.routeName,
   // false => AdmissionPaymentPage.routeName,
 
@@ -188,13 +190,16 @@ final initialRoute = switch (kReleaseMode) {
   // false => msc_thesis.ThesisDefensePaymentPage.routeName,
   // false => ThesisListPage.routeName,
   // false => msc_thesis.ThesisEverythingPage.routeName,
-  // false => msc_thesis.ThesisDefenseRegisterPage.routeName,
+  false => msc_thesis.ThesisDefenseRegisterPage.routeName,
   // false => msc_thesis.MscThesisAssignmentPage.routeName,
   // false => msc_thesis.MscThesisSelectionPage.routeName,
+  // false => ThesisCreatePage.routeName,
+  false => ThesisDefensePaymentPage.routeName,
 
   // PhD students pages
   // false => PhdStudentListPage.routeName,
-  false => phd_pages.PhdAdmissionPaymentPage.routeName,
+  // false => PhdStudentCreatePage.routeName,
+  // false => phd_pages.PhdAdmissionPaymentPage.routeName,
 
   // Teacher pages
   // false => TeacherSearchPage.routeName,
@@ -249,8 +254,8 @@ final routesBySections = <String, List<RouteItem>>{
       subtitle: null,
     ),
     (
-      label: "Quy định hiện hành",
-      route: RulesPage.routeName,
+      label: "Văn bản, quy định",
+      route: DocumentManagementPage.routeName,
       icon: Symbols.rule,
       subtitle: null,
     ),
@@ -363,6 +368,10 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     case CourseLimitingPage.routeName:
       return CourseLimitingPage();
 
+    // Document manegement pages
+    case DocumentManagementPage.routeName:
+      return DocumentManagementPage();
+
     // Course classes
     case CourseClassListPage.routeName:
       return CourseClassListPage();
@@ -447,6 +456,10 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
       return const msc_thesis.MscThesisAssignmentPage();
     case msc_thesis.MscThesisSelectionPage.routeName:
       return const msc_thesis.MscThesisSelectionPage(studentId: 61);
+    case ThesisDefensePaymentPage.routeName:
+      return const ThesisDefensePaymentPage();
+    case ThesisCreatePage.routeName:
+      return const ThesisCreatePage();
 
     // case ThesisDefensePaymentPage.routeName:
     //   return const ThesisDefensePaymentPage();

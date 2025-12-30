@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:riverpod/riverpod.dart';
 
-import '../../business/db_v2_providers/database.dart';
+import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
 
 final searchQueryProvider = NotifierProvider(

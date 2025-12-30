@@ -1,6 +1,8 @@
+import 'package:fami_tools/pages/phd_student_pages/phd_student_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../business/main_database.dart';
 import '../../business/view_models.dart';
 import './providers.dart';
 
@@ -15,9 +17,7 @@ class CohortDropdown extends ConsumerWidget {
       case AsyncLoading():
         return LinearProgressIndicator();
       case AsyncError(:final error, :final stackTrace):
-        print(error);
-        print(stackTrace);
-        return Text('Error loading cohorts');
+        return ErrorWidget(error);
       default:
     }
 
@@ -106,23 +106,42 @@ class _PhdPaymentTile extends ConsumerWidget {
     // final supervisor = model.supervisor;
     // final secondarySupervisor = model.secondarySupervisor;
 
-    final subtitleParts = <String>[];
+    /// Teacher subtitle line
+    String teacherStl(TeacherData? teacher, String role) {
+      if (teacher != null) {
+        return '$role: ${teacher.name} - ${teacher.university}';
+      } else {
+        return '$role: ';
+      }
+    }
+
+    final subtitleParts = <String>[
+      teacherStl(model.admissionPresident, 'Chủ tịch'),
+      teacherStl(model.admissionSecretary, 'Thư ký'),
+      teacherStl(model.admissionMember1, 'Ủy viên'),
+      teacherStl(model.admissionMember2, 'Ủy viên'),
+      teacherStl(model.admissionMember3, 'Ủy viên'),
+    ];
     // subtitleParts.add('HD1: ${supervisor.name}');
     // subtitleParts.add('HD2: ${secondarySupervisor?.name ?? ""}');
-    subtitleParts.add('Chủ tịch: ${model.admissionPresident?.name ?? ""}');
-    subtitleParts.add('Thư ký: ${model.admissionPresident?.name ?? ""}');
-    subtitleParts.add('Ủy viên 1: ${model.admissionMember1?.name ?? ""}');
-    subtitleParts.add('Ủy viên 2: ${model.admissionMember2?.name ?? ""}');
-    subtitleParts.add('Ủy viên 3: ${model.admissionMember3?.name ?? ""}');
 
     final helper = model.admissionHelper;
     if (helper != null) {
       subtitleParts.add('Người hỗ trợ: ${helper.name}');
     }
 
+    final navigator = Navigator.of(context);
+
     return ListTile(
       title: Text(student.name),
       subtitle: Text(subtitleParts.join('\n')),
+      onTap: () {
+        navigator.push(
+          MaterialPageRoute(
+            builder: (context) => PhdStudentDetailsPage(studentId: id),
+          ),
+        );
+      },
     );
   }
 }

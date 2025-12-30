@@ -1,14 +1,30 @@
 import 'package:fami_tools/business/db_v2_providers.dart';
+import 'package:fami_tools/shortcuts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/business_enums.dart';
+import '../../business/view_models.dart';
 import '../../custom_widgets.dart';
 import './providers.dart';
 import './widgets.dart';
 import 'phd_student_pages.dart';
+
+class _ActionDispatcher {
+  _ActionDispatcher();
+
+  void focusSearchField(BuildContext context) {
+    final searchFocusNode = FocusNodeProvider.of(context);
+    FocusScope.of(context).requestFocus(searchFocusNode);
+  }
+
+  void goToCreatePhdStudent(BuildContext context) {
+    final navigator = Navigator.of(context);
+    navigator.pushNamed(PhdStudentCreatePage.routeName);
+  }
+}
 
 class PhdStudentListPage extends StatelessWidget {
   static const routeName = '/phd-students';
@@ -17,33 +33,41 @@ class PhdStudentListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gutter = context.gutter;
+    final actions = _ActionDispatcher();
+
     return Scaffold(
       appBar: ConstrainedAppBar(
         child: AppBar(
           title: const Text('PhD Students'),
         ),
       ),
-      body: ConstrainedBody(
-        child: Padding(
-          padding: EdgeInsets.all(context.gutter),
-          child: Column(
-            spacing: gutter,
-            verticalDirection: context.verticalDirection,
-            children: [
-              IntrinsicHeight(
-                child: Row(
-                  spacing: gutter,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Expanded(
-                      child: CohortSelector(),
+      body: FocusNodeProvider(
+        child: CommonShortcuts(
+          onCreateNew: actions.goToCreatePhdStudent,
+          onSearch: actions.focusSearchField,
+          child: ConstrainedBody(
+            child: Padding(
+              padding: EdgeInsets.all(context.gutter),
+              child: Column(
+                spacing: gutter,
+                verticalDirection: context.verticalDirection,
+                children: [
+                  IntrinsicHeight(
+                    child: Row(
+                      spacing: gutter,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: CohortSelector(),
+                        ),
+                        _GotoCreateButton(),
+                      ],
                     ),
-                    _GotoCreateButton(),
-                  ],
-                ),
+                  ),
+                  Expanded(child: _PhdStudentListView()),
+                ],
               ),
-              Expanded(child: _PhdStudentListView()),
-            ],
+            ),
           ),
         ),
       ),
@@ -99,7 +123,7 @@ class _PhdStudentInfo extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final modelAsync = ref.watch(phdStudentViewModelByIdProvider(studentId));
+    final modelAsync = ref.watch(PhdStudentViewModel.providerById(studentId));
     switch (modelAsync) {
       case AsyncLoading():
         return const Center(child: CircularProgressIndicator());

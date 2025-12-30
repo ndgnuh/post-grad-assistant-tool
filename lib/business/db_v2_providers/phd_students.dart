@@ -14,12 +14,23 @@ final phdAdmissionPaymentPolicyByIdProvider = FutureProvider.family((
   return policy;
 });
 
-final phdCohortsProvider = AsyncNotifierProvider(
-  PhdCohorts.new,
-);
+final phdCohortsProvider = FutureProvider<List<PhdCohortData>>(
+  (Ref ref) async {
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final stmt = db.phdCohort.select()
+      ..orderBy([
+        (x) => OrderingTerm(expression: x.cohort, mode: OrderingMode.desc),
+      ]);
 
-final phdStudentsMutationProvider = NotifierProvider(
-  PhdStudentsMutationNotifier.new,
+    if (ref.isFirstBuild) {
+      stmt.watch().listen((_) {
+        ref.invalidateSelf();
+      });
+    }
+
+    final result = await stmt.get();
+    return result;
+  },
 );
 
 final phdCohortByIdProvider = FutureProvider.family((
@@ -28,7 +39,15 @@ final phdCohortByIdProvider = FutureProvider.family((
 ) async {
   final db = await ref.watch(mainDatabaseProvider.future);
   final stmt = db.phdCohort.select()..where((c) => c.cohort.equals(cohortId));
-  final cohort = stmt.getSingleOrNull();
+
+  if (ref.isFirstBuild) {
+    stmt.watchSingleOrNull().listen((_) {
+      ref.invalidateSelf();
+    });
+  }
+
+  final cohort = await stmt.getSingleOrNull();
+  assert(cohort != null, 'PhD Cohort with ID $cohortId not found');
   return cohort;
 });
 
@@ -44,19 +63,6 @@ final phdStudentIdsByCohortProvider = AsyncNotifierProvider.family(
   (PhdCohortData cohort) => PhdStudentIdsNotifier(cohort: cohort),
 );
 
-class PhdCohorts extends AsyncNotifier<List<PhdCohortData>> {
-  @override
-  Future<List<PhdCohortData>> build() async {
-    final db = await ref.watch(mainDatabaseProvider.future);
-    final stmt = db.phdCohort.select()
-      ..orderBy([
-        (x) => OrderingTerm(expression: x.cohort, mode: OrderingMode.desc),
-      ]);
-    final result = await stmt.get();
-    return result;
-  }
-}
-
 class PhdStudentByIdNotifier extends AsyncNotifier<PhdStudentData> {
   final int studentId;
   PhdStudentByIdNotifier(this.studentId);
@@ -64,9 +70,17 @@ class PhdStudentByIdNotifier extends AsyncNotifier<PhdStudentData> {
   @override
   Future<PhdStudentData> build() async {
     final db = await ref.watch(mainDatabaseProvider.future);
-    final student = await db.managers.phdStudent
-        .filter((student) => student.id.equals(studentId))
-        .getSingleOrNull();
+    final stmt = db.managers.phdStudent.filter(
+      (student) => student.id.equals(studentId),
+    );
+
+    if (ref.isFirstBuild) {
+      stmt.watch().listen((_) {
+        ref.invalidateSelf();
+      });
+    }
+
+    final student = await stmt.getSingleOrNull();
     assert(student != null, 'PhD Student with ID $studentId not found');
     return student!;
   }
@@ -124,61 +138,67 @@ class PhdStudentIdsNotifier extends AsyncNotifier<List<int>> {
       orderBy: orderBy,
     );
 
+    if (ref.isFirstBuild) {
+      stmt.watch().listen((_) {
+        ref.invalidateSelf();
+      });
+    }
+
     final ids = await stmt.map((s) => s.id).get();
     return ids;
   }
 }
 
-class PhdStudentsMutationNotifier extends Notifier<void> {
-  Future<void> addPhdStudent({
-    // Admisison information
-    required String admissionId,
-    required String cohort,
-
-    // Basic information
-    required String name,
-    required Gender gender,
-    required DateTime dateOfBirth,
-    required String placeOfBirth,
-
-    // Contact information
-    required String phone,
-    required String personalEmail,
-
-    // Academic information
-    required String thesis,
-    required int supervisorId,
-    required int? secondarySupervisorId,
-    required PhdSpecialization majorSpecialization,
-  }) async {
-    final db = await ref.watch(mainDatabaseProvider.future);
-    final companion = PhdStudentCompanion.insert(
-      // Admission information
-      admissionId: admissionId,
-      cohort: cohort,
-      status: StudentStatus.admission,
-
-      // Basic information
-      name: name,
-      gender: Value(gender),
-      dateOfBirth: Value(dateOfBirth),
-      placeOfBirth: Value(placeOfBirth),
-      phone: phone,
-      personalEmail: personalEmail,
-
-      // Academic information
-      thesis: thesis,
-      supervisorId: supervisorId,
-      secondarySupervisorId: Value(secondarySupervisorId),
-      majorSpecialization: majorSpecialization,
-    );
-
-    final stmt = db.phdStudent.insert();
-    await stmt.insert(companion);
-
-    ref.invalidate(phdStudentIdsByCohortProvider);
-  }
-
-  @override
-  build() {}
-}
+// class PhdStudentsMutationNotifier extends Notifier<void> {
+//   Future<void> addPhdStudent({
+//     // Admisison information
+//     required String admissionId,
+//     required String cohort,
+//
+//     // Basic information
+//     required String name,
+//     required Gender gender,
+//     required DateTime dateOfBirth,
+//     required String placeOfBirth,
+//
+//     // Contact information
+//     required String phone,
+//     required String personalEmail,
+//
+//     // Academic information
+//     required String thesis,
+//     required int supervisorId,
+//     required int? secondarySupervisorId,
+//     required PhdSpecialization majorSpecialization,
+//   }) async {
+//     final db = await ref.watch(mainDatabaseProvider.future);
+//     final companion = PhdStudentCompanion.insert(
+//       // Admission information
+//       admissionId: admissionId,
+//       cohort: cohort,
+//       status: StudentStatus.admission,
+//
+//       // Basic information
+//       name: name,
+//       gender: Value(gender),
+//       dateOfBirth: Value(dateOfBirth),
+//       placeOfBirth: Value(placeOfBirth),
+//       phone: phone,
+//       personalEmail: personalEmail,
+//
+//       // Academic information
+//       thesis: thesis,
+//       supervisorId: supervisorId,
+//       secondarySupervisorId: Value(secondarySupervisorId),
+//       majorSpecialization: majorSpecialization,
+//     );
+//
+//     final stmt = db.phdStudent.insert();
+//     await stmt.insert(companion);
+//
+//     ref.invalidate(phdStudentIdsByCohortProvider);
+//   }
+//
+//   @override
+//   build() {}
+// }

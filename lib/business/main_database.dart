@@ -4,11 +4,34 @@ import 'business_enums.dart' as enums;
 import 'business_enums.dart';
 
 export './business_enums.dart';
+export 'package:drift/drift.dart' show Value;
+export 'package:drift/drift.dart' show TableStatements;
 
+part 'database_v1/thesis_dao.dart';
+part 'database_v1/phd_student_dao.dart';
+part 'database_v1/teacher_dao.dart';
 part 'main_database.g.dart';
 
 extension AnyEmail on TeacherData {
   String? get email => workEmail ?? personalEmail;
+  String get requireEmail {
+    if (workEmail != null) return workEmail as String;
+    if (personalEmail != null) return personalEmail as String;
+    throw AssertionError('Giảng viên $name không có');
+  }
+
+  // String get nameWithTitle {
+  //   switch ((academicRank, academicDegree)) {
+  //     case (AcademicRank rank, AcademicDegree degree):
+  //       return '${rank.short} ${degree.short} $name';
+  //     case (AcademicRank rank, null):
+  //       return '${rank.short} $name';
+  //     case (null, AcademicDegree degree):
+  //       return '${degree.short} $name';
+  //     case (null, null):
+  //       return name;
+  //   }
+  // }
 
   List<String> get emails => [
     if (workEmail != null) workEmail as String,
@@ -85,33 +108,6 @@ class AppDatabase extends _$AppDatabase {
     );
     final db = AppDatabase(executor);
     return db;
-  }
-
-  SimpleSelectStatement<Thesis, ThesisData> searchTheses({
-    String? searchText,
-  }) {
-    final stmt = thesis.select();
-
-    switch (searchText?.trim()) {
-      case String searchText:
-        final stmtTeacher = selectOnly(teacher)
-          ..where(teacher.name.contains(searchText))
-          ..addColumns([teacher.id]);
-
-        final stmtStudent = selectOnly(student)
-          ..where(student.name.contains(searchText))
-          ..addColumns([student.id]);
-
-        stmt.where(
-          (t) =>
-              t.vietnameseTitle.contains(searchText) |
-              t.englishTitle.contains(searchText) |
-              t.studentId.isInQuery(stmtStudent) |
-              t.supervisorId.isInQuery(stmtTeacher),
-        );
-    }
-
-    return stmt;
   }
 
   Future<List<String>> searchCourses({
@@ -201,120 +197,6 @@ class AppDatabase extends _$AppDatabase {
     return stmt;
   }
 
-  /// Search teachers by name and outsider status
-  /// Returns only the ids of the teachers
-  SimpleSelectStatement<Teacher, TeacherData> searchTeachers({
-    String searchText = "",
-    bool? isOutsider,
-  }) {
-    final stmt = select(teacher);
-
-    if (isOutsider != null) {
-      stmt.where((t) => t.isOutsider.equals(isOutsider));
-    }
-
-    if (searchText.isNotEmpty) {
-      final st = searchText.trim();
-
-      final idsFts = selectOnly(teacher);
-      idsFts.addColumns([teacher.id]);
-      idsFts.where(
-        CustomExpression(
-          "id in (select id from teacher_fts where teacher_fts MATCH '$st')",
-        ),
-      );
-
-      stmt.where(
-        (t) =>
-            t.name.contains(st) |
-            t.staffId.contains(st) |
-            t.workEmail.contains(st) |
-            t.citizenId.contains(st) |
-            t.bankAccount.contains(st) |
-            t.personalEmail.contains(st) |
-            t.phoneNumber.contains(st),
-        // t.id.isInQuery(idsFts),
-        // t.isInQuery(idsFtsQuery as BaseSelectStatement<IntColumn>),
-      );
-    }
-
-    return stmt;
-  }
-
-  /// Craete new thesis
-  void createThesis({
-    required String vietnameseTitle,
-    required String englishTitle,
-    required TeacherData supervisor,
-    required StudentData? student,
-  }) {
-    final studentId = switch (student?.id) {
-      null => Value<int>.absent(),
-      int id => Value(id),
-    };
-
-    final thesisStatus = switch (student?.id) {
-      null => ThesisStatus.unofficial,
-      int _ => ThesisStatus.assigned,
-    };
-    thesis.insertOne(
-      ThesisCompanion.insert(
-        vietnameseTitle: vietnameseTitle,
-        englishTitle: englishTitle,
-        supervisorId: supervisor.id,
-        studentId: studentId,
-        defenseStatus: thesisStatus,
-        paymentStatus: PaymentStatus.unpaid,
-      ),
-    );
-  }
-
-  SimpleSelectStatement<PhdStudent, PhdStudentData> searchPhdStudents({
-    int? id,
-    String? searchText,
-    PhdCohortData? cohort,
-    PaymentStatus? admissionPaymentStatus,
-    List<OrderingTerm Function(PhdStudent)>? orderBy,
-  }) {
-    final stmt = select(phdStudent);
-
-    if (id != null) {
-      stmt.where((p) => p.id.equals(id));
-    }
-
-    switch (searchText?.trim()) {
-      case String searchText when searchText.trim().isNotEmpty:
-        stmt.where(
-          (p) =>
-              p.name.contains(searchText) |
-              p.admissionId.contains(searchText) |
-              p.personalEmail.contains(searchText) |
-              p.phone.contains(searchText) |
-              p.cohort.contains(searchText),
-        );
-      default:
-    }
-
-    switch (orderBy) {
-      case null:
-        break;
-      default:
-        stmt.orderBy(orderBy);
-    }
-
-    if (cohort != null) {
-      stmt.where((p) => p.cohort.equals(cohort.cohort));
-    }
-
-    switch (admissionPaymentStatus) {
-      case PaymentStatus status:
-        stmt.where((p) => p.admissionPaymentStatus.equals(status.value));
-      default:
-    }
-
-    return stmt;
-  }
-
   SimpleSelectStatement<Semester, SemesterData> previousSemester(
     SemesterData semester,
   ) {
@@ -322,4 +204,25 @@ class AppDatabase extends _$AppDatabase {
     stmt.where((s) => s.sequence.equals(semester.sequence - 1));
     return stmt;
   }
+
+  SimpleSelectStatement<Document, DocumentData> searchDocuments({
+    String? searchText,
+  }) {
+    final stmt = document.select();
+
+    switch (searchText?.trim()) {
+      case String text when text.isNotEmpty:
+        stmt.where(
+          (d) =>
+              d.title.contains(text) |
+              d.officialCode.cast<String>().contains(text),
+        );
+    }
+
+    return stmt;
+  }
+}
+
+Value<T> valueOrAbsent<T>(T? value) {
+  return value != null ? Value(value) : const Value.absent();
 }

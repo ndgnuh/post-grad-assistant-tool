@@ -286,15 +286,6 @@ extension PdfPageFormatHelpers on PdfPageFormat {
   PdfPageFormat get transpose => copyWith(height: width, width: height);
 }
 
-// Helpful text styles
-// -------------------
-extension TextStyleHelpers on TextStyle {
-  TextStyle get bold => copyWith(fontWeight: FontWeight.bold);
-  TextStyle get boldItalic =>
-      copyWith(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic);
-  TextStyle get italic => copyWith(fontStyle: FontStyle.italic);
-}
-
 /// Create dot fill pattern like "Name: ............"
 class Dotfill extends StatelessWidget {
   final Widget leading;

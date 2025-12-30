@@ -1,3 +1,4 @@
+import 'package:fami_tools/shortcuts.dart';
 import 'package:flutter/material.dart';
 
 import '../../business/business_enums.dart';
@@ -28,6 +29,7 @@ class PhdStudentDetailsPage extends StatelessWidget {
               ),
             ),
             bottom: TabBar(
+              isScrollable: true,
               tabs: [
                 Tab(text: "Thông tin"),
                 PhdStudentInfo(
@@ -42,12 +44,14 @@ class PhdStudentDetailsPage extends StatelessWidget {
             ),
           ),
         ),
-        body: ConstrainedBody(
-          child: TabBarView(
-            children: [
-              PhdStudentDetailsTab(studentId: studentId),
-              PhdStudentAdmissionTab(studentId: studentId),
-            ],
+        body: CommonShortcuts(
+          child: ConstrainedBody(
+            child: TabBarView(
+              children: [
+                PhdStudentDetailsTab(studentId: studentId),
+                PhdStudentAdmissionTab(studentId: studentId),
+              ],
+            ),
           ),
         ),
       ),

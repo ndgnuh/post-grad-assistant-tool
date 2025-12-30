@@ -24,7 +24,8 @@ class PaymentModel {
     int total = 0;
     for (final vm in viewModels) {
       final policy = vm.admissionPaymentPolicy;
-      total += policy.presidentPayment;
+      assert(policy != null, "Chưa có chính sách thanh toán");
+      total += policy!.presidentPayment;
       total += policy.secretaryPayment;
       total += policy.memberPayment * 3;
       total += policy.helperPayment;
@@ -52,16 +53,20 @@ class PaymentModel {
       firstMembers: viewModels.map((vm) => vm.admissionMember1!).toList(),
       secondMembers: viewModels.map((vm) => vm.admissionMember2!).toList(),
       thirdMembers: viewModels.map((vm) => vm.admissionMember3!).toList(),
-      paymentPolicies: viewModels
-          .map((vm) => vm.admissionPaymentPolicy)
-          .toList(),
+      paymentPolicies: viewModels.map((vm) {
+        final policy = vm.admissionPaymentPolicy;
+        assert(policy != null, "Chưa có chính sách thanh toán");
+        return policy!;
+      }).toList(),
     );
   }
 
   PaymentAtmModel get paymentAtmModel {
     final entries = <PaymentAtmEntry>[];
     for (final vm in viewModels) {
-      final policy = vm.admissionPaymentPolicy;
+      final maybePolicy = vm.admissionPaymentPolicy;
+      assert(maybePolicy != null, "Chưa có chính sách thanh toán");
+      final policy = maybePolicy!;
       assert(vm.admissionPresident != null, "Chưa có chủ tịch hội đồng");
       assert(vm.admissionSecretary != null, "Chưa có thư ký hội đồng");
       assert(vm.admissionMember1 != null, "Chưa có ủy viên hội đồng 1");

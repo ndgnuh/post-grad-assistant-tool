@@ -286,7 +286,7 @@ class _CreateTabView extends HookConsumerWidget {
                   student: student,
                 );
 
-                ref.invalidate(thesisIdByStudentProvider(studentId));
+                // ref.invalidate(thesisIdByStudentProvider(studentId));
                 Navigator.pop(context);
               },
               child: Text('Tạo mới và giao đề tài'),

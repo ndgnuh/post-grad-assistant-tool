@@ -1,37 +1,33 @@
-import 'dart:async';
-
 import 'package:riverpod/riverpod.dart';
 
 import '../db_v2_providers.dart';
 
-final courseByIdProvider = AsyncNotifierProvider.family(
-  CourseByIdNotifier.new,
-);
-
-final coursesProvider = AsyncNotifierProvider(
-  CoursesNotifier.new,
-);
-
-class CourseByIdNotifier extends AsyncNotifier<CourseData> {
-  final String courseId;
-  CourseByIdNotifier(this.courseId);
-
-  @override
-  Future<CourseData> build() async {
-    final db = await ref.watch(mainDatabaseProvider.future);
-    final course = await db.managers.course
-        .filter((c) => c.id.equals(courseId))
-        .getSingleOrNull();
-    assert(course != null, "Course with ID $courseId not found");
-    return course as CourseData;
+final courseByIdProvider = FutureProvider.family((
+  Ref ref,
+  String courseId,
+) async {
+  final db = await ref.watch(mainDatabaseProvider.future);
+  final stmt = db.managers.course.filter((c) => c.id.equals(courseId));
+  if (ref.isFirstBuild) {
+    stmt.watchSingleOrNull().listen((course) {
+      ref.invalidateSelf();
+    });
   }
-}
 
-class CoursesNotifier extends AsyncNotifier<List<CourseData>> {
-  @override
-  FutureOr<List<CourseData>> build() async {
-    final db = await ref.watch(mainDatabaseProvider.future);
-    final courses = await db.managers.course.get();
-    return courses;
-  }
-}
+  final course = await stmt.getSingleOrNull();
+  assert(course != null, "Course with ID $courseId not found");
+  return course as CourseData;
+});
+
+// final coursesProvider = AsyncNotifierProvider(
+//   CoursesNotifier.new,
+// );
+
+// class CoursesNotifier extends AsyncNotifier<List<CourseData>> {
+//   @override
+//   FutureOr<List<CourseData>> build() async {
+//     final db = await ref.watch(mainDatabaseProvider.future);
+//     final courses = await db.managers.course.get();
+//     return courses;
+//   }
+// }

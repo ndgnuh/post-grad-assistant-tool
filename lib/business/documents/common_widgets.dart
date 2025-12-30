@@ -3,10 +3,10 @@ import 'package:fami_tools/business/documents/pdf_utils.dart';
 class TitleRule extends StatelessWidget {
   @override
   Widget build(Context context) {
-    final style = Theme.of(context).defaultTextStyle;
+    final style = context.defaultTextStyle;
     late final double width;
     switch (style.fontSize?.toInt()) {
-      case 10:
+      case int n when (n <= 10):
         width = 2.9 * cm;
       case 11:
         width = 3.2 * cm;
@@ -37,13 +37,13 @@ class FormalTitle extends StatelessWidget {
   });
   @override
   Widget build(Context context) {
-    final defaultStyle = TextStyle(fontWeight: FontWeight.bold);
+    final style = context.defaultTextStyle.bold.heading1;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(firstTitle, style: firstStyle ?? defaultStyle),
+        Text(firstTitle, style: firstStyle ?? style),
         SizedBox(height: 1.5 * pt),
-        Text(secondTitle, style: secondStyle ?? defaultStyle),
+        Text(secondTitle, style: secondStyle ?? style),
         SizedBox(height: 1.5 * pt),
         TitleRule(),
       ],

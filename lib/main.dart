@@ -44,29 +44,29 @@ Future<void> setupHotKeys() async {
   await hotKeyManager.unregisterAll();
 
   /// Hotkey for going back
-  await hotKeyManager.register(
-    HotKey(
-      key: PhysicalKeyboardKey.arrowLeft,
-      modifiers: const [HotKeyModifier.alt],
-      scope: HotKeyScope.inapp,
-      identifier: 'go-back',
-    ),
-    keyDownHandler: (hotKey) {
-      final navigator = navigationKey.currentState!;
-      final messenger = messengerKey.currentState!;
-
-      if (navigator.canPop() == false) {
-        messenger.showSnackBar(
-          const SnackBar(
-            content: Text('Không có trang để quay lại'),
-            duration: Duration(seconds: 1),
-          ),
-        );
-      } else {
-        navigator.pop();
-      }
-    },
-  );
+  // await hotKeyManager.register(
+  //   HotKey(
+  //     key: PhysicalKeyboardKey.arrowLeft,
+  //     modifiers: const [HotKeyModifier.alt],
+  //     scope: HotKeyScope.inapp,
+  //     identifier: 'go-back',
+  //   ),
+  //   keyDownHandler: (hotKey) {
+  //     final navigator = navigationKey.currentState!;
+  //     final messenger = messengerKey.currentState!;
+  //
+  //     if (navigator.canPop() == false) {
+  //       messenger.showSnackBar(
+  //         const SnackBar(
+  //           content: Text('Không có trang để quay lại'),
+  //           duration: Duration(seconds: 1),
+  //         ),
+  //       );
+  //     } else {
+  //       navigator.pop();
+  //     }
+  //   },
+  // );
 
   /// C-g for the go-to dialog
   await hotKeyManager.register(
@@ -95,52 +95,52 @@ Future<void> setupHotKeys() async {
     },
   );
 
-  registerCommonShortcuts({
-    required String identifier,
-    required key,
-    required Function(CommonShortcuts) callback,
-    modifiers = const [HotKeyModifier.control],
-  }) async {
-    await hotKeyManager.register(
-      HotKey(
-        key: key,
-        modifiers: modifiers,
-        scope: HotKeyScope.inapp,
-        identifier: identifier,
-      ),
-      keyDownHandler: (hotKey) {
-        final state = shortcutStateKey.currentState?.widget;
-        switch (state) {
-          case CommonShortcuts state:
-            callback(state);
-        }
-      },
-    );
-  }
+  // registerCommonShortcuts({
+  //   required String identifier,
+  //   required key,
+  //   required Function(CommonShortcuts) callback,
+  //   modifiers = const [HotKeyModifier.control],
+  // }) async {
+  //   await hotKeyManager.register(
+  //     HotKey(
+  //       key: key,
+  //       modifiers: modifiers,
+  //       scope: HotKeyScope.inapp,
+  //       identifier: identifier,
+  //     ),
+  //     keyDownHandler: (hotKey) {
+  //       final state = shortcutStateKey.currentState?.widget;
+  //       switch (state) {
+  //         case CommonShortcuts state:
+  //           callback(state);
+  //       }
+  //     },
+  //   );
+  // }
 
-  registerCommonShortcuts(
-    identifier: 'create-new',
-    key: PhysicalKeyboardKey.keyN,
-    callback: (state) => state.onCreateNew?.call(),
-  );
-
-  registerCommonShortcuts(
-    identifier: 'import',
-    key: PhysicalKeyboardKey.keyI,
-    callback: (state) => state.onImport?.call(),
-  );
-
-  registerCommonShortcuts(
-    identifier: 'paste',
-    key: PhysicalKeyboardKey.keyV,
-    callback: (state) => state.onPaste?.call(),
-  );
-
-  registerCommonShortcuts(
-    identifier: 'search',
-    key: PhysicalKeyboardKey.keyF,
-    callback: (state) => state.onSearch?.call(),
-  );
+  // registerCommonShortcuts(
+  //   identifier: 'create-new',
+  //   key: PhysicalKeyboardKey.keyN,
+  //   callback: (state) => state.onCreateNew?.call(),
+  // );
+  //
+  // registerCommonShortcuts(
+  //   identifier: 'import',
+  //   key: PhysicalKeyboardKey.keyI,
+  //   callback: (state) => state.onImport?.call(),
+  // );
+  //
+  // registerCommonShortcuts(
+  //   identifier: 'paste',
+  //   key: PhysicalKeyboardKey.keyV,
+  //   callback: (state) => state.onPaste?.call(),
+  // );
+  //
+  // registerCommonShortcuts(
+  //   identifier: 'search',
+  //   key: PhysicalKeyboardKey.keyF,
+  //   callback: (state) => state.onSearch?.call(),
+  // );
 }
 
 class MyApp extends ConsumerWidget {
@@ -172,8 +172,8 @@ class MyApp extends ConsumerWidget {
     };
 
     final actions = <Type, Action<Intent>>{
-      SearchIntent: SearchAction(context: context, ref: ref),
-      GoBackIntent: GoBackAction(context: context),
+      // SearchIntent: SearchAction(context: context, ref: ref),
+      // GoBackIntent: GoBackAction(context: context),
       NextTabIntent: ChangeTabAction(context: context, offset: 1),
       PreviousTabIntent: ChangeTabAction(context: context, offset: -1),
     };
@@ -185,14 +185,14 @@ class MyApp extends ConsumerWidget {
     return SafeArea(
       child: MaterialApp(
         scaffoldMessengerKey: messengerKey,
-        shortcuts: shortcuts,
-        actions: actions,
+        // shortcuts: shortcuts,
+        // actions: actions,
         navigatorKey: navigationKey,
         locale: locale,
         darkTheme: themes.dark,
         theme: themes.light,
         themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-        initialRoute: pages.initialLoadingRotue,
+        initialRoute: pages.initialLoadingRoute,
         debugShowMaterialGrid: false,
         debugShowCheckedModeBanner: false,
         onGenerateRoute: pages.onGenerateRoute,

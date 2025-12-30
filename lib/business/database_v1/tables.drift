@@ -141,7 +141,7 @@ create table teacher_group (
 -- Currently, just place barely enough information about lecturers
 -- to be able to link them to students
 -- We migrate to english later
-create table teacher (
+create table "teacher" (
 	id integer not null primary key autoincrement,
     staff_id text unique,
     name text not null,
@@ -160,6 +160,7 @@ create table teacher (
 	date_of_birth datetime,
 	bank_account text,
     bank_name text,
+    pronoun text not null mapped by `const PronounConverter()` default 'thay',
     deprecated_tax_code text,
 	note text,
     start_teaching_year integer,
@@ -203,8 +204,7 @@ create table "phd_student" (
     "admission_helper_id" integer,
     -- "admission_paid" boolean not null default false,
     "admission_payment_status" text not null mapped by `paymentStatusConverter` default 'unpaid',
-    "admission_payment_policy" integer not null
-        default ("select max(id) from phd_admission_payment_policy")
+    "admission_payment_policy" integer default ('select max(id) from phd_admission_payment_policy')
         references phd_admission_payment_policy(id),
     "thesis" text not null,
     "supervisor_id"	integer not null,

@@ -48,6 +48,13 @@ class TeachingRegistrationNotifier
         break;
     }
 
+    // Auto watch
+    if (ref.isFirstBuild) {
+      stmt.watch().listen((_) {
+        ref.invalidateSelf();
+      });
+    }
+
     final registrations = await stmt.get();
     return registrations;
   }
@@ -60,7 +67,6 @@ class TeachingRegistrationNotifier
     db.teachingRegistration.deleteWhere(
       (tr) => tr.teacherId.equals(teacherId) & tr.courseId.equals(courseId),
     );
-    ref.invalidateSelf();
   }
 
   Future<void> addRegistration({
@@ -73,7 +79,6 @@ class TeachingRegistrationNotifier
       courseId: courseId,
     );
     await db.into(db.teachingRegistration).insertOnConflictUpdate(entry);
-    ref.invalidateSelf();
   }
 }
 

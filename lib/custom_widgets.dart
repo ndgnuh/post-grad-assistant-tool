@@ -9,6 +9,7 @@ import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' hide Provider;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 export 'custom_widgets/datetime_picker.dart';
 export 'custom_widgets/directory_picker.dart';
@@ -132,7 +133,7 @@ T? ezGetValue<T>(ChangeNotifier controller, {bool textNullable = true}) {
       return ctl.value;
     case TextEditingController tec:
       if (textNullable) {
-        return tec.nonEmptyValue as T?;
+        return tec.nonEmptyText as T?;
       } else {
         return tec.text as T;
       }
@@ -1475,7 +1476,7 @@ class _InfoTileState<T> extends State<InfoTile<T>> {
 }
 
 extension NonEmptyValue on TextEditingController {
-  String? get nonEmptyValue {
+  String? get nonEmptyText {
     final txt = text.trim();
     return txt.isEmpty ? null : txt;
   }
@@ -1698,6 +1699,116 @@ class ErrorScaffold extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+abstract class StoredValueNotifier<T> extends ValueNotifier<T> {
+  final String key;
+
+  T? load(SharedPreferences pref);
+  Future<void> save(SharedPreferences pref, T value);
+
+  Future<void> delete(SharedPreferences pref) async {
+    await pref.remove(key);
+  }
+
+  StoredValueNotifier(
+    super.initialValue, {
+    required this.key,
+  }) {
+    // Load initial value from storage
+    SharedPreferences.getInstance().then((prefs) {
+      final storedValue = load(prefs);
+      if (storedValue != null) {
+        value = storedValue;
+      }
+    });
+
+    // Add listener to save value on change
+    addListener(() async {
+      final prefs = await SharedPreferences.getInstance();
+      await save(prefs, value);
+    });
+  }
+}
+
+class StoredStringNotifier extends StoredValueNotifier<String?> {
+  StoredStringNotifier(super.initialValue, {required super.key});
+
+  @override
+  String? load(SharedPreferences pref) {
+    return pref.getString(key);
+  }
+
+  @override
+  Future<void> save(SharedPreferences pref, String? value) async {
+    if (value == null) {
+      await pref.remove(key);
+      return;
+    }
+    await pref.setString(key, value);
+  }
+}
+
+extension MultipleListenable<T1> on ValueNotifier<T1> {
+  ValueNotifier<(T1, T2)> mergeWith<T2>(ValueNotifier<T2> other) {
+    final merged = ValueNotifier<(T1, T2)>((value, other.value));
+
+    void listener() {
+      merged.value = (value, other.value);
+    }
+
+    addListener(listener);
+    other.addListener(listener);
+
+    return merged;
+  }
+}
+
+class FramedSection extends StatelessWidget {
+  final String title;
+  final Widget child;
+  final Color? frameColor;
+  final EdgeInsetsGeometry? padding;
+  const FramedSection({
+    super.key,
+    required this.title,
+    required this.child,
+    this.frameColor,
+    this.padding,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final fgColor = frameColor ?? ColorScheme.of(context).outline;
+    final bgColor = theme.scaffoldBackgroundColor;
+
+    return Stack(
+      children: [
+        Container(
+          margin: EdgeInsets.only(top: context.gutterSmall),
+          padding: padding,
+          decoration: BoxDecoration(
+            border: Border.all(color: fgColor),
+          ),
+          child: child,
+        ),
+        Positioned(
+          left: context.gutter - context.gutterTiny / 2,
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: context.gutterTiny,
+            ),
+            color: bgColor,
+            child: Text(
+              title,
+              style: TextStyle(color: fgColor),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

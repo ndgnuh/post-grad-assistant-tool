@@ -1,5 +1,4 @@
-import 'dart:async';
-
+import 'package:fami_tools/shortcuts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +7,8 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
 import '../teacher_pages/teacher_pages.dart';
+
+final _searchFocusNode = FocusNode();
 
 class CourseDetailsPage extends StatelessWidget {
   static const String routeName = "/courses/detail";
@@ -22,29 +23,32 @@ class CourseDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
-      child: Scaffold(
-        appBar: ConstrainedAppBar(
-          withTabBar: true,
-          child: AppBar(
-            title: Text("Học phần $courseId"),
-            bottom: TabBar(
-              tabs: [
-                Tab(text: "Chi tiết"),
-                Tab(text: "Lớp học phần"),
-                Tab(text: "Giảng viên"),
-              ],
+      child: CommonShortcuts(
+        onSearch: (context) => _searchFocusNode.requestFocus(),
+        child: Scaffold(
+          appBar: ConstrainedAppBar(
+            withTabBar: true,
+            child: AppBar(
+              title: Text("Học phần $courseId"),
+              bottom: TabBar(
+                tabs: [
+                  Tab(text: "Chi tiết"),
+                  Tab(text: "Lớp học phần"),
+                  Tab(text: "Giảng viên"),
+                ],
+              ),
             ),
           ),
-        ),
-        body: ConstrainedBody(
-          child: TabBarView(
-            children: [
-              _CourseInfoTab(courseId: courseId),
-              Center(
-                child: Text("TODO: danh sách lớp với học phần này..."),
-              ),
-              _CourseTeachingRegistrationTab(courseId: courseId),
-            ],
+          body: ConstrainedBody(
+            child: TabBarView(
+              children: [
+                _CourseInfoTab(courseId: courseId),
+                Center(
+                  child: Text("TODO: danh sách lớp với học phần này..."),
+                ),
+                _CourseTeachingRegistrationTab(courseId: courseId),
+              ],
+            ),
           ),
         ),
       ),
@@ -94,6 +98,7 @@ class _AddTeacherInput extends ConsumerWidget {
       },
       builder: (context, controller) => TextField(
         onChanged: (_) => controller.openView(),
+        focusNode: _searchFocusNode,
         controller: controller,
         decoration: InputDecoration(
           prefixIcon: Icon(Symbols.search),

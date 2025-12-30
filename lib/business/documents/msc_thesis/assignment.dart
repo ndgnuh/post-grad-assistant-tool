@@ -29,6 +29,7 @@ Future<XlsxFile> buildThesisAssignmentExcel({
 Future<PdfFile> buildThesisAssignmentPdf({
   required List<StudentViewModel> theses,
   required CohortData cohort,
+  required PdfConfig config,
 }) async {
   final model = ThesisAssignmentModel(
     cohort: cohort,
@@ -37,10 +38,10 @@ Future<PdfFile> buildThesisAssignmentPdf({
 
   final bytes = await buildMultiPageDocument(
     pageFormat: PdfPageFormat.a4.transpose,
-    baseFontSize: 9 * pt,
+    baseFontSize: config.baseFontSize,
     margin: EdgeInsets.symmetric(
-      horizontal: 0.25 * inch,
-      vertical: 0.75 * inch,
+      horizontal: config.horizontalMargin,
+      vertical: config.verticalMargin,
     ),
     build: (context) => _build(
       context: context,
@@ -176,9 +177,8 @@ List<Widget> _build({
   required Context context,
   required ThesisAssignmentModel model,
 }) {
-  final bold = TextStyle(fontWeight: FontWeight.bold);
+  final textStyle = context.defaultTextStyle;
   final classCode = model.classCode;
-  final italic = TextStyle(fontStyle: FontStyle.italic);
 
   return [
     Footer(
@@ -192,15 +192,18 @@ List<Widget> _build({
       child: Column(
         children: [
           SizedBox(height: 6 * pt),
-          Text("Kính gửi: Ban Đào tạo", style: bold),
+          Text("Kính gửi: Ban Đào tạo", style: textStyle.heading1.bold),
           SizedBox(height: 2 * pt),
           Text(
             "DANH SÁCH ĐỀ TÀI LUẬN VĂN THẠC SĨ (CHÍNH THỨC) - KHÓA ${model.cohort.id}",
-            style: bold.copyWith(fontSize: 12 * pt),
+            style: textStyle.heading0.bold,
           ),
-          Text("Ngành: Toán - Tin, Hệ thạc sĩ khoa học"),
+          Text(
+            "Ngành: Toán - Tin, Hệ thạc sĩ khoa học",
+            style: textStyle.heading2,
+          ),
           SizedBox(height: 2 * pt),
-          Text("Lớp: $classCode"),
+          Text("Lớp: $classCode", style: textStyle.heading2),
           SizedBox(height: 6 * pt),
         ],
       ),
@@ -264,9 +267,12 @@ List<Widget> _build({
     Footer(
       trailing: Column(
         children: [
-          Text("Hà Nội, ngày .... tháng .... năm 20....", style: italic),
+          Text(
+            "Hà Nội, ngày .... tháng .... năm 20....",
+            style: textStyle.italic,
+          ),
           SizedBox(height: 2 * pt),
-          Text("KHOA TOÁN - TIN", style: bold),
+          Text("KHOA TOÁN - TIN", style: textStyle.bold),
           SizedBox(height: 3 * cm),
         ],
       ),
@@ -297,9 +303,18 @@ class ThesisAssignmentModel {
     required this.theses,
   });
 
-  Future<PdfFile> get pdf => buildThesisAssignmentPdf(
+  static const defaultPdfconfig = PdfConfig(
+    baseFontSize: 9 * pt,
+    horizontalMargin: 0.5 * inch,
+    verticalMargin: 0.79 * inch,
+    verticalTableCellPadding: 3 * pt,
+    horizontalTableCellPadding: 3 * pt,
+  );
+
+  Future<PdfFile> pdf(PdfConfig config) => buildThesisAssignmentPdf(
     theses: theses,
     cohort: cohort,
+    config: config,
   );
 
   Future<XlsxFile> get xlsx => buildThesisAssignmentExcel(

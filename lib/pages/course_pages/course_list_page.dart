@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
@@ -15,38 +16,38 @@ class CourseListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final focusNode = FocusNode();
-    return Actions(
-      actions: {
-        SearchIntent: CallbackAction<SearchIntent>(
-          onInvoke: (intent) {
-            print("Search shortcut invoked");
-            focusNode.requestFocus();
-            return null;
-          },
-        ),
-      },
-      child: Scaffold(
-        appBar: ConstrainedAppBar(
-          child: AppBar(
-            title: Text("Danh sách học phần"),
+    return FocusNodeProvider(
+      child: CommonShortcuts(
+        onSearch: (context) {
+          final focusNode = FocusNodeProvider.of(context);
+          focusNode.requestFocus();
+        },
+        child: Scaffold(
+          appBar: ConstrainedAppBar(
+            child: AppBar(
+              title: Text("Danh sách học phần"),
+            ),
           ),
-        ),
-        body: ConstrainedBody(
-          child: Padding(
-            padding: EdgeInsets.all(context.gutter),
-            child: Column(
-              verticalDirection: context.verticalDirection,
-              spacing: context.gutter,
-              children: [
-                ListTile(
-                  leading: Icon(Icons.search),
-                  title: _SearchBar(),
-                ),
-                Expanded(
-                  child: _CourseListView(),
-                ),
-              ],
+          body: ConstrainedBody(
+            child: Padding(
+              padding: EdgeInsets.all(context.gutter),
+              child: Column(
+                verticalDirection: context.verticalDirection,
+                spacing: context.gutter,
+                children: [
+                  _SearchBar(),
+                  Expanded(
+                    child: FramedSection(
+                      title: "Học phần",
+                      padding: EdgeInsets.symmetric(
+                        vertical: context.gutter,
+                        horizontal: context.gutterSmall,
+                      ),
+                      child: _CourseListView(),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -120,7 +121,10 @@ class _CourseListView extends ConsumerWidget {
 
     final courseIds = courseIdsAsync.value!;
     return ListView.separated(
-      separatorBuilder: (context, index) => Divider(),
+      separatorBuilder: (context, index) => Padding(
+        padding: EdgeInsets.symmetric(horizontal: context.gutterSmall),
+        child: Divider(),
+      ),
       itemCount: courseIds.length,
       itemBuilder: (context, index) {
         final courseId = courseIds[index];
@@ -136,7 +140,7 @@ class _CourseListView extends ConsumerWidget {
 class _SearchBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final focusNode = ref.watch(focusNodeProvider);
+    final focusNode = FocusNodeProvider.of(context);
     final notifier = ref.read(searchTextProvider.notifier);
     return TextFormField(
       focusNode: focusNode,
@@ -146,6 +150,7 @@ class _SearchBar extends ConsumerWidget {
         floatingLabelBehavior: FloatingLabelBehavior.always,
         hintText: "Mã học phần, tên học phần",
         labelText: "Tìm kiếm",
+        suffixIcon: Icon(Symbols.search),
       ),
     );
   }

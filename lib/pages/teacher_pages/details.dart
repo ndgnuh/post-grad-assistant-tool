@@ -6,11 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/db_v2_providers.dart';
-import '../../business/view_models.dart';
 import '../../custom_tiles.dart';
 import '../../custom_widgets.dart';
 import '../../shortcuts.dart';
-import '../course_pages/course_pages.dart';
 
 const notAvailableText = "N/A";
 
@@ -59,12 +57,14 @@ class TeacherDetailsPage extends StatelessWidget {
               ),
             ),
           ),
-          body: ConstrainedBody(
-            child: TabBarView(
-              children: [
-                _TeacherDetailTab(teacherId: id),
-                _TeachingCoursesTab(teacherId: id),
-              ],
+          body: CommonShortcuts(
+            child: ConstrainedBody(
+              child: TabBarView(
+                children: [
+                  _TeacherDetailTab(teacherId: id),
+                  _TeachingCoursesTab(teacherId: id),
+                ],
+              ),
             ),
           ),
         ),
@@ -238,6 +238,7 @@ class _TeacherDetailTab extends ConsumerWidget {
     final teacher = teacherAsync.value!;
     final teacherNotifier = ref.read(teacherByIdProvider(teacher.id).notifier);
 
+    final id = teacherId;
     return Padding(
       padding: EdgeInsets.all(context.gutter),
       child: ListView(
@@ -247,10 +248,9 @@ class _TeacherDetailTab extends ConsumerWidget {
             title: "Họ tên",
             leading: const Icon(Icons.person),
             initialValue: teacher.name,
-            onUpdate: (value) => teacherNotifier.updateTeacher(
-              TeacherCompanion(
-                name: value != null ? Value(value) : const Value.absent(),
-              ),
+            onUpdate: withDatabase(
+              context: context,
+              callback: (db, v) => db.updateTeacher(id: id, name: v),
             ),
           ),
 
@@ -259,13 +259,28 @@ class _TeacherDetailTab extends ConsumerWidget {
             leading: const Icon(Icons.male),
             options: Gender.values,
             initialValue: teacher.gender,
-            onUpdate: (v) => teacherNotifier.updateInfo(gender: v),
+            onUpdate: withDatabase(
+              context: context,
+              callback: (db, v) => db.updateTeacher(id: id, gender: v),
+            ),
           ),
+
           DateTile(
             titleText: "Ngày sinh",
             leading: const Icon(Icons.cake),
             initialValue: teacher.dateOfBirth,
             onUpdate: (value) => teacherNotifier.updateInfo(dateOfBirth: value),
+          ),
+
+          EnumTile<Pronoun>(
+            title: Text("Xưng hô"),
+            leading: const Icon(Icons.record_voice_over),
+            options: Pronoun.values,
+            initialValue: teacher.pronoun,
+            onUpdate: withDatabase(
+              context: context,
+              callback: (db, v) => db.updateTeacher(id: id, pronoun: v),
+            ),
           ),
 
           // Thông tin công tác
@@ -311,14 +326,15 @@ class _TeacherDetailTab extends ConsumerWidget {
             title: "Học hàm",
             leading: const Icon(null),
             initialValue: teacher.academicRank,
-            onUpdate: (rank) => teacherNotifier.updateAcademicRank(rank),
+            onUpdate: (rank) => teacherNotifier.updateInfo(academicRank: rank),
           ),
           SingleSelectionTile<AcademicDegree>(
             title: "Học vị",
             leading: const Icon(null),
             options: AcademicDegree.values,
             initialValue: teacher.academicDegree,
-            onUpdate: (degree) => teacherNotifier.updateAcademicDegree(degree),
+            onUpdate: (degree) =>
+                teacherNotifier.updateInfo(academicDegree: degree),
           ),
 
           // Thông tin liên hệ
@@ -371,4 +387,17 @@ class _TeacherDetailTab extends ConsumerWidget {
       ),
     );
   }
+}
+
+ValueChanged<T> withDatabase<T>({
+  required BuildContext context,
+  required Function(AppDatabase, T) callback,
+}) {
+  final ref = ProviderScope.containerOf(context);
+  wrappedCallback(T value) async {
+    final db = await ref.read(mainDatabaseProvider.future);
+    callback(db, value);
+  }
+
+  return wrappedCallback;
 }

@@ -1,3 +1,4 @@
+import 'package:fami_tools/shortcuts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +8,8 @@ import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
 import 'teacher_pages.dart';
 import 'teacher_search_providers.dart';
+
+final _searchFocusNode = FocusNode();
 
 class TeacherSearchPage extends StatelessWidget {
   static const routeName = '/teacher/search';
@@ -30,28 +33,31 @@ class TeacherSearchPage extends StatelessWidget {
             ),
           ),
         ),
-        body: ConstrainedBody(
-          child: TabBarView(
-            children: [
-              // Search tab
-              Padding(
-                padding: EdgeInsets.all(context.gutter),
-                child: Column(
-                  spacing: context.gutter,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  verticalDirection: context.verticalDirection,
-                  children: [
-                    _SearchBar(),
+        body: CommonShortcuts(
+          onSearch: (_) => _searchFocusNode.requestFocus(),
+          child: ConstrainedBody(
+            child: TabBarView(
+              children: [
+                // Search tab
+                Padding(
+                  padding: EdgeInsets.all(context.gutter),
+                  child: Column(
+                    spacing: context.gutter,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    verticalDirection: context.verticalDirection,
+                    children: [
+                      _SearchBar(),
 
-                    Expanded(
-                      child: _TeacherListView(),
-                    ),
-                  ],
+                      Expanded(
+                        child: _TeacherListView(),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
 
-              Text("TODO"),
-            ],
+                Text("TODO"),
+              ],
+            ),
           ),
         ),
       ),
@@ -147,6 +153,7 @@ class _SearchBar extends ConsumerWidget {
     final notifier = ref.read(searchQueryProvider.notifier);
 
     return TextField(
+      focusNode: _searchFocusNode,
       controller: notifier.controller,
       onChanged: (value) => notifier.debounceSet(value),
       onSubmitted: (value) => notifier.set(value),

@@ -46,17 +46,20 @@ class _AdmissionActionTabViewState
 
   @override
   Widget build(BuildContext context) {
+    final sectionPadding = EdgeInsets.symmetric(
+      vertical: context.gutter,
+      horizontal: context.gutterSmall,
+    );
     return SingleChildScrollView(
       padding: EdgeInsets.all(context.gutter),
-      child: ExpansionPanelList(
-        expansionCallback: expansionCallback,
+      child: Column(
+        spacing: context.gutter,
         children: [
           /// Add panel
-          ExpansionPanel(
-            canTapOnHeader: true,
-            isExpanded: expansionState[0],
-            headerBuilder: simpleExpansionHeading("Thêm hồ sơ"),
-            body: ListBody(
+          FramedSection(
+            title: "Thêm hồ sơ",
+            padding: sectionPadding,
+            child: ListBody(
               children: [
                 ListTile(title: _AddButton()),
                 ListTile(title: _ImportButton()),
@@ -65,34 +68,33 @@ class _AdmissionActionTabViewState
           ),
 
           /// Download panel
-          ExpansionPanel(
-            isExpanded: expansionState[1],
-            canTapOnHeader: true,
-            headerBuilder: simpleExpansionHeading(
-              "Tải hồ sơ",
-            ),
-            body: ListBody(
+          FramedSection(
+            title: "Tải hồ sơ",
+            padding: EdgeInsets.all(context.gutter),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: context.gutter,
               children: [
-                ListTile(title: CouncilSelector()),
-                ListTile(title: _SaveDirectoryPicker()),
-                _SavePaperworkButton(),
-                _ProfileDownloadButton(),
+                CouncilSelector(),
+                _SaveDirectoryPicker(),
+                Row(
+                  spacing: context.gutter,
+                  children: [
+                    Expanded(child: _SavePaperworkButton()),
+                    Expanded(child: _ProfileDownloadButton()),
+                  ],
+                ),
               ],
             ),
           ),
 
           /// Interview
-          ExpansionPanel(
-            isExpanded: expansionState[2],
-            canTapOnHeader: true,
-            headerBuilder: simpleExpansionHeading("Mời phỏng vấn"),
-            body: ListBody(
+          FramedSection(
+            title: "Phỏng vấn",
+            padding: sectionPadding,
+            child: ListBody(
               children: [
-                ListTile(
-                  leading: const Icon(Symbols.location_on),
-                  title: _InterviewLocationInput(),
-                  trailing: const Icon(Symbols.edit),
-                ),
+                _InterviewLocationInput(),
                 _InterviewTimeInput(),
                 InterviewEmailSender(
                   builder: (context, callback) => ListTile(
@@ -127,13 +129,10 @@ class _AdmissionActionTabViewState
           ),
 
           /// Enroll
-          ExpansionPanel(
-            canTapOnHeader: true,
-            isExpanded: expansionState[3],
-            headerBuilder: simpleExpansionHeading(
-              "Báo trúng tuyển",
-            ),
-            body: ListBody(
+          FramedSection(
+            title: "Nhập học",
+            padding: sectionPadding,
+            child: ListBody(
               children: [
                 ListTile(
                   leading: Icon(Symbols.group),
@@ -208,7 +207,7 @@ class _InterviewLocationInput extends ConsumerWidget {
       decoration: InputDecoration(
         hintText: "Phòng D3-106b",
         labelText: "Địa điểm phỏng vấn",
-        border: InputBorder.none,
+        suffixIcon: Icon(Symbols.location_on),
       ),
       onChanged: debouncedValueChanged(
         callback: (text) => onChanged(ref, text),
@@ -222,64 +221,65 @@ class _InterviewLocationInput extends ConsumerWidget {
   }
 }
 
-class _ProfileDownloadButton extends ConsumerWidget {
+class _ProfileDownloadButton extends StatelessWidget {
   const _ProfileDownloadButton();
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void onPressed(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
-    return ListTile(
-      leading: const Icon(Symbols.download),
-      title: Text("Tải hồ sơ"),
-      trailing: const Icon(Symbols.chevron_right),
-      onTap: () async {
-        // Fetch students
-        final admissionIds = await ref.read(admissionStudentIdsProvider.future);
-        final students = <StudentData>[];
-        for (final id in admissionIds) {
-          final student = await ref.read(studentByIdProvider(id).future);
-          if (student.admissionType == AdmissionType.interview) {
-            students.add(student);
-          }
-        }
+    final ref = ProviderScope.containerOf(context);
+    // Fetch students
+    final admissionIds = await ref.read(admissionStudentIdsProvider.future);
+    final students = <StudentData>[];
+    for (final id in admissionIds) {
+      final student = await ref.read(studentByIdProvider(id).future);
+      if (student.admissionType == AdmissionType.interview) {
+        students.add(student);
+      }
+    }
 
-        final saveDirectory = ref.read(downloadDirectoryProvider);
+    final saveDirectory = ref.read(downloadDirectoryProvider);
 
-        if (saveDirectory == null || saveDirectory.isEmpty) {
-          messenger.showSnackBar(
-            const SnackBar(
-              content: Text("Vui lòng chọn thư mục lưu hồ sơ."),
-            ),
-          );
-          return;
-        }
+    if (saveDirectory == null || saveDirectory.isEmpty) {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text("Vui lòng chọn thư mục lưu hồ sơ."),
+        ),
+      );
+      return;
+    }
 
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text(
-              "Đang tải hồ sơ xét tuyển",
-            ),
-          ),
-        );
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          "Đang tải hồ sơ xét tuyển",
+        ),
+      ),
+    );
 
-        for (final student in students) {
-          await downloadAdmissionFiles(
-            admissionId: student.admissionId!,
-            studentName: student.name,
-            saveDirectory: saveDirectory,
-          );
-          messenger.clearSnackBars();
-          messenger.showMessage("Đã tải hồ sơ ${student.name}");
-        }
+    for (final student in students) {
+      await downloadAdmissionFiles(
+        admissionId: student.admissionId!,
+        studentName: student.name,
+        saveDirectory: saveDirectory,
+      );
+      messenger.clearSnackBars();
+      messenger.showMessage("Đã tải hồ sơ ${student.name}");
+    }
 
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text(
-              "Đã tải ${students.length} hồ sơ học viên",
-            ),
-          ),
-        );
-      },
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          "Đã tải ${students.length} hồ sơ học viên",
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      onPressed: () => onPressed(context),
+      child: Text("Tải hồ sơ"),
     );
   }
 }
@@ -316,50 +316,50 @@ class _SavePaperworkButton extends ConsumerWidget {
 
     final students = studentState.value!.admissionList;
 
-    return ListTile(
-      leading: const Icon(Symbols.save),
-      title: Text("Lưu mẫu biên bản"),
-      trailing: const Icon(Symbols.chevron_right),
-      onTap: () async {
-        final saveDirectory = ref.read(downloadDirectoryProvider);
-        final councilModel = await ref.read(
-          admissionCouncilSelectionProvider.future,
-        );
-        final council = councilModel.selected;
+    void callback() async {
+      final saveDirectory = ref.read(downloadDirectoryProvider);
+      final councilModel = await ref.read(
+        admissionCouncilSelectionProvider.future,
+      );
+      final council = councilModel.selected;
 
-        if (saveDirectory == null || saveDirectory.isEmpty) {
-          messenger.showSnackBar(
-            const SnackBar(
-              content: Text("Vui lòng chọn thư mục lưu hồ sơ."),
-            ),
-          );
-          return;
-        }
-
-        if (council == null) {
-          messenger.showSnackBar(
-            const SnackBar(
-              content: Text("Vui lòng chọn tiểu ban xét tuyển."),
-            ),
-          );
-          return;
-        }
-
-        saveAdmissionForms(
-          ref: ref,
-          saveDirectory: saveDirectory,
-          candidates: students,
-          council: council,
-        );
-
+      if (saveDirectory == null || saveDirectory.isEmpty) {
         messenger.showSnackBar(
-          SnackBar(
-            content: Text(
-              "Đã lưu biên bản xét tuyển",
-            ),
+          const SnackBar(
+            content: Text("Vui lòng chọn thư mục lưu hồ sơ."),
           ),
         );
-      },
+        return;
+      }
+
+      if (council == null) {
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text("Vui lòng chọn tiểu ban xét tuyển."),
+          ),
+        );
+        return;
+      }
+
+      saveAdmissionForms(
+        ref: ref,
+        saveDirectory: saveDirectory,
+        candidates: students,
+        council: council,
+      );
+
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            "Đã lưu biên bản xét tuyển",
+          ),
+        ),
+      );
+    }
+
+    return OutlinedButton(
+      onPressed: callback,
+      child: Text("Lưu biên bản"),
     );
   }
 }

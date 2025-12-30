@@ -1,6 +1,5 @@
 import 'package:riverpod/riverpod.dart';
 
-import '../main_database.dart';
 import '../db_v2_providers.dart';
 
 class PhdStudentViewModel {
@@ -16,7 +15,7 @@ class PhdStudentViewModel {
   final TeacherData? admissionMember3;
   final TeacherData? admissionHelper;
 
-  final PhdAdmissionPaymentPolicyData admissionPaymentPolicy;
+  final PhdAdmissionPaymentPolicyData? admissionPaymentPolicy;
 
   static final providerById = _byIdProvider;
 
@@ -82,11 +81,10 @@ final _byIdProvider = FutureProvider.family<PhdStudentViewModel, int>((
     int id => await ref.watch(teacherByIdProvider(id).future),
   };
 
-  final admissionPaymentPolicy = await ref.watch(
-    phdAdmissionPaymentPolicyByIdProvider(
-      student.admissionPaymentPolicy,
-    ).future,
-  );
+  final admissionPaymentPolicy = switch (student.admissionPaymentPolicy) {
+    int id => await ref.watch(phdAdmissionPaymentPolicyByIdProvider(id).future),
+    null => null,
+  };
 
   return PhdStudentViewModel(
     student: student,

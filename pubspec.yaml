@@ -19,7 +19,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.8.0
+  sdk: ^3.10.0
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -86,6 +86,7 @@ dependencies:
   pdf_combiner: ^4.4.0
   dart_pdf_reader: ^0.4.3
   flutter_hooks: ^0.21.3+1
+  skeletonizer: ^2.1.2
 
 dev_dependencies:
   flutter_test:

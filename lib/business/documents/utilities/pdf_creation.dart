@@ -90,10 +90,19 @@ Future<Uint8List> buildSinglePageDocument({
   EdgeInsetsGeometry? margin = defaultMargin,
   double baseFontSize = defaultBaseFontSize,
 }) async {
+  final defaultTextStyle = await getPdfDefaultTextStyle(
+    fontSize: baseFontSize,
+  );
+  final bold = defaultTextStyle.copyWith(
+    fontWeight: FontWeight.bold,
+  );
   final theme = ThemeData(
-    defaultTextStyle: await getPdfDefaultTextStyle(
-      fontSize: baseFontSize,
-    ),
+    defaultTextStyle: defaultTextStyle,
+    header0: bold.copyWith(fontSize: baseFontSize * 1.4),
+    header1: bold.copyWith(fontSize: baseFontSize * 1.3),
+    header2: bold.copyWith(fontSize: baseFontSize * 1.2),
+    header3: bold.copyWith(fontSize: baseFontSize * 1.1),
+    header4: bold.copyWith(fontSize: baseFontSize * 1.05),
   );
   final document = Document(theme: theme);
 

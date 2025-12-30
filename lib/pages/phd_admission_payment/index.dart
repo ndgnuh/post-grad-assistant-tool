@@ -3,6 +3,7 @@ import 'package:fami_tools/business/documents/common.dart' show PdfConfig;
 import 'package:fami_tools/custom_widgets.dart';
 import 'package:fami_tools/custom_widgets/pdf_viewer.dart';
 import 'package:fami_tools/custom_widgets/pref_hooks.dart';
+import 'package:fami_tools/shortcuts.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ class PhdAdmissionPaymentPage extends StatelessWidget {
           child: AppBar(
             title: Text('Thanh toán chấm đề cương NCS'),
             bottom: TabBar(
+              isScrollable: true,
               tabs: [
                 Tab(text: 'Danh sách'),
                 Tab(text: 'Thao tác'),
@@ -35,25 +37,27 @@ class PhdAdmissionPaymentPage extends StatelessWidget {
             ),
           ),
         ),
-        body: ConstrainedBody(
-          child: TabBarView(
-            children: [
-              // List view tab
-              Padding(
-                padding: EdgeInsets.all(context.gutter),
-                child: Column(
-                  spacing: context.gutter,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    CohortDropdown(),
-                    Expanded(child: PhdStudentListView()),
-                  ],
+        body: CommonShortcuts(
+          child: ConstrainedBody(
+            child: TabBarView(
+              children: [
+                // List view tab
+                Padding(
+                  padding: EdgeInsets.all(context.gutter),
+                  child: Column(
+                    spacing: context.gutter,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      CohortDropdown(),
+                      Expanded(child: PhdStudentListView()),
+                    ],
+                  ),
                 ),
-              ),
 
-              // Action tab
-              _ActionTab(),
-            ],
+                // Action tab
+                _ActionTab(),
+              ],
+            ),
           ),
         ),
       ),

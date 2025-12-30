@@ -1024,6 +1024,16 @@ class Teacher extends Table with TableInfo<Teacher, TeacherData> {
     requiredDuringInsert: false,
     $customConstraints: '',
   );
+  late final GeneratedColumnWithTypeConverter<enums.Pronoun, String> pronoun =
+      GeneratedColumn<String>(
+        'pronoun',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints: 'NOT NULL DEFAULT \'thay\'',
+        defaultValue: const CustomExpression('\'thay\''),
+      ).withConverter<enums.Pronoun>(Teacher.$converterpronoun);
   static const VerificationMeta _deprecatedTaxCodeMeta = const VerificationMeta(
     'deprecatedTaxCode',
   );
@@ -1087,6 +1097,7 @@ class Teacher extends Table with TableInfo<Teacher, TeacherData> {
     dateOfBirth,
     bankAccount,
     bankName,
+    pronoun,
     deprecatedTaxCode,
     note,
     startTeachingYear,
@@ -1331,6 +1342,12 @@ class Teacher extends Table with TableInfo<Teacher, TeacherData> {
         DriftSqlType.string,
         data['${effectivePrefix}bank_name'],
       ),
+      pronoun: Teacher.$converterpronoun.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}pronoun'],
+        )!,
+      ),
       deprecatedTaxCode: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}deprecated_tax_code'],
@@ -1361,6 +1378,8 @@ class Teacher extends Table with TableInfo<Teacher, TeacherData> {
       const enums.AcademicRankConverter();
   static TypeConverter<enums.AcademicDegree?, String?>
   $converteracademicDegree = const enums.AcademicDegreeConverter();
+  static TypeConverter<enums.Pronoun, String> $converterpronoun =
+      const enums.PronounConverter();
   @override
   bool get dontWriteConstraints => true;
 }
@@ -1384,6 +1403,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
   final DateTime? dateOfBirth;
   final String? bankAccount;
   final String? bankName;
+  final enums.Pronoun pronoun;
   final String? deprecatedTaxCode;
   final String? note;
   final int? startTeachingYear;
@@ -1407,6 +1427,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
     this.dateOfBirth,
     this.bankAccount,
     this.bankName,
+    required this.pronoun,
     this.deprecatedTaxCode,
     this.note,
     this.startTeachingYear,
@@ -1468,6 +1489,11 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
     }
     if (!nullToAbsent || bankName != null) {
       map['bank_name'] = Variable<String>(bankName);
+    }
+    {
+      map['pronoun'] = Variable<String>(
+        Teacher.$converterpronoun.toSql(pronoun),
+      );
     }
     if (!nullToAbsent || deprecatedTaxCode != null) {
       map['deprecated_tax_code'] = Variable<String>(deprecatedTaxCode);
@@ -1533,6 +1559,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
       bankName: bankName == null && nullToAbsent
           ? const Value.absent()
           : Value(bankName),
+      pronoun: Value(pronoun),
       deprecatedTaxCode: deprecatedTaxCode == null && nullToAbsent
           ? const Value.absent()
           : Value(deprecatedTaxCode),
@@ -1576,6 +1603,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
       dateOfBirth: serializer.fromJson<DateTime?>(json['date_of_birth']),
       bankAccount: serializer.fromJson<String?>(json['bank_account']),
       bankName: serializer.fromJson<String?>(json['bank_name']),
+      pronoun: serializer.fromJson<enums.Pronoun>(json['pronoun']),
       deprecatedTaxCode: serializer.fromJson<String?>(
         json['deprecated_tax_code'],
       ),
@@ -1610,6 +1638,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
       'date_of_birth': serializer.toJson<DateTime?>(dateOfBirth),
       'bank_account': serializer.toJson<String?>(bankAccount),
       'bank_name': serializer.toJson<String?>(bankName),
+      'pronoun': serializer.toJson<enums.Pronoun>(pronoun),
       'deprecated_tax_code': serializer.toJson<String?>(deprecatedTaxCode),
       'note': serializer.toJson<String?>(note),
       'start_teaching_year': serializer.toJson<int?>(startTeachingYear),
@@ -1636,6 +1665,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
     Value<DateTime?> dateOfBirth = const Value.absent(),
     Value<String?> bankAccount = const Value.absent(),
     Value<String?> bankName = const Value.absent(),
+    enums.Pronoun? pronoun,
     Value<String?> deprecatedTaxCode = const Value.absent(),
     Value<String?> note = const Value.absent(),
     Value<int?> startTeachingYear = const Value.absent(),
@@ -1667,6 +1697,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
     dateOfBirth: dateOfBirth.present ? dateOfBirth.value : this.dateOfBirth,
     bankAccount: bankAccount.present ? bankAccount.value : this.bankAccount,
     bankName: bankName.present ? bankName.value : this.bankName,
+    pronoun: pronoun ?? this.pronoun,
     deprecatedTaxCode: deprecatedTaxCode.present
         ? deprecatedTaxCode.value
         : this.deprecatedTaxCode,
@@ -1718,6 +1749,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
           ? data.bankAccount.value
           : this.bankAccount,
       bankName: data.bankName.present ? data.bankName.value : this.bankName,
+      pronoun: data.pronoun.present ? data.pronoun.value : this.pronoun,
       deprecatedTaxCode: data.deprecatedTaxCode.present
           ? data.deprecatedTaxCode.value
           : this.deprecatedTaxCode,
@@ -1752,6 +1784,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
           ..write('dateOfBirth: $dateOfBirth, ')
           ..write('bankAccount: $bankAccount, ')
           ..write('bankName: $bankName, ')
+          ..write('pronoun: $pronoun, ')
           ..write('deprecatedTaxCode: $deprecatedTaxCode, ')
           ..write('note: $note, ')
           ..write('startTeachingYear: $startTeachingYear, ')
@@ -1780,6 +1813,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
     dateOfBirth,
     bankAccount,
     bankName,
+    pronoun,
     deprecatedTaxCode,
     note,
     startTeachingYear,
@@ -1807,6 +1841,7 @@ class TeacherData extends DataClass implements Insertable<TeacherData> {
           other.dateOfBirth == this.dateOfBirth &&
           other.bankAccount == this.bankAccount &&
           other.bankName == this.bankName &&
+          other.pronoun == this.pronoun &&
           other.deprecatedTaxCode == this.deprecatedTaxCode &&
           other.note == this.note &&
           other.startTeachingYear == this.startTeachingYear &&
@@ -1832,6 +1867,7 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
   final Value<DateTime?> dateOfBirth;
   final Value<String?> bankAccount;
   final Value<String?> bankName;
+  final Value<enums.Pronoun> pronoun;
   final Value<String?> deprecatedTaxCode;
   final Value<String?> note;
   final Value<int?> startTeachingYear;
@@ -1855,6 +1891,7 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
     this.dateOfBirth = const Value.absent(),
     this.bankAccount = const Value.absent(),
     this.bankName = const Value.absent(),
+    this.pronoun = const Value.absent(),
     this.deprecatedTaxCode = const Value.absent(),
     this.note = const Value.absent(),
     this.startTeachingYear = const Value.absent(),
@@ -1879,6 +1916,7 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
     this.dateOfBirth = const Value.absent(),
     this.bankAccount = const Value.absent(),
     this.bankName = const Value.absent(),
+    this.pronoun = const Value.absent(),
     this.deprecatedTaxCode = const Value.absent(),
     this.note = const Value.absent(),
     this.startTeachingYear = const Value.absent(),
@@ -1904,6 +1942,7 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
     Expression<DateTime>? dateOfBirth,
     Expression<String>? bankAccount,
     Expression<String>? bankName,
+    Expression<String>? pronoun,
     Expression<String>? deprecatedTaxCode,
     Expression<String>? note,
     Expression<int>? startTeachingYear,
@@ -1929,6 +1968,7 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
       if (dateOfBirth != null) 'date_of_birth': dateOfBirth,
       if (bankAccount != null) 'bank_account': bankAccount,
       if (bankName != null) 'bank_name': bankName,
+      if (pronoun != null) 'pronoun': pronoun,
       if (deprecatedTaxCode != null) 'deprecated_tax_code': deprecatedTaxCode,
       if (note != null) 'note': note,
       if (startTeachingYear != null) 'start_teaching_year': startTeachingYear,
@@ -1955,6 +1995,7 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
     Value<DateTime?>? dateOfBirth,
     Value<String?>? bankAccount,
     Value<String?>? bankName,
+    Value<enums.Pronoun>? pronoun,
     Value<String?>? deprecatedTaxCode,
     Value<String?>? note,
     Value<int?>? startTeachingYear,
@@ -1980,6 +2021,7 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       bankAccount: bankAccount ?? this.bankAccount,
       bankName: bankName ?? this.bankName,
+      pronoun: pronoun ?? this.pronoun,
       deprecatedTaxCode: deprecatedTaxCode ?? this.deprecatedTaxCode,
       note: note ?? this.note,
       startTeachingYear: startTeachingYear ?? this.startTeachingYear,
@@ -2052,6 +2094,11 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
     if (bankName.present) {
       map['bank_name'] = Variable<String>(bankName.value);
     }
+    if (pronoun.present) {
+      map['pronoun'] = Variable<String>(
+        Teacher.$converterpronoun.toSql(pronoun.value),
+      );
+    }
     if (deprecatedTaxCode.present) {
       map['deprecated_tax_code'] = Variable<String>(deprecatedTaxCode.value);
     }
@@ -2088,6 +2135,7 @@ class TeacherCompanion extends UpdateCompanion<TeacherData> {
           ..write('dateOfBirth: $dateOfBirth, ')
           ..write('bankAccount: $bankAccount, ')
           ..write('bankName: $bankName, ')
+          ..write('pronoun: $pronoun, ')
           ..write('deprecatedTaxCode: $deprecatedTaxCode, ')
           ..write('note: $note, ')
           ..write('startTeachingYear: $startTeachingYear, ')
@@ -9834,13 +9882,13 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
   late final GeneratedColumn<int> admissionPaymentPolicy = GeneratedColumn<int>(
     'admission_payment_policy',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
     $customConstraints:
-        'NOT NULL DEFAULT ("select max(id) from phd_admission_payment_policy") REFERENCES phd_admission_payment_policy(id)',
+        'DEFAULT \'select max(id) from phd_admission_payment_policy\' REFERENCES phd_admission_payment_policy(id)',
     defaultValue: const CustomExpression(
-      '"select max(id) from phd_admission_payment_policy"',
+      '\'select max(id) from phd_admission_payment_policy\'',
     ),
   );
   static const VerificationMeta _thesisMeta = const VerificationMeta('thesis');
@@ -10279,7 +10327,7 @@ class PhdStudent extends Table with TableInfo<PhdStudent, PhdStudentData> {
       admissionPaymentPolicy: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}admission_payment_policy'],
-      )!,
+      ),
       thesis: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}thesis'],
@@ -10365,7 +10413,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
 
   /// "admission_paid" boolean not null default false,
   final enums.PaymentStatus admissionPaymentStatus;
-  final int admissionPaymentPolicy;
+  final int? admissionPaymentPolicy;
   final String thesis;
   final int supervisorId;
   final int? secondarySupervisorId;
@@ -10395,7 +10443,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     this.admission3rdMemberId,
     this.admissionHelperId,
     required this.admissionPaymentStatus,
-    required this.admissionPaymentPolicy,
+    this.admissionPaymentPolicy,
     required this.thesis,
     required this.supervisorId,
     this.secondarySupervisorId,
@@ -10464,7 +10512,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
         ),
       );
     }
-    map['admission_payment_policy'] = Variable<int>(admissionPaymentPolicy);
+    if (!nullToAbsent || admissionPaymentPolicy != null) {
+      map['admission_payment_policy'] = Variable<int>(admissionPaymentPolicy);
+    }
     map['thesis'] = Variable<String>(thesis);
     map['supervisor_id'] = Variable<int>(supervisorId);
     if (!nullToAbsent || secondarySupervisorId != null) {
@@ -10527,7 +10577,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
           ? const Value.absent()
           : Value(admissionHelperId),
       admissionPaymentStatus: Value(admissionPaymentStatus),
-      admissionPaymentPolicy: Value(admissionPaymentPolicy),
+      admissionPaymentPolicy: admissionPaymentPolicy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(admissionPaymentPolicy),
       thesis: Value(thesis),
       supervisorId: Value(supervisorId),
       secondarySupervisorId: secondarySupervisorId == null && nullToAbsent
@@ -10585,7 +10637,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       admissionPaymentStatus: serializer.fromJson<enums.PaymentStatus>(
         json['admission_payment_status'],
       ),
-      admissionPaymentPolicy: serializer.fromJson<int>(
+      admissionPaymentPolicy: serializer.fromJson<int?>(
         json['admission_payment_policy'],
       ),
       thesis: serializer.fromJson<String>(json['thesis']),
@@ -10630,7 +10682,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       'admission_payment_status': serializer.toJson<enums.PaymentStatus>(
         admissionPaymentStatus,
       ),
-      'admission_payment_policy': serializer.toJson<int>(
+      'admission_payment_policy': serializer.toJson<int?>(
         admissionPaymentPolicy,
       ),
       'thesis': serializer.toJson<String>(thesis),
@@ -10665,7 +10717,7 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     Value<int?> admission3rdMemberId = const Value.absent(),
     Value<int?> admissionHelperId = const Value.absent(),
     enums.PaymentStatus? admissionPaymentStatus,
-    int? admissionPaymentPolicy,
+    Value<int?> admissionPaymentPolicy = const Value.absent(),
     String? thesis,
     int? supervisorId,
     Value<int?> secondarySupervisorId = const Value.absent(),
@@ -10710,8 +10762,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
         : this.admissionHelperId,
     admissionPaymentStatus:
         admissionPaymentStatus ?? this.admissionPaymentStatus,
-    admissionPaymentPolicy:
-        admissionPaymentPolicy ?? this.admissionPaymentPolicy,
+    admissionPaymentPolicy: admissionPaymentPolicy.present
+        ? admissionPaymentPolicy.value
+        : this.admissionPaymentPolicy,
     thesis: thesis ?? this.thesis,
     supervisorId: supervisorId ?? this.supervisorId,
     secondarySupervisorId: secondarySupervisorId.present
@@ -10925,7 +10978,7 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
   final Value<int?> admission3rdMemberId;
   final Value<int?> admissionHelperId;
   final Value<enums.PaymentStatus> admissionPaymentStatus;
-  final Value<int> admissionPaymentPolicy;
+  final Value<int?> admissionPaymentPolicy;
   final Value<String> thesis;
   final Value<int> supervisorId;
   final Value<int?> secondarySupervisorId;
@@ -11099,7 +11152,7 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     Value<int?>? admission3rdMemberId,
     Value<int?>? admissionHelperId,
     Value<enums.PaymentStatus>? admissionPaymentStatus,
-    Value<int>? admissionPaymentPolicy,
+    Value<int?>? admissionPaymentPolicy,
     Value<String>? thesis,
     Value<int>? supervisorId,
     Value<int?>? secondarySupervisorId,
@@ -13949,6 +14002,7 @@ typedef $TeacherCreateCompanionBuilder =
       Value<DateTime?> dateOfBirth,
       Value<String?> bankAccount,
       Value<String?> bankName,
+      Value<enums.Pronoun> pronoun,
       Value<String?> deprecatedTaxCode,
       Value<String?> note,
       Value<int?> startTeachingYear,
@@ -13974,6 +14028,7 @@ typedef $TeacherUpdateCompanionBuilder =
       Value<DateTime?> dateOfBirth,
       Value<String?> bankAccount,
       Value<String?> bankName,
+      Value<enums.Pronoun> pronoun,
       Value<String?> deprecatedTaxCode,
       Value<String?> note,
       Value<int?> startTeachingYear,
@@ -14164,6 +14219,12 @@ class $TeacherFilterComposer extends Composer<_$AppDatabase, Teacher> {
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnWithTypeConverterFilters<enums.Pronoun, enums.Pronoun, String>
+  get pronoun => $composableBuilder(
+    column: $table.pronoun,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
   ColumnFilters<String> get deprecatedTaxCode => $composableBuilder(
     column: $table.deprecatedTaxCode,
     builder: (column) => ColumnFilters(column),
@@ -14351,6 +14412,11 @@ class $TeacherOrderingComposer extends Composer<_$AppDatabase, Teacher> {
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get pronoun => $composableBuilder(
+    column: $table.pronoun,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get deprecatedTaxCode => $composableBuilder(
     column: $table.deprecatedTaxCode,
     builder: (column) => ColumnOrderings(column),
@@ -14473,6 +14539,9 @@ class $TeacherAnnotationComposer extends Composer<_$AppDatabase, Teacher> {
 
   GeneratedColumn<String> get bankName =>
       $composableBuilder(column: $table.bankName, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<enums.Pronoun, String> get pronoun =>
+      $composableBuilder(column: $table.pronoun, builder: (column) => column);
 
   GeneratedColumn<String> get deprecatedTaxCode => $composableBuilder(
     column: $table.deprecatedTaxCode,
@@ -14613,6 +14682,7 @@ class $TeacherTableManager
                 Value<DateTime?> dateOfBirth = const Value.absent(),
                 Value<String?> bankAccount = const Value.absent(),
                 Value<String?> bankName = const Value.absent(),
+                Value<enums.Pronoun> pronoun = const Value.absent(),
                 Value<String?> deprecatedTaxCode = const Value.absent(),
                 Value<String?> note = const Value.absent(),
                 Value<int?> startTeachingYear = const Value.absent(),
@@ -14636,6 +14706,7 @@ class $TeacherTableManager
                 dateOfBirth: dateOfBirth,
                 bankAccount: bankAccount,
                 bankName: bankName,
+                pronoun: pronoun,
                 deprecatedTaxCode: deprecatedTaxCode,
                 note: note,
                 startTeachingYear: startTeachingYear,
@@ -14663,6 +14734,7 @@ class $TeacherTableManager
                 Value<DateTime?> dateOfBirth = const Value.absent(),
                 Value<String?> bankAccount = const Value.absent(),
                 Value<String?> bankName = const Value.absent(),
+                Value<enums.Pronoun> pronoun = const Value.absent(),
                 Value<String?> deprecatedTaxCode = const Value.absent(),
                 Value<String?> note = const Value.absent(),
                 Value<int?> startTeachingYear = const Value.absent(),
@@ -14686,6 +14758,7 @@ class $TeacherTableManager
                 dateOfBirth: dateOfBirth,
                 bankAccount: bankAccount,
                 bankName: bankName,
+                pronoun: pronoun,
                 deprecatedTaxCode: deprecatedTaxCode,
                 note: note,
                 startTeachingYear: startTeachingYear,
@@ -20620,7 +20693,7 @@ typedef $PhdStudentCreateCompanionBuilder =
       Value<int?> admission3rdMemberId,
       Value<int?> admissionHelperId,
       Value<enums.PaymentStatus> admissionPaymentStatus,
-      Value<int> admissionPaymentPolicy,
+      Value<int?> admissionPaymentPolicy,
       required String thesis,
       required int supervisorId,
       Value<int?> secondarySupervisorId,
@@ -20652,7 +20725,7 @@ typedef $PhdStudentUpdateCompanionBuilder =
       Value<int?> admission3rdMemberId,
       Value<int?> admissionHelperId,
       Value<enums.PaymentStatus> admissionPaymentStatus,
-      Value<int> admissionPaymentPolicy,
+      Value<int?> admissionPaymentPolicy,
       Value<String> thesis,
       Value<int> supervisorId,
       Value<int?> secondarySupervisorId,
@@ -20693,9 +20766,9 @@ final class $PhdStudentReferences
     ),
   );
 
-  $PhdAdmissionPaymentPolicyProcessedTableManager get admissionPaymentPolicy {
-    final $_column = $_itemColumn<int>('admission_payment_policy')!;
-
+  $PhdAdmissionPaymentPolicyProcessedTableManager? get admissionPaymentPolicy {
+    final $_column = $_itemColumn<int>('admission_payment_policy');
+    if ($_column == null) return null;
     final manager = $PhdAdmissionPaymentPolicyTableManager(
       $_db,
       $_db.phdAdmissionPaymentPolicy,
@@ -21337,7 +21410,7 @@ class $PhdStudentTableManager
                 Value<int?> admissionHelperId = const Value.absent(),
                 Value<enums.PaymentStatus> admissionPaymentStatus =
                     const Value.absent(),
-                Value<int> admissionPaymentPolicy = const Value.absent(),
+                Value<int?> admissionPaymentPolicy = const Value.absent(),
                 Value<String> thesis = const Value.absent(),
                 Value<int> supervisorId = const Value.absent(),
                 Value<int?> secondarySupervisorId = const Value.absent(),
@@ -21401,7 +21474,7 @@ class $PhdStudentTableManager
                 Value<int?> admissionHelperId = const Value.absent(),
                 Value<enums.PaymentStatus> admissionPaymentStatus =
                     const Value.absent(),
-                Value<int> admissionPaymentPolicy = const Value.absent(),
+                Value<int?> admissionPaymentPolicy = const Value.absent(),
                 required String thesis,
                 required int supervisorId,
                 Value<int?> secondarySupervisorId = const Value.absent(),

@@ -4,14 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+class UnselectedException implements Exception {
+  final String message;
+  UnselectedException([this.message = "No item is selected."]);
+
+  @override
+  String toString() => "UnselectedException: $message";
+}
+
 class SelectionModel<T> {
   final T? selected;
   final List<T> options;
   final TextEditingController labelController = TextEditingController();
+  final ValueChanged<SelectionModel<T>>? onChanged;
 
   SelectionModel({
     required this.selected,
     required this.options,
+    this.onChanged,
   });
 
   SelectionModel<T> deselect() {
@@ -38,16 +48,18 @@ class SelectionModel<T> {
   }
 
   SelectionModel<T> select(T? item) {
-    return SelectionModel<T>(
+    final updated = SelectionModel<T>(
       selected: item,
       options: options,
+      onChanged: onChanged,
     );
+    onChanged?.call(updated);
+    return updated;
   }
 }
 
 mixin SelectionModelMixin<T> on AsyncNotifier<SelectionModel<T>> {
-  // Name of the stored preference
-  String get prefKey;
+  // Name of the stored preference String get prefKey;
 
   // List of options
   FutureOr<List<T>> get options;
@@ -110,5 +122,44 @@ mixin SelectionModelMixin<T> on AsyncNotifier<SelectionModel<T>> {
         state = AsyncData(model.select(item));
         save(prefs, item);
     }
+  }
+}
+
+class SingleSelectionModel<T> {
+  T? selected;
+  final List<T> options;
+  final ValueChanged<T?>? onChanged;
+
+  SingleSelectionModel({
+    required this.selected,
+    required this.options,
+    this.onChanged,
+  });
+
+  void deselect() => select(null);
+
+  int? get selectedIndex {
+    switch (selected) {
+      case null:
+        return null;
+      case T selected:
+        return options.indexOf(selected);
+    }
+  }
+
+  void cycle() {
+    switch (selectedIndex) {
+      case null:
+        return select(options.first);
+      case int i:
+        final n = options.length;
+        final j = (i + 1) % n;
+        return select(options[j]);
+    }
+  }
+
+  void select(T? item) {
+    selected = item;
+    onChanged?.call(item);
   }
 }

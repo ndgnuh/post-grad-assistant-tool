@@ -30,6 +30,26 @@ class PdfConfig {
     this.pageFormat = PdfPageFormat.a4,
   });
 
+  PdfConfig copyWith({
+    double? baseFontSize,
+    double? verticalMargin,
+    double? horizontalMargin,
+    PdfPageFormat? pageFormat,
+    double? verticalTableCellPadding,
+    double? horizontalTableCellPadding,
+  }) {
+    return PdfConfig(
+      baseFontSize: baseFontSize ?? this.baseFontSize,
+      verticalMargin: verticalMargin ?? this.verticalMargin,
+      horizontalMargin: horizontalMargin ?? this.horizontalMargin,
+      pageFormat: pageFormat ?? this.pageFormat,
+      verticalTableCellPadding:
+          verticalTableCellPadding ?? this.verticalTableCellPadding,
+      horizontalTableCellPadding:
+          horizontalTableCellPadding ?? this.horizontalTableCellPadding,
+    );
+  }
+
   @override
   String toString() {
     return 'PdfConfig(baseFontSize: $baseFontSize, verticalMargin: $verticalMargin, horizontalMargin: $horizontalMargin, pageFormat: $pageFormat, verticalTableCellPadding: $verticalTableCellPadding, horizontalTableCellPadding: $horizontalTableCellPadding)';

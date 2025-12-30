@@ -13,8 +13,20 @@ final thesisMutationProvider = AsyncNotifierProvider.family(
   ThesisMutationNotifier.new,
 );
 
-final thesisIdByStudentProvider = AsyncNotifierProvider.family(
-  ThesisIdNotifier.new,
+final thesisIdByStudentProvider = FutureProvider.family.autoDispose(
+  (Ref ref, int studentId) async {
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final stmt = db.thesis.select();
+    stmt.where((r) => r.studentId.equals(studentId));
+
+    if (ref.isFirstBuild) {
+      final stream = stmt.watchSingleOrNull();
+      stream.listen((_) => ref.invalidateSelf());
+      ref.onDispose(() => stream.drain());
+    }
+
+    return await stmt.map((r) => r.id).getSingleOrNull();
+  },
 );
 
 final trackedThesisIdsProvider = AsyncNotifierProvider(
@@ -96,6 +108,11 @@ class ThesisByIdNotifier extends AsyncNotifier<ThesisData> {
     final db = await ref.watch(mainDatabaseProvider.future);
     final stmt = db.thesis.select();
     stmt.where((r) => r.id.equals(id));
+    if (ref.isFirstBuild) {
+      stmt.watch().listen((_) {
+        ref.invalidateSelf();
+      });
+    }
     final thesis = await stmt.getSingleOrNull();
     assert(thesis != null, 'Thesis with id $id not found');
     return thesis!;

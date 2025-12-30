@@ -1,6 +1,8 @@
 import 'package:fami_tools/business/copy_pasta.dart';
 import 'package:fami_tools/custom_widgets.dart';
 import 'package:fami_tools/custom_widgets/pdf_preview_tile.dart';
+import 'package:fami_tools/custom_widgets/pdf_viewer.dart';
+import 'package:fami_tools/shortcuts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -8,6 +10,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/db_v2_providers.dart';
+import '../../business/documents.dart';
 import '../../business/view_models.dart';
 import '../msc_thesis_defense/msc_thesis_details.dart';
 import 'providers.dart';
@@ -24,26 +27,28 @@ class MscThesisAssignmentPage extends StatelessWidget {
     return DefaultTabController(
       initialIndex: 0,
       length: 2,
-      child: Scaffold(
-        appBar: ConstrainedAppBar(
-          withTabBar: true,
-          child: AppBar(
-            title: Text('Giao đề tài'),
-            bottom: TabBar(
-              isScrollable: true,
-              tabs: [
-                Tab(text: 'Danh sách'),
-                Tab(text: 'Quản trị'),
-              ],
+      child: CommonShortcuts(
+        child: Scaffold(
+          appBar: ConstrainedAppBar(
+            withTabBar: true,
+            child: AppBar(
+              title: Text('Giao đề tài'),
+              bottom: TabBar(
+                isScrollable: true,
+                tabs: [
+                  Tab(text: 'Danh sách'),
+                  Tab(text: 'Quản trị'),
+                ],
+              ),
             ),
           ),
-        ),
-        body: ConstrainedBody(
-          child: TabBarView(
-            children: [
-              _ListTabView(),
-              _ActionTabView(),
-            ],
+          body: ConstrainedBody(
+            child: TabBarView(
+              children: [
+                _ListTabView(),
+                _ActionTabView(),
+              ],
+            ),
           ),
         ),
       ),
@@ -56,6 +61,10 @@ class _ActionTabView extends HookWidget {
   Widget build(BuildContext context) {
     final messenger = ScaffoldMessenger.of(context);
     final saveDirectory = useState<String?>(null);
+
+    final pdfConfigState = useState<PdfConfig>(
+      ThesisAssignmentModel.defaultPdfconfig,
+    );
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(context.gutter),
@@ -82,8 +91,14 @@ class _ActionTabView extends HookWidget {
             title: "Giấy tờ",
             children: [
               Consumer(
-                builder: (context, ref, _) => PdfPreviewTile(
-                  pdfFileAsync: ref.watch(assignmentPdfProvider),
+                builder: (context, ref, _) => PdfViewerTile(
+                  pdfBuilder: (config) => ref.watch(
+                    assignmentPdfProvider(config).future,
+                  ),
+                  initialConfig: pdfConfigState.value,
+                  onConfigChanged: (newConfig) {
+                    pdfConfigState.value = newConfig;
+                  },
                   title: Text("PDF giao đề tài"),
                   subtitle: Text(
                     "ĐT.QT10.BM04. Danh sách đề tài luận văn thạc sĩ (Chính thức)",
@@ -107,8 +122,9 @@ class _ActionTabView extends HookWidget {
                   enabled: saveDirectory.value != null,
                   onTap: () async {
                     final directory = saveDirectory.value!;
+                    final pdfConfig = pdfConfigState.value;
                     final assignmentPdf = await ref.read(
-                      assignmentPdfProvider.future,
+                      assignmentPdfProvider(pdfConfig).future,
                     );
                     final assignmentExcel = await ref.read(
                       assignmentXlsxProvider.future,
