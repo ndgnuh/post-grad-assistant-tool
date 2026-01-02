@@ -36,4 +36,7 @@ install: linux
 	cp build/linux/x64/release/bundle/* -r $(APP_HOME)/
 	ln -fs $(APP_HOME)/fami_tools $(PREFIX)/bin/fami-sdh
 
-.PHONY: dev build_runner build build_windows linux apk
+assets:
+	fluttergen -c pubspec.yaml
+
+.PHONY: dev build_runner build build_windows linux apk assets

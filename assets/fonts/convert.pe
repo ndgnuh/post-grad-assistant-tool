@@ -1,0 +1,57 @@
+#!fontforge -script
+
+Open($1)
+
+# Metrics from times new roman.ttf
+# General:
+#   WinAscent =1825
+#   WinDescent =443
+# OS/2 Typo:
+#   TypoAscent =1420
+#   TypoDescent =-442
+#   TypoLineGap =307
+# HHead:
+#   HHeadAscent =1825
+#   HHeadDescent =-443
+#   HHeadLineGap =87
+
+# From Tex Gyre Termes
+# General:
+#   WinAscent =1055
+#   WinDescent =281
+# OS/2 Typo:
+#   TypoAscent =783
+#   TypoDescent =-217
+#   TypoLineGap =200
+# HHead:
+#   HHeadAscent =1055 <- after trial and erros, this is responsible for line spacing in pdf
+#   HHeadDescent =-281
+#   HHeadLineGap =0
+
+# ===== General font metrics =====
+SetOS2Value("WinAscent", 1055)
+SetOS2Value("WinDescent", 281)
+
+# ===== Typographic metrics (used by PDF engines) =====
+SetOS2Value("TypoAscent", 1420)
+SetOS2Value("TypoDescent", -442)
+SetOS2Value("TypoLineGap", 307)
+
+SetOS2Value("TypoAscent", 783)
+SetOS2Value("TypoDescent", -217)
+SetOS2Value("TypoLineGap", 200)
+
+# ===== Horizontal header (hhea) =====
+SetOS2Value("HHeadAscent", 900)
+SetOS2Value("HHeadDescent", -281)
+SetOS2Value("HHeadLineGap", 0)
+
+# ===== Enable Typo metrics =====
+# SetOS2Value("UseTypoMetrics", 1)
+
+# ===== Remove extra leading =====
+# SetOS2Value("WinLineGap", 0)
+
+Generate($2)
+Close()
+

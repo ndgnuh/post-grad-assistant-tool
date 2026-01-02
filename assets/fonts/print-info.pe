@@ -1,0 +1,26 @@
+#!fontforge -script
+#!fontforge -script
+Open($1)
+
+Print("General:")
+# Print("  Ascent =", GetOS2Value("LinuxAscent"))
+# Print("  Descent =", GetOS2Value("Descent"))
+Print("  WinAscent =", GetOS2Value("WinAscent"))
+Print("  WinDescent =", GetOS2Value("WinDescent"))
+
+Print("OS/2 Typo:")
+Print("  TypoAscent =", GetOS2Value("TypoAscent"))
+Print("  TypoDescent =", GetOS2Value("TypoDescent"))
+Print("  TypoLineGap =", GetOS2Value("TypoLineGap"))
+
+Print("HHead:")
+Print("  HHeadAscent =", GetOS2Value("HHeadAscent"))
+Print("  HHeadDescent =", GetOS2Value("HHeadDescent"))
+Print("  HHeadLineGap =", GetOS2Value("HHeadLineGap"))
+
+# Print("  UseTypoMetrics =", GetOS2Value("UseTypoMetrics"))
+# Print("  WinLineGap =", GetOS2Value("WinLineGap"))
+
+# ===== Remove extra leading =====
+
+Close()

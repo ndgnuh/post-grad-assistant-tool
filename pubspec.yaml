@@ -120,19 +120,19 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/fonts/texgyreheros-bolditalic.otf
-    - assets/fonts/texgyreheros-bold.otf
-    - assets/fonts/texgyreheroscn-bolditalic.otf
-    - assets/fonts/texgyreheroscn-bold.otf
-    - assets/fonts/texgyreheroscn-italic.otf
-    - assets/fonts/texgyreheroscn-regular.otf
-    - assets/fonts/texgyreheros-italic.otf
-    - assets/fonts/texgyreheros-regular.otf
-    - assets/fonts/texgyretermes-bolditalic.otf
-    - assets/fonts/texgyretermes-bold.otf
-    - assets/fonts/texgyretermes-italic.otf
-    - assets/fonts/texgyretermes-regular.otf
-    - assets/fonts/Times_New_Roman.ttf
+    # - assets/fonts/tex_gyre_heros_regular.ttf
+    # - assets/fonts/tex_gyre_heros_bold.ttf
+    # - assets/fonts/tex_gyre_heros_italic.ttf
+    # - assets/fonts/tex_gyre_heros_regular.ttf
+    # - assets/fonts/tex_gyre_heros_cn_bolditalic.ttf
+    # - assets/fonts/tex_gyre_heros_cn_bold.ttf
+    # - assets/fonts/tex_gyre_heros_cn_italic.ttf
+    # - assets/fonts/tex_gyre_heros_cn_regular.ttf
+    - assets/fonts/tex_gyre_termes_bold_italic.ttf
+    - assets/fonts/tex_gyre_termes_bold.ttf
+    - assets/fonts/tex_gyre_termes_italic.ttf
+    - assets/fonts/tex_gyre_termes_regular.ttf
+    # - assets/fonts/Times_New_Roman.ttf
     - assets/fonts/Times_New_Roman_Bold.ttf
     - assets/fonts/Times_New_Roman_Bold_Italic.ttf
     - assets/fonts/Times_New_Roman_Italic.ttf
@@ -142,6 +142,7 @@ flutter:
     - assets/templates/msc-thesis-council-decision.docx
     - assets/templates/payment_request.docx
     - assets/templates/sample.docx
+    - assets/templates/msc-thesis-spending-decision.docx
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -12,9 +12,6 @@
 class $AssetsFontsGen {
   const $AssetsFontsGen();
 
-  /// File path: assets/fonts/Times_New_Roman.ttf
-  String get timesNewRoman => 'assets/fonts/Times_New_Roman.ttf';
-
   /// File path: assets/fonts/Times_New_Roman_Bold.ttf
   String get timesNewRomanBold => 'assets/fonts/Times_New_Roman_Bold.ttf';
 
@@ -25,63 +22,28 @@ class $AssetsFontsGen {
   /// File path: assets/fonts/Times_New_Roman_Italic.ttf
   String get timesNewRomanItalic => 'assets/fonts/Times_New_Roman_Italic.ttf';
 
-  /// File path: assets/fonts/texgyreheros-bold.otf
-  String get texgyreherosBold => 'assets/fonts/texgyreheros-bold.otf';
+  /// File path: assets/fonts/tex_gyre_termes_bold.ttf
+  String get texGyreTermesBold => 'assets/fonts/tex_gyre_termes_bold.ttf';
 
-  /// File path: assets/fonts/texgyreheros-bolditalic.otf
-  String get texgyreherosBolditalic =>
-      'assets/fonts/texgyreheros-bolditalic.otf';
+  /// File path: assets/fonts/tex_gyre_termes_bold_italic.ttf
+  String get texGyreTermesBoldItalic =>
+      'assets/fonts/tex_gyre_termes_bold_italic.ttf';
 
-  /// File path: assets/fonts/texgyreheros-italic.otf
-  String get texgyreherosItalic => 'assets/fonts/texgyreheros-italic.otf';
+  /// File path: assets/fonts/tex_gyre_termes_italic.ttf
+  String get texGyreTermesItalic => 'assets/fonts/tex_gyre_termes_italic.ttf';
 
-  /// File path: assets/fonts/texgyreheros-regular.otf
-  String get texgyreherosRegular => 'assets/fonts/texgyreheros-regular.otf';
-
-  /// File path: assets/fonts/texgyreheroscn-bold.otf
-  String get texgyreheroscnBold => 'assets/fonts/texgyreheroscn-bold.otf';
-
-  /// File path: assets/fonts/texgyreheroscn-bolditalic.otf
-  String get texgyreheroscnBolditalic =>
-      'assets/fonts/texgyreheroscn-bolditalic.otf';
-
-  /// File path: assets/fonts/texgyreheroscn-italic.otf
-  String get texgyreheroscnItalic => 'assets/fonts/texgyreheroscn-italic.otf';
-
-  /// File path: assets/fonts/texgyreheroscn-regular.otf
-  String get texgyreheroscnRegular => 'assets/fonts/texgyreheroscn-regular.otf';
-
-  /// File path: assets/fonts/texgyretermes-bold.otf
-  String get texgyretermesBold => 'assets/fonts/texgyretermes-bold.otf';
-
-  /// File path: assets/fonts/texgyretermes-bolditalic.otf
-  String get texgyretermesBolditalic =>
-      'assets/fonts/texgyretermes-bolditalic.otf';
-
-  /// File path: assets/fonts/texgyretermes-italic.otf
-  String get texgyretermesItalic => 'assets/fonts/texgyretermes-italic.otf';
-
-  /// File path: assets/fonts/texgyretermes-regular.otf
-  String get texgyretermesRegular => 'assets/fonts/texgyretermes-regular.otf';
+  /// File path: assets/fonts/tex_gyre_termes_regular.ttf
+  String get texGyreTermesRegular => 'assets/fonts/tex_gyre_termes_regular.ttf';
 
   /// List of all assets
   List<String> get values => [
-    timesNewRoman,
     timesNewRomanBold,
     timesNewRomanBoldItalic,
     timesNewRomanItalic,
-    texgyreherosBold,
-    texgyreherosBolditalic,
-    texgyreherosItalic,
-    texgyreherosRegular,
-    texgyreheroscnBold,
-    texgyreheroscnBolditalic,
-    texgyreheroscnItalic,
-    texgyreheroscnRegular,
-    texgyretermesBold,
-    texgyretermesBolditalic,
-    texgyretermesItalic,
-    texgyretermesRegular,
+    texGyreTermesBold,
+    texGyreTermesBoldItalic,
+    texGyreTermesItalic,
+    texGyreTermesRegular,
   ];
 }
 
@@ -91,6 +53,10 @@ class $AssetsTemplatesGen {
   /// File path: assets/templates/msc-thesis-council-decision.docx
   String get mscThesisCouncilDecision =>
       'assets/templates/msc-thesis-council-decision.docx';
+
+  /// File path: assets/templates/msc-thesis-spending-decision.docx
+  String get mscThesisSpendingDecision =>
+      'assets/templates/msc-thesis-spending-decision.docx';
 
   /// File path: assets/templates/payment_request.docx
   String get paymentRequest => 'assets/templates/payment_request.docx';
@@ -104,6 +70,7 @@ class $AssetsTemplatesGen {
   /// List of all assets
   List<String> get values => [
     mscThesisCouncilDecision,
+    mscThesisSpendingDecision,
     paymentRequest,
     phdAdmissionRecord,
     sample,

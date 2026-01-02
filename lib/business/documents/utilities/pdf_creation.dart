@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:fami_tools/gen/assets.gen.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:pdf_combiner/pdf_combiner.dart';
 import 'package:path/path.dart' as p;
@@ -123,10 +124,10 @@ Future<TextStyle> getPdfDefaultTextStyle({
   double fontSize = defaultBaseFontSize,
 }) async {
   final serifFonts = (
-    base: loadFont("assets/fonts/Times_New_Roman.ttf"),
-    bold: loadFont("assets/fonts/Times_New_Roman_Bold.ttf"),
-    italic: loadFont("assets/fonts/Times_New_Roman_Italic.ttf"),
-    boldItalic: loadFont("assets/fonts/Times_New_Roman_Bold_Italic.ttf"),
+    base: loadFont(Assets.fonts.texGyreTermesRegular),
+    bold: loadFont(Assets.fonts.texGyreTermesBold),
+    italic: loadFont(Assets.fonts.texGyreTermesItalic),
+    boldItalic: loadFont(Assets.fonts.texGyreTermesBoldItalic),
   );
 
   final defaultTextStyle = TextStyle(

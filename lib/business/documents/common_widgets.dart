@@ -37,16 +37,19 @@ class FormalTitle extends StatelessWidget {
   });
   @override
   Widget build(Context context) {
-    final style = context.defaultTextStyle.bold.heading1;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(firstTitle, style: firstStyle ?? style),
-        SizedBox(height: 1.5 * pt),
-        Text(secondTitle, style: secondStyle ?? style),
-        SizedBox(height: 1.5 * pt),
-        TitleRule(),
-      ],
+    final style1 = context.defaultTextStyle.bold.heading2;
+    final style2 = context.defaultTextStyle.heading1;
+    return RichText(
+      textAlign: TextAlign.center,
+      text: TextSpan(
+        children: [
+          TextSpan(text: firstTitle, style: firstStyle ?? style1),
+          TextSpan(text: '\n'),
+          TextSpan(text: secondTitle, style: secondStyle ?? style2),
+          TextSpan(text: '\n'),
+          WidgetSpan(child: TitleRule()),
+        ],
+      ),
     );
   }
 }
