@@ -19,7 +19,8 @@ enum MscDefenseStatus {
   normal("Bình thường"),
   registered("Đã đăng ký"),
   applied("Đã nộp hồ sơ"),
-  defended("Đã bảo vệ");
+  defended("Đã bảo vệ")
+  ;
 
   final String label;
   const MscDefenseStatus(this.label);
@@ -48,7 +49,8 @@ enum DocumentClass {
     group: 'phd',
     value: 'thesis-acceptance',
     label: 'QĐ cộng nhận NCS, Đề tài và Tập thể hướng dẫn',
-  );
+  )
+  ;
 
   final String group;
   final String value;
@@ -65,7 +67,8 @@ enum DocumentClass {
 
 enum CourseClassStatus {
   normal(0, "Bình thường"),
-  canceled(1, "Hủy");
+  canceled(1, "Hủy")
+  ;
 
   const CourseClassStatus(this.value, this.label);
   final int value;
@@ -80,7 +83,8 @@ enum CourseCategory {
   masterAdvancedSpecialized('32-nganh-nangcao', 'Kiến thức ngành (nâng cao)'),
   masterPracticalElection('41-tc-batbuoc', 'Tự chọn bắt buộc'),
   masterNonrestrictedElection('42-tc-tudo', 'Tự chọn tự do'),
-  phd('40-phd', 'Học phần tiến sĩ');
+  phd('40-phd', 'Học phần tiến sĩ')
+  ;
 
   final String value;
   final String label;
@@ -129,8 +133,30 @@ class CourseClassStatusConverter extends TypeConverter<CourseClassStatus, int> {
 /// How we combine filters
 enum FilterMode {
   and("AND"),
-  or("OR");
+  or("OR")
+  ;
 
   final String label;
   const FilterMode(this.label);
+}
+
+/// Các loại văn bản trong thường gặp
+/// Trong hệ thống, [other] dùng cho các văn bản ít gặp.
+enum DocumentArchetype {
+  mscThesisExtension("Gia hạn thời gian thực hiện luận văn thạc sĩ"),
+  mscThesisAssignment("Công nhận đề tài luận văn thạc sĩ"),
+  organizationRegulation("Quy chế Tổ chức & Hoạt động"),
+  internalSpendingRegulation("Quy chế Chi tiêu Nội bộ"),
+  financialManagementRegulation("Quy chế Quản lý Tài chính"),
+  educationRegulation("Quy chế Đào tạo"),
+  educationManagementRegulation("Quy chế Tổ chức & Quản lý Đào tạo"),
+  studentAffairsRegulation("Quy chế Công tác Sinh viên"),
+  staffAffairsRegulation("Quy chế Công tác Cán bộ"),
+  other("Khác")
+  ;
+
+  final String label;
+  const DocumentArchetype(this.label);
+
+  String get value => name.camelToKebabCase();
 }

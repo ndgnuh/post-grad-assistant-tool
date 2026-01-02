@@ -155,7 +155,7 @@ final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
 
   // Document management pages
-  // false => DocumentManagementPage.routeName,
+  false => DocumentManagementPage.routeName,
   // false => DocumentCreatePage.routeName,
 
   // false => DraftPage.routeName,

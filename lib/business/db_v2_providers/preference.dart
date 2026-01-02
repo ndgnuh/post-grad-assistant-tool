@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:drift/drift.dart';
 import 'package:riverpod/riverpod.dart';
 
+import '../../custom_widgets.dart' show UserFacingException;
 import '../db_v2_providers.dart';
+import '../business_enums.dart';
 
 // "Free" providers
 // ================
@@ -39,33 +41,10 @@ final mscEvenCohortSpecialistIdProvider = AsyncNotifierProvider(
 );
 
 /// Quy chế đào tạo
-final educationRegulationIdProvider = AsyncNotifierProvider(
-  IntDatabasePreferenceNotifier.educationRegulation,
-);
-
-/// Quy chế tổ chức & đào tạo
-final educationOrganizationRegulationIdProvider = AsyncNotifierProvider(
-  IntDatabasePreferenceNotifier.educationOrganizationRegulation,
-);
-
-/// Quy chế công tác sinh viên
-final studentAffairsRegulationIdProvider = AsyncNotifierProvider(
-  IntDatabasePreferenceNotifier.studentAffairsRegulation,
-);
-
-/// Quy chế công tác cán bộ
-final staffAffairsRegulationIdProvider = AsyncNotifierProvider(
-  IntDatabasePreferenceNotifier.staffAffairsRegulation,
-);
-
-/// Quy chế chi tiêu nội bộ
-final internalSpendingRegulationIdProvider = AsyncNotifierProvider(
-  IntDatabasePreferenceNotifier.internalSpendingRegulation,
-);
-
-/// Quy chế quản lý tài chính
-final financialManagementRegulationIdProvider = AsyncNotifierProvider(
-  IntDatabasePreferenceNotifier.financialManagementRegulation,
+final regulationIdProvider = AsyncNotifierProvider.family(
+  (DocumentArchetype archetype) {
+    return IntDatabasePreferenceNotifier.regulation(archetype);
+  },
 );
 
 class UnsetPreference implements Exception {
@@ -75,6 +54,20 @@ class UnsetPreference implements Exception {
 
 // Dependent providers
 // ===================
+
+/// Provide the regulation document for a given archetype
+final regulationProvider = StreamProvider.family(
+  (Ref ref, DocumentArchetype archetype) async* {
+    final id = await ref.watch(regulationIdProvider(archetype).future);
+    if (id == null) {
+      throw UserFacingException(
+        "Chưa cài đặt quy chế cho loại văn bản ${archetype.label}",
+      );
+    }
+    final document = await ref.watch(documentStreamProvider(id).future);
+    yield document;
+  },
+);
 
 /// Provide my data, just in case we need more than just my ID
 final myDataProvider = _makeTeacherProvider(
@@ -188,29 +181,10 @@ class IntDatabasePreferenceNotifier extends DbPreferenceNotifier<int> {
   factory IntDatabasePreferenceNotifier.mscEvenCohortSpecialistId() =>
       .new("msc-even-cohort-specialist");
 
-  /// Quy chế đào tạo
-  factory IntDatabasePreferenceNotifier.educationRegulation() =>
-      .new("education-regulation");
-
-  /// Quy chế tổ chức & đào tạo
-  factory IntDatabasePreferenceNotifier.educationOrganizationRegulation() =>
-      .new("education-organization-regulation");
-
-  /// Quy chế công tác sinh viên
-  factory IntDatabasePreferenceNotifier.studentAffairsRegulation() =>
-      .new("student-affairs-regulation");
-
-  /// Quy chế công tác cán bộ
-  factory IntDatabasePreferenceNotifier.staffAffairsRegulation() =>
-      .new("staff-affairs-regulation");
-
-  /// Quy chế chi tiêu nội bộ
-  factory IntDatabasePreferenceNotifier.internalSpendingRegulation() =>
-      .new("internal-spending-regulation");
-
-  /// Quy chế quản lý tài chính
-  factory IntDatabasePreferenceNotifier.financialManagementRegulation() =>
-      .new("financial-management-regulation");
+  /// Các loại quy chế, văn bản mang tính chất quy định
+  static IntDatabasePreferenceNotifier regulation(
+    DocumentArchetype archetype,
+  ) => .new("regulation-${archetype.value}");
 
   @override
   String? toSql(int value) => value.toString();

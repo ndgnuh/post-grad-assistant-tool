@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/db_v2_providers.dart';
-import '../../business/main_database.dart';
 import '../../custom_widgets.dart';
 import '../../shortcuts.dart';
 import 'document_pages.dart';
@@ -286,44 +285,100 @@ class _DocumentSearchResults extends ConsumerWidget {
   }
 }
 
-/// [TODO]: make an enum for all document types
-/// and then make this widget and the provider depends on the enum instead of copy-pasting everything
-class _DocumentTile extends ConsumerWidget {
-  final int documentId;
-  const _DocumentTile({required this.documentId});
+class _RegulationTile extends ConsumerWidget {
+  final DocumentArchetype archetype;
+  const _RegulationTile({required this.archetype});
+
+  Future<List<Widget>> suggestionsBuilder(
+    BuildContext context,
+    SearchController controller,
+  ) async {
+    final navigator = Navigator.of(context);
+    final ref = ProviderScope.containerOf(context);
+    final db = await ref.read(mainDatabaseProvider.future);
+
+    final createNewTile = ListTile(
+      leading: Icon(Symbols.add_circle_outline),
+      title: Text('Thêm mới'),
+      subtitle: Text("Thêm mới ${archetype.label}"),
+      onTap: () {
+        _navigateToCreateDocumentPage(context);
+      },
+    );
+    final searchText = controller.text;
+    if (searchText.isEmpty) {
+      return [createNewTile];
+    }
+
+    final stmt = db.searchDocuments(searchText: searchText);
+    final documents = await stmt.get();
+    final notifier = ref.read(regulationIdProvider(archetype).notifier);
+
+    return [
+      createNewTile,
+      for (final document in documents)
+        ListTile(
+          title: Text(document.title),
+          subtitle: Text(document.fullLabel),
+          onTap: () {
+            notifier.set(document.id);
+            navigator.pop();
+          },
+        ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final documentAsync = ref.watch(
-      documentByIdProvider(documentId),
-    );
+    final documentAsync = ref.watch(regulationProvider(archetype));
     switch (documentAsync) {
       case AsyncLoading():
         return ListTile(
-          title: Text('Đang tải...'),
+          title: Text(archetype.label),
+          subtitle: LinearProgressIndicator(),
+        );
+      case AsyncError(:final UserFacingException error):
+        return SearchAnchor(
+          suggestionsBuilder: suggestionsBuilder,
+          builder: (context, controller) => ListTile(
+            title: Text(archetype.label),
+            subtitle: Text(error.message),
+            trailing: TextButton(
+              onPressed: controller.openView,
+              child: Text('Chọn'),
+            ),
+          ),
         );
       case AsyncError(:final error, :final stackTrace):
         if (kDebugMode) {
           print(stackTrace);
         }
         return ListTile(
-          title: Text('Lỗi: $error'),
+          title: Text(archetype.label),
+          subtitle: Text('Lỗi: $error'),
         );
       default:
     }
 
     final document = documentAsync.value!;
 
-    return ListTile(
-      title: Text(document.title),
-      subtitle: Text(document.fullLabel),
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => DocumentViewerPage(documentId: document.id),
-          ),
-        );
-      },
+    return SearchAnchor(
+      suggestionsBuilder: suggestionsBuilder,
+      builder: (context, controller) => ListTile(
+        title: Text(archetype.label),
+        subtitle: Text([document.title, document.fullLabel].join("\n")),
+        trailing: OutlinedButton(
+          onPressed: controller.openView,
+          child: Text('Chọn'),
+        ),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => DocumentViewerPage(documentId: document.id),
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -335,7 +390,46 @@ class _CurrentRuleTab extends StatelessWidget {
       padding: EdgeInsets.all(context.gutter),
       child: Column(
         spacing: context.gutter,
-        children: [],
+        children: [
+          FramedSection.withListTile(
+            title: "Tài chính",
+            children: [
+              _RegulationTile(
+                archetype: DocumentArchetype.internalSpendingRegulation,
+              ),
+              _RegulationTile(
+                archetype: DocumentArchetype.financialManagementRegulation,
+              ),
+            ],
+          ),
+
+          FramedSection.withListTile(
+            title: "Đào tạo",
+            children: [
+              _RegulationTile(
+                archetype: DocumentArchetype.educationRegulation,
+              ),
+              _RegulationTile(
+                archetype: DocumentArchetype.educationManagementRegulation,
+              ),
+              _RegulationTile(
+                archetype: DocumentArchetype.studentAffairsRegulation,
+              ),
+            ],
+          ),
+
+          FramedSection.withListTile(
+            title: 'Cán bộ',
+            children: [
+              _RegulationTile(
+                archetype: DocumentArchetype.organizationRegulation,
+              ),
+              _RegulationTile(
+                archetype: DocumentArchetype.staffAffairsRegulation,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

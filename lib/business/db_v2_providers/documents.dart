@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:fami_tools/custom_widgets.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../db_v2_providers.dart';
@@ -11,8 +12,13 @@ final documentByIdProvider = FutureProvider.family<DocumentData, int>(
     stmt.where((d) => d.id.equals(id));
 
     if (ref.isFirstBuild) {
-      stmt.watch().listen((event) {
+      final stream = stmt.watch();
+      stream.listen((event) {
         ref.invalidateSelf();
+      });
+
+      ref.onDispose(() {
+        stream.drain();
       });
     }
 
@@ -21,6 +27,24 @@ final documentByIdProvider = FutureProvider.family<DocumentData, int>(
       throw Exception('Document with ID $id not found');
     }
     return doc;
+  },
+);
+
+final documentStreamProvider = StreamProvider.autoDispose.family(
+  (Ref ref, int id) async* {
+    final db = await ref.watch(mainDatabaseProvider.future);
+
+    final stmt = db.document.select();
+    stmt.where((d) => d.id.equals(id));
+
+    final stream = stmt.watchSingleOrNull();
+
+    await for (final doc in stream) {
+      if (doc == null) {
+        throw UserFacingException('Không tìm thấy văn bản với ID $id');
+      }
+      yield doc;
+    }
   },
 );
 
