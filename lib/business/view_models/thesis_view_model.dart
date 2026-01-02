@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import '../../custom_widgets.dart' show UserFacingException;
 import '../db_v2_providers.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -15,6 +16,48 @@ class ThesisViewModel {
   final TeacherData? firstReviewer;
   final TeacherData? secondReviewer;
   final TeacherData? member;
+
+  StudentData get requireStudent {
+    if (student == null) {
+      throw UserFacingException('Chưa giao đề tài cho sinh viên nào');
+    }
+    return student!;
+  }
+
+  TeacherData get requirePresident {
+    if (president == null) {
+      throw UserFacingException('Chưa có chủ tịch hội đồng');
+    }
+    return president!;
+  }
+
+  TeacherData get requireSecretary {
+    if (secretary == null) {
+      throw UserFacingException('Chưa có thư ký hội đồng');
+    }
+    return secretary!;
+  }
+
+  TeacherData get requireFirstReviewer {
+    if (firstReviewer == null) {
+      throw UserFacingException('Chưa có phản biện 1');
+    }
+    return firstReviewer!;
+  }
+
+  TeacherData get requireSecondReviewer {
+    if (secondReviewer == null) {
+      throw UserFacingException('Chưa có phản biện 2');
+    }
+    return secondReviewer!;
+  }
+
+  TeacherData get requireMember {
+    if (member == null) {
+      throw UserFacingException('Chưa có ủy viên hội đồng');
+    }
+    return member!;
+  }
 
   final DocumentData? councilDecision;
   final Uint8List? councilDecisionContent;

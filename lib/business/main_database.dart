@@ -1,7 +1,11 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:flutter/foundation.dart';
 import 'business_enums.dart' as enums;
 import 'business_enums.dart';
+import 'package:intl/intl.dart' show DateFormat;
+
+import 'file_content_database.dart';
 
 export './business_enums.dart';
 export 'package:drift/drift.dart' show Value;
@@ -11,6 +15,18 @@ part 'database_v1/thesis_dao.dart';
 part 'database_v1/phd_student_dao.dart';
 part 'database_v1/teacher_dao.dart';
 part 'main_database.g.dart';
+
+extension DocumentInformation on DocumentData {
+  String get fullOfficialCode {
+    return "$officialCode/$officialType";
+  }
+
+  String get fullLabel {
+    final dateFmt = DateFormat('dd/MM/yyyy');
+    final signDate = dateFmt.format(signedDate);
+    return '$officialCode/$officialType ngày $signDate';
+  }
+}
 
 extension AnyEmail on TeacherData {
   String? get email => workEmail ?? personalEmail;
@@ -220,6 +236,55 @@ class AppDatabase extends _$AppDatabase {
     }
 
     return stmt;
+  }
+
+  Future<void> addDocument({
+    required String title,
+    required int officialCode,
+    required String officialType,
+    required DateTime signedDate,
+    FileContentDatabase? fileContentDb,
+    Uint8List? fileBytes,
+  }) async {
+    final txn = await transaction(() async {
+      // Create document entry
+      final documentData = await into(document).insertReturning(
+        DocumentCompanion(
+          title: Value(title),
+          officialCode: Value(officialCode),
+          officialType: Value(officialType),
+          signedDate: Value(signedDate),
+        ),
+      );
+
+      if (fileBytes != null) {
+        // Check required parameters
+        if (fileContentDb == null) {
+          throw ArgumentError(
+            'fileContentDb must be provided when fileContent is not null',
+          );
+        }
+
+        // Insert file content into the separate database
+        final stmt = fileContentDb.documentContent.insert();
+        final companion = DocumentContentCompanion.insert(
+          content: fileBytes,
+        );
+        final contentData = await stmt.insertReturning(companion);
+
+        // Link the document with its content
+        final stmtLink = document.update();
+        stmtLink.where((d) => d.id.equals(documentData.id));
+        await stmtLink.write(
+          DocumentCompanion(
+            contentId: Value(contentData.id),
+          ),
+        );
+      }
+    });
+    if (kDebugMode) {
+      print("Transaction state: $txn.");
+    }
   }
 }
 

@@ -118,7 +118,6 @@ create table thesis (
 	"nam"	TEXT as year,
     "defense_status" text not null mapped by `thesisStatusConverter`,
     "payment_status" text not null mapped by `paymentStatusConverter`,
-
     "defense_decision_id" INTEGER REFERENCES document(id) as councilDecisionId,
 
     -- Deprecated fields, probably to be removed later

@@ -18,6 +18,20 @@ export 'custom_widgets/menu_dialog.dart';
 export 'custom_widgets/responsive_breakpoints.dart';
 export 'custom_widgets/providers.dart';
 
+/// Lỗi hiển thị cho người dùng, khi xử lý
+/// và dữ liệu không hợp lý, code logic có thể throw
+/// và exception sẽ nổi lên trên để được handle
+/// bởi giao diện (hiển thị)
+class UserFacingException {
+  final String message;
+  UserFacingException(this.message);
+
+  @override
+  String toString() {
+    return "Lỗi: $message";
+  }
+}
+
 extension CustomFormatter on TextEditingController {
   static TextInputFormatter get trimmedText => TextInputFormatter.withFunction(
     (oldValue, newValue) {
@@ -1766,6 +1780,19 @@ extension MultipleListenable<T1> on ValueNotifier<T1> {
   }
 }
 
+class FramedSectionListTileDivider extends StatelessWidget {
+  final double? padding;
+  const FramedSectionListTileDivider({super.key, this.padding});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: padding ?? context.gutterSmall),
+      child: Divider(),
+    );
+  }
+}
+
 class FramedSection extends StatelessWidget {
   final String title;
   final Widget child;
@@ -1778,6 +1805,36 @@ class FramedSection extends StatelessWidget {
     this.frameColor,
     this.padding,
   });
+
+  static Widget listTileDivider({double? padding}) =>
+      FramedSectionListTileDivider(padding: padding);
+
+  static Widget withListTile({
+    required String title,
+    required List<Widget> children,
+    Color? frameColor,
+  }) {
+    final splicedChildren = [
+      for (var i = 0; i < children.length; i++) ...[
+        children[i],
+        if (i < children.length - 1) FramedSectionListTileDivider(),
+      ],
+    ];
+
+    return Builder(
+      builder: (context) {
+        return FramedSection(
+          title: title,
+          frameColor: frameColor,
+          padding: EdgeInsets.all(context.gutterSmall),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: splicedChildren,
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

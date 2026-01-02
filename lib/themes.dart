@@ -43,10 +43,6 @@ ThemeData getTheme({
         borderRadius: BorderRadius.zero,
       ),
       padding: buttonPadding,
-      side: BorderSide(
-        width: 1.0,
-        color: baseTheme.colorScheme.primary,
-      ),
       fixedSize: buttonSize,
       foregroundColor: baseTheme.colorScheme.primary,
     ),

@@ -156,6 +156,7 @@ final initialRoute = switch (kReleaseMode) {
 
   // Document management pages
   // false => DocumentManagementPage.routeName,
+  // false => DocumentCreatePage.routeName,
 
   // false => DraftPage.routeName,
 
@@ -190,7 +191,7 @@ final initialRoute = switch (kReleaseMode) {
   // false => msc_thesis.ThesisDefensePaymentPage.routeName,
   // false => ThesisListPage.routeName,
   // false => msc_thesis.ThesisEverythingPage.routeName,
-  false => msc_thesis.ThesisDefenseRegisterPage.routeName,
+  // false => msc_thesis.ThesisDefenseRegisterPage.routeName,
   // false => msc_thesis.MscThesisAssignmentPage.routeName,
   // false => msc_thesis.MscThesisSelectionPage.routeName,
   // false => ThesisCreatePage.routeName,
@@ -371,6 +372,8 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     // Document manegement pages
     case DocumentManagementPage.routeName:
       return DocumentManagementPage();
+    case DocumentCreatePage.routeName:
+      return DocumentCreatePage();
 
     // Course classes
     case CourseClassListPage.routeName:

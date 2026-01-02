@@ -213,6 +213,8 @@ class PaymentAtmModel {
   final String reason;
   final List<PaymentAtmEntry> entries;
 
+  static final defaultPdfConfig = defaultDocumentConfig;
+
   PaymentAtmModel({
     required this.reason,
     required this.entries,

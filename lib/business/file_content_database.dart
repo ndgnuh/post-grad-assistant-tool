@@ -9,7 +9,6 @@ part 'file_content_database.g.dart';
 
 class DocumentContent extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get fileName => text()();
   BlobColumn get content => blob()();
 }
 

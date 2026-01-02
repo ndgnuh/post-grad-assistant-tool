@@ -1,12 +1,16 @@
 import 'package:fami_tools/custom_widgets.dart';
+import 'package:fami_tools/custom_widgets/pdf_viewer.dart';
 import 'package:fami_tools/shortcuts.dart';
 import 'package:fami_tools/utilities/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:signals/signals_flutter.dart'
+    show FlutterReadonlySignalUtils, SignalsMixin, Watch, signal;
 
 import '../../business/db_v2_providers.dart';
+import '../../business/documents.dart';
 import '../msc_thesis_defense/msc_thesis_details.dart';
 import 'payment_providers.dart';
 
@@ -110,7 +114,10 @@ class _ThesisListView extends ConsumerWidget {
                       style: TextTheme.of(context).titleMedium,
                     ),
                     Table(
-                      defaultColumnWidth: IntrinsicColumnWidth(),
+                      columnWidths: {
+                        0: IntrinsicColumnWidth(),
+                        1: FlexColumnWidth(),
+                      },
                       defaultVerticalAlignment: TableCellVerticalAlignment.top,
                       children: [
                         infoRow('Ngày bảo vệ:', defenseDate ?? 'Chưa có'),
@@ -141,7 +148,19 @@ class _ThesisListView extends ConsumerWidget {
   }
 }
 
-class _ActionTabView extends StatelessWidget {
+class _ActionTabView extends StatefulWidget {
+  @override
+  State<_ActionTabView> createState() => _ActionTabViewState();
+}
+
+class _ActionTabViewState extends State<_ActionTabView> with SignalsMixin {
+  final atmPdfConfig = signal(PaymentAtmModel.defaultPdfConfig);
+
+  @override
+  initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -150,40 +169,46 @@ class _ActionTabView extends StatelessWidget {
         spacing: context.gutter,
         children: [
           // Preview section
-          FramedSection(
+          FramedSection.withListTile(
             title: "Xem trước",
-            padding: EdgeInsets.all(context.gutter),
-            child: Column(
-              children: [
-                ListTile(
-                  title: const Text('Bảng tổng hợp ATM (x2)'),
-                  subtitle: const Text('Cần in 2 bản'),
-                  contentPadding: EdgeInsets.zero,
+            children: [
+              PdfViewerTile(
+                title: Text("Đề nghị thanh toán"),
+                pdfBuilder: (config) async {
+                  final ref = ProviderScope.containerOf(context);
+                  return ref.read(paymentRequestPdfProvider(config).future);
+                },
+              ),
+              Watch(
+                (context) => PdfViewerTile(
+                  title: Text("Bảng tổng hợp ATM (x2)"),
+                  subtitle: Text("Click để xem trước"),
+                  initialConfig: atmPdfConfig.value,
+                  onConfigChanged: (PdfConfig config) {
+                    atmPdfConfig.value = config;
+                  },
+                  pdfBuilder: (PdfConfig config) async {
+                    final ref = ProviderScope.containerOf(context);
+                    return await ref.read(paymentAtmPdf(config).future);
+                  },
                 ),
-                Divider(),
-                ListTile(
-                  title: const Text('Bản kê thanh toán'),
-                  subtitle: const Text('TODO'),
-                  contentPadding: EdgeInsets.zero,
-                  enabled: false,
-                ),
-                Divider(),
-                ListTile(
-                  title: const Text('Quyết định trích tiên'),
-                  subtitle: const Text('TODO'),
-                  contentPadding: EdgeInsets.zero,
-                  enabled: false,
-                ),
-                Divider(),
-
-                ListTile(
-                  title: const Text('Bảng kiểm tra'),
-                  subtitle: const Text('TODO'),
-                  enabled: false,
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ],
-            ),
+              ),
+              ListTile(
+                title: const Text('Bản kê thanh toán'),
+                subtitle: const Text('TODO'),
+                enabled: false,
+              ),
+              ListTile(
+                title: const Text('Quyết định trích tiên'),
+                subtitle: const Text('TODO'),
+                enabled: false,
+              ),
+              ListTile(
+                title: const Text('Bảng kiểm tra'),
+                subtitle: const Text('TODO'),
+                enabled: false,
+              ),
+            ],
           ),
 
           // Save section

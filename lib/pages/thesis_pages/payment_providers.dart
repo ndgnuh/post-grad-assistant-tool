@@ -1,8 +1,11 @@
 import 'package:drift/drift.dart';
+import 'package:fami_tools/custom_widgets.dart';
 import 'package:riverpod/riverpod.dart';
 import '../../business/db_v2_providers.dart';
 import '../../business/view_models.dart';
 import '../../business/documents.dart';
+
+const reason = 'Thanh toán tiền bồi dưỡng hội đồng chấm luận văn thạc sĩ';
 
 final studentsProvider = FutureProvider<List<ThesisViewModel>>((ref) async {
   final db = await ref.watch(mainDatabaseProvider.future);
@@ -40,52 +43,82 @@ final studentsProvider = FutureProvider<List<ThesisViewModel>>((ref) async {
   return viewModels;
 });
 
-class PaymentEntry {
-  final TeacherData teacher;
-  final String role;
-  const PaymentEntry({required this.teacher, required this.role});
-}
-
-class _ThesisPaymentModel {
-  final List<ThesisData> theses;
-  final List<Map<ThesisPaymentRole, int>> payPerRole;
-  final List<TeacherData> presidents;
-  final List<TeacherData> firstReviewers;
-  final List<TeacherData> secondReviewers;
-  final List<TeacherData> members;
-
-  int getPaymentPerRole(ThesisPaymentRole role) {
-    return switch (role) {
-      ThesisPaymentRole.president => 400_000,
-      ThesisPaymentRole.reviewer => 400_000,
-      ThesisPaymentRole.secretary => 400_000,
-      ThesisPaymentRole.member => 400_000,
-      ThesisPaymentRole.commentation => 650_000,
-    };
+final paymentAtmModel = FutureProvider<PaymentAtmModel>((ref) async {
+  // Get all the theses
+  final students = await ref.watch(studentsProvider.future);
+  final viewModels = <ThesisViewModel>[];
+  for (final student in students) {
+    final id = student.thesis.id;
+    final modelProvider = ThesisViewModel.providerById(id);
+    viewModels.add(await ref.watch(modelProvider.future));
   }
 
-  List<PaymentEntry> get paymentEntries {
-    final entries = <PaymentEntry>[];
-    return entries;
+  final entries = <PaymentAtmEntry>[];
+  for (final vm in viewModels) {
+    entries.add(
+      PaymentAtmEntry(
+        teacher: vm.requirePresident,
+        amount: 400_000,
+      ),
+    );
+
+    entries.add(
+      PaymentAtmEntry(
+        teacher: vm.requireFirstReviewer,
+        amount: 1_050_000,
+      ),
+    );
+
+    entries.add(
+      PaymentAtmEntry(
+        teacher: vm.requireSecondReviewer,
+        amount: 1_050_000,
+      ),
+    );
+
+    entries.add(
+      PaymentAtmEntry(
+        teacher: vm.requireSecretary,
+        amount: 400_000,
+      ),
+    );
+
+    entries.add(
+      PaymentAtmEntry(
+        teacher: vm.requireMember,
+        amount: 300_000,
+      ),
+    );
   }
 
-  List<TeacherData> get allTeachers {
-    final teachers = <TeacherData>{};
-    for (final t in presidents) {
-      teachers.add(t);
-    }
-    for (final t in firstReviewers) {
-      teachers.add(t);
-    }
-    return teachers.toList();
-  }
+  final model = PaymentAtmModel(
+    reason: reason,
+    entries: entries,
+  );
 
-  const _ThesisPaymentModel({
-    required this.theses,
-    required this.presidents,
-    required this.firstReviewers,
-    required this.secondReviewers,
-    required this.members,
-    required this.payPerRole,
-  });
-}
+  return model;
+});
+
+final paymentAtmPdf = FutureProvider.family<PdfFile, PdfConfig>(
+  (ref, config) async {
+    final model = await ref.watch(paymentAtmModel.future);
+    return model.pdf(config);
+  },
+);
+
+final paymentRequestPdfProvider = FutureProvider.family<PdfFile, PdfConfig>(
+  (ref, config) async {
+    final myName = await ref.watch(myNameProvider.future);
+    final myFaculty = await ref.watch(myFacultyProvider.future);
+    final theses = await ref.watch(studentsProvider.future);
+    final model = PaymentRequestModel(
+      paymentReason: reason,
+      requesterName: myName,
+      requesterFalcuty: myFaculty!,
+      paymentAmount:
+          theses.length * (400_000 + 1_050_000 + 1_050_000 + 400_000 + 300_000),
+    );
+
+    return model.pdf;
+  },
+);

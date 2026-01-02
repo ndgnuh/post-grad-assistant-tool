@@ -93,9 +93,50 @@ class _AssignCouncilTab extends StatelessWidget {
     return SingleChildScrollView(
       padding: EdgeInsets.all(context.gutter),
       child: Column(
+        spacing: context.gutter,
         children: [
+          _CouncilAssignmentInformationSection(thesisId: thesisId),
           _CouncilAssignmentSection(thesisId: thesisId),
           _DefenseInformationSection(thesisId: thesisId),
+        ],
+      ),
+    );
+  }
+}
+
+class _CouncilAssignmentInformationSection extends ConsumerWidget {
+  final int thesisId;
+  const _CouncilAssignmentInformationSection({required this.thesisId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final modelAsync = ref.watch(ThesisViewModel.providerById(thesisId));
+    switch (modelAsync) {
+      case AsyncLoading():
+        return LinearProgressIndicator();
+      case AsyncError():
+        return Text('Error loading thesis information');
+      default:
+    }
+
+    final model = modelAsync.value!;
+    final thesis = model.thesis;
+    final student = model.student;
+
+    return FramedSection(
+      title: 'Thông tin phân công hội đồng',
+      padding: EdgeInsets.all(context.gutterSmall),
+      child: Column(
+        children: [
+          ListTile(
+            title: Text('Luận văn'),
+            subtitle: Text(thesis.vietnameseTitle),
+          ),
+          FramedSection.listTileDivider(),
+          ListTile(
+            title: Text('Học viên'),
+            subtitle: Text(student?.name ?? 'Chưa giao'),
+          ),
         ],
       ),
     );
@@ -119,8 +160,9 @@ class _DefenseInformationSection extends ConsumerWidget {
 
     final model = modelAsync.value!;
     final thesis = model.thesis;
+    final defenseDecision = model.councilDecision;
 
-    return CardSection(
+    return FramedSection.withListTile(
       title: 'Thông tin bảo vệ',
       children: [
         DateTile(
@@ -136,17 +178,42 @@ class _DefenseInformationSection extends ConsumerWidget {
             await stmt.write(companion);
           },
         ),
-        StringTile(
-          title: "Quyết định bảo vệ",
-          initialValue: thesis.defenseDecisionNumber ?? "",
-          onUpdate: (value) async {
+        SearchAnchor(
+          builder: (context, controller) => ListTile(
+            title: Text('Số QĐ bảo vệ'),
+            isThreeLine: true,
+            subtitle: switch (defenseDecision) {
+              null => Text('Chưa có'),
+              final decision => Text(
+                "${decision.title}\n${decision.fullLabel}",
+              ),
+            },
+            onTap: () => controller.openView(),
+          ),
+          suggestionsBuilder: (context, controller) async {
+            if (controller.text.isEmpty) {
+              return [];
+            }
+
             final db = await ref.read(mainDatabaseProvider.future);
-            final companion = ThesisCompanion(
-              defenseDecisionNumber: valueOrAbsent(value),
-            );
-            final stmt = db.thesis.update();
-            stmt.where((r) => r.id.equals(thesisId));
-            await stmt.write(companion);
+            final decisions = await db
+                .searchDocuments(searchText: controller.text)
+                .get();
+            return decisions.map((decision) {
+              return ListTile(
+                title: Text(decision.title),
+                subtitle: Text(decision.fullLabel),
+                onTap: () {
+                  final stmt = db.thesis.update();
+                  stmt.where((r) => r.id.equals(thesisId));
+                  final companion = ThesisCompanion(
+                    councilDecisionId: Value(decision.id),
+                  );
+                  stmt.write(companion);
+                  controller.closeView("");
+                },
+              );
+            }).toList();
           },
         ),
       ],
@@ -281,7 +348,7 @@ class _CouncilAssignmentSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CardSection(
+    return FramedSection.withListTile(
       title: 'Hội đồng bảo vệ',
       children: [
         _AssignmentButton(

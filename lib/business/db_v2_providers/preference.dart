@@ -13,8 +13,59 @@ final myIdProvider = AsyncNotifierProvider(
   IntDatabasePreferenceNotifier.myId,
 );
 
+/// Quản lý trực tiếp
 final mySupervisorIdProvider = AsyncNotifierProvider(
   IntDatabasePreferenceNotifier.mySupervisorId,
+);
+
+/// Chuyên viên xử lý học tập
+final mscStudySpecialistIdProvider = AsyncNotifierProvider(
+  IntDatabasePreferenceNotifier.mscStudySpecialistId,
+);
+
+/// Chuyên viên xử lý tuyển sinh
+final mscAdmissionSpecialistIdProvider = AsyncNotifierProvider(
+  IntDatabasePreferenceNotifier.mscAdmissionSpecialistId,
+);
+
+/// Chuyên viên xử lý tác vụ khóa lẻ
+final mscOddCohortSpecialistIdProvider = AsyncNotifierProvider(
+  IntDatabasePreferenceNotifier.mscOddCohortSpecialistId,
+);
+
+/// Chuyên viên xử lý tác vụ khóa chẵn
+final mscEvenCohortSpecialistIdProvider = AsyncNotifierProvider(
+  IntDatabasePreferenceNotifier.mscEvenCohortSpecialistId,
+);
+
+/// Quy chế đào tạo
+final educationRegulationIdProvider = AsyncNotifierProvider(
+  IntDatabasePreferenceNotifier.educationRegulation,
+);
+
+/// Quy chế tổ chức & đào tạo
+final educationOrganizationRegulationIdProvider = AsyncNotifierProvider(
+  IntDatabasePreferenceNotifier.educationOrganizationRegulation,
+);
+
+/// Quy chế công tác sinh viên
+final studentAffairsRegulationIdProvider = AsyncNotifierProvider(
+  IntDatabasePreferenceNotifier.studentAffairsRegulation,
+);
+
+/// Quy chế công tác cán bộ
+final staffAffairsRegulationIdProvider = AsyncNotifierProvider(
+  IntDatabasePreferenceNotifier.staffAffairsRegulation,
+);
+
+/// Quy chế chi tiêu nội bộ
+final internalSpendingRegulationIdProvider = AsyncNotifierProvider(
+  IntDatabasePreferenceNotifier.internalSpendingRegulation,
+);
+
+/// Quy chế quản lý tài chính
+final financialManagementRegulationIdProvider = AsyncNotifierProvider(
+  IntDatabasePreferenceNotifier.financialManagementRegulation,
 );
 
 class UnsetPreference implements Exception {
@@ -120,14 +171,46 @@ class IntDatabasePreferenceNotifier extends DbPreferenceNotifier<int> {
   static IntDatabasePreferenceNotifier myId() => .new("my-id");
   static IntDatabasePreferenceNotifier mySupervisorId() =>
       .new("my-supervisor-id");
+
+  /// Chuyên viên xử lý học tập
   static IntDatabasePreferenceNotifier mscStudySpecialistId() =>
       .new("msc-study-specialist");
+
+  /// Chuyên viên xử lý tuyển sinh
   static IntDatabasePreferenceNotifier mscAdmissionSpecialistId() =>
       .new("msc-admission-specialist");
+
+  /// Chuyên viên xử lý tác vụ khóa lẻ
   static IntDatabasePreferenceNotifier mscOddCohortSpecialistId() =>
       .new("msc-odd-cohort-specialist");
-  static IntDatabasePreferenceNotifier mscEvenCohortSpecialistId() =>
+
+  /// Chuyên viên xử lý tác vụ khóa chẵn
+  factory IntDatabasePreferenceNotifier.mscEvenCohortSpecialistId() =>
       .new("msc-even-cohort-specialist");
+
+  /// Quy chế đào tạo
+  factory IntDatabasePreferenceNotifier.educationRegulation() =>
+      .new("education-regulation");
+
+  /// Quy chế tổ chức & đào tạo
+  factory IntDatabasePreferenceNotifier.educationOrganizationRegulation() =>
+      .new("education-organization-regulation");
+
+  /// Quy chế công tác sinh viên
+  factory IntDatabasePreferenceNotifier.studentAffairsRegulation() =>
+      .new("student-affairs-regulation");
+
+  /// Quy chế công tác cán bộ
+  factory IntDatabasePreferenceNotifier.staffAffairsRegulation() =>
+      .new("staff-affairs-regulation");
+
+  /// Quy chế chi tiêu nội bộ
+  factory IntDatabasePreferenceNotifier.internalSpendingRegulation() =>
+      .new("internal-spending-regulation");
+
+  /// Quy chế quản lý tài chính
+  factory IntDatabasePreferenceNotifier.financialManagementRegulation() =>
+      .new("financial-management-regulation");
 
   @override
   String? toSql(int value) => value.toString();

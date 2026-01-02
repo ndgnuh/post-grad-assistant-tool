@@ -22,17 +22,6 @@ class $DocumentContentTable extends DocumentContent
       'PRIMARY KEY AUTOINCREMENT',
     ),
   );
-  static const VerificationMeta _fileNameMeta = const VerificationMeta(
-    'fileName',
-  );
-  @override
-  late final GeneratedColumn<String> fileName = GeneratedColumn<String>(
-    'file_name',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
   static const VerificationMeta _contentMeta = const VerificationMeta(
     'content',
   );
@@ -45,7 +34,7 @@ class $DocumentContentTable extends DocumentContent
     requiredDuringInsert: true,
   );
   @override
-  List<GeneratedColumn> get $columns => [id, fileName, content];
+  List<GeneratedColumn> get $columns => [id, content];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -60,14 +49,6 @@ class $DocumentContentTable extends DocumentContent
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('file_name')) {
-      context.handle(
-        _fileNameMeta,
-        fileName.isAcceptableOrUnknown(data['file_name']!, _fileNameMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_fileNameMeta);
     }
     if (data.containsKey('content')) {
       context.handle(
@@ -90,10 +71,6 @@ class $DocumentContentTable extends DocumentContent
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
-      fileName: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}file_name'],
-      )!,
       content: attachedDatabase.typeMapping.read(
         DriftSqlType.blob,
         data['${effectivePrefix}content'],
@@ -110,28 +87,18 @@ class $DocumentContentTable extends DocumentContent
 class DocumentContentData extends DataClass
     implements Insertable<DocumentContentData> {
   final int id;
-  final String fileName;
   final Uint8List content;
-  const DocumentContentData({
-    required this.id,
-    required this.fileName,
-    required this.content,
-  });
+  const DocumentContentData({required this.id, required this.content});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['file_name'] = Variable<String>(fileName);
     map['content'] = Variable<Uint8List>(content);
     return map;
   }
 
   DocumentContentCompanion toCompanion(bool nullToAbsent) {
-    return DocumentContentCompanion(
-      id: Value(id),
-      fileName: Value(fileName),
-      content: Value(content),
-    );
+    return DocumentContentCompanion(id: Value(id), content: Value(content));
   }
 
   factory DocumentContentData.fromJson(
@@ -141,7 +108,6 @@ class DocumentContentData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return DocumentContentData(
       id: serializer.fromJson<int>(json['id']),
-      fileName: serializer.fromJson<String>(json['fileName']),
       content: serializer.fromJson<Uint8List>(json['content']),
     );
   }
@@ -150,24 +116,15 @@ class DocumentContentData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'fileName': serializer.toJson<String>(fileName),
       'content': serializer.toJson<Uint8List>(content),
     };
   }
 
-  DocumentContentData copyWith({
-    int? id,
-    String? fileName,
-    Uint8List? content,
-  }) => DocumentContentData(
-    id: id ?? this.id,
-    fileName: fileName ?? this.fileName,
-    content: content ?? this.content,
-  );
+  DocumentContentData copyWith({int? id, Uint8List? content}) =>
+      DocumentContentData(id: id ?? this.id, content: content ?? this.content);
   DocumentContentData copyWithCompanion(DocumentContentCompanion data) {
     return DocumentContentData(
       id: data.id.present ? data.id.value : this.id,
-      fileName: data.fileName.present ? data.fileName.value : this.fileName,
       content: data.content.present ? data.content.value : this.content,
     );
   }
@@ -176,59 +133,48 @@ class DocumentContentData extends DataClass
   String toString() {
     return (StringBuffer('DocumentContentData(')
           ..write('id: $id, ')
-          ..write('fileName: $fileName, ')
           ..write('content: $content')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, fileName, $driftBlobEquality.hash(content));
+  int get hashCode => Object.hash(id, $driftBlobEquality.hash(content));
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is DocumentContentData &&
           other.id == this.id &&
-          other.fileName == this.fileName &&
           $driftBlobEquality.equals(other.content, this.content));
 }
 
 class DocumentContentCompanion extends UpdateCompanion<DocumentContentData> {
   final Value<int> id;
-  final Value<String> fileName;
   final Value<Uint8List> content;
   const DocumentContentCompanion({
     this.id = const Value.absent(),
-    this.fileName = const Value.absent(),
     this.content = const Value.absent(),
   });
   DocumentContentCompanion.insert({
     this.id = const Value.absent(),
-    required String fileName,
     required Uint8List content,
-  }) : fileName = Value(fileName),
-       content = Value(content);
+  }) : content = Value(content);
   static Insertable<DocumentContentData> custom({
     Expression<int>? id,
-    Expression<String>? fileName,
     Expression<Uint8List>? content,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (fileName != null) 'file_name': fileName,
       if (content != null) 'content': content,
     });
   }
 
   DocumentContentCompanion copyWith({
     Value<int>? id,
-    Value<String>? fileName,
     Value<Uint8List>? content,
   }) {
     return DocumentContentCompanion(
       id: id ?? this.id,
-      fileName: fileName ?? this.fileName,
       content: content ?? this.content,
     );
   }
@@ -238,9 +184,6 @@ class DocumentContentCompanion extends UpdateCompanion<DocumentContentData> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
-    }
-    if (fileName.present) {
-      map['file_name'] = Variable<String>(fileName.value);
     }
     if (content.present) {
       map['content'] = Variable<Uint8List>(content.value);
@@ -252,7 +195,6 @@ class DocumentContentCompanion extends UpdateCompanion<DocumentContentData> {
   String toString() {
     return (StringBuffer('DocumentContentCompanion(')
           ..write('id: $id, ')
-          ..write('fileName: $fileName, ')
           ..write('content: $content')
           ..write(')'))
         .toString();
@@ -278,13 +220,11 @@ abstract class _$FileContentDatabase extends GeneratedDatabase {
 typedef $$DocumentContentTableCreateCompanionBuilder =
     DocumentContentCompanion Function({
       Value<int> id,
-      required String fileName,
       required Uint8List content,
     });
 typedef $$DocumentContentTableUpdateCompanionBuilder =
     DocumentContentCompanion Function({
       Value<int> id,
-      Value<String> fileName,
       Value<Uint8List> content,
     });
 
@@ -299,11 +239,6 @@ class $$DocumentContentTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get fileName => $composableBuilder(
-    column: $table.fileName,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -327,11 +262,6 @@ class $$DocumentContentTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get fileName => $composableBuilder(
-    column: $table.fileName,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<Uint8List> get content => $composableBuilder(
     column: $table.content,
     builder: (column) => ColumnOrderings(column),
@@ -349,9 +279,6 @@ class $$DocumentContentTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get fileName =>
-      $composableBuilder(column: $table.fileName, builder: (column) => column);
 
   GeneratedColumn<Uint8List> get content =>
       $composableBuilder(column: $table.content, builder: (column) => column);
@@ -395,23 +322,13 @@ class $$DocumentContentTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<String> fileName = const Value.absent(),
                 Value<Uint8List> content = const Value.absent(),
-              }) => DocumentContentCompanion(
-                id: id,
-                fileName: fileName,
-                content: content,
-              ),
+              }) => DocumentContentCompanion(id: id, content: content),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                required String fileName,
                 required Uint8List content,
-              }) => DocumentContentCompanion.insert(
-                id: id,
-                fileName: fileName,
-                content: content,
-              ),
+              }) => DocumentContentCompanion.insert(id: id, content: content),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),

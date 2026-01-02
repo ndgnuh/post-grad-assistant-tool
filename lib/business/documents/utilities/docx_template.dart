@@ -192,7 +192,6 @@ class DocxTemplate {
         final stdContentText = sdtContent.findAllElements("w:t").first;
         stdContentText.innerText = tagValue;
       }
-      print((tagName, tagValue));
     }
 
     // Replace simple placeholders
