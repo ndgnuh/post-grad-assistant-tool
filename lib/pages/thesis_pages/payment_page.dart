@@ -6,8 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:signals/signals_flutter.dart'
-    show FlutterReadonlySignalUtils, SignalsMixin, Watch, signal;
+import 'package:riverpod/misc.dart' show FutureProviderFamily;
 
 import '../../business/db_v2_providers.dart';
 import '../../business/documents.dart';
@@ -123,7 +122,8 @@ class _ThesisListView extends ConsumerWidget {
                         infoRow('Ngày bảo vệ:', defenseDate ?? 'Chưa có'),
                         infoRow(
                           'Số QĐ bảo vệ:',
-                          model.thesis.defenseDecisionNumber ?? 'N/A',
+                          model.councilDecisionViewModel?.document.fullLabel ??
+                              'N/A',
                         ),
                         infoRow("Chủ tịch", teacherLine(model.president)),
                         infoRow(
@@ -153,8 +153,52 @@ class _ActionTabView extends StatefulWidget {
   State<_ActionTabView> createState() => _ActionTabViewState();
 }
 
-class _ActionTabViewState extends State<_ActionTabView> with SignalsMixin {
-  final atmPdfConfig = signal(PaymentAtmModel.defaultPdfConfig);
+class _PdfPreviewButton extends ConsumerWidget {
+  final ValueNotifier<PdfConfig> configNotifier;
+  final FutureProviderFamily<PdfFile, PdfConfig> pdfProvider;
+  final String title;
+
+  const _PdfPreviewButton({
+    required this.title,
+    required this.configNotifier,
+    required this.pdfProvider,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ValueListenableBuilder(
+      valueListenable: configNotifier,
+      builder: (context, value, child) {
+        return PdfViewerTile(
+          title: Text(title),
+          subtitle: Text("Click để xem trước"),
+          initialConfig: configNotifier.value,
+          onConfigChanged: (config) {
+            configNotifier.value = config;
+          },
+          pdfBuilder: (config) async {
+            return await ref.read(pdfProvider(config).future);
+          },
+        );
+      },
+    );
+  }
+}
+
+typedef PdfConfigNotifier = ValueNotifier<PdfConfig>;
+
+class _ActionTabViewState extends State<_ActionTabView> {
+  final PdfConfigNotifier requestConfigNotifier = .new(PdfConfig());
+
+  final PdfConfigNotifier atmPdfConfigNotifier = .new(
+    PaymentAtmModel.defaultPdfConfig,
+  );
+
+  final PdfConfigNotifier listingPdfConfigNotifier = .new(
+    PaymentListingModel.defaultPdfConfig,
+  );
+  final PdfConfigNotifier doubleCheckConfigProvider = .new(PdfConfig());
+  final PdfConfigNotifier doubleCheckSummaryConfigProvider = .new(PdfConfig());
 
   @override
   initState() {
@@ -172,41 +216,36 @@ class _ActionTabViewState extends State<_ActionTabView> with SignalsMixin {
           FramedSection.withListTile(
             title: "Xem trước",
             children: [
-              PdfViewerTile(
-                title: Text("Đề nghị thanh toán"),
-                pdfBuilder: (config) async {
-                  final ref = ProviderScope.containerOf(context);
-                  return ref.read(paymentRequestPdfProvider(config).future);
-                },
+              _PdfPreviewButton(
+                title: "Yêu cầu thanh toán",
+                configNotifier: doubleCheckConfigProvider,
+                pdfProvider: paymentRequestPdfProvider,
               ),
-              Watch(
-                (context) => PdfViewerTile(
-                  title: Text("Bảng tổng hợp ATM (x2)"),
-                  subtitle: Text("Click để xem trước"),
-                  initialConfig: atmPdfConfig.value,
-                  onConfigChanged: (PdfConfig config) {
-                    atmPdfConfig.value = config;
-                  },
-                  pdfBuilder: (PdfConfig config) async {
-                    final ref = ProviderScope.containerOf(context);
-                    return await ref.read(paymentAtmPdf(config).future);
-                  },
-                ),
+              _PdfPreviewButton(
+                title: "Bảng ATM (x2)",
+                configNotifier: atmPdfConfigNotifier,
+                pdfProvider: paymentAtmPdfProvider,
               ),
-              ListTile(
-                title: const Text('Bản kê thanh toán'),
-                subtitle: const Text('TODO'),
-                enabled: false,
+              _PdfPreviewButton(
+                title: "Bản kê thanh toán",
+                configNotifier: listingPdfConfigNotifier,
+                pdfProvider: paymentListingPdfProvider,
               ),
+
               ListTile(
                 title: const Text('Quyết định trích tiên'),
                 subtitle: const Text('TODO'),
                 enabled: false,
               ),
-              ListTile(
-                title: const Text('Bảng kiểm tra'),
-                subtitle: const Text('TODO'),
-                enabled: false,
+              _PdfPreviewButton(
+                title: "Bảng kiểm tra thanh toán",
+                configNotifier: doubleCheckConfigProvider,
+                pdfProvider: paymentDoubleCheckPdfProvider,
+              ),
+              _PdfPreviewButton(
+                title: "Bảng kiểm tra thanh toán (tổng hợp)",
+                configNotifier: doubleCheckSummaryConfigProvider,
+                pdfProvider: paymentDoubleCheckSummaryPdfProvider,
               ),
             ],
           ),

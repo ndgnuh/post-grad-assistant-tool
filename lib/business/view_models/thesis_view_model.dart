@@ -1,8 +1,8 @@
-import 'dart:typed_data';
-
 import '../../custom_widgets.dart' show UserFacingException;
 import '../db_v2_providers.dart';
 import 'package:riverpod/riverpod.dart';
+
+import '../view_models.dart';
 
 /// View model dùng cho việc hiển thị dữ liệu của luận vân thạc sĩ
 class ThesisViewModel {
@@ -16,6 +16,15 @@ class ThesisViewModel {
   final TeacherData? firstReviewer;
   final TeacherData? secondReviewer;
   final TeacherData? member;
+
+  final DocumentViewModel? councilDecisionViewModel;
+
+  DocumentViewModel get requireCouncilDecision {
+    if (councilDecisionViewModel == null) {
+      throw UserFacingException('Chưa có quyết định thành lập hội đồng');
+    }
+    return councilDecisionViewModel!;
+  }
 
   StudentData get requireStudent {
     if (student == null) {
@@ -59,9 +68,6 @@ class ThesisViewModel {
     return member!;
   }
 
-  final DocumentData? councilDecision;
-  final Uint8List? councilDecisionContent;
-
   const ThesisViewModel({
     required this.student,
     required this.thesis,
@@ -72,8 +78,7 @@ class ThesisViewModel {
     this.firstReviewer,
     this.secondReviewer,
     this.member,
-    this.councilDecision,
-    this.councilDecisionContent,
+    this.councilDecisionViewModel,
   });
 
   /* Providers */
@@ -142,12 +147,7 @@ final _byIdProvider = FutureProvider.family(
 
     final councilDecision = switch (thesis.councilDecisionId) {
       null => null,
-      int id => await ref.watch(documentByIdProvider(id).future),
-    };
-
-    final councilDecisionContent = switch (councilDecision?.contentId) {
-      null => null,
-      int id => await ref.watch(documentContentProvider(id).future),
+      int id => await ref.watch(DocumentViewModel.provider(id).future),
     };
 
     return ThesisViewModel(
@@ -160,15 +160,14 @@ final _byIdProvider = FutureProvider.family(
       firstReviewer: firstReviewer,
       secondReviewer: secondReviewer,
       member: member,
-      councilDecision: councilDecision,
-      councilDecisionContent: councilDecisionContent,
+      councilDecisionViewModel: councilDecision,
     );
   },
 );
 
 /// Get thesis view model from [studentId]
-final _byStudentIdProvider = FutureProvider.family(
-  (ref, int studentId) async {
+final _byStudentIdProvider = StreamProvider.autoDispose.family(
+  (ref, int studentId) async* {
     final thesisId = (await ref.watch(
       thesisIdByStudentProvider(studentId).future,
     ))!;
@@ -177,6 +176,6 @@ final _byStudentIdProvider = FutureProvider.family(
       _byIdProvider(thesisId).future,
     );
 
-    return viewModel;
+    yield viewModel;
   },
 );

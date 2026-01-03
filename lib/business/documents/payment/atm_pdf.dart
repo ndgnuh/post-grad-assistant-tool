@@ -9,10 +9,10 @@ import '../xlsx_utils.dart' hide TextSpan;
 export '../models/payment_atm.dart';
 
 final defaultDocumentConfig = PdfConfig(
-  baseFontSize: 12 * pt,
-  verticalMargin: 1 * inch,
+  baseFontSize: 10 * pt,
+  verticalMargin: 0.7 * inch,
   horizontalMargin: 1 * inch,
-  verticalTableCellPadding: 3 * pt,
+  verticalTableCellPadding: 2 * pt,
   horizontalTableCellPadding: 3 * pt,
   pageFormat: PdfPageFormat.a4.transpose,
 );
@@ -52,7 +52,7 @@ Future<PdfFile> _pdf({
         HustTitle(),
 
         // Title
-        SizedBox(height: 24 * pt),
+        SizedBox(height: 12 * pt),
         Center(
           child: RichText(
             textAlign: TextAlign.center,
@@ -67,7 +67,7 @@ Future<PdfFile> _pdf({
         ),
 
         // The summary table
-        SizedBox(height: 12 * pt),
+        SizedBox(height: 6 * pt),
         EzTable(
           data: model.dataRows,
           headers: model.dataHeaders,
@@ -117,7 +117,7 @@ Future<PdfFile> _pdf({
         ),
 
         // Summary text
-        SizedBox(height: 12 * pt), // Space between table and summary text
+        SizedBox(height: 3 * pt), // Space between table and summary text
 
         Center(
           child: InfoField(
@@ -132,7 +132,7 @@ Future<PdfFile> _pdf({
         ),
 
         // The date & the signing area
-        SizedBox(height: 12 * pt), // Space between title and content
+        SizedBox(height: 6 * pt), // Space between title and content
         Column(
           children: [
             Footer(

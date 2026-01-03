@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:fami_tools/business/documents/pdf_utils.dart';
 import 'package:fami_tools/utilities/strings.dart';
 
+import '../../documents.dart';
+
 const _headings = [
   "TT",
   "Số\nhóa đơn",
@@ -17,12 +19,16 @@ const _magicInsiderCode = "6449";
 const _magicOutsiderCode = "6756";
 
 Future<Uint8List> paymentListingPdf({
-  required PaymentListingTableModel model,
+  required PaymentListingModel model,
+  required PdfConfig config,
 }) async {
   return await buildMultiPageDocument(
     pageFormat: PdfPageFormat.a4,
-    baseFontSize: 11.0,
-    margin: EdgeInsets.all(0.7 * PdfPageFormat.inch),
+    baseFontSize: config.baseFontSize,
+    margin: EdgeInsets.symmetric(
+      horizontal: config.horizontalMargin,
+      vertical: config.verticalMargin,
+    ),
     build: (context) => [
       Footer(
         leading: RichText(
@@ -129,7 +135,7 @@ Future<Uint8List> paymentListingPdf({
 typedef PaymentListingEntry = ({String reason, int amount});
 
 class PaymentListingTable extends StatelessWidget {
-  final PaymentListingTableModel model;
+  final PaymentListingModel model;
   PaymentListingTable({required this.model});
 
   @override
@@ -253,16 +259,30 @@ class PaymentListingTable extends StatelessWidget {
   }
 }
 
-class PaymentListingTableModel {
+class PaymentListingModel {
   final List<PaymentListingEntry> insiderEntries;
   final List<PaymentListingEntry> outsiderEntries;
   final String reason;
 
-  const PaymentListingTableModel({
+  static PaymentListingEntry entry({
+    required String reason,
+    required int amount,
+  }) => (reason: reason, amount: amount);
+
+  const PaymentListingModel({
     required this.insiderEntries,
     required this.outsiderEntries,
     required this.reason,
   });
+
+  static PdfConfig defaultPdfConfig = PdfConfig(
+    pageFormat: PdfPageFormat.a4,
+    verticalMargin: 0.7 * PdfPageFormat.inch,
+    horizontalMargin: 0.7 * PdfPageFormat.inch,
+    baseFontSize: 10.0,
+    horizontalTableCellPadding: 3 * pt,
+    verticalTableCellPadding: 2 * pt,
+  );
 
   int get insiderTotal => insiderEntries.fold(
     0,
@@ -275,4 +295,12 @@ class PaymentListingTableModel {
   );
 
   int get total => insiderTotal + outsiderTotal;
+
+  Future<PdfFile> pdf({required PdfConfig config}) async {
+    final bytes = await paymentListingPdf(model: this, config: config);
+    return PdfFile(
+      bytes: bytes,
+      name: "Bản kê thanh toán $reason",
+    );
+  }
 }

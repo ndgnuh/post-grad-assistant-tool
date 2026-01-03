@@ -160,11 +160,16 @@ class _PdfViewerPageState extends State<_PdfViewerPage> {
       onEdit: showEditDialog,
       onSave: saveFile,
       child: Scaffold(
+        extendBody: true,
         appBar: AppBar(
           title: _PdfTitle(pdfFileFuture: pdfFileResult),
         ),
-        body: Expanded(
-          child: _PdfViewer(pdfFileFuture: pdfFileResult),
+        body: Center(
+          child: Expanded(
+            child: _PdfViewer(
+              pdfFileFuture: pdfFileResult,
+            ),
+          ),
         ),
         floatingActionButton: fabClass(
           onPressed: () => saveFile(context),
@@ -192,7 +197,16 @@ class _PdfViewer extends StatelessWidget {
           case ConnectionState.done:
             switch ((state.data, state.error)) {
               case (PdfFile data, _):
-                return PdfViewer.data(data.bytes, sourceName: data.name);
+                return PdfViewer.data(
+                  data.bytes,
+                  sourceName: data.name,
+                  params: PdfViewerParams(
+                    keyHandlerParams: PdfViewerKeyHandlerParams(
+                      canRequestFocus: false,
+                      enabled: false,
+                    ),
+                  ),
+                );
               case (null, Error error):
                 return Text("Lỗi: $error");
             }

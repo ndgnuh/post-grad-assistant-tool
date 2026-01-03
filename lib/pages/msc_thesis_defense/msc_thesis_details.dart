@@ -160,7 +160,7 @@ class _DefenseInformationSection extends ConsumerWidget {
 
     final model = modelAsync.value!;
     final thesis = model.thesis;
-    final defenseDecision = model.councilDecision;
+    final defenseDecision = model.councilDecisionViewModel;
 
     return FramedSection.withListTile(
       title: 'Thông tin bảo vệ',
@@ -184,9 +184,7 @@ class _DefenseInformationSection extends ConsumerWidget {
             isThreeLine: true,
             subtitle: switch (defenseDecision) {
               null => Text('Chưa có'),
-              final decision => Text(
-                "${decision.title}\n${decision.fullLabel}",
-              ),
+              final decision => Text(decision.document.fullLabel),
             },
             onTap: () => controller.openView(),
           ),

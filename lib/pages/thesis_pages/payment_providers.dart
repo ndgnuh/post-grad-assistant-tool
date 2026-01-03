@@ -7,41 +7,60 @@ import '../../business/documents.dart';
 
 const reason = 'Thanh toán tiền bồi dưỡng hội đồng chấm luận văn thạc sĩ';
 
-final studentsProvider = FutureProvider<List<ThesisViewModel>>((ref) async {
-  final db = await ref.watch(mainDatabaseProvider.future);
-  final stmt = db.thesis.select().join([
-    innerJoin(db.student, db.thesis.studentId.equalsExp(db.student.id)),
-  ]);
+/// TODO: make this a changeable value somewhere in the DB
+const paymentPerRole = {
+  ThesisPaymentRole.president: 400_000,
+  ThesisPaymentRole.reviewer: 400_000,
+  ThesisPaymentRole.commentation: 650_000,
+  ThesisPaymentRole.secretary: 400_000,
+  ThesisPaymentRole.member: 300_000,
+};
 
-  stmt.where(db.thesis.paymentStatus.equals(PaymentStatus.unpaid.value));
-  stmt.where(
-    db.thesis.defenseStatus.equals(ThesisStatus.defenseIntended.value) |
-        db.thesis.defenseStatus.equals(ThesisStatus.defenseApplied.value) |
-        db.thesis.defenseStatus.equals(ThesisStatus.defenseApproved.value) |
-        db.thesis.defenseStatus.equals(ThesisStatus.defenseFailed.value),
-  );
+final thesisIdsProvider = StreamProvider<List<int>>(
+  (Ref ref) async* {
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final stmt = db.thesis.select().join([
+      innerJoin(db.student, db.thesis.studentId.equalsExp(db.student.id)),
+      innerJoin(
+        db.document,
+        db.thesis.councilDecisionId.equalsExp(db.document.id),
+      ),
+    ]);
 
-  stmt.orderBy([
-    OrderingTerm(expression: db.thesis.defenseDecisionNumber),
-    OrderingTerm(expression: db.thesis.defenseDate),
-  ]);
+    stmt.where(db.thesis.paymentStatus.equals(PaymentStatus.unpaid.value));
+    stmt.where(
+      db.thesis.defenseStatus.equals(ThesisStatus.defenseIntended.value) |
+          db.thesis.defenseStatus.equals(ThesisStatus.defenseApplied.value) |
+          db.thesis.defenseStatus.equals(ThesisStatus.defenseApproved.value) |
+          db.thesis.defenseStatus.equals(ThesisStatus.defenseFailed.value),
+    );
 
-  if (ref.isFirstBuild) {
-    stmt.watch().listen((rows) {
-      // Just to trigger updates
-      ref.invalidateSelf();
-    });
-  }
+    stmt.orderBy([
+      OrderingTerm(expression: db.document.signedDate, mode: OrderingMode.asc),
+      OrderingTerm(
+        expression: db.document.officialCode,
+        mode: OrderingMode.asc,
+      ),
+    ]);
 
-  final ids = await stmt.map((r) => r.read(db.thesis.id)).get();
+    final mapped = stmt.map((r) => r.read(db.thesis.id));
+    await for (final ids in mapped.watch()) {
+      yield ids.whereType<int>().toList();
+    }
+  },
+);
 
-  final viewModels = <ThesisViewModel>[];
-  for (final id in ids.whereType<int>()) {
-    final vm = await ref.watch(ThesisViewModel.providerById(id).future);
-    viewModels.add(vm);
-  }
-  return viewModels;
-});
+final studentsProvider = StreamProvider<List<ThesisViewModel>>(
+  (ref) async* {
+    final ids = await ref.watch(thesisIdsProvider.future);
+    final viewModels = <ThesisViewModel>[];
+    for (final id in ids.whereType<int>()) {
+      final vm = await ref.watch(ThesisViewModel.providerById(id).future);
+      viewModels.add(vm);
+    }
+    yield viewModels;
+  },
+);
 
 final paymentAtmModel = FutureProvider<PaymentAtmModel>((ref) async {
   // Get all the theses
@@ -99,15 +118,15 @@ final paymentAtmModel = FutureProvider<PaymentAtmModel>((ref) async {
   return model;
 });
 
-final paymentAtmPdf = FutureProvider.family<PdfFile, PdfConfig>(
+final paymentAtmPdfProvider = FutureProvider.family<PdfFile, PdfConfig>(
   (ref, config) async {
     final model = await ref.watch(paymentAtmModel.future);
     return model.pdf(config);
   },
 );
 
-final paymentRequestPdfProvider = FutureProvider.family<PdfFile, PdfConfig>(
-  (ref, config) async {
+final paymentRequestPdfProvider = FutureProvider.family(
+  (ref, PdfConfig config) async {
     final myName = await ref.watch(myNameProvider.future);
     final myFaculty = await ref.watch(myFacultyProvider.future);
     final theses = await ref.watch(studentsProvider.future);
@@ -119,6 +138,137 @@ final paymentRequestPdfProvider = FutureProvider.family<PdfFile, PdfConfig>(
           theses.length * (400_000 + 1_050_000 + 1_050_000 + 400_000 + 300_000),
     );
 
-    return model.pdf;
+    final pdf = await model.pdf;
+    return pdf;
+  },
+);
+
+final doubleCheckModelProvider = FutureProvider(
+  (Ref ref) async {
+    final models = await ref.watch(studentsProvider.future);
+
+    final entries = <PaymentDoubleCheckEntry>[];
+    for (final model in models) {
+      entries.addAll([
+        PaymentDoubleCheckEntry(
+          teacher: model.requirePresident,
+          roles: {ThesisPaymentRole.president},
+          paymentPerRole: paymentPerRole,
+        ),
+        PaymentDoubleCheckEntry(
+          teacher: model.requireFirstReviewer,
+          roles: {
+            ThesisPaymentRole.reviewer,
+            ThesisPaymentRole.commentation,
+          },
+          paymentPerRole: paymentPerRole,
+        ),
+        PaymentDoubleCheckEntry(
+          teacher: model.requireSecondReviewer,
+          roles: {
+            ThesisPaymentRole.reviewer,
+            ThesisPaymentRole.commentation,
+          },
+          paymentPerRole: paymentPerRole,
+        ),
+        PaymentDoubleCheckEntry(
+          teacher: model.requireSecretary,
+          roles: {ThesisPaymentRole.secretary},
+          paymentPerRole: paymentPerRole,
+        ),
+        PaymentDoubleCheckEntry(
+          teacher: model.requireMember,
+          roles: {ThesisPaymentRole.member},
+          paymentPerRole: paymentPerRole,
+        ),
+      ]);
+    }
+
+    final model = PaymentDoubleCheckModel(
+      title: reason,
+      roles: ThesisPaymentRole.values,
+      entries: entries,
+    );
+
+    return model;
+  },
+);
+
+final paymentDoubleCheckPdfProvider = FutureProvider.family(
+  (ref, PdfConfig config) async {
+    final model = await ref.watch(doubleCheckModelProvider.future);
+    final pdf = await model.pdf(config: config);
+    return pdf;
+  },
+);
+
+final paymentDoubleCheckSummaryPdfProvider = FutureProvider.family(
+  (ref, PdfConfig config) async {
+    final model = await ref.watch(doubleCheckModelProvider.future);
+    final pdf = await model.pdf(config: config);
+    return pdf;
+  },
+);
+
+final paymentListingModel = FutureProvider<PaymentListingModel>(
+  (ref) async {
+    final models = await ref.watch(studentsProvider.future);
+    final insiderEntries = <PaymentListingEntry>[];
+    final outsiderEntries = <PaymentListingEntry>[];
+    for (final model in models) {
+      final councilDecision = model.requireCouncilDecision.document;
+      final reason =
+          "Thanh toán tiền bồi dưỡng hội đồng chấm luận văn thạc sĩ theo QĐ ${councilDecision.fullLabel}";
+
+      int insiderAmount = 0;
+      int outsiderAmount = 0;
+      for (final role in ThesisPaymentRole.values) {
+        final paymentAmount = paymentPerRole[role] ?? 0;
+        final teachers = switch (role) {
+          ThesisPaymentRole.president => {model.requirePresident},
+          ThesisPaymentRole.reviewer => {
+            model.requireFirstReviewer,
+            model.requireSecondReviewer,
+          },
+          ThesisPaymentRole.commentation => {
+            model.requireFirstReviewer,
+            model.requireSecondReviewer,
+          },
+          ThesisPaymentRole.secretary => {model.requireSecretary},
+          ThesisPaymentRole.member => {model.requireMember},
+        };
+
+        for (final teacher in teachers) {
+          if (teacher.isOutsider) {
+            outsiderAmount += paymentAmount;
+          } else {
+            insiderAmount += paymentAmount;
+          }
+        }
+      }
+
+      insiderEntries.add(
+        PaymentListingModel.entry(reason: reason, amount: insiderAmount),
+      );
+      outsiderEntries.add(
+        PaymentListingModel.entry(reason: reason, amount: outsiderAmount),
+      );
+    }
+
+    final listingModel = PaymentListingModel(
+      reason: reason,
+      insiderEntries: insiderEntries,
+      outsiderEntries: outsiderEntries,
+    );
+
+    return listingModel;
+  },
+);
+
+final paymentListingPdfProvider = FutureProvider.family(
+  (ref, PdfConfig config) async {
+    final model = await ref.watch(paymentListingModel.future);
+    final pdf = await model.pdf(config: config);
+    return pdf;
   },
 );

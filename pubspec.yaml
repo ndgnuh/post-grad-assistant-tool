@@ -72,6 +72,7 @@ dependencies:
   spreadsheet_decoder:
     git: https://github.com/BlockRen/spreadsheet_decoder
   csv: ^6.0.0
+  docx_viewer: ^1.0.0
 
   # Riverpod
   flutter_riverpod: ^3.0.0-dev.17
@@ -83,13 +84,12 @@ dependencies:
   external_path: ^2.2.0
   archive: ^4.0.7
   xml: ^6.6.1
-  pdf_combiner: ^4.4.0
+  # pdf_combiner: ^4.4.0
   dart_pdf_reader: ^0.4.3
   flutter_hooks: ^0.21.3+1
   skeletonizer: ^2.1.2
-  pdf_text_extraction: ^2.1.1
-  doc_text_extractor: ^2.1.0
   signals: ^6.3.0
+  pdfrx_engine: ^0.3.6
 
 dev_dependencies:
   flutter_test:
