@@ -12,19 +12,6 @@
 class $AssetsFontsGen {
   const $AssetsFontsGen();
 
-  /// File path: assets/fonts/Times_New_Roman.ttf
-  String get timesNewRoman => 'assets/fonts/Times_New_Roman.ttf';
-
-  /// File path: assets/fonts/Times_New_Roman_Bold.ttf
-  String get timesNewRomanBold => 'assets/fonts/Times_New_Roman_Bold.ttf';
-
-  /// File path: assets/fonts/Times_New_Roman_Bold_Italic.ttf
-  String get timesNewRomanBoldItalic =>
-      'assets/fonts/Times_New_Roman_Bold_Italic.ttf';
-
-  /// File path: assets/fonts/Times_New_Roman_Italic.ttf
-  String get timesNewRomanItalic => 'assets/fonts/Times_New_Roman_Italic.ttf';
-
   /// File path: assets/fonts/tex_gyre_termes_bold.ttf
   String get texGyreTermesBold => 'assets/fonts/tex_gyre_termes_bold.ttf';
 
@@ -40,10 +27,6 @@ class $AssetsFontsGen {
 
   /// List of all assets
   List<String> get values => [
-    timesNewRoman,
-    timesNewRomanBold,
-    timesNewRomanBoldItalic,
-    timesNewRomanItalic,
     texGyreTermesBold,
     texGyreTermesBoldItalic,
     texGyreTermesItalic,
@@ -68,26 +51,18 @@ class $AssetsTemplatesGen {
   /// File path: assets/templates/phd-admission-record.docx
   String get phdAdmissionRecord => 'assets/templates/phd-admission-record.docx';
 
-  /// File path: assets/templates/sample.docx
-  String get sample => 'assets/templates/sample.docx';
-
   /// List of all assets
   List<String> get values => [
     mscThesisCouncilDecision,
     mscThesisSpendingDecision,
     paymentRequest,
     phdAdmissionRecord,
-    sample,
   ];
 }
 
 class Assets {
   const Assets._();
 
-  static const String copyPasta = 'assets/copy-pasta.yaml';
   static const $AssetsFontsGen fonts = $AssetsFontsGen();
   static const $AssetsTemplatesGen templates = $AssetsTemplatesGen();
-
-  /// List of all assets
-  static List<String> get values => [copyPasta];
 }
