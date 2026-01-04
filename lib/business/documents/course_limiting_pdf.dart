@@ -175,9 +175,9 @@ Future<PdfFile> _pdf({
   );
 }
 
-XlsxFile _buildXlsx({
+Future<XlsxFile> _buildXlsx({
   required CourseLimitingDocumentModel model,
-}) {
+}) async {
   builder(Sheet sheet) {
     sheet.addTable(
       headerStyleBuilder: (col, value, defaultStyle) {
@@ -209,7 +209,7 @@ XlsxFile _buildXlsx({
     }
   }
 
-  final bytes = buildSingleSheetExcel(builder: builder);
+  final bytes = await buildSingleSheetExcel(builder: builder);
   final name = model.name;
   return XlsxFile(name: name, bytes: bytes);
 }

@@ -49,7 +49,10 @@ final scoreSheetsPdfProvider = FutureProvider<PdfFile>(
       names.add(student.name);
     }
 
-    return PdfFile.mscThesis.multipleScoreSheets(studentNames: names);
+    final model = MscThesisScoreSheetDocument(studentNames: names);
+    return await model.buildPdf(
+      config: MscThesisScoreSheetDocument.defaultPdfConfig,
+    );
   },
 );
 
@@ -62,10 +65,11 @@ final councilDecisionDocxFilesProvider = FutureProvider(
       final thesisViewModel = await ref.read(
         ThesisViewModel.providerByStudentId(id).future,
       );
-      final docxFile = await DocxFactory.mscThesis.councilDecision(
-        thesis: thesisViewModel,
+      final model = MscThesisCouncilDecisionDocument(
+        thesisViewModel: thesisViewModel,
+        major: "Toán - Tin", // TODO: no magic value
       );
-      docx.add(docxFile);
+      docx.add(await model.buildDocx());
     }
     return docx;
   },
@@ -83,7 +87,10 @@ final councilSuggestionsPdfProvider = FutureProvider<PdfFile>(
       models.add(model);
     }
 
-    return PdfFile.mscThesis.multipleCouncilSuggestion(models: models);
+    return MscThesisCouncilSuggestionDocument.buildCombinedPdf(
+      models: models,
+      config: MscThesisCouncilSuggestionDocument.defaultPdfConfig,
+    );
   },
 );
 

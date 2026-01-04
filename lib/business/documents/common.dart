@@ -4,7 +4,6 @@ import 'dart:typed_data';
 
 import 'package:path/path.dart' as p;
 
-import '../documents.dart';
 import 'utilities/pdf_widgets.dart';
 export 'utilities/pdf_widgets.dart' show pt, inch, cm;
 
@@ -73,6 +72,7 @@ sealed class InMemoryDocument {
   }
 }
 
+/// Excel file in memory
 class XlsxFile extends InMemoryDocument {
   const XlsxFile({required super.name, required super.bytes});
 
@@ -80,9 +80,24 @@ class XlsxFile extends InMemoryDocument {
   String get extension => ".xlsx";
 }
 
+/// Word document file in memory
 class DocxFile extends InMemoryDocument {
   const DocxFile({required super.name, required super.bytes});
 
   @override
   String get extension => ".docx";
+}
+
+/// PDF file in memory, has [config] for storing PDF generation settings
+class PdfFile extends InMemoryDocument {
+  final PdfConfig config;
+
+  @override
+  String get extension => ".pdf";
+
+  const PdfFile({
+    required super.name,
+    required super.bytes,
+    this.config = const PdfConfig(),
+  });
 }

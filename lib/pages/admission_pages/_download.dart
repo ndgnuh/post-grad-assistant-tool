@@ -5,9 +5,9 @@ import 'package:fami_tools/services/pdf_builder.bak/drafting.dart';
 import 'package:fami_tools/utilities/strings.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:pdf_combiner/pdf_combiner.dart';
-import 'package:pdf_combiner/responses/pdf_combiner_status.dart';
 import 'package:dart_pdf_reader/dart_pdf_reader.dart';
+
+import '../../business/documents/pdf_utils.dart';
 
 final dio = Dio();
 const baseTuyenSinhUrl = "https://sdh.hust.edu.vn/AnhTuyenSinh";
@@ -125,21 +125,11 @@ Future<void> downloadAdmissionFiles({
     }
   }
 
-  final response = await PdfCombiner.generatePDFFromDocuments(
-    inputPaths: paddedOutputPaths,
-    outputPath: outputPath,
+  final outputBytes = await combinePdfPages(
+    pdfBytes: [
+      for (final path in paddedOutputPaths) await File(path).readAsBytes(),
+    ],
   );
-  switch (response.status) {
-    case PdfCombinerStatus.success:
-      // Clean up individual files
-      for (final path in outputPaths) {
-        final file = File(path);
-        if (await file.exists()) {
-          await file.delete();
-        }
-      }
 
-    case PdfCombinerStatus.error:
-      throw Exception("Failed to merge PDFs: ${response.message}");
-  }
+  await File(outputPath).writeAsBytes(outputBytes);
 }

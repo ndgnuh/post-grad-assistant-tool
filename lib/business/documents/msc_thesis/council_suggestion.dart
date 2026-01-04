@@ -2,86 +2,77 @@ import 'package:fami_tools/business/view_models.dart';
 import 'package:fami_tools/utilities/strings.dart';
 import 'package:intl/intl.dart';
 
-import '../pdf_utils.dart';
 import '../../documents.dart';
 import '../../main_database.dart';
 import '../common_widgets.dart';
+import '../pdf_utils.dart';
 
-final margin = EdgeInsets.symmetric(
-  vertical: 0.75 * inch,
-  horizontal: 0.79 * inch,
-);
-final baseFontSize = 11.0;
+class MscThesisCouncilSuggestionDocument {
+  final ThesisViewModel model;
 
-Future<PdfFile> councilSuggestionPdf({
-  required ThesisViewModel model,
-}) async {
-  assert(model.student != null, "Student data must not be null");
-
-  final bytes = await buildSinglePageDocument(
-    baseFontSize: baseFontSize,
+  static final PdfConfig defaultPdfConfig = PdfConfig(
     pageFormat: PdfPageFormat.a4.landscape,
-    margin: margin,
-    build: (context) => CouncilSuggestion.fromViewModel(viewModel: model),
+    horizontalMargin: 0.79 * inch,
+    verticalMargin: 0.75 * inch,
+    baseFontSize: 11 * pt,
   );
 
-  final slug = model.student!.name.toPascalCase();
-  final title = "${slug}_DeXuatHoiDong";
-  final pdf = PdfFile(name: title, bytes: bytes);
-  return pdf;
-}
-
-Future<PdfFile> multipleCouncilSuggestionPdfs({
-  required List<ThesisViewModel> models,
-}) async {
-  final files = [
-    for (final model in models) await councilSuggestionPdf(model: model),
-  ];
-  final bytes = await combinePdfPages(
-    pdfPages: [for (final file in files) file.bytes],
-  );
-
-  final hash = bytes.hashCode;
-  final title = "DeXuatHoiDong_x$hash";
-  final pdf = PdfFile(name: title, bytes: bytes);
-  return pdf;
-}
-
-class CouncilSuggestion extends StatelessWidget {
-  final StudentData student;
-  final ThesisData thesis;
-
-  // These can be unassignned initially
-  final TeacherData? president;
-  final TeacherData? secretary;
-  final TeacherData? firstReviewer;
-  final TeacherData? secondReviewer;
-  final TeacherData? member;
-
-  factory CouncilSuggestion.fromViewModel({
-    required ThesisViewModel viewModel,
-  }) {
-    return CouncilSuggestion(
-      student: viewModel.student!,
-      thesis: viewModel.thesis,
-      president: viewModel.president,
-      secretary: viewModel.secretary,
-      firstReviewer: viewModel.firstReviewer,
-      secondReviewer: viewModel.secondReviewer,
-      member: viewModel.member,
-    );
+  Future<PdfFile> buildPdf({required PdfConfig config}) async {
+    return await _buildPdf(model: this, config: config);
   }
 
-  CouncilSuggestion({
-    required this.student,
-    required this.thesis,
-    required this.president,
-    required this.secretary,
-    required this.firstReviewer,
-    required this.secondReviewer,
-    required this.member,
-  });
+  static Future<PdfFile> buildCombinedPdf({
+    required List<ThesisViewModel> models,
+    required PdfConfig config,
+  }) async {
+    final files = [
+      for (final model in models)
+        await _buildPdf(
+          model: MscThesisCouncilSuggestionDocument(model: model),
+          config: config,
+        ),
+    ];
 
+    final mergedBytes = await combinePdfPages(
+      pdfBytes: [for (final file in files) file.bytes],
+    );
+    final hash = mergedBytes.hashCode;
+    final title = "DeXuatHoiDong_x$hash";
+    return PdfFile(name: title, bytes: mergedBytes);
+  }
+
+  String get name {
+    assert(model.student != null, "Student data must not be null");
+    final name = model.student!.name.toPascalCase();
+    final pdfName = "DeXuatHoiDong";
+    return "${name}_$pdfName";
+  }
+
+  MscThesisCouncilSuggestionDocument({
+    required this.model,
+  });
+}
+
+Future<PdfFile> _buildPdf({
+  required MscThesisCouncilSuggestionDocument model,
+  required PdfConfig config,
+}) async {
+  final bytes = await buildSinglePageDocument(
+    baseFontSize: config.baseFontSize,
+    pageFormat: PdfPageFormat.a4.landscape,
+    margin: EdgeInsets.symmetric(
+      horizontal: config.horizontalMargin,
+      vertical: config.verticalMargin,
+    ),
+    build: (context) =>
+        _CouncilSuggestion.fromViewModel(viewModel: model.model),
+  );
+
+  final pdf = PdfFile(name: model.name, bytes: bytes);
+  return pdf;
+}
+
+class _CouncilSuggestion extends StatelessWidget {
   static const List<String> roles = [
     "Chủ tịch",
     "Phản biện 1",
@@ -89,7 +80,6 @@ class CouncilSuggestion extends StatelessWidget {
     "Thư ký",
     "Ủy viên",
   ];
-
   static const List<String> tableHeaders = [
     "TT",
     "Họ và tên",
@@ -99,6 +89,41 @@ class CouncilSuggestion extends StatelessWidget {
     "Tháng/Năm nhận\nhọc vị tiến sĩ",
     "Trách nhiệm\ntrong Hội đồng",
   ];
+
+  final StudentData student;
+  final ThesisData thesis;
+  // These can be unassignned initially
+  final TeacherData? president;
+  final TeacherData? secretary;
+  final TeacherData? firstReviewer;
+
+  final TeacherData? secondReviewer;
+
+  final TeacherData? member;
+
+  _CouncilSuggestion({
+    required this.student,
+    required this.thesis,
+    required this.president,
+    required this.secretary,
+    required this.firstReviewer,
+    required this.secondReviewer,
+    required this.member,
+  });
+
+  factory _CouncilSuggestion.fromViewModel({
+    required ThesisViewModel viewModel,
+  }) {
+    return _CouncilSuggestion(
+      student: viewModel.student!,
+      thesis: viewModel.thesis,
+      president: viewModel.president,
+      secretary: viewModel.secretary,
+      firstReviewer: viewModel.firstReviewer,
+      secondReviewer: viewModel.secondReviewer,
+      member: viewModel.member,
+    );
+  }
 
   List<List<String>> get tableData {
     final rows = <List<String>>[];

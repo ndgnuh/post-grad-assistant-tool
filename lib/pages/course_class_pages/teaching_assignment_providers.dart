@@ -36,9 +36,8 @@ final teachingAssignmentEmailProvider = FutureProvider<Email?>((ref) async {
   final specialistEmail =
       "hung.nguyenhuy@hust.edu.vn"; // TODO: get from preference
   final semesterId = semester.id;
-  final myFalcuty =
-      await ref.watch(myFacultyProvider.future) ?? "<<<< MY FACULTY >>>>";
-  final myName = await ref.watch(myNameProvider.future) ?? "<<<< MY NAME >>>>";
+  final myFalcuty = await ref.watch(myFacultyProvider.future);
+  final myName = await ref.watch(myNameProvider.future);
 
   // Supervisor email
   final mySupervisorId = await ref.watch(mySupervisorIdProvider.future);
@@ -109,29 +108,15 @@ $myName"""
 });
 
 final teachingAssignmentPdfProvider = FutureProvider((ref) async {
-  final model = await ref.watch(teachingAssignmentOutputModelProvider.future);
+  final model = await ref.watch(teachingAssignmentModelProvider.future);
   if (model == null) return null;
-
-  return PdfFile.mscCourseClass.teachingAssignment(
-    semester: model.semester,
-    courseClasses: model.courseClasses,
-    mapCourses: model.mapCourses,
-    mapTeachers: model.mapTeachers,
-    mapWeights: model.mapWeights,
-  );
+  return model.buildPdf(config: TeachingAssignmentDocument.defaultPdfConfig);
 });
 
 final teachingAssignmentXlsxProvider = FutureProvider((ref) async {
-  final model = await ref.watch(teachingAssignmentOutputModelProvider.future);
+  final model = await ref.watch(teachingAssignmentModelProvider.future);
   if (model == null) return null;
-
-  return XlsxFactory.msc.teachingAssignment(
-    semester: model.semester,
-    courseClasses: model.courseClasses,
-    mapCourses: model.mapCourses,
-    mapTeachers: model.mapTeachers,
-    mapWeights: model.mapWeights,
-  );
+  return model.buildXlsx();
 });
 
 /// Provide the teachers assigned to
@@ -398,7 +383,7 @@ class PoliteNotifier extends AsyncNotifier<bool> {
   }
 }
 
-final teachingAssignmentOutputModelProvider = FutureProvider((ref) async {
+final teachingAssignmentModelProvider = FutureProvider((ref) async {
   final semesterSelection = await ref.watch(
     semesterSelectionModelProvider.future,
   );
@@ -438,7 +423,7 @@ final teachingAssignmentOutputModelProvider = FutureProvider((ref) async {
     mapWeights[classId] = weights;
   }
 
-  return (
+  return TeachingAssignmentDocument(
     semester: semester,
     courseClasses: courseClasses,
     mapCourses: mapCourses,

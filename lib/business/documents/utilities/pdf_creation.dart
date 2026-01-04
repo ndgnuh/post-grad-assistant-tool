@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:fami_tools/gen/assets.gen.dart';
@@ -25,42 +26,6 @@ Future<Uint8List> combinePdfPages({required List<Uint8List> pdfBytes}) async {
   return pdfData;
 }
 
-/// Combine in-memory PDF pages into a single PDF document
-// Future<Uint8List> combinePdfPages({required List<Uint8List> pdfPages}) async {
-//   final tmpDir = await getTemporaryDirectory();
-//   final names = [
-//     for (var i = 0; i < pdfPages.length; i++) 'part_${i + 1}.pdf',
-//   ];
-//
-//   for (var i = 0; i < pdfPages.length; i++) {
-//     final file = File(p.join(tmpDir.path, names[i]));
-//     await file.writeAsBytes(pdfPages[i]);
-//   }
-//
-//   final inputPaths = [for (final name in names) p.join(tmpDir.path, name)];
-//   final outputPath = p.join(tmpDir.path, 'combined.pdf');
-//   final response = await PdfCombiner.generatePDFFromDocuments(
-//     inputPaths: inputPaths,
-//     outputPath: outputPath,
-//   );
-//   switch (response.status) {
-//     case PdfCombinerStatus.success:
-//       // Clean up individual files
-//       for (final path in inputPaths) {
-//         final file = File(path);
-//         if (await file.exists()) {
-//           await file.delete();
-//         }
-//       }
-//       final outputFile = File(outputPath);
-//       final bytes = await outputFile.readAsBytes();
-//       return bytes;
-//
-//     case PdfCombinerStatus.error:
-//       throw Exception("Failed to merge PDFs: ${response.message}");
-//   }
-// }
-
 /// A function for quickly load up default settings
 /// and create a multi-page document, the build function
 /// must returns a list of widgets
@@ -77,20 +42,25 @@ Future<Uint8List> buildMultiPageDocument({
       fontSize: baseFontSize,
     ),
   );
-  final document = Document(theme: theme);
 
-  document.addPage(
-    MultiPage(
-      theme: theme,
-      pageFormat: pageFormat,
-      margin: margin,
-      build: build,
-      header: header,
-      footer: footer,
-    ),
+  /// Build the PDF document in a separate isolate
+  final bytes = await Isolate.run(
+    () {
+      final document = Document(theme: theme);
+      final page = MultiPage(
+        theme: theme,
+        pageFormat: pageFormat,
+        margin: margin,
+        build: build,
+        header: header,
+        footer: footer,
+      );
+      document.addPage(page);
+      return document.save();
+    },
   );
 
-  return await document.save();
+  return bytes;
 }
 
 /// A function for quickly load up default settings
@@ -105,28 +75,31 @@ Future<Uint8List> buildSinglePageDocument({
   final defaultTextStyle = await getPdfDefaultTextStyle(
     fontSize: baseFontSize,
   );
-  final bold = defaultTextStyle.copyWith(
-    fontWeight: FontWeight.bold,
-  );
-  final theme = ThemeData(
-    defaultTextStyle: defaultTextStyle,
-    header0: bold.copyWith(fontSize: baseFontSize * 1.4),
-    header1: bold.copyWith(fontSize: baseFontSize * 1.3),
-    header2: bold.copyWith(fontSize: baseFontSize * 1.2),
-    header3: bold.copyWith(fontSize: baseFontSize * 1.1),
-    header4: bold.copyWith(fontSize: baseFontSize * 1.05),
-  );
-  final document = Document(theme: theme);
 
-  document.addPage(
-    Page(
-      pageFormat: pageFormat,
-      margin: margin,
-      build: build,
-    ),
-  );
+  return Isolate.run(() {
+    final bold = defaultTextStyle.copyWith(
+      fontWeight: FontWeight.bold,
+    );
+    final theme = ThemeData(
+      defaultTextStyle: defaultTextStyle,
+      header0: bold.copyWith(fontSize: baseFontSize * 1.4),
+      header1: bold.copyWith(fontSize: baseFontSize * 1.3),
+      header2: bold.copyWith(fontSize: baseFontSize * 1.2),
+      header3: bold.copyWith(fontSize: baseFontSize * 1.1),
+      header4: bold.copyWith(fontSize: baseFontSize * 1.05),
+    );
+    final document = Document(theme: theme);
 
-  return await document.save();
+    document.addPage(
+      Page(
+        pageFormat: pageFormat,
+        margin: margin,
+        build: build,
+      ),
+    );
+
+    return document.save();
+  });
 }
 
 /// Load default font settings
@@ -140,6 +113,12 @@ Future<TextStyle> getPdfDefaultTextStyle({
     italic: loadFont(Assets.fonts.texGyreTermesItalic),
     boldItalic: loadFont(Assets.fonts.texGyreTermesBoldItalic),
   );
+  // final serifFonts = (
+  //   base: loadFont(Assets.fonts.timesNewRoman),
+  //   bold: loadFont(Assets.fonts.timesNewRomanBold),
+  //   italic: loadFont(Assets.fonts.timesNewRomanItalic),
+  //   boldItalic: loadFont(Assets.fonts.timesNewRomanBoldItalic),
+  // );
 
   final defaultTextStyle = TextStyle(
     font: await serifFonts.base,

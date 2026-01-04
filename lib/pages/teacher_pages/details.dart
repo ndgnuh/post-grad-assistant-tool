@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
@@ -9,6 +8,8 @@ import '../../business/db_v2_providers.dart';
 import '../../custom_tiles.dart';
 import '../../custom_widgets.dart';
 import '../../shortcuts.dart';
+
+import '../../custom_tiles_v2.dart' as tiles_v2;
 
 const notAvailableText = "N/A";
 
@@ -244,11 +245,18 @@ class _TeacherDetailTab extends ConsumerWidget {
       child: ListView(
         children: [
           HeadingListTile(title: "Thông tin cơ bản"),
-          StringTile(
-            title: "Họ tên",
+          tiles_v2.StringTile(
+            emptyIsNull: false,
+            title: Text("Họ tên"),
             leading: const Icon(Icons.person),
-            initialValue: teacher.name,
-            onUpdate: withDatabase(
+            value: teacher.name,
+            validator: (String? v) {
+              if (v == null || v.trim().isEmpty) {
+                return "Tên không được để trống";
+              }
+              return null;
+            },
+            onChanged: withDatabase(
               context: context,
               callback: (db, v) => db.updateTeacher(id: id, name: v),
             ),

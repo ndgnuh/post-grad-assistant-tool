@@ -1,8 +1,5 @@
-import 'dart:typed_data';
-
 import 'package:fami_tools/gen/assets.gen.dart';
 import 'package:fami_tools/business/documents/utilities/docx_template.dart';
-import 'package:fami_tools/utilities/strings.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:riverpod/riverpod.dart';
 import '../../business/db_v2_providers.dart';
@@ -11,7 +8,8 @@ import '../../business/documents.dart' as pdfs;
 final scoreSheetPdfProvider = FutureProvider.family((ref, int studentId) async {
   final provider = phdStudentByIdProvider(studentId);
   final phdStudent = await ref.watch(provider.future);
-  return await pdfs.PdfFile.phdAdmission.scoreSheet(student: phdStudent);
+  final model = pdfs.PhdAdmissionScoreSheetDocument(student: phdStudent);
+  return await model.pdf;
 });
 
 final councilSuggestionPdfProvider = FutureProvider.family((
@@ -47,7 +45,7 @@ final councilSuggestionPdfProvider = FutureProvider.family((
     return null;
   }
 
-  return await pdfs.PdfFile.phdAdmission.councilSuggestion(
+  final model = pdfs.PhdAdmissionCouncilSuggestionDocument(
     phdStudent: phdStudent,
     supervisor: supervisor,
     secondarySupervisor: secondarySupervisor,
@@ -56,6 +54,9 @@ final councilSuggestionPdfProvider = FutureProvider.family((
     firstMember: firstMember,
     secondMember: secondMember,
     thirdMember: thirdMember,
+  );
+  return await model.buildPdf(
+    config: pdfs.PhdAdmissionCouncilSuggestionDocument.defaultPdfConfig,
   );
 });
 
@@ -141,7 +142,7 @@ final paymentTablePdfProvider = FutureProvider.family((
     teacherByIdProvider(student.admission3rdMemberId!).future,
   );
 
-  final pdfFile = await pdfs.PdfFile.phdAdmission.paymentTable(
+  final model = pdfs.PhdAdmissionPaymentDocument(
     student: student,
     president: president,
     secretary: secretary,
@@ -150,5 +151,8 @@ final paymentTablePdfProvider = FutureProvider.family((
     thirdMember: member3,
   );
 
-  return pdfFile;
+  /// TODO: configuration
+  return model.buildPdf(
+    pdfs.PhdAdmissionCouncilSuggestionDocument.defaultPdfConfig,
+  );
 });

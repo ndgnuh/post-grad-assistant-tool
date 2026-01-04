@@ -109,8 +109,8 @@ class PaymentModel {
 
   Future<PdfFile> get paymentRequestPdf => paymentRequestModel.pdf;
   Future<PdfFile> paymentAtmPdf(PdfConfig config) =>
-      paymentAtmModel.pdf(config);
-  XlsxFile get paymentAtmXlsx => paymentAtmModel.xlsx;
+      paymentAtmModel.buildPdf(config);
+  Future<XlsxFile> get paymentAtmXlsx => paymentAtmModel.xlsx;
 }
 
 final phdCohortSelectionProvider = AsyncNotifierProvider(
@@ -193,7 +193,7 @@ final paymentAtmProvider = FutureProvider(
 final paymentAtmPdfProvider = FutureProvider.family(
   (ref, PdfConfig config) async {
     final model = await ref.watch(paymentAtmProvider.future);
-    return model.pdf(config);
+    return model.buildPdf(config);
   },
 );
 

@@ -1,10 +1,10 @@
 /// Ultilies for building Excel files using the 'excel' package.
 library;
 
+import 'dart:isolate';
 import 'dart:typed_data';
 import 'package:excel/excel.dart';
 
-import '../../../utilities/strings.dart';
 export 'package:excel/excel.dart';
 
 class CellPointer {
@@ -75,40 +75,42 @@ class CellPointer {
   }
 }
 
-Uint8List buildExcel({
+Future<Uint8List> buildExcel({
   required Map<String, Function(Sheet)> builders,
 }) {
   final excel = Excel.createExcel();
 
   // Build sheets
-  for (final entry in builders.entries) {
-    final sheetName = entry.key;
-    final builder = entry.value;
+  return Isolate.run(() {
+    for (final entry in builders.entries) {
+      final sheetName = entry.key;
+      final builder = entry.value;
 
-    final sheet = excel[sheetName];
-    builder(sheet);
-  }
+      final sheet = excel[sheetName];
+      builder(sheet);
+    }
 
-  // Remove default sheet
-  final previousDefaultSheetName = excel.sheets.keys.first;
-  excel.setDefaultSheet(builders.keys.first);
-  excel.delete(previousDefaultSheetName);
+    // Remove default sheet
+    final previousDefaultSheetName = excel.sheets.keys.first;
+    excel.setDefaultSheet(builders.keys.first);
+    excel.delete(previousDefaultSheetName);
 
-  return excel.encode() as Uint8List;
+    return excel.encode() as Uint8List;
+  });
 }
 
-Uint8List buildSingleSheetExcel({
+Future<Uint8List> buildSingleSheetExcel({
   required Function(Sheet) builder,
 }) {
   final excel = Excel.createExcel();
   final sheet = excel.sheets.values.first;
 
   // Ok, so the library does not allow setting pages
-
   // Add headers
-  builder(sheet);
-
-  return excel.encode() as Uint8List;
+  return Isolate.run(() {
+    builder(sheet);
+    return excel.encode() as Uint8List;
+  });
 }
 
 extension CellStyleHelper on CellStyle {

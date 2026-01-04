@@ -7,7 +7,7 @@ ThemeData getTheme({
 }) {
   final radius = context.gutterSmall;
   final buttonShape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.zero,
+    borderRadius: BorderRadius.circular(context.gutterTiny),
     // borderRadius: BorderRadius.all(
     //   Radius.circular(radius),
     // ),
@@ -39,12 +39,9 @@ ThemeData getTheme({
 
   final outlinedButtonTheme = OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.zero,
-      ),
+      shape: buttonShape,
       padding: buttonPadding,
       fixedSize: buttonSize,
-      foregroundColor: baseTheme.colorScheme.primary,
     ),
   );
 
@@ -82,16 +79,16 @@ ThemeData getTheme({
 
   final inputDecorationTheme = InputDecorationTheme(
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.zero,
+      borderRadius: BorderRadius.circular(context.gutterTiny),
       // borderRadius: BorderRadius.only(
       //   topLeft: Radius.circular(context.gutterTiny),
       //   topRight: Radius.circular(context.gutterTiny),
       // ),
-      borderSide: BorderSide(width: 1.0),
+      borderSide: BorderSide(width: 0.5),
     ),
     contentPadding: EdgeInsets.symmetric(
-      horizontal: context.gutter,
-      vertical: context.gutterTiny,
+      horizontal: context.gutterSmall,
+      vertical: context.gutterSmall,
     ),
     // filled: true,
     fillColor: baseTheme.inputDecorationTheme.fillColor,

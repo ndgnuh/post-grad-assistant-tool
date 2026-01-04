@@ -1,12 +1,27 @@
-import 'dart:typed_data';
-
 import 'package:fami_tools/utilities/strings.dart';
 import 'package:fami_tools/business/documents/pdf_utils.dart';
 
 import '../../db_v2_providers.dart';
 import '../../documents.dart';
 
-Future<PdfFile> scoreSheetPdf({
+class PhdAdmissionScoreSheetDocument {
+  final PhdStudentData student;
+  final int? year;
+
+  Future<PdfFile> get pdf async {
+    return await _scoreSheetPdf(
+      student: student,
+      year: year,
+    );
+  }
+
+  PhdAdmissionScoreSheetDocument({
+    required this.student,
+    this.year,
+  });
+}
+
+Future<PdfFile> _scoreSheetPdf({
   required PhdStudentData student,
   int? year,
 }) async {
@@ -19,7 +34,7 @@ Future<PdfFile> scoreSheetPdf({
     pageFormat: PdfPageFormat.a4,
     baseFontSize: 11 * pt,
     margin: EdgeInsets.all(0.25 * inch),
-    build: (context) => TiledScoreSheet(
+    build: (context) => _TiledScoreSheet(
       student: student,
       year: year,
       copies: 6,
@@ -29,12 +44,12 @@ Future<PdfFile> scoreSheetPdf({
   return PdfFile(name: fileName, bytes: bytes);
 }
 
-class TiledScoreSheet extends StatelessWidget {
+class _TiledScoreSheet extends StatelessWidget {
   final PhdStudentData student;
   final int? year;
   final int copies;
 
-  TiledScoreSheet({
+  _TiledScoreSheet({
     required this.student,
     this.year,
     this.copies = 6,
@@ -46,7 +61,7 @@ class TiledScoreSheet extends StatelessWidget {
       crossAxisCount: 2,
       children: [
         for (int i = 0; i < copies; i++)
-          SingleScoreSheet(
+          _SingleScoreSheet(
             student: student,
             year: year,
           ),
@@ -55,11 +70,11 @@ class TiledScoreSheet extends StatelessWidget {
   }
 }
 
-class SingleScoreSheet extends StatelessWidget {
+class _SingleScoreSheet extends StatelessWidget {
   int? year;
   final PhdStudentData student;
 
-  SingleScoreSheet({
+  _SingleScoreSheet({
     required this.student,
     this.year,
   });

@@ -12,6 +12,9 @@
 class $AssetsFontsGen {
   const $AssetsFontsGen();
 
+  /// File path: assets/fonts/Times_New_Roman.ttf
+  String get timesNewRoman => 'assets/fonts/Times_New_Roman.ttf';
+
   /// File path: assets/fonts/Times_New_Roman_Bold.ttf
   String get timesNewRomanBold => 'assets/fonts/Times_New_Roman_Bold.ttf';
 
@@ -37,6 +40,7 @@ class $AssetsFontsGen {
 
   /// List of all assets
   List<String> get values => [
+    timesNewRoman,
     timesNewRomanBold,
     timesNewRomanBoldItalic,
     timesNewRomanItalic,

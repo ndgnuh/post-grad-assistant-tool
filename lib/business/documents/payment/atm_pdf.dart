@@ -187,9 +187,9 @@ Future<PdfFile> _pdf({
   return PdfFile(name: name, bytes: bytes, config: config);
 }
 
-XlsxFile _xlsx({required PaymentAtmModel model}) {
+Future<XlsxFile> _xlsx({required PaymentAtmModel model}) async {
   final builder = _PaymentAtmExcelBuilder(model);
-  final bytes = buildSingleSheetExcel(builder: builder.call);
+  final bytes = await buildSingleSheetExcel(builder: builder.call);
   final file = XlsxFile(name: model.fileName, bytes: bytes);
   return file;
 }
@@ -250,9 +250,11 @@ class PaymentAtmModel {
     return sorted;
   }
 
-  Future<PdfFile> pdf([PdfConfig config = const PdfConfig()]) =>
-      _pdf(model: this, config: config);
-  XlsxFile get xlsx => _xlsx(model: this);
+  Future<PdfFile> buildPdf([PdfConfig config = const PdfConfig()]) async {
+    return _pdf(model: this, config: config);
+  }
+
+  Future<XlsxFile> get xlsx => _xlsx(model: this);
 
   List<String> get dataHeaders => [
     "TT",

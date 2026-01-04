@@ -9,7 +9,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:path/path.dart' as path;
 
 import '../../custom_widgets.dart';
-import '../setting_pages/setting_pages.dart';
+import '../document_pages/document_pages.dart';
 import 'admission_payment_providers.dart';
 import 'providers.dart';
 import 'widgets.dart';
@@ -261,10 +261,8 @@ class _PdfViewButton extends ConsumerWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PdfDataPreviewPage(
-              pdfData: value,
-              sourceName: sourceName,
-              title: title,
+            builder: (context) => PdfViewerPage.fromPdfFile(
+              pdfFile: PdfFile(name: title, bytes: value),
             ),
           ),
         );
@@ -323,11 +321,7 @@ class _PdfFileViewButton extends ConsumerWidget {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PdfDataPreviewPage(
-            pdfData: pdfFile.bytes,
-            sourceName: pdfFile.name,
-            title: title,
-          ),
+          builder: (context) => PdfViewerPage.fromPdfFile(pdfFile: pdfFile),
         ),
       );
     }

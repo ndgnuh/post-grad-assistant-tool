@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:isolate';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';

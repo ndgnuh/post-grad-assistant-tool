@@ -9,10 +9,10 @@ import 'package:fami_tools/utilities/strings.dart';
 import '../documents.dart';
 import '../main_database.dart';
 
-XlsxFile _xlsx(PaymentDoubleCheckModel model) {
+Future<XlsxFile> _xlsx(PaymentDoubleCheckModel model) async {
   final name = model.name;
   // Build XLSX file here
-  final bytes = buildExcel(
+  final bytes = await buildExcel(
     builders: {
       "Theo bộ": (sheet) => _xlsxBuilder(sheet, model, false),
       "Tổng hợp": (sheet) => _xlsxBuilder(sheet, model, true),
@@ -372,7 +372,7 @@ class PaymentDoubleCheckModel<R extends PaymentRole> {
   String get name => "KiemTra_ThanhToan";
 
   /// Build [XlsxFile] for payment ATM
-  XlsxFile get xlsx => _xlsx(this);
+  Future<XlsxFile> get xlsx => _xlsx(this);
 
   /// Build [PdfFile] for payment ATM
   Future<PdfFile> pdf({
@@ -392,7 +392,8 @@ enum PhdAdmissionRole with PaymentRole {
   president("Chủ tịch"),
   secretary("Thư ký"),
   member("Ủy viên"),
-  helper("Phục vụ");
+  helper("Phục vụ")
+  ;
 
   @override
   final String displayName;
@@ -404,7 +405,8 @@ enum ThesisPaymentRole with PaymentRole {
   secretary("Thư ký"),
   reviewer("Phản biện"),
   commentation("Viết nhận xét"),
-  member("Ủy viên");
+  member("Ủy viên")
+  ;
 
   @override
   final String displayName;

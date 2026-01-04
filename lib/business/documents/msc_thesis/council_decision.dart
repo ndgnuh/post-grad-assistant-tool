@@ -7,7 +7,7 @@ import '../../view_models.dart';
 import '../common.dart';
 import '../docx_utils.dart';
 
-class CouncilDecisionModel {
+class MscThesisCouncilDecisionDocument {
   final ThesisViewModel thesisViewModel;
   final String major;
 
@@ -44,28 +44,23 @@ class CouncilDecisionModel {
     };
   }
 
-  CouncilDecisionModel({
+  Future<DocxFile> buildDocx() => _buildDocx(model: this);
+
+  MscThesisCouncilDecisionDocument({
     required this.thesisViewModel,
     required this.major,
   });
 }
 
-Future<DocxFile> buildCouncilDecisionDocx({
-  required ThesisViewModel thesis,
-  String major = "Toán tin",
+Future<DocxFile> _buildDocx({
+  required final MscThesisCouncilDecisionDocument model,
 }) async {
-  final model = CouncilDecisionModel(
-    thesisViewModel: thesis,
-    major: major,
-  );
-
   final templatePath = Assets.templates.mscThesisCouncilDecision;
   final templateBytes = await rootBundle.load(templatePath);
 
   final context = model.toJson();
 
-  print(context["supervisor"]);
-  final bytes = fillDocxTemplate(
+  final bytes = await fillDocxTemplate(
     templateBytes.buffer.asUint8List(),
     context,
   );

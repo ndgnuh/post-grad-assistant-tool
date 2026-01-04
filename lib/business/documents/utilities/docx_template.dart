@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 import 'package:jinja/jinja.dart';
 
@@ -222,10 +223,12 @@ class DocxTemplate {
   }
 }
 
-Uint8List fillDocxTemplate(
+Future<Uint8List> fillDocxTemplate(
   Uint8List templateBytes,
   Map<String, Object?> context,
 ) {
-  final template = DocxTemplate.fromBytes(templateBytes);
-  return template.render(context);
+  return Isolate.run(() {
+    final template = DocxTemplate.fromBytes(templateBytes);
+    return template.render(context);
+  });
 }

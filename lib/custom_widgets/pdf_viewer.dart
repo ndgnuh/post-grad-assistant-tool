@@ -1,19 +1,27 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:fami_tools/custom_widgets.dart';
 import 'package:fami_tools/shortcuts.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:pdfrx/pdfrx.dart';
+import 'package:riverpod/riverpod.dart';
 
 import '../business/documents.dart';
 
 class _SaveIntent extends Intent {
   const _SaveIntent();
 }
+
+final _futureProvider = FutureProvider.family(
+  (ref, FutureOr<PdfFile> future) => future,
+);
 
 typedef OnConfigChanged = void Function(PdfConfig config);
 
@@ -160,12 +168,13 @@ class _PdfViewerPageState extends State<_PdfViewerPage> {
       onEdit: showEditDialog,
       onSave: saveFile,
       child: Scaffold(
-        extendBody: true,
-        appBar: AppBar(
-          title: _PdfTitle(pdfFileFuture: pdfFileResult),
+        appBar: ConstrainedAppBar(
+          child: AppBar(
+            title: _PdfTitle(pdfFileFuture: pdfFileResult),
+          ),
         ),
-        body: Center(
-          child: Expanded(
+        body: ConstrainedBody(
+          child: Center(
             child: _PdfViewer(
               pdfFileFuture: pdfFileResult,
             ),
@@ -180,64 +189,52 @@ class _PdfViewerPageState extends State<_PdfViewerPage> {
   }
 }
 
-class _PdfViewer extends StatelessWidget {
+class _PdfViewer extends ConsumerWidget {
   final FutureOr<PdfFile> pdfFileFuture;
   const _PdfViewer({required this.pdfFileFuture});
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Future.value(pdfFileFuture),
-      builder: (context, state) {
-        switch (state.connectionState) {
-          case ConnectionState.none ||
-              ConnectionState.waiting ||
-              ConnectionState.active:
-            return Text("Đang tải");
-          case ConnectionState.done:
-            switch ((state.data, state.error)) {
-              case (PdfFile data, _):
-                return PdfViewer.data(
-                  data.bytes,
-                  sourceName: data.name,
-                  params: PdfViewerParams(
-                    keyHandlerParams: PdfViewerKeyHandlerParams(
-                      canRequestFocus: false,
-                      enabled: false,
-                    ),
-                  ),
-                );
-              case (null, Error error):
-                return Text("Lỗi: $error");
-            }
-
-            return Text("Phát sinh lỗi không rõ nguyên nhân");
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pdfFileAsync = ref.watch(_futureProvider(pdfFileFuture));
+    switch (pdfFileAsync) {
+      case AsyncLoading():
+        return LinearProgressIndicator();
+      case AsyncError(:final error, :final stackTrace):
+        if (kDebugMode) {
+          print(stackTrace);
         }
-      },
-    );
+        return Text("Lỗi: $error");
+      case AsyncData(:final value):
+        final pdfFile = value;
+        return PdfViewer.data(
+          pdfFile.bytes,
+          sourceName: pdfFile.fileName,
+          params: PdfViewerParams(
+            keyHandlerParams: PdfViewerKeyHandlerParams(
+              canRequestFocus: false,
+              enabled: false,
+            ),
+          ),
+        );
+    }
   }
 }
 
-class _PdfTitle extends StatelessWidget {
+class _PdfTitle extends ConsumerWidget {
   final FutureOr<PdfFile> pdfFileFuture;
   const _PdfTitle({required this.pdfFileFuture});
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Future.value(pdfFileFuture),
-      builder: (context, state) {
-        switch (state.connectionState) {
-          case ConnectionState.none ||
-              ConnectionState.waiting ||
-              ConnectionState.active:
-            return Text("Đang tải");
-          case ConnectionState.done:
-            final pdfFile = state.data;
-            return Text(pdfFile?.name ?? "Xem trước PDF");
-        }
-      },
-    );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pdfFileAsync = ref.watch(_futureProvider(pdfFileFuture));
+    switch (pdfFileAsync) {
+      case AsyncLoading():
+        return Text("Đang tải...");
+      case AsyncError(:final error):
+        return Text("Lỗi: $error");
+      case AsyncData(:final value):
+        return Text(value.fileName);
+    }
   }
 }
 

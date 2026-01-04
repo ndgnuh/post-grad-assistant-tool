@@ -3,57 +3,71 @@ import 'package:fami_tools/utilities/strings.dart';
 
 import '../../documents.dart';
 
-Future<PdfFile> thesisScoreSheetsPdf({
-  required String studentName,
-  int? year,
-}) async {
-  final bytes = await buildSinglePageDocument(
-    baseFontSize: 11,
+class MscThesisScoreSheetDocument {
+  final List<String> studentNames;
+  final int? year;
+
+  static final PdfConfig defaultPdfConfig = PdfConfig(
     pageFormat: PdfPageFormat.a4,
-    margin: EdgeInsets.all(0.5 * inch),
-    build: (context) => ScoreSheet(
-      name: studentName,
-      year: year,
-    ),
+    horizontalMargin: 0.5 * inch,
+    verticalMargin: 0.5 * inch,
+    baseFontSize: 11 * pt,
   );
 
-  final slug = studentName.toPascalCase();
-  final title = "${slug}_PhieuDiem";
-  final pdf = PdfFile(name: title, bytes: bytes);
-  return pdf;
+  Future<PdfFile> buildPdf({required PdfConfig config}) async {
+    return await _buildPdf(config: config, model: this);
+  }
+
+  String get name {
+    if (studentNames.length != 1) {
+      final hashCode = studentNames.join("_").toPascalCase().hashCode;
+      final title = "ScoreSheets_x$hashCode";
+      return title;
+    }
+    final name = studentNames.single.toPascalCase();
+    final pdfName = "PhieuDiem";
+    return "${name}_$pdfName";
+  }
+
+  MscThesisScoreSheetDocument({
+    required this.studentNames,
+    this.year,
+  });
 }
 
-Future<PdfFile> thesisScoreSheetsMultiplePdf({
-  required List<String> studentNames,
-  int? year,
+Future<PdfFile> _buildPdf({
+  required MscThesisScoreSheetDocument model,
+  required PdfConfig config,
 }) async {
   final bytes = await buildMultiPageDocument(
-    baseFontSize: 11,
+    baseFontSize: config.baseFontSize,
     pageFormat: PdfPageFormat.a4,
-    margin: EdgeInsets.all(0.5 * inch),
+    margin: EdgeInsets.symmetric(
+      horizontal: config.horizontalMargin,
+      vertical: config.verticalMargin,
+    ),
     build: (context) => [
-      for (final name in studentNames)
-        ScoreSheet(
+      for (final name in model.studentNames)
+        _ScoreSheet(
           name: name,
-          year: year,
+          year: model.year,
         ),
     ],
   );
 
-  final hashCode = studentNames.join("_").toPascalCase().hashCode;
-  final title = "ScoreSheets_x$hashCode";
+  final title = model.name;
   final pdf = PdfFile(name: title, bytes: bytes);
   return pdf;
 }
 
-class ScoreSheet extends StatelessWidget {
+class _ScoreSheet extends StatelessWidget {
   final String name;
   final int? year;
-  ScoreSheet({this.year, this.name = ""});
+  _ScoreSheet({this.year, this.name = ""});
 
   @override
   Widget build(Context context) {
-    final tile = ScoreSheetTile(year: year, name: name);
+    final tile = _ScoreSheetTile(year: year, name: name);
     return FullPage(
       ignoreMargins: false,
       child: Row(
@@ -70,10 +84,10 @@ class ScoreSheet extends StatelessWidget {
   }
 }
 
-class ScoreSheetTile extends StatelessWidget {
+class _ScoreSheetTile extends StatelessWidget {
   int? year;
   final String name;
-  ScoreSheetTile({this.year, this.name = ""});
+  _ScoreSheetTile({this.year, this.name = ""});
 
   @override
   Widget build(Context context) {

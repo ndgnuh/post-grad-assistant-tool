@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+import '../business/documents/common.dart';
 import 'admission_pages/admission_pages.dart';
 import 'course_class_pages/course_class_pages.dart';
 import 'course_pages/course_pages.dart';
@@ -113,10 +114,8 @@ class AppNavigator {
     required Uint8List pdfData,
     required String sourceName,
   }) => moveTo(
-    (context) => PdfDataPreviewPage(
-      title: title,
-      pdfData: pdfData,
-      sourceName: sourceName,
+    (context) => PdfViewerPage.fromPdfFile(
+      pdfFile: PdfFile(name: title, bytes: pdfData),
     ),
   );
 
@@ -195,7 +194,7 @@ final initialRoute = switch (kReleaseMode) {
   // false => msc_thesis.MscThesisAssignmentPage.routeName,
   // false => msc_thesis.MscThesisSelectionPage.routeName,
   // false => ThesisCreatePage.routeName,
-  false => ThesisDefensePaymentPage.routeName,
+  // false => ThesisDefensePaymentPage.routeName,
 
   // PhD students pages
   // false => PhdStudentListPage.routeName,
@@ -203,7 +202,7 @@ final initialRoute = switch (kReleaseMode) {
   // false => phd_pages.PhdAdmissionPaymentPage.routeName,
 
   // Teacher pages
-  // false => TeacherSearchPage.routeName,
+  false => TeacherSearchPage.routeName,
 
   // false => DraftPage.routeName,
   // false => PageCourseClassList.routeName,

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:fami_tools/business/copy_pasta.dart';
 import 'package:fami_tools/business/documents.dart';
+import 'package:fami_tools/pages/document_pages/document_pages.dart';
 import 'package:fami_tools/utilities/strings.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,6 @@ import 'package:path/path.dart' as path;
 
 import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
-import '../setting_pages/setting_pages.dart';
 import 'providers.dart';
 import 'phd_student_admission_providers.dart';
 
@@ -303,11 +303,7 @@ class _PdfPreviewButton extends ConsumerWidget {
       onTap: () async {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => PdfDataPreviewPage(
-              sourceName: pdf!.name,
-              title: title,
-              pdfData: pdf.bytes,
-            ),
+            builder: (context) => PdfViewerPage.fromPdfFile(pdfFile: pdf!),
           ),
         );
       },

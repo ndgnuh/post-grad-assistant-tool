@@ -5,58 +5,92 @@ import '../common_widgets.dart';
 import '../../db_v2_providers.dart';
 import '../../documents.dart';
 
-Future<PdfFile> paymentTablePdf({
-  required final PhdStudentData student,
-  required final TeacherData president,
-  required final TeacherData secretary,
-  required final TeacherData firstMember,
-  required final TeacherData secondMember,
-  required final TeacherData thirdMember,
-}) async {
-  final bytes = await buildSinglePageDocument(
-    baseFontSize: 11 * pt,
-    pageFormat: PdfPageFormat.a4,
-    margin: EdgeInsets.symmetric(
-      horizontal: 0.75 * inch,
-      vertical: 1 * inch,
-    ),
-    build: (context) => PaymentTable(
-      student: student,
-      president: president,
-      secretary: secretary,
-      firstMember: firstMember,
-      secondMember: secondMember,
-      thirdMember: thirdMember,
-    ),
-  );
-
-  final admissionId = student.admissionId;
-  final name = student.name.toPascalCase();
-  final pdfName = "BangThanhToan";
-
-  return PdfFile(
-    name: "${admissionId}_${name}_$pdfName.pdf",
-    bytes: bytes,
-  );
-}
-
-class PaymentTable extends StatelessWidget {
+class PhdAdmissionPaymentDocument {
   final PhdStudentData student;
   final TeacherData president;
   final TeacherData secretary;
   final TeacherData firstMember;
   final TeacherData secondMember;
   final TeacherData thirdMember;
-  final TeacherData? asisstant;
+  final TeacherData? assistant;
 
-  PaymentTable({
+  static final PdfConfig defaultPdfConfig = PdfConfig(
+    pageFormat: PdfPageFormat.a4,
+    horizontalMargin: 0.75 * inch,
+    verticalMargin: 1 * inch,
+    baseFontSize: 11 * pt,
+  );
+
+  Future<PdfFile> buildPdf(PdfConfig config) async {
+    return await _paymentTablePdf(
+      model: this,
+      config: config,
+    );
+  }
+
+  String get name {
+    final admissionId = student.admissionId;
+    final name = student.name.toPascalCase();
+    final pdfName = "BangThanhToan";
+    return "${admissionId}_${name}_$pdfName";
+  }
+
+  PhdAdmissionPaymentDocument({
     required this.student,
     required this.president,
     required this.secretary,
     required this.firstMember,
     required this.secondMember,
     required this.thirdMember,
-    this.asisstant,
+    this.assistant,
+  });
+}
+
+Future<PdfFile> _paymentTablePdf({
+  required final PhdAdmissionPaymentDocument model,
+  required final PdfConfig config,
+}) async {
+  final bytes = await buildSinglePageDocument(
+    baseFontSize: config.baseFontSize,
+    pageFormat: PdfPageFormat.a4,
+    margin: EdgeInsets.symmetric(
+      horizontal: config.horizontalMargin,
+      vertical: config.verticalMargin,
+    ),
+    build: (context) => _PaymentTable(
+      student: model.student,
+      president: model.president,
+      secretary: model.secretary,
+      firstMember: model.firstMember,
+      secondMember: model.secondMember,
+      thirdMember: model.thirdMember,
+      assistant: model.assistant,
+    ),
+  );
+
+  return PdfFile(
+    name: model.name,
+    bytes: bytes,
+  );
+}
+
+class _PaymentTable extends StatelessWidget {
+  final PhdStudentData student;
+  final TeacherData president;
+  final TeacherData secretary;
+  final TeacherData firstMember;
+  final TeacherData secondMember;
+  final TeacherData thirdMember;
+  final TeacherData? assistant;
+
+  _PaymentTable({
+    required this.student,
+    required this.president,
+    required this.secretary,
+    required this.firstMember,
+    required this.secondMember,
+    required this.thirdMember,
+    this.assistant,
   });
 
   @override

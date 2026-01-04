@@ -5,45 +5,81 @@ import '../../main_database.dart';
 import '../common_widgets.dart';
 import '../../documents.dart';
 
-Future<PdfFile> councilSuggestionPdf({
-  required PhdStudentData phdStudent,
-  required TeacherData supervisor,
-  required TeacherData president,
-  required TeacherData secretary,
-  required TeacherData firstMember,
-  required TeacherData secondMember,
-  required TeacherData thirdMember,
-  TeacherData? secondarySupervisor,
-}) async {
-  final admissionId = phdStudent.admissionId;
-  final pdfName = "DeXuatTieuBan";
-  final name = phdStudent.name.toPascalCase();
-  final fileName = "${admissionId}_${name}_$pdfName.pdf";
+class PhdAdmissionCouncilSuggestionDocument {
+  final PhdStudentData phdStudent;
+  final TeacherData supervisor;
+  final TeacherData president;
+  final TeacherData secretary;
+  final TeacherData firstMember;
+  final TeacherData secondMember;
+  final TeacherData thirdMember;
+  final TeacherData? secondarySupervisor;
 
-  final pdfBytes = await buildSinglePageDocument(
+  static final PdfConfig defaultPdfConfig = PdfConfig(
     pageFormat: PdfPageFormat.a4,
-    margin: EdgeInsets.all(1 * inch),
+    horizontalMargin: 1 * inch,
+    verticalMargin: 1 * inch,
     baseFontSize: 12 * pt,
+  );
+
+  Future<PdfFile> buildPdf({required PdfConfig config}) async {
+    return await _councilSuggestionPdf(
+      config: config,
+      model: this,
+    );
+  }
+
+  String get name {
+    final admissionId = phdStudent.admissionId;
+    final name = phdStudent.name.toPascalCase();
+    final pdfName = "DeXuatTieuBan";
+    return "${admissionId}_${name}_$pdfName";
+  }
+
+  PhdAdmissionCouncilSuggestionDocument({
+    required this.phdStudent,
+    required this.supervisor,
+    required this.president,
+    required this.secretary,
+    required this.firstMember,
+    required this.secondMember,
+    required this.thirdMember,
+    this.secondarySupervisor,
+  });
+}
+
+Future<PdfFile> _councilSuggestionPdf({
+  required PdfConfig config,
+  required PhdAdmissionCouncilSuggestionDocument model,
+}) async {
+  final name = model.name;
+  final bytes = await buildSinglePageDocument(
+    pageFormat: PdfPageFormat.a4,
+    margin: EdgeInsets.symmetric(
+      vertical: config.verticalMargin,
+      horizontal: config.horizontalMargin,
+    ),
+    baseFontSize: config.baseFontSize,
     build: (context) {
-      return PhdAdmissionCouncilSuggestionPdf(
-        phdStudent: phdStudent,
-        supervisor: supervisor,
-        secondarySupervisor: secondarySupervisor,
+      return _PhdAdmissionCouncilSuggestionPdf(
+        phdStudent: model.phdStudent,
+        supervisor: model.supervisor,
+        secondarySupervisor: model.secondarySupervisor,
         councilMembers: [
-          president,
-          secretary,
-          firstMember,
-          secondMember,
-          thirdMember,
+          model.president,
+          model.secretary,
+          model.firstMember,
+          model.secondMember,
+          model.thirdMember,
         ],
       );
     },
   );
 
-  return PdfFile(name: fileName, bytes: pdfBytes);
+  return PdfFile(name: name, bytes: bytes);
 }
 
-class PhdAdmissionCouncilSuggestionPdf extends StatelessWidget {
+class _PhdAdmissionCouncilSuggestionPdf extends StatelessWidget {
   final PhdStudentData phdStudent;
   final TeacherData supervisor;
   final TeacherData? secondarySupervisor;
@@ -57,7 +93,7 @@ class PhdAdmissionCouncilSuggestionPdf extends StatelessWidget {
     "Ủy viên",
   ];
 
-  PhdAdmissionCouncilSuggestionPdf({
+  _PhdAdmissionCouncilSuggestionPdf({
     required this.phdStudent,
     required this.supervisor,
     required this.councilMembers,
@@ -82,13 +118,6 @@ class PhdAdmissionCouncilSuggestionPdf extends StatelessWidget {
       TeacherData s =>
         "HD1: ${supervisor.nameWithTitle}, HD2: ${s.nameWithTitle}",
     };
-
-    SizedBox titleRule() => SizedBox(
-      width: 3 * cm,
-      child: Center(
-        child: Divider(height: 2 * pt, thickness: 1 * pt),
-      ),
-    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

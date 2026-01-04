@@ -20,6 +20,19 @@ extension TabControllerExt on BuildContext {
   TabController? get tabController => tabControllerNotifier.value;
 }
 
+class FocusIntent extends Intent {
+  final FocusNode focusNode;
+  const FocusIntent(this.focusNode);
+}
+
+class FocusAction extends Action<FocusIntent> {
+  @override
+  Object? invoke(FocusIntent intent) {
+    intent.focusNode.requestFocus();
+    return null;
+  }
+}
+
 class TrackedTabController extends StatelessWidget {
   final int length;
   final int initialIndex;

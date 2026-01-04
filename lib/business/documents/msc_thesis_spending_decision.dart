@@ -28,7 +28,7 @@ Future<DocxFile> _buildDocx({
     "total_amount_in_words": model.totalAmount.toVietnameseWords(),
   };
 
-  final renderedBytes = docx.fillDocxTemplate(
+  final renderedBytes = await docx.fillDocxTemplate(
     templateBytes,
     context,
   );

@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/db_v2_providers.dart';
+import '../../business/documents/common.dart';
+import '../../business/view_models.dart';
 import '../../custom_widgets.dart';
 import '../../shortcuts.dart';
 import 'document_pages.dart';
@@ -268,17 +270,66 @@ class _DocumentSearchResults extends ConsumerWidget {
       ),
       itemBuilder: (context, index) {
         final document = documents[index];
+        return _DocumentPreviewButton(documentId: document.id);
+      },
+    );
+  }
+}
+
+class _DocumentPreviewButton extends ConsumerWidget {
+  const _DocumentPreviewButton({
+    required this.documentId,
+  });
+
+  final int documentId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final documentAsync = ref.watch(DocumentViewModel.provider(documentId));
+    switch (documentAsync) {
+      case AsyncLoading():
         return ListTile(
-          title: Text(document.title),
-          subtitle: Text(document.fullLabel),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) =>
-                    DocumentViewerPage(documentId: document.id),
-              ),
-            );
-          },
+          title: Text('Đang tải...'),
+          leading: CircularProgressIndicator(),
+        );
+      case AsyncError(:final error, :final stackTrace):
+        if (kDebugMode) {
+          print(stackTrace);
+        }
+        return ListTile(
+          title: Text('Lỗi tải văn bản'),
+          subtitle: Text('Error: $error'),
+        );
+      default:
+    }
+
+    final documentViewModel = documentAsync.value!;
+    final document = documentViewModel.document;
+    final navigator = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    return ListTile(
+      title: Text(document.title),
+      subtitle: Text(document.fullLabel),
+      onTap: () {
+        final content = documentViewModel.contentData;
+        if (content == null) {
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text('Toàn văn của văn bản này không khả dụng'),
+            ),
+          );
+          return;
+        }
+
+        // Build PDF File and open viewer
+        final pdfFile = PdfFile(
+          name: document.title,
+          bytes: content,
+        );
+        navigator.push(
+          MaterialPageRoute(
+            builder: (context) => PdfViewerPage.fromPdfFile(pdfFile: pdfFile),
+          ),
         );
       },
     );
@@ -361,6 +412,8 @@ class _RegulationTile extends ConsumerWidget {
     }
 
     final document = documentAsync.value!;
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
 
     return SearchAnchor(
       suggestionsBuilder: suggestionsBuilder,
@@ -371,10 +424,27 @@ class _RegulationTile extends ConsumerWidget {
           onPressed: controller.openView,
           child: Text('Chọn'),
         ),
-        onTap: () {
-          Navigator.of(context).push(
+        onTap: () async {
+          final model = await ref.watch(
+            DocumentViewModel.provider(document.id).future,
+          );
+          if (model.contentData == null) {
+            messenger.showSnackBar(
+              SnackBar(
+                content: Text('Toàn văn của văn bản này không khả dụng'),
+              ),
+            );
+            return;
+          }
+
+          final pdfFile = PdfFile(
+            name: document.title,
+            bytes: model.contentData!,
+          );
+
+          navigator.push(
             MaterialPageRoute(
-              builder: (context) => DocumentViewerPage(documentId: document.id),
+              builder: (context) => PdfViewerPage.fromPdfFile(pdfFile: pdfFile),
             ),
           );
         },

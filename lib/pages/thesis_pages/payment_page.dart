@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:riverpod/misc.dart' show FutureProviderFamily;
 
 import '../../business/db_v2_providers.dart';
 import '../../business/documents.dart';
+import '../document_pages/document_pages.dart';
 import '../msc_thesis_defense/msc_thesis_details.dart';
 import 'payment_providers.dart';
 
@@ -154,31 +154,51 @@ class _ActionTabView extends StatefulWidget {
 }
 
 class _PdfPreviewButton extends ConsumerWidget {
-  final ValueNotifier<PdfConfig> configNotifier;
-  final FutureProviderFamily<PdfFile, PdfConfig> pdfProvider;
+  final NotifierProvider<StateNotifier<PdfConfig>, PdfConfig> configProvider;
+  final FutureProvider<PdfFile> pdfProvider;
   final String title;
 
   const _PdfPreviewButton({
     required this.title,
-    required this.configNotifier,
+    required this.configProvider,
     required this.pdfProvider,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ValueListenableBuilder(
-      valueListenable: configNotifier,
-      builder: (context, value, child) {
-        return PdfViewerTile(
-          title: Text(title),
-          subtitle: Text("Click để xem trước"),
-          initialConfig: configNotifier.value,
-          onConfigChanged: (config) {
-            configNotifier.value = config;
-          },
-          pdfBuilder: (config) async {
-            return await ref.read(pdfProvider(config).future);
-          },
+    final configNotifier = ref.watch(configProvider.notifier);
+    // final pdfFileAsync = ref.watch(pdfProvider);
+
+    // switch (pdfFileAsync) {
+    //   case AsyncLoading():
+    //     return ListTile(
+    //       title: Text(title),
+    //       subtitle: Text("Đang tải..."),
+    //     );
+    //
+    //   case AsyncError(:final error, :final stackTrace):
+    //     return ListTile(
+    //       title: Text(title),
+    //       subtitle: Text('Lỗi khi tải PDF: $error\n$stackTrace'),
+    //     );
+    //   default:
+    // }
+    // final pdfFile = pdfFileAsync.value!;
+
+    return ListTile(
+      title: Text(title),
+      subtitle: Text("Click để xem trước"),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PdfViewerPage(
+              pdfProvider: pdfProvider,
+              onConfigChanged: (PdfConfig config) {
+                configNotifier.set(config);
+              },
+            ),
+          ),
         );
       },
     );
@@ -188,17 +208,7 @@ class _PdfPreviewButton extends ConsumerWidget {
 typedef PdfConfigNotifier = ValueNotifier<PdfConfig>;
 
 class _ActionTabViewState extends State<_ActionTabView> {
-  final PdfConfigNotifier requestConfigNotifier = .new(PdfConfig());
-
-  final PdfConfigNotifier atmPdfConfigNotifier = .new(
-    PaymentAtmModel.defaultPdfConfig,
-  );
-
-  final PdfConfigNotifier listingPdfConfigNotifier = .new(
-    PaymentListingModel.defaultPdfConfig,
-  );
-  final PdfConfigNotifier doubleCheckConfigProvider = .new(PdfConfig());
-  final PdfConfigNotifier doubleCheckSummaryConfigProvider = .new(PdfConfig());
+  final saveDirectoryNotifier = ValueNotifier<String?>(null);
 
   @override
   initState() {
@@ -218,34 +228,34 @@ class _ActionTabViewState extends State<_ActionTabView> {
             children: [
               _PdfPreviewButton(
                 title: "Yêu cầu thanh toán",
-                configNotifier: doubleCheckConfigProvider,
+                configProvider: paymentRequestPdfConfigProvider,
                 pdfProvider: paymentRequestPdfProvider,
               ),
               _PdfPreviewButton(
                 title: "Bảng ATM (x2)",
-                configNotifier: atmPdfConfigNotifier,
+                configProvider: paymentAtmPdfConfigProvider,
                 pdfProvider: paymentAtmPdfProvider,
               ),
               _PdfPreviewButton(
                 title: "Bản kê thanh toán",
-                configNotifier: listingPdfConfigNotifier,
+                configProvider: paymentListingPdfConfigProvider,
                 pdfProvider: paymentListingPdfProvider,
               ),
 
-              ListTile(
-                title: const Text('Quyết định trích tiên'),
-                subtitle: const Text('TODO'),
-                enabled: false,
-              ),
+              // ListTile(
+              //   title: const Text('Quyết định trích tiên'),
+              //   subtitle: const Text('TODO'),
+              //   enabled: false,
+              // ),
               _PdfPreviewButton(
                 title: "Bảng kiểm tra thanh toán",
-                configNotifier: doubleCheckConfigProvider,
+                configProvider: paymentDoubleCheckPdfConfigProvider,
                 pdfProvider: paymentDoubleCheckPdfProvider,
               ),
               _PdfPreviewButton(
                 title: "Bảng kiểm tra thanh toán (tổng hợp)",
-                configNotifier: doubleCheckSummaryConfigProvider,
                 pdfProvider: paymentDoubleCheckSummaryPdfProvider,
+                configProvider: paymentDoubleCheckSummaryPdfConfigProvider,
               ),
             ],
           ),
@@ -262,17 +272,86 @@ class _ActionTabViewState extends State<_ActionTabView> {
                 DirectoryPicker(
                   name: "thanh-toan-lvths",
                   labelText: 'Chọn thư mục lưu hồ sơ',
+                  onDirectorySelected: (saveDirectory) {
+                    saveDirectoryNotifier.value = saveDirectory;
+                  },
                 ),
-                FilledButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Symbols.save),
-                  label: const Text('Lưu hồ sơ'),
+                _SaveButton(
+                  saveDirectoryNotifier: saveDirectoryNotifier,
                 ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _SaveButton extends ConsumerWidget {
+  final ValueNotifier<String?> saveDirectoryNotifier;
+
+  const _SaveButton({required this.saveDirectoryNotifier});
+
+  void save(
+    BuildContext context,
+    WidgetRef ref,
+    List<InMemoryDocument> documents,
+  ) {
+    final saveDirectory = saveDirectoryNotifier.value;
+    final messenger = ScaffoldMessenger.of(context);
+    if (saveDirectory == null) {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Vui lòng chọn thư mục lưu hồ sơ trước khi lưu'),
+        ),
+      );
+    }
+
+    messenger.showSnackBar(
+      const SnackBar(
+        content: Text('Đang lưu'),
+      ),
+    );
+
+    for (final document in documents) {
+      document.save(directory: saveDirectory!);
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Đã lưu ${document.fileName} vào $saveDirectory'),
+        ),
+      );
+    }
+
+    // final docx = await ref.read(paymentSpendingDecisionDocxProvider.future);
+    // docx.save(directory: saveDirectory!);
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text('Đã lưu hồ sơ vào $saveDirectory'),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final allDocumentsAsync = ref.watch(allDocumentsProvider);
+
+    final (title, ok) = switch (allDocumentsAsync) {
+      AsyncLoading() => ("Đang chuẩn bị hồ sơ...", false),
+      AsyncError(:final error) => ("Lỗi khi chuẩn bị hồ sơ: $error", false),
+      _ => ("Lưu hồ sơ", true),
+    };
+
+    final onPressed = switch (ok) {
+      false => null,
+      true => () => save(context, ref, allDocumentsAsync.value!),
+    };
+
+    return FilledButton.icon(
+      onPressed: onPressed,
+      icon: const Icon(Symbols.save),
+      label: Text(title),
     );
   }
 }

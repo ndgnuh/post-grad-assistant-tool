@@ -18,7 +18,7 @@ Future<XlsxFile> buildThesisAssignmentExcel({
     theses: theses,
   );
 
-  final bytes = buildSingleSheetExcel(
+  final bytes = await buildSingleSheetExcel(
     builder: (sheet) => _buildSheet(sheet: sheet, model: model),
   );
 

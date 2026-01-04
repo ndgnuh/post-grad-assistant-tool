@@ -187,8 +187,7 @@ class _ActionTab extends HookWidget {
             (await atmPdf).save(directory: saveDir);
             (await checkPdf).save(directory: saveDir);
             (await checkSummaryPdf).save(directory: saveDir);
-
-            checkModel.xlsx.save(directory: saveDir);
+            (await checkModel.xlsx).save(directory: saveDir);
             messenger.showSnackBar(
               SnackBar(content: Text("Đã lưu hồ sơ vào $saveDir")),
             );

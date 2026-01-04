@@ -73,7 +73,7 @@ Future<DocxFile> buildPaymentRequestDocx({
 
   return DocxFile(
     name: model.name,
-    bytes: docxBytes,
+    bytes: await docxBytes,
   );
 }
 

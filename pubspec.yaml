@@ -132,7 +132,7 @@ flutter:
     - assets/fonts/tex_gyre_termes_bold.ttf
     - assets/fonts/tex_gyre_termes_italic.ttf
     - assets/fonts/tex_gyre_termes_regular.ttf
-    # - assets/fonts/Times_New_Roman.ttf
+    - assets/fonts/Times_New_Roman.ttf
     - assets/fonts/Times_New_Roman_Bold.ttf
     - assets/fonts/Times_New_Roman_Bold_Italic.ttf
     - assets/fonts/Times_New_Roman_Italic.ttf
