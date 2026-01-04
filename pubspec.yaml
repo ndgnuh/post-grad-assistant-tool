@@ -138,6 +138,7 @@ flutter:
     # - assets/fonts/Times_New_Roman_Italic.ttf
     # - assets/copy-pasta.yaml
 
+    - assets/templates/phd-admission-council-suggestion.docx
     - assets/templates/phd-admission-record.docx
     - assets/templates/msc-thesis-council-decision.docx
     - assets/templates/payment_request.docx

@@ -1,9 +1,11 @@
+import 'package:fami_tools/business/documents.dart';
 import 'package:fami_tools/gen/assets.gen.dart';
 import 'package:fami_tools/business/documents/utilities/docx_template.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:riverpod/riverpod.dart';
 import '../../business/db_v2_providers.dart';
 import '../../business/documents.dart' as pdfs;
+import '../../utilities/strings.dart';
 
 final scoreSheetPdfProvider = FutureProvider.family((ref, int studentId) async {
   final provider = phdStudentByIdProvider(studentId);
@@ -12,7 +14,7 @@ final scoreSheetPdfProvider = FutureProvider.family((ref, int studentId) async {
   return await model.pdf;
 });
 
-final councilSuggestionPdfProvider = FutureProvider.family((
+final councilSuggestionModelProvider = FutureProvider.family((
   ref,
   int studentId,
 ) async {
@@ -55,10 +57,34 @@ final councilSuggestionPdfProvider = FutureProvider.family((
     secondMember: secondMember,
     thirdMember: thirdMember,
   );
-  return await model.buildPdf(
-    config: pdfs.PhdAdmissionCouncilSuggestionDocument.defaultPdfConfig,
-  );
+  return model;
 });
+
+final councilSuggestionPdfProvider = FutureProvider.family(
+  (ref, int studentId) async {
+    final model = await ref.watch(
+      councilSuggestionModelProvider(studentId).future,
+    );
+    if (model == null) {
+      return null;
+    }
+    return await model.buildPdf(
+      config: pdfs.PhdAdmissionCouncilSuggestionDocument.defaultPdfConfig,
+    );
+  },
+);
+
+final councilSuggestionDocxProvider = FutureProvider.family(
+  (ref, int studentId) async {
+    final model = await ref.watch(
+      councilSuggestionModelProvider(studentId).future,
+    );
+    if (model == null) {
+      return null;
+    }
+    return await model.buildDocx();
+  },
+);
 
 final admissionRecordDocxProvider = FutureProvider.family(
   (ref, int studentId) async {
@@ -108,8 +134,10 @@ final admissionRecordDocxProvider = FutureProvider.family(
           secondarySupervisor?.toJsonExt() ?? {"name_with_title": ""},
     };
     final output = template.render(context);
+    final name =
+        "${student.admissionId}_${student.name.toPascalCase()}_BienBan";
 
-    return output;
+    return DocxFile(name: name, bytes: output);
   },
 );
 

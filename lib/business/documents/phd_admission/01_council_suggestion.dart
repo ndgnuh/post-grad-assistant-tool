@@ -1,9 +1,12 @@
 import 'package:fami_tools/business/documents/pdf_utils.dart';
+import 'package:fami_tools/gen/assets.gen.dart';
 import 'package:fami_tools/utilities/strings.dart';
+import 'package:flutter/services.dart';
 
 import '../../main_database.dart';
 import '../common_widgets.dart';
 import '../../documents.dart';
+import '../docx_utils.dart';
 
 class PhdAdmissionCouncilSuggestionDocument {
   final PhdStudentData phdStudent;
@@ -21,6 +24,35 @@ class PhdAdmissionCouncilSuggestionDocument {
     verticalMargin: 1 * inch,
     baseFontSize: 12 * pt,
   );
+
+  Future<DocxFile> buildDocx() async {
+    final docxBuffer = await rootBundle.load(
+      Assets.templates.phdAdmissionCouncilSuggestion,
+    );
+    final docxBytes = docxBuffer.buffer.asUint8List();
+
+    final context = {
+      "candidate_name": phdStudent.name,
+      "major_name": phdStudent.majorName,
+      "major_code": phdStudent.majorId,
+      "thesis_title": phdStudent.thesis,
+      "supervisor": supervisor.nameWithTitle,
+      "secondary_supervisor": secondarySupervisor?.nameWithTitle ?? "",
+      "president_name": president.nameWithTitle,
+      "president_workplace": president.university,
+      "secretary_name": secretary.nameWithTitle,
+      "secretary_workplace": secretary.university,
+      "member_1_name": firstMember.nameWithTitle,
+      "member_1_workplace": firstMember.university,
+      "member_2_name": secondMember.nameWithTitle,
+      "member_2_workplace": secondMember.university,
+      "member_3_name": thirdMember.nameWithTitle,
+      "member_3_workplace": thirdMember.university,
+    };
+
+    final bytes = await fillDocxTemplate(docxBytes, context);
+    return DocxFile(name: name, bytes: bytes);
+  }
 
   Future<PdfFile> buildPdf({required PdfConfig config}) async {
     return await _councilSuggestionPdf(

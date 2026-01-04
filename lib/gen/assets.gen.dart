@@ -48,6 +48,10 @@ class $AssetsTemplatesGen {
   /// File path: assets/templates/payment_request.docx
   String get paymentRequest => 'assets/templates/payment_request.docx';
 
+  /// File path: assets/templates/phd-admission-council-suggestion.docx
+  String get phdAdmissionCouncilSuggestion =>
+      'assets/templates/phd-admission-council-suggestion.docx';
+
   /// File path: assets/templates/phd-admission-record.docx
   String get phdAdmissionRecord => 'assets/templates/phd-admission-record.docx';
 
@@ -56,6 +60,7 @@ class $AssetsTemplatesGen {
     mscThesisCouncilDecision,
     mscThesisSpendingDecision,
     paymentRequest,
+    phdAdmissionCouncilSuggestion,
     phdAdmissionRecord,
   ];
 }

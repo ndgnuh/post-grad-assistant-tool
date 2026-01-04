@@ -103,8 +103,11 @@ class _SaveAdmissionFilesButton extends ConsumerWidget {
         final paymentTable = await ref.read(
           paymentTablePdfProvider(studentId).future,
         );
+        final councilSuggestionDocx = await ref.read(
+          councilSuggestionDocxProvider(studentId).future,
+        );
 
-        final recordDocxData = await ref.read(
+        final recordDocx = await ref.read(
           admissionRecordDocxProvider(studentId).future,
         );
 
@@ -112,20 +115,12 @@ class _SaveAdmissionFilesButton extends ConsumerWidget {
           councilSuggestion,
           scoreSheet,
           paymentTable,
-        ].whereType<PdfFile>().toList();
-        for (final pdfFile in files) {
-          final savePath = path.join(directory, pdfFile.name);
-          final file = File(savePath);
-          await file.writeAsBytes(pdfFile.bytes);
+          councilSuggestionDocx,
+          recordDocx,
+        ].whereType<InMemoryDocument>().toList();
+        for (final file in files) {
+          file.save(directory: directory);
         }
-
-        // TODO: add strcuture for file docx file name, similar to PdfFile and ExcelFile
-        final studentName = student.name.toPascalCase();
-        final admissionId = student.admissionId.toString();
-        final docName = "${admissionId}_${studentName}_BienBanXetTuyen.docx";
-        final savePath = path.join(directory, docName);
-        final file = File(savePath);
-        await file.writeAsBytes(recordDocxData);
 
         messenger.showSnackBar(
           SnackBar(content: Text("Đã lưu hồ sơ vào thư mục $directory")),
