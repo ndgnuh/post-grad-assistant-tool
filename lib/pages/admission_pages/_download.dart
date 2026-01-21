@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
-import 'package:fami_tools/services/pdf_builder.bak/drafting.dart';
-import 'package:fami_tools/utilities/strings.dart';
+import '../../services/pdf_builder.bak/drafting.dart';
+import '../../utilities/strings.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:dart_pdf_reader/dart_pdf_reader.dart';

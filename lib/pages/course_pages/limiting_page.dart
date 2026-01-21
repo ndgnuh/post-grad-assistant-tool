@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:fami_tools/custom_tiles.dart';
-import 'package:fami_tools/pages/course_pages/course_details_page.dart';
-import 'package:fami_tools/utilities/strings.dart';
+import '../../custom_tiles.dart';
+import 'course_details_page.dart';
+import '../../utilities/strings.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

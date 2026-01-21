@@ -1,10 +1,10 @@
-import 'package:fami_tools/business/copy_pasta.dart';
+import '../../business/copy_pasta.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:drift/drift.dart';
 import '../../business/documents.dart';
 import '../../business/db_v2_providers.dart';
 
-import 'package:fami_tools/business/view_models.dart';
+import '../../business/view_models.dart';
 
 final registeredStudentIdsProvider = FutureProvider<List<int>>((ref) async {
   final AppDatabase db = await ref.watch(mainDatabaseProvider.future);

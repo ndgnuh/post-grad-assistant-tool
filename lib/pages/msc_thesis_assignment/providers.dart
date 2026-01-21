@@ -1,6 +1,6 @@
-import 'package:fami_tools/business/copy_pasta.dart';
-import 'package:fami_tools/business/selection_models.dart';
-import 'package:fami_tools/business/view_models.dart';
+import '../../business/copy_pasta.dart';
+import '../../business/selection_models.dart';
+import '../../business/view_models.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../../business/db_v2_providers.dart';
@@ -167,7 +167,7 @@ final supervisorsEmailProvider = FutureProvider<Email>((ref) async {
     final supervisor = thesis.supervisor;
     if (supervisor == null) continue;
 
-    final supervisorEmail = supervisor!.workEmail ?? supervisor.personalEmail;
+    final supervisorEmail = supervisor.workEmail ?? supervisor.personalEmail;
     assert(
       supervisorEmail != null,
       "Giảng viên hướng dẫn ${supervisor.name} không có email",

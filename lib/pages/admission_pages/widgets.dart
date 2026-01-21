@@ -1,4 +1,4 @@
-import 'package:fami_tools/business/db_v2_providers/students.dart';
+import '../../business/db_v2_providers/students.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -152,6 +152,7 @@ class EnrollButtonBuilder extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final navigator = Navigator.of(context);
     final messenger = ScaffoldMessenger.of(context);
     return builder(context, () async {
       // Check student ID and school email are not empty
@@ -192,6 +193,7 @@ class EnrollButtonBuilder extends ConsumerWidget {
         admissionCouncilId: council.id,
       );
 
+      navigator.pop();
       messenger.showSnackBar(
         const SnackBar(
           content: Text("Nhập học thành công"),

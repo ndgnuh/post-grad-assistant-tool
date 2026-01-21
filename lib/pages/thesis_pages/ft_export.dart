@@ -116,7 +116,7 @@ class SampleThesesPdfNotifier extends AsyncNotifier<Uint8List> {
     final theses = <ThesisData>[];
     for (final id in ids) {
       final thesis = await ref.watch(thesisByIdProvider(id).future);
-      theses.add(thesis!);
+      theses.add(thesis);
     }
 
     final supervisors = <ThesisData, TeacherData>{};
@@ -124,7 +124,7 @@ class SampleThesesPdfNotifier extends AsyncNotifier<Uint8List> {
       final teacher = await ref.watch(
         teacherByIdProvider(thesis.supervisorId).future,
       );
-      supervisors[thesis] = teacher!;
+      supervisors[thesis] = teacher;
     }
     return buildThesisListPdf(theses: theses, supervisors: supervisors);
   }

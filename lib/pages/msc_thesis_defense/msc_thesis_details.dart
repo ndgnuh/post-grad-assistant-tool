@@ -1,9 +1,9 @@
 // TODO: move this to a seprate package
-import 'package:fami_tools/business/db_v2_providers.dart';
-import 'package:fami_tools/custom_tiles.dart';
-import 'package:fami_tools/custom_widgets.dart';
-import 'package:fami_tools/business/view_models.dart';
-import 'package:fami_tools/shortcuts.dart';
+import '../../business/db_v2_providers.dart';
+import '../../custom_tiles.dart';
+import '../../custom_widgets.dart';
+import '../../business/view_models.dart';
+import '../../shortcuts.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';

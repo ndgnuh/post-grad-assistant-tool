@@ -1,5 +1,5 @@
 // TODO: refactor
-import 'package:fami_tools/business/copy_pasta.dart';
+import '../../business/copy_pasta.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

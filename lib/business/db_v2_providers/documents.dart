@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:fami_tools/custom_widgets.dart';
+import '../../custom_widgets.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../db_v2_providers.dart';

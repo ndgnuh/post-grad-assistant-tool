@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart' show OrderingTerm;
-import 'package:fami_tools/business/db_v2_providers.dart';
-import 'package:fami_tools/business/selection_models.dart';
+import '../../business/db_v2_providers.dart';
+import '../../business/selection_models.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../../business/documents.dart';
@@ -156,7 +156,7 @@ final paymentModelProvider = FutureProvider<PaymentModel>(
 
     return PaymentModel(
       viewModels: viewModels,
-      myName: myName!,
+      myName: myName,
       myFaculty: myFaculty!,
     );
   },

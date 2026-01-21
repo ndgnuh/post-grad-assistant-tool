@@ -2,24 +2,40 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:isolate';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'package:pdfrx/pdfrx.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'business/db_v2_providers.dart';
 import 'pages/pages.dart' as pages;
 import 'shortcuts.dart';
 import 'themes.dart';
 
+Future<void> initializeWindowManager() async {
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = WindowOptions(
+    // size: Size(800, 600),
+    // center: true,
+    backgroundColor: Colors.transparent,
+    // skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.hidden,
+  );
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+}
+
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   pdfrxFlutterInitialize();
-
   if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
     await setupHotKeys();
+    await initializeWindowManager();
   }
 
   if (kIsWeb) {

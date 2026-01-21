@@ -1,9 +1,9 @@
-import 'package:fami_tools/business/documents.dart';
-import 'package:fami_tools/business/documents/common.dart' show PdfConfig;
-import 'package:fami_tools/custom_widgets.dart';
-import 'package:fami_tools/custom_widgets/pdf_viewer.dart';
-import 'package:fami_tools/custom_widgets/pref_hooks.dart';
-import 'package:fami_tools/shortcuts.dart';
+import '../../business/documents.dart';
+import '../../business/documents/common.dart' show PdfConfig;
+import '../../custom_widgets.dart';
+import '../../custom_widgets/pdf_viewer.dart';
+import '../../custom_widgets/pref_hooks.dart';
+import '../../shortcuts.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

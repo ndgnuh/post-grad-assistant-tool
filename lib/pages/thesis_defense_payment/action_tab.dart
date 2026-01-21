@@ -1,10 +1,9 @@
-import 'package:fami_tools/custom_widgets.dart';
-import 'package:fami_tools/utilities/strings.dart';
+import '../../custom_widgets.dart';
+import '../../utilities/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-import 'package:fami_tools/custom_widgets.dart';
 
 import '../pages.dart';
 import 'providers.dart';

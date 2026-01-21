@@ -34,7 +34,7 @@ install-apk: apk
 install: linux
 	mkdir -p $(APP_HOME)
 	cp build/linux/x64/release/bundle/* -r $(APP_HOME)/
-	ln -fs $(APP_HOME)/fami_tools $(PREFIX)/bin/fami-sdh
+	ln -fs $(APP_HOME)/fami-pgms $(PREFIX)/bin/fami-pgms
 
 assets:
 	fluttergen -c pubspec.yaml

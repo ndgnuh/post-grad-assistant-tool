@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:fami_tools/utilities/strings.dart';
+import '../../utilities/strings.dart';
 
 const thesisStatusConverter = ThesisStatusConverter();
 

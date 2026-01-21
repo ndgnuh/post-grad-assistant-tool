@@ -1,4 +1,4 @@
-import 'package:fami_tools/shortcuts.dart';
+import '../../shortcuts.dart';
 import 'package:flutter/material.dart';
 
 import '../../business/business_enums.dart';

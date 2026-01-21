@@ -1,8 +1,8 @@
 import 'dart:isolate';
 
 import 'package:drift/drift.dart';
-import 'package:fami_tools/custom_widgets.dart';
-import 'package:fami_tools/pages/pages.dart';
+import '../../custom_widgets.dart';
+import '../pages.dart';
 import 'package:flutter/services.dart';
 import 'package:riverpod/riverpod.dart';
 import '../../business/db_v2_providers.dart';

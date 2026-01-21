@@ -1,5 +1,5 @@
-import 'package:fami_tools/business/selection_models.dart';
-import 'package:fami_tools/shortcuts.dart';
+import '../../business/selection_models.dart';
+import '../../shortcuts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // import 'package:riverpod_annotation/riverpod_annotation.dart';

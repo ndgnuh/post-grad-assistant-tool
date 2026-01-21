@@ -52,7 +52,7 @@ class ThesisListViewModelNotifier extends AsyncNotifier<ThesisListViewModel> {
 
     for (final id in ids) {
       final thesisAsync = await ref.watch(thesisByIdProvider(id).future);
-      final thesis = thesisAsync!;
+      final thesis = thesisAsync;
       theses.add(thesis);
 
       final supervisor = await ref.watch(
@@ -65,7 +65,7 @@ class ThesisListViewModelNotifier extends AsyncNotifier<ThesisListViewModel> {
           final student = await ref.watch(
             studentByIdProvider(id).future,
           );
-          students[thesis] = student!;
+          students[thesis] = student;
       }
     }
 

@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:fami_tools/custom_widgets.dart';
+import '../../custom_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../business/db_v2_providers.dart';

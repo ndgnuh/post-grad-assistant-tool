@@ -1,8 +1,8 @@
-import 'package:fami_tools/business/copy_pasta.dart';
-import 'package:fami_tools/custom_widgets.dart';
-import 'package:fami_tools/custom_widgets/pdf_preview_tile.dart';
-import 'package:fami_tools/custom_widgets/pdf_viewer.dart';
-import 'package:fami_tools/shortcuts.dart';
+import '../../business/copy_pasta.dart';
+import '../../custom_widgets.dart';
+import '../../custom_widgets/pdf_preview_tile.dart';
+import '../../custom_widgets/pdf_viewer.dart';
+import '../../shortcuts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

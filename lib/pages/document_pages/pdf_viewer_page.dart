@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:fami_tools/custom_widgets/responsive_breakpoints.dart';
+import '../../custom_widgets/responsive_breakpoints.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

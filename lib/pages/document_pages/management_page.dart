@@ -1,4 +1,4 @@
-import 'package:fami_tools/pages/document_pages/viewer_page.dart';
+import 'viewer_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';

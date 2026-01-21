@@ -1,8 +1,8 @@
-import 'package:fami_tools/business/db_v2_providers.dart';
+import '../../business/db_v2_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fami_tools/custom_widgets.dart';
+import '../../custom_widgets.dart';
 import 'package:intl/intl.dart';
 
 import 'semester_pages.dart';

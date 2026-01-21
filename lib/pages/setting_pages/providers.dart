@@ -1,4 +1,4 @@
-import 'package:fami_tools/business/db_v2_providers.dart';
+import '../../business/db_v2_providers.dart';
 import 'package:riverpod/riverpod.dart';
 
 final initialSetupDoneProvider = FutureProvider<bool>((ref) async {

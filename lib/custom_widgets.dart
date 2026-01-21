@@ -1528,7 +1528,7 @@ extension ExpandedChildren on Expanded {
   }
 }
 
-const maxScreenWidth = 960.0;
+const maxScreenWidth = double.infinity;
 const maxScreenWidthConstraints = BoxConstraints(maxWidth: maxScreenWidth);
 
 class ConstrainedAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -1543,12 +1543,13 @@ class ConstrainedAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ConstrainedBox(
-        constraints: maxScreenWidthConstraints,
-        child: child,
-      ),
-    );
+    return child;
+    // return Center(
+    //   child: ConstrainedBox(
+    //     constraints: maxScreenWidthConstraints,
+    //     child: child,
+    //   ),
+    // );
   }
 
   @override
@@ -1565,13 +1566,14 @@ class ConstrainedBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        constraints: maxScreenWidthConstraints,
-        child: child,
-      ),
-    );
+    return child;
+    // return Align(
+    //   alignment: Alignment.topCenter,
+    //   child: ConstrainedBox(
+    //     constraints: maxScreenWidthConstraints,
+    //     child: child,
+    //   ),
+    // );
   }
 }
 

@@ -1,13 +1,11 @@
 import 'dart:async';
 
-import 'package:drift/drift.dart' show Value;
-import 'package:fami_tools/business/copy_pasta.dart';
-import 'package:fami_tools/business/documents.dart';
+import '../../business/copy_pasta.dart';
+import '../../business/documents.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../business/db_v2_providers.dart';
-import '../../business/documents.dart';
 import '../../business/selection_models.dart';
 import '_interpersonal.dart' as interpersonal;
 import 'providers.dart';

@@ -1,7 +1,7 @@
-import 'package:fami_tools/custom_widgets.dart';
-import 'package:fami_tools/custom_widgets/pdf_viewer.dart';
-import 'package:fami_tools/shortcuts.dart';
-import 'package:fami_tools/utilities/strings.dart';
+import '../../custom_widgets.dart';
+import '../../custom_widgets/pdf_viewer.dart';
+import '../../shortcuts.dart';
+import '../../utilities/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

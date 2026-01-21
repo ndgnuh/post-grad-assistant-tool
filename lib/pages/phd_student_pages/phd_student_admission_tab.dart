@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:fami_tools/business/copy_pasta.dart';
-import 'package:fami_tools/business/documents.dart';
-import 'package:fami_tools/pages/document_pages/document_pages.dart';
-import 'package:fami_tools/utilities/strings.dart';
+import '../../business/copy_pasta.dart';
+import '../../business/documents.dart';
+import '../document_pages/document_pages.dart';
+import '../../utilities/strings.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';

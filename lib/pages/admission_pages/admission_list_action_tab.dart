@@ -1,6 +1,6 @@
-import 'package:fami_tools/business/copy_pasta.dart'
+import '../../business/copy_pasta.dart'
     show Email, EmailCopyDialog;
-import 'package:fami_tools/business/db_v2_providers.dart';
+import '../../business/db_v2_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

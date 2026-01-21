@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fami_tools/custom_widgets.dart';
-import 'package:fami_tools/shortcuts.dart';
-import 'package:fami_tools/utilities/strings.dart';
+import '../../custom_widgets.dart';
+import '../../shortcuts.dart';
+import '../../utilities/strings.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

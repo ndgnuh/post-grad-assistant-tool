@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:fami_tools/custom_widgets.dart';
-import 'package:fami_tools/shortcuts.dart';
+import '../custom_widgets.dart';
+import '../shortcuts.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,6 @@ import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:pdfrx/pdfrx.dart';
-import 'package:riverpod/riverpod.dart';
 
 import '../business/documents.dart';
 

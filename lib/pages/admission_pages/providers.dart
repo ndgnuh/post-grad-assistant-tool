@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../business/copy_pasta.dart';
 import '../../business/db_v2_providers.dart';
-import '../../business/main_database.dart';
 import '../../business/selection_models.dart';
 
 final acceptanceEmailProvider = AsyncNotifierProvider(
@@ -247,7 +246,7 @@ class InterviewEmailNotifier extends AsyncNotifier<Email> {
       subject: subject,
       recipients: recipients,
       body: emailBody(
-        myName: myName!,
+        myName: myName,
         location: location,
         datetime: datetime ?? DateTime.now(),
       ),

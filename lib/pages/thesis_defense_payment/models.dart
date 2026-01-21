@@ -1,5 +1,5 @@
-import 'package:fami_tools/business/db_v2_providers.dart';
-import 'package:fami_tools/business/documents.dart';
+import '../../business/db_v2_providers.dart';
+import '../../business/documents.dart';
 
 class ThesisViewModel {
   final ThesisData thesis;

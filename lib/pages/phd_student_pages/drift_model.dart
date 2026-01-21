@@ -1,10 +1,8 @@
-import 'package:fami_tools/business/db_v2_providers/phd_students.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../business/db_v2_providers.dart';
-import '../../business/main_database.dart';
 
 final filteredPhdStudentsProvider = AsyncNotifierProvider(
   FilteredPhdStudentsNotifier.new,
@@ -70,8 +68,8 @@ class PhdStudentViewModelNotifier extends AsyncNotifier<PhdStudentViewModel?> {
         : null;
 
     return PhdStudentViewModel(
-      student: student!,
-      supervisor: supervisor!,
+      student: student,
+      supervisor: supervisor,
       secondarySupervisor: secondarySupervisor,
     );
   }

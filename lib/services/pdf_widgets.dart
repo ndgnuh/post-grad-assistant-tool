@@ -1,6 +1,5 @@
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
-import 'package:pdf/widgets.dart' show Widget, Context, StatelessWidget;
 import 'package:flutter/services.dart' show rootBundle;
 
 // Export so that other packages only need to use one namespace

@@ -1,6 +1,6 @@
-import 'package:fami_tools/business/db_v2_providers.dart';
-import 'package:fami_tools/business/documents.dart';
-import 'package:fami_tools/custom_widgets.dart';
+import '../../business/db_v2_providers.dart';
+import '../../business/documents.dart';
+import '../../custom_widgets.dart';
 import 'package:riverpod/riverpod.dart';
 
 import 'models.dart';
@@ -32,7 +32,7 @@ final paymentModelProvider = FutureProvider<ThesisPaymentModel>((ref) async {
   assert(myFaculty != null);
 
   return ThesisPaymentModel(
-    myName: myName!,
+    myName: myName,
     myFaculty: myFaculty!,
     thesisViewModels: thesisViewModels,
   );

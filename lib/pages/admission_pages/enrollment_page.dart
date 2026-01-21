@@ -8,6 +8,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:diacritic/diacritic.dart' as diacritic;
 
 import '../../business/db_v2_providers.dart';
+import '../../shortcuts.dart';
 import 'widgets.dart';
 
 class AdmissionEnrollmentPage extends StatelessWidget {
@@ -19,28 +20,30 @@ class AdmissionEnrollmentPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
     final gutter = context.gutter;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Nhập học'),
-      ),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: SizedBox(
-          width: min(width, 960),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(
-              gutter,
-              context.gutterTiny,
-              gutter,
-              context.gutterTiny,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              spacing: context.gutterLarge,
-              children: [
-                _StudentInfoSection(studentId: studentId),
-                _EnrollFormSection(studentId: studentId),
-              ],
+    return CommonShortcuts(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Nhập học'),
+        ),
+        body: Align(
+          alignment: Alignment.topCenter,
+          child: SizedBox(
+            width: min(width, 960),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                gutter,
+                context.gutterTiny,
+                gutter,
+                context.gutterTiny,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: context.gutterLarge,
+                children: [
+                  _StudentInfoSection(studentId: studentId),
+                  _EnrollFormSection(studentId: studentId),
+                ],
+              ),
             ),
           ),
         ),
@@ -89,6 +92,8 @@ class _EnrollFormSectionState extends ConsumerState<_EnrollFormSection> {
           .split(' ')
           .reversed
           .skip(1)
+          .toList()
+          .reversed
           .map((e) => e[0].toUpperCase())
           .join();
 

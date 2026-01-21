@@ -1,4 +1,4 @@
-import 'package:fami_tools/business/documents/pdf_utils.dart';
+import 'pdf_utils.dart';
 
 class TitleRule extends StatelessWidget {
   @override

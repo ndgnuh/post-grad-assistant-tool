@@ -1,4 +1,4 @@
-import 'package:fami_tools/pages/phd_student_pages/phd_student_details_page.dart';
+import '../phd_student_pages/phd_student_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

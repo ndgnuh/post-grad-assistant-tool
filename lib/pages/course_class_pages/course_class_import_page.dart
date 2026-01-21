@@ -1,6 +1,5 @@
-import 'package:drift/drift.dart' hide Column;
-import 'package:fami_tools/custom_widgets.dart';
-import 'package:fami_tools/pages/course_class_pages/providers.dart';
+import '../../custom_widgets.dart';
+import 'providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

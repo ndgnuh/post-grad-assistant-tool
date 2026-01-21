@@ -1,6 +1,6 @@
 // This is experimental code for drift ORM
 import 'package:drift/drift.dart';
-import 'package:fami_tools/utilities/strings.dart';
+import '../utilities/strings.dart';
 
 // Database
 export 'enums/document_role.dart';

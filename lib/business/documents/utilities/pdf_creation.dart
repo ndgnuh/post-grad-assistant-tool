@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
 
-import 'package:fami_tools/gen/assets.gen.dart';
+import '../../../gen/assets.gen.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:pdfrx_engine/pdfrx_engine.dart' as pdfrx;
 

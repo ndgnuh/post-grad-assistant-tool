@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:fami_tools/business/documents/pdf_utils.dart';
+import '../../business/documents/pdf_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -189,7 +189,7 @@ final paymentRequestProvider = FutureProvider((ref) async {
 
   final reason = _paymentReason(council.year);
   final model = PaymentRequestModel(
-    requesterName: myName!,
+    requesterName: myName,
     requesterFalcuty: myOrganization!,
     paymentReason: reason,
     paymentAmount: amount,

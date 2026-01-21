@@ -1,8 +1,7 @@
-import 'package:fami_tools/business/db_v2_providers.dart';
+import '../db_v2_providers.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:drift/drift.dart';
 
-import '../main_database.dart';
 
 class TeacherViewModel {
   final TeacherData teacher;

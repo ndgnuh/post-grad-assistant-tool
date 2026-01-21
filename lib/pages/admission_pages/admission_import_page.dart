@@ -1,5 +1,5 @@
-import 'package:fami_tools/pages/msc_thesis_assignment/providers.dart';
-import 'package:fami_tools/utilities/strings.dart';
+import '../msc_thesis_assignment/providers.dart';
+import '../../utilities/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

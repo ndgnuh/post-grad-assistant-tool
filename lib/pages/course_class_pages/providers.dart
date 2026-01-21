@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:fami_tools/utilities/strings.dart';
+import '../../utilities/strings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

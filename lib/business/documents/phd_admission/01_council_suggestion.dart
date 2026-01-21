@@ -1,6 +1,6 @@
-import 'package:fami_tools/business/documents/pdf_utils.dart';
-import 'package:fami_tools/gen/assets.gen.dart';
-import 'package:fami_tools/utilities/strings.dart';
+import '../pdf_utils.dart';
+import '../../../gen/assets.gen.dart';
+import '../../../utilities/strings.dart';
 import 'package:flutter/services.dart';
 
 import '../../main_database.dart';

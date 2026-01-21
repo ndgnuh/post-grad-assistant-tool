@@ -1,5 +1,5 @@
-import 'package:fami_tools/business/documents/pdf_utils.dart';
-import 'package:fami_tools/utilities/strings.dart';
+import '../pdf_utils.dart';
+import '../../../utilities/strings.dart';
 
 import '../common_widgets.dart';
 import '../../db_v2_providers.dart';

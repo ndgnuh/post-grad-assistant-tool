@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:fami_tools/business/documents/common_widgets.dart';
-import 'package:fami_tools/business/main_database.dart';
+import 'common_widgets.dart';
+import '../main_database.dart';
 
 import 'pdf_utils.dart';
 import 'xlsx_utils.dart';

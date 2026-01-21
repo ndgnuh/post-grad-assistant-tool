@@ -1,10 +1,10 @@
 // Double check the payment details before processing the transaction.
 
-import 'package:fami_tools/business/documents/common_widgets.dart';
-import 'package:fami_tools/business/documents/pdf_utils.dart';
-import 'package:fami_tools/business/documents/utilities/xlsx_builder.dart';
-import 'package:fami_tools/services/misc_services.dart';
-import 'package:fami_tools/utilities/strings.dart';
+import 'common_widgets.dart';
+import 'pdf_utils.dart';
+import 'utilities/xlsx_builder.dart';
+import '../../services/misc_services.dart';
+import '../../utilities/strings.dart';
 
 import '../documents.dart';
 import '../main_database.dart';

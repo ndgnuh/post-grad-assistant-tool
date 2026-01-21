@@ -1,7 +1,6 @@
 import 'package:riverpod/riverpod.dart';
 import 'package:drift/drift.dart';
 
-import '../main_database.dart';
 import '../db_v2_providers.dart';
 
 class SemesterViewModel {

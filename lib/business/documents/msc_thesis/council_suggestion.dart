@@ -1,5 +1,5 @@
-import 'package:fami_tools/business/view_models.dart';
-import 'package:fami_tools/utilities/strings.dart';
+import '../../view_models.dart';
+import '../../../utilities/strings.dart';
 import 'package:intl/intl.dart';
 
 import '../../documents.dart';

@@ -1,6 +1,6 @@
-import 'package:fami_tools/business/documents.dart';
-import 'package:fami_tools/gen/assets.gen.dart';
-import 'package:fami_tools/business/documents/utilities/docx_template.dart';
+import '../../business/documents.dart';
+import '../../gen/assets.gen.dart';
+import '../../business/documents/utilities/docx_template.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:riverpod/riverpod.dart';
 import '../../business/db_v2_providers.dart';

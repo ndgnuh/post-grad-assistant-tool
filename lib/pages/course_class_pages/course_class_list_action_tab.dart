@@ -1,8 +1,8 @@
-import 'package:fami_tools/business/copy_pasta.dart';
-import 'package:fami_tools/business/db_v2_providers.dart';
-import 'package:fami_tools/custom_widgets.dart';
-import 'package:fami_tools/pages/course_class_pages/teaching_assignment_providers.dart';
-import 'package:fami_tools/pages/pages.dart';
+import '../../business/copy_pasta.dart';
+import '../../business/db_v2_providers.dart';
+import '../../custom_widgets.dart';
+import 'teaching_assignment_providers.dart';
+import '../pages.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

@@ -2,7 +2,7 @@
 import 'dart:io';
 
 import 'package:external_path/external_path.dart' as ext_path;
-import 'package:fami_tools/shortcuts.dart';
+import '../../shortcuts.dart';
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
