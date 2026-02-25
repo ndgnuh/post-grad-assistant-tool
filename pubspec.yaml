@@ -91,6 +91,7 @@ dependencies:
   signals: ^6.3.0
   pdfrx_engine: ^0.3.6
   window_manager: ^0.5.1
+  flex_color_scheme: ^8.4.0
 
 dev_dependencies:
   flutter_test:

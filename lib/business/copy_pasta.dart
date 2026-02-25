@@ -3,7 +3,7 @@ import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
-import './../shortcuts.dart';
+import '../core/router.dart';
 
 void copyToClipboard({
   required String text,

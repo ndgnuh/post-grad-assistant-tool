@@ -2,7 +2,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final navigationKey = GlobalKey<NavigatorState>();
 final searchAnchorKey = GlobalKey<State<SearchAnchor>>();
 final scaffoldKey = GlobalKey<ScaffoldState>();
 final globalFocusKey = GlobalKey<State<Focus>>();

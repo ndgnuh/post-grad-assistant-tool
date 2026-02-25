@@ -1,34 +1,22 @@
 import 'dart:io' show Platform;
+
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
+import 'package:pdfrx/pdfrx.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
-import 'package:pdfrx/pdfrx.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'business/db_v2_providers.dart';
+import 'core/router.dart';
 import 'features/pages.dart' as pages;
 import 'shortcuts.dart';
 import 'themes.dart';
-
-Future<void> initializeWindowManager() async {
-  await windowManager.ensureInitialized();
-
-  WindowOptions windowOptions = WindowOptions(
-    // size: Size(800, 600),
-    // center: true,
-    backgroundColor: Colors.transparent,
-    // skipTaskbar: false,
-    titleBarStyle: TitleBarStyle.hidden,
-  );
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.show();
-    await windowManager.focus();
-  });
-}
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,6 +44,22 @@ Future main() async {
 }
 
 final messengerKey = GlobalKey<ScaffoldMessengerState>();
+
+Future<void> initializeWindowManager() async {
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = WindowOptions(
+    // size: Size(800, 600),
+    // center: true,
+    backgroundColor: Colors.transparent,
+    // skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.hidden,
+  );
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+}
 
 Future<void> setupHotKeys() async {
   await hotKeyManager.unregisterAll();
@@ -161,8 +165,6 @@ Future<void> setupHotKeys() async {
 }
 
 class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
-
   static final shortcuts = {
     SingleActivator(LogicalKeyboardKey.arrowLeft, alt: true):
         const GoBackIntent(),
@@ -179,24 +181,41 @@ class MyApp extends ConsumerWidget {
         const PreviousTabIntent(),
   };
 
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkModeState = ref.watch(isDarkModeProvider);
 
-    final isDarkMode = switch (isDarkModeState) {
-      AsyncData(:final value) => value ?? false,
-      _ => false,
-    };
-
-    final actions = <Type, Action<Intent>>{
-      // SearchIntent: SearchAction(context: context, ref: ref),
-      // GoBackIntent: GoBackAction(context: context),
-      NextTabIntent: ChangeTabAction(context: context, offset: 1),
-      PreviousTabIntent: ChangeTabAction(context: context, offset: -1),
+    /// FIXME: store theme mode directly instead of boolean
+    final themeMode = switch (isDarkModeState) {
+      AsyncData(:final value) => switch (value) {
+        true => ThemeMode.dark,
+        false => ThemeMode.light,
+        _ => ThemeMode.system,
+      },
+      _ => ThemeMode.system,
     };
 
     // Function to get lighter color from a color
-    final themes = Themes(context);
+    final colorScheme = FlexScheme.blueM3;
+    final subThemeData = FlexSubThemesData(
+      inputDecoratorIsFilled: true,
+      buttonPadding: EdgeInsetsGeometry.symmetric(
+        vertical: context.gutterSmall,
+        horizontal: context.gutter,
+      ),
+      defaultRadius: context.gutterSmall,
+    );
+
+    final theme = FlexThemeData.light(
+      scheme: colorScheme,
+      subThemesData: subThemeData,
+    );
+    final darkTheme = FlexThemeData.dark(
+      scheme: colorScheme,
+      subThemesData: subThemeData,
+    );
     final locale = Locale('vi', 'VN');
 
     return SafeArea(
@@ -206,9 +225,9 @@ class MyApp extends ConsumerWidget {
         // actions: actions,
         navigatorKey: navigationKey,
         locale: locale,
-        darkTheme: themes.dark,
-        theme: themes.light,
-        themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        darkTheme: darkTheme,
+        theme: theme,
+        themeMode: themeMode,
         initialRoute: pages.initialLoadingRoute,
         debugShowMaterialGrid: false,
         debugShowCheckedModeBanner: false,
