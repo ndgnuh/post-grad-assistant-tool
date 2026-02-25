@@ -1,3 +1,23 @@
+core*
+*.sql
+.vscode
+*.xls
+*.doc
+*.xlsx
+*.docx
+*.zip
+*.sqlite3
+*.sqlite
+*.db
+!assets/*.xlsx
+!assets/*.docx
+flutter_*
+
+# Other folders
+queries/
+references/
+drafts/
+
 # Miscellaneous
 .dart_tool
 *.class
