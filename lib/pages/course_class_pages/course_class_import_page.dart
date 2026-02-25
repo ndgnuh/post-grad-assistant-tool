@@ -5,7 +5,7 @@ import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../business/db_v2_providers.dart';
-import '../../services/excel.dart' as excel_helper;
+import '../../core/excel.dart' as excel_helper;
 import 'widgets.dart';
 
 List<_ParsedCourseClassInfo> _parseTable(

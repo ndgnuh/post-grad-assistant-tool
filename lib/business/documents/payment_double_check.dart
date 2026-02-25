@@ -3,7 +3,7 @@
 import 'common_widgets.dart';
 import 'pdf_utils.dart';
 import 'utilities/xlsx_builder.dart';
-import '../../services/misc_services.dart';
+import '../../core/misc_services.dart';
 import '../../utilities/strings.dart';
 
 import '../documents.dart';

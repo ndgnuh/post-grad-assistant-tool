@@ -6,7 +6,7 @@ import 'package:pdf/pdf.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../../business/db_v2_providers.dart';
-import '../../services/pdf_widgets.dart' as pw;
+import '../../core/pdf_widgets.dart' as pw;
 
 final unassignedThesisProvider = AsyncNotifierProvider(
   () => ThesisIdsNotifier(assigned: false),

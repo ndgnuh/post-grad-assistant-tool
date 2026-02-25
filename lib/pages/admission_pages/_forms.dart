@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:pdf/pdf.dart';
 
-import '../../services/pdf_widgets.dart' as pw;
+import '../../core/pdf_widgets.dart' as pw;
 
 extension _DateDmy on DateTime {
   String toDmy() {
