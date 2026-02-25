@@ -1,8 +1,9 @@
-import '../business/documents.dart';
-import '../pages/pages.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod/riverpod.dart';
+
+import '../business/documents.dart';
+import '../features/pages.dart';
 
 @Deprecated('Use [PdfViewerTile] from custom_widgets/pdf_viewer.dart instead')
 class PdfPreviewTile extends StatelessWidget {

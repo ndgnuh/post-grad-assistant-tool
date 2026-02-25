@@ -10,7 +10,7 @@ import 'package:pdfrx/pdfrx.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'business/db_v2_providers.dart';
-import 'pages/pages.dart' as pages;
+import 'features/pages.dart' as pages;
 import 'shortcuts.dart';
 import 'themes.dart';
 

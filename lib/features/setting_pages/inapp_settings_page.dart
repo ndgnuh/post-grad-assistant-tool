@@ -1,4 +1,4 @@
-// Setting pages
+// Setting features
 import 'dart:io';
 
 import 'package:external_path/external_path.dart' as ext_path;

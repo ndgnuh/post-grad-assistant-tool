@@ -103,7 +103,7 @@ class AppNavigator {
     );
   }
 
-  /// Detail pages
+  /// Detail features
   /// ============
   void toSemesterDetailsPage({required String semesterId}) => moveTo(
     (context) => SemesterDetailsPage(semesterId: semesterId),
@@ -153,7 +153,7 @@ class AppNavigator {
 final initialRoute = switch (kReleaseMode) {
   true => HomePage.routeName,
 
-  // Document management pages
+  // Document management features
   // false => DocumentManagementPage.routeName,
   // false => DocumentCreatePage.routeName,
 
@@ -163,10 +163,10 @@ final initialRoute = switch (kReleaseMode) {
   // false => InitialSetupPage.routeName,
   // false => SettingsPage.routeName,
 
-  // Semester pages
+  // Semester features
   // false => SemesterListPage.routeName,
 
-  // Student pages
+  // Student features
   // false => StudentListPage.routeName,
 
   // Debug home page
@@ -177,12 +177,12 @@ final initialRoute = switch (kReleaseMode) {
   // false => AdmissionEnrollmentPage.routeName,
   // false => AdmissionPaymentPage.routeName,
 
-  // Course classes pages
+  // Course classes features
   // ====================
   // false => CourseClassListPage.routeName,
   // false => CourseLimitingPage.routeName,
 
-  // Course pages
+  // Course features
   // false => CourseListPage.routeName,
 
   // Thesis defends
@@ -196,12 +196,12 @@ final initialRoute = switch (kReleaseMode) {
   // false => ThesisCreatePage.routeName,
   // false => ThesisDefensePaymentPage.routeName,
 
-  // PhD students pages
+  // PhD students features
   // false => PhdStudentListPage.routeName,
   // false => PhdStudentCreatePage.routeName,
   // false => phd_pages.PhdAdmissionPaymentPage.routeName,
 
-  // Teacher pages
+  // Teacher features
   false => TeacherSearchPage.routeName,
 
   // false => DraftPage.routeName,
@@ -211,7 +211,7 @@ final initialRoute = switch (kReleaseMode) {
   // false => PhdStudentListPage.routeName,
   // false => PhdStudentCreatePage.routeName,
 
-  /* Courses related pages */
+  /* Courses related features */
   // false => CourseLimitingPage.routeName,
 };
 
@@ -368,7 +368,7 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     case CourseLimitingPage.routeName:
       return CourseLimitingPage();
 
-    // Document manegement pages
+    // Document manegement features
     case DocumentManagementPage.routeName:
       return DocumentManagementPage();
     case DocumentCreatePage.routeName:
@@ -409,7 +409,7 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     // case MobilePageThesisAssignList.routeName:
     //   return const MobilePageThesisAssignList();
 
-    /// Academic year pages
+    /// Academic year features
     case SemesterListPage.routeName:
       return const SemesterListPage();
     case SemesterCreatePage.routeName:
@@ -422,7 +422,7 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
           return const SemesterListPage();
       }
 
-    /// Admission pages
+    /// Admission features
     case AdmissionListPage.routeName:
       return const AdmissionListPage();
     case AdmissionImportPage.routeName:
@@ -432,11 +432,11 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     case AdmissionPaymentPage.routeName:
       return const AdmissionPaymentPage();
 
-    /// Thesis topic management pages
+    /// Thesis topic management features
     case ThesisListPage.routeName:
       return const ThesisListPage();
 
-    /// Student management pages
+    /// Student management features
     case StudentListPage.routeName:
       return const StudentListPage();
     case StudentDetailPage.routeName:
@@ -447,7 +447,7 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
           return const StudentListPage();
       }
 
-    // Thesis defense pages
+    // Thesis defense features
     case msc_thesis.ThesisEverythingPage.routeName:
       return const msc_thesis.ThesisEverythingPage();
     case msc_thesis.ThesisDefensePaymentPage.routeName:
@@ -466,7 +466,7 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     // case ThesisDefensePaymentPage.routeName:
     //   return const ThesisDefensePaymentPage();
 
-    // PhD Student pages
+    // PhD Student features
     case PhdStudentListPage.routeName:
       return const PhdStudentListPage();
     case PhdStudentDetailsPage.routeName:
@@ -481,7 +481,7 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
     case phd_pages.PhdAdmissionPaymentPage.routeName:
       return const phd_pages.PhdAdmissionPaymentPage();
 
-    /// Functional pages
+    /// Functional features
     case SettingsPage.routeName:
       return const SettingsPage();
     case InitialSetupPage.routeName:

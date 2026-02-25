@@ -105,7 +105,7 @@ Future<Uint8List> buildSingleSheetExcel({
   final excel = Excel.createExcel();
   final sheet = excel.sheets.values.first;
 
-  // Ok, so the library does not allow setting pages
+  // Ok, so the library does not allow setting features
   // Add headers
   return Isolate.run(() {
     builder(sheet);
