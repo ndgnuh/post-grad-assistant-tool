@@ -4,6 +4,7 @@ SYNC_DIR ?= "$(HOME)/Sync/FaMI_SDH"
 APK_OUTPUT ?= "build/app/outputs/flutter-apk/app-release.apk"
 GDK_SCALE := 2
 
+
 dev:
 	flutter run
 
@@ -15,6 +16,13 @@ build_runner:
 
 build:
 	flutter build linux --release
+
+# Find import bug due to refactor
+import:
+	dart analyze lib | grep uri_does_not_exist
+
+bdb: # build debug
+	flutter build linux --debug
 
 build_windows:
 	flutter build windows --release
