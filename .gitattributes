@@ -5,3 +5,4 @@ assets/fonts/tex_gyre_termes_bold.ttf filter=lfs diff=lfs merge=lfs -text
 assets/fonts/tex_gyre_termes_italic.ttf filter=lfs diff=lfs merge=lfs -text
 assets/fonts/tex_gyre_termes_regular.ttf filter=lfs diff=lfs merge=lfs -text
 assets/templates/payment_request.docx filter=lfs diff=lfs merge=lfs -text
+assets/templates/msc-thesis-spending-decision.docx filter=lfs diff=lfs merge=lfs -text
