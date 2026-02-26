@@ -5,90 +5,11 @@ import 'common_widgets.dart';
 import 'pdf_utils.dart';
 import 'utilities/xlsx_builder.dart';
 
-class TeachingAssignmentDocument {
-  final SemesterData semester;
-  final List<CourseClassData> courseClasses;
-  final Map<int, CourseData> mapCourses;
-  final Map<int, List<TeacherData>> mapTeachers;
-  final Map<int, List<double>> mapWeights;
-
-  static final defaultPdfConfig = PdfConfig(
-    pageFormat: PdfPageFormat.a4.landscape,
-    horizontalMargin: 0.5 * inch,
-    verticalMargin: 0.5 * inch,
-    baseFontSize: 10 * pt,
-  );
-
-  String get name {
-    final semesterId = semester.id;
-    return "${semesterId}_PhanCongGiangDay_FaMI";
-  }
-
-  Future<XlsxFile> buildXlsx() {
-    return _buildXlsx(model: this);
-  }
-
-  Future<PdfFile> buildPdf({required PdfConfig config}) async {
-    return await _buildPdf(
-      config: config,
-      model: this,
-    );
-  }
-
-  TeachingAssignmentDocument({
-    required this.semester,
-    required this.courseClasses,
-    required this.mapCourses,
-    required this.mapTeachers,
-    required this.mapWeights,
-  });
-}
-
-Future<PdfFile> _buildPdf({
-  required final PdfConfig config,
-  required final TeachingAssignmentDocument model,
+Future<PdfFile> buildTeachingAssignmentPdf({
+  required TeachingAssignmentDocument model,
+  required PdfConfig config,
 }) async {
-  final bytes = await buildMultiPageDocument(
-    pageFormat: PdfPageFormat.a4.landscape,
-    margin: EdgeInsets.symmetric(
-      horizontal: config.horizontalMargin,
-      vertical: config.verticalMargin,
-    ),
-    baseFontSize: config.baseFontSize,
-    build: (context) => [
-      _TeachingAssignmentPdf(
-        config: config,
-        mapCourses: model.mapCourses,
-        semester: model.semester,
-        courseClasses: model.courseClasses,
-        mapTeachers: model.mapTeachers,
-        mapWeights: model.mapWeights,
-      ),
-    ],
-  );
-
-  final name = model.name;
-  return PdfFile(name: name, bytes: bytes);
-}
-
-class _TeachingAssignmentPdf extends StatelessWidget {
-  final SemesterData semester;
-  final List<CourseClassData> courseClasses;
-  final Map<int, CourseData> mapCourses;
-  final Map<int, List<TeacherData>> mapTeachers;
-  final Map<int, List<double>> mapWeights;
-  final PdfConfig config;
-
-  _TeachingAssignmentPdf({
-    required this.semester,
-    required this.mapCourses,
-    required this.courseClasses,
-    required this.mapTeachers,
-    required this.mapWeights,
-    required this.config,
-  });
-
-  List<String> get headerTexts => [
+  final List<String> headerTexts = const [
     "STT",
     "Mã lớp học phần",
     "Số TC",
@@ -99,17 +20,24 @@ class _TeachingAssignmentPdf extends StatelessWidget {
     "Phòng học",
     "Giảng viên",
     "Cơ quan\ncông tác",
-    "Điện thoại\nliên hệ",
+    "Email liên hệ\n(@hust.edu.vn)",
     "Ghi chú",
   ];
 
-  PdfColor? rowColor(int i, CourseClassData courseClass) {
-    if (courseClass.status == CourseClassStatus.canceled) {
-      return PdfColors.red200;
-    }
-    return null;
-  }
+  /// Get chronical time
+  final semester = model.semester;
+  final beginDate = semester.classBeginDate.toDmy(separator: '/');
+  final endDate = semester.classEndDate.toDmy(separator: '/');
+  final fromDateToDate = "$beginDate\n$endDate";
+  final yearStart = int.parse(semester.id.split('.').first);
+  final yearEnd = yearStart + 1;
 
+  /// Get course classes information
+  final mapTeachers = model.mapTeachers;
+  final mapCourses = model.mapCourses;
+  final courseClasses = model.courseClasses.toList(growable: false);
+
+  /// Function to build table row
   List<String> buildRow(int i, CourseClassData courseClass) {
     final status = courseClass.status;
     final course = mapCourses[courseClass.id]!;
@@ -137,16 +65,14 @@ class _TeachingAssignmentPdf extends StatelessWidget {
     }
 
     /// from - to dates
-    final beginDate = semester.classBeginDate.toDmy(separator: '/');
-    final endDate = semester.classEndDate.toDmy(separator: '/');
-    final fromToDate = "$beginDate\n$endDate";
 
     /// Teachers
     final teachers = [
       for (final teacher in mapTeachers[courseClass.id]!) teacher.name,
     ].join("\n");
     final contacts = [
-      for (final teacher in mapTeachers[courseClass.id]!) teacher.phoneNumber,
+      for (final teacher in mapTeachers[courseClass.id]!)
+        teacher.email?.replaceFirst("@hust.edu.vn", ""),
     ].join("\n");
 
     /// Classroom
@@ -154,10 +80,10 @@ class _TeachingAssignmentPdf extends StatelessWidget {
     switch ((courseClass.status, courseClass.classroom)) {
       case (CourseClassStatus.canceled, _):
         classroom = "";
-      case (_, String room) when room.isNotEmpty:
+      case (_, String room):
         classroom = room;
       default:
-        classroom = "mượn";
+        classroom = "";
     }
 
     /// Note
@@ -178,7 +104,7 @@ class _TeachingAssignmentPdf extends StatelessWidget {
       courseClassName,
       courseClass.dayOfWeek?.toShortString() ?? "",
       periods,
-      fromToDate,
+      fromDateToDate,
       classroom,
       teachers,
       "ĐHBKHN",
@@ -187,16 +113,14 @@ class _TeachingAssignmentPdf extends StatelessWidget {
     ];
   }
 
-  @override
-  Widget build(Context context) {
-    final yearStart = int.parse(semester.id.split('.').first);
-    final yearEnd = yearStart + 1;
-    final bold = TextStyle(fontWeight: FontWeight.bold);
-    final beginDate = semester.classBeginDate.toDmy(separator: '/');
-    final endDate = semester.classEndDate.toDmy(separator: '/');
-
-    return Column(
-      children: [
+  final bytes = await buildMultiPageDocument(
+    pageFormat: PdfPageFormat.a4.landscape,
+    margin: config.margin,
+    baseFontSize: config.baseFontSize,
+    build: (context) {
+      final defaultStyle = context.defaultTextStyle;
+      final bold = defaultStyle.bold;
+      return [
         /// Titles
         Row(
           children: [
@@ -206,18 +130,24 @@ class _TeachingAssignmentPdf extends StatelessWidget {
         ),
 
         /// To:
-        SizedBox(height: 12 * pt),
-        Text('Kính gửi: Ban Phòng Đào Tạo', style: bold),
-        Text(
-          "BẢNG PHÂN CÔNG ĐĂNG KÝ GIẢNG DẠY CAO HỌC - HỌC KỲ ${semester.id} - NĂM HỌC $yearStart - $yearEnd",
-          style: bold,
-        ),
+        Center(
+          child: Column(
+            children: [
+              SizedBox(height: 12 * pt),
+              Text('Kính gửi: Ban Phòng Đào Tạo', style: bold),
+              Text(
+                "BẢNG PHÂN CÔNG ĐĂNG KÝ GIẢNG DẠY CAO HỌC - HỌC KỲ ${semester.id} - NĂM HỌC $yearStart - $yearEnd",
+                style: bold,
+              ),
 
-        // Class begin-from date
-        SizedBox(height: 3 * pt),
-        Text(
-          "Thời gian học: $beginDate - $endDate",
-          style: bold,
+              // Class begin-from date
+              SizedBox(height: 3 * pt),
+              Text(
+                "Thời gian học: $beginDate - $endDate",
+                style: bold,
+              ),
+            ],
+          ),
         ),
 
         // assignment table
@@ -226,6 +156,7 @@ class _TeachingAssignmentPdf extends StatelessWidget {
           headerStyle: bold,
           headerAlignment: Alignment.center,
           headerAlignments: {3: Alignment.center, 8: Alignment.center},
+          cellPadding: config.cellPadding,
           cellBuilder: (col, data, row) {
             if (row == 0) {
               return Align(
@@ -243,7 +174,11 @@ class _TeachingAssignmentPdf extends StatelessWidget {
           defaultColumnWidth: IntrinsicColumnWidth(),
           cellAlignment: Alignment.center,
           columnWidths: {3: FlexColumnWidth(0.5)},
-          cellAlignments: {3: Alignment.centerLeft, 8: Alignment.centerLeft},
+          cellAlignments: {
+            3: Alignment.centerLeft,
+            8: Alignment.centerLeft,
+            10: Alignment.centerLeft,
+          },
           data: [
             headerTexts,
             for (final (i, courseClass) in courseClasses.indexed)
@@ -267,9 +202,29 @@ class _TeachingAssignmentPdf extends StatelessWidget {
             ),
           ],
         ),
-      ],
-    );
-  }
+      ];
+    },
+  );
+
+  return PdfFile(name: model.name, bytes: bytes);
+}
+
+Future<XlsxFile> _buildXlsx({
+  required final TeachingAssignmentDocument model,
+}) async {
+  final bytes = await buildSingleSheetExcel(
+    builder: (sheet) => _sheetBuilder(
+      sheet: sheet,
+      semester: model.semester,
+      courseClasses: model.courseClasses,
+      mapCourses: model.mapCourses,
+      mapTeachers: model.mapTeachers,
+      mapWeights: model.mapWeights,
+    ),
+  );
+
+  final name = model.name;
+  return XlsxFile(name: name, bytes: bytes);
 }
 
 void _sheetBuilder({
@@ -369,7 +324,8 @@ void _sheetBuilder({
       for (final teacher in mapTeachers[courseClass.id]!) teacher.name,
     ].join("\n");
     final contacts = [
-      for (final teacher in mapTeachers[courseClass.id]!) teacher.phoneNumber,
+      for (final teacher in mapTeachers[courseClass.id]!)
+        teacher.email?.replaceFirst("@hust.edu.vn", ""),
     ].join("\n");
 
     final String note;
@@ -476,20 +432,62 @@ void _sheetBuilder({
   );
 }
 
-Future<XlsxFile> _buildXlsx({
-  required final TeachingAssignmentDocument model,
-}) async {
-  final bytes = await buildSingleSheetExcel(
-    builder: (sheet) => _sheetBuilder(
-      sheet: sheet,
-      semester: model.semester,
-      courseClasses: model.courseClasses,
-      mapCourses: model.mapCourses,
-      mapTeachers: model.mapTeachers,
-      mapWeights: model.mapWeights,
-    ),
+class TeachingAssignmentDocument {
+  static final defaultPdfConfig = PdfConfig(
+    pageFormat: PdfPageFormat.a4.landscape,
+    horizontalMargin: 0.5 * inch,
+    verticalMargin: 0.5 * inch,
+    baseFontSize: 10 * pt,
   );
+  final SemesterData semester;
+  final List<CourseClassData> courseClasses;
+  final Map<int, CourseData> mapCourses;
+  final Map<int, List<TeacherData>> mapTeachers;
 
-  final name = model.name;
-  return XlsxFile(name: name, bytes: bytes);
+  final Map<int, List<double>> mapWeights;
+
+  TeachingAssignmentDocument({
+    required this.semester,
+    required this.courseClasses,
+    required this.mapCourses,
+    required this.mapTeachers,
+    required this.mapWeights,
+  }) {
+    courseClasses.sort((c1, c2) {
+      // Sort by status
+      final s1 = c1.status;
+      final s2 = c2.status;
+      switch ((s1, s2)) {
+        case (CourseClassStatus.normal, CourseClassStatus.canceled):
+          return -1;
+        case (CourseClassStatus.canceled, CourseClassStatus.normal):
+          return 1;
+        default:
+        // no-op
+      }
+
+      // Sort earlier first
+      final d1 = c1.dayOfWeek ?? DayOfWeek.sunday;
+      final d2 = c2.dayOfWeek ?? DayOfWeek.sunday;
+      if (d1 != d2) return d1.compareTo(d2);
+
+      // Sort earlier in a day first
+      final p1 = c1.startPeriod ?? 99;
+      final p2 = c2.startPeriod ?? 99;
+      return p1.compareTo(p2);
+    });
+  }
+
+  String get name {
+    final semesterId = semester.id;
+    return "${semesterId}_PhanCongGiangDay_FaMI";
+  }
+
+  Future<PdfFile> buildPdf({required PdfConfig config}) async {
+    return await buildTeachingAssignmentPdf(model: this, config: config);
+  }
+
+  Future<XlsxFile> buildXlsx() {
+    return _buildXlsx(model: this);
+  }
 }

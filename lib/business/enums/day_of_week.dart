@@ -1,13 +1,14 @@
 import 'package:drift/drift.dart';
 
-enum DayOfWeek {
+enum DayOfWeek implements Comparable {
   monday(2, 'Thứ 2'),
   tuesday(3, 'Thứ 3'),
   wednesday(4, 'Thứ 4'),
   thursday(5, 'Thứ 5'),
   friday(6, 'Thứ 6'),
   saturday(7, 'Thứ 7'),
-  sunday(8, 'Chủ nhật');
+  sunday(8, 'Chủ nhật')
+  ;
 
   final int value;
   final String label;
@@ -33,6 +34,11 @@ enum DayOfWeek {
       case DayOfWeek.sunday:
         return 'CN';
     }
+  }
+
+  @override
+  int compareTo(other) {
+    return value.compareTo(other.value);
   }
 }
 

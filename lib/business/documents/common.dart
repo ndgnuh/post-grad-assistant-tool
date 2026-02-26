@@ -29,6 +29,20 @@ class PdfConfig {
     this.pageFormat = PdfPageFormat.a4,
   });
 
+  /// Represent the page margins.
+  /// Returns the [EdgeInsets] object required by the pdf framework.
+  EdgeInsets get margin => EdgeInsets.symmetric(
+    vertical: verticalMargin,
+    horizontal: horizontalMargin,
+  );
+
+  /// Represent the table cell paddings.
+  /// Returns the [EdgeInsets] object required by the pdf framework.
+  EdgeInsets get cellPadding => EdgeInsets.symmetric(
+    vertical: verticalTableCellPadding,
+    horizontal: horizontalTableCellPadding,
+  );
+
   PdfConfig copyWith({
     double? baseFontSize,
     double? verticalMargin,
