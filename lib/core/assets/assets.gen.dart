@@ -25,12 +25,29 @@ class $AssetsFontsGen {
   /// File path: assets/fonts/tex_gyre_termes_regular.ttf
   String get texGyreTermesRegular => 'assets/fonts/tex_gyre_termes_regular.ttf';
 
+  /// File path: assets/fonts/times_new_roman.ttf
+  String get timesNewRoman => 'assets/fonts/times_new_roman.ttf';
+
+  /// File path: assets/fonts/times_new_roman_bold.ttf
+  String get timesNewRomanBold => 'assets/fonts/times_new_roman_bold.ttf';
+
+  /// File path: assets/fonts/times_new_roman_bold_italic.ttf
+  String get timesNewRomanBoldItalic =>
+      'assets/fonts/times_new_roman_bold_italic.ttf';
+
+  /// File path: assets/fonts/times_new_roman_italic.ttf
+  String get timesNewRomanItalic => 'assets/fonts/times_new_roman_italic.ttf';
+
   /// List of all assets
   List<String> get values => [
     texGyreTermesBold,
     texGyreTermesBoldItalic,
     texGyreTermesItalic,
     texGyreTermesRegular,
+    timesNewRoman,
+    timesNewRomanBold,
+    timesNewRomanBoldItalic,
+    timesNewRomanItalic,
   ];
 }
 

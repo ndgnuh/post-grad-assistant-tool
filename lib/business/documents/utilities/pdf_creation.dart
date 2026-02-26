@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
 
@@ -107,18 +106,21 @@ Future<Uint8List> buildSinglePageDocument({
 Future<TextStyle> getPdfDefaultTextStyle({
   double fontSize = defaultBaseFontSize,
 }) async {
-  final serifFonts = (
-    base: loadFont(Assets.fonts.texGyreTermesRegular),
-    bold: loadFont(Assets.fonts.texGyreTermesBold),
-    italic: loadFont(Assets.fonts.texGyreTermesItalic),
-    boldItalic: loadFont(Assets.fonts.texGyreTermesBoldItalic),
-  );
-  // final serifFonts = (
-  //   base: loadFont(Assets.fonts.timesNewRoman),
-  //   bold: loadFont(Assets.fonts.timesNewRomanBold),
-  //   italic: loadFont(Assets.fonts.timesNewRomanItalic),
-  //   boldItalic: loadFont(Assets.fonts.timesNewRomanBoldItalic),
-  // );
+  final useTimes = true;
+  final serifFonts = switch (useTimes) {
+    false => (
+      base: loadFont(Assets.fonts.texGyreTermesRegular),
+      bold: loadFont(Assets.fonts.texGyreTermesBold),
+      italic: loadFont(Assets.fonts.texGyreTermesItalic),
+      boldItalic: loadFont(Assets.fonts.texGyreTermesBoldItalic),
+    ),
+    true => (
+      base: loadFont(Assets.fonts.timesNewRoman),
+      bold: loadFont(Assets.fonts.timesNewRomanBold),
+      italic: loadFont(Assets.fonts.timesNewRomanItalic),
+      boldItalic: loadFont(Assets.fonts.timesNewRomanBoldItalic),
+    ),
+  };
 
   final defaultTextStyle = TextStyle(
     font: await serifFonts.base,
