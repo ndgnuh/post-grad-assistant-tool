@@ -11,6 +11,7 @@ core*
 *.db
 !assets/*.xlsx
 !assets/*.docx
+!lib/core/
 flutter_*
 
 # Other folders
