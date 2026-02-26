@@ -21,3 +21,4 @@ export 'documents/msc_thesis/assignment.dart';
 export 'documents/msc_thesis/score_sheet.dart';
 export 'documents/msc_thesis/council_suggestion.dart';
 export 'documents/msc_thesis/council_decision.dart';
+export 'package:pdf/pdf.dart' show PdfPageFormat;

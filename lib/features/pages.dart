@@ -179,7 +179,7 @@ final initialRoute = switch (kReleaseMode) {
 
   // Course classes features
   // ====================
-  // false => CourseClassListPage.routeName,
+  false => CourseClassListPage.routeName,
   // false => CourseLimitingPage.routeName,
 
   // Course features

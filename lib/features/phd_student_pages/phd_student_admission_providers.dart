@@ -1,10 +1,10 @@
 import '../../business/documents.dart';
-import '../../gen/assets.gen.dart';
 import '../../business/documents/utilities/docx_template.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:riverpod/riverpod.dart';
 import '../../business/db_v2_providers.dart';
 import '../../business/documents.dart' as pdfs;
+import '../../core/assets.dart';
 import '../../utilities/strings.dart';
 
 final scoreSheetPdfProvider = FutureProvider.family((ref, int studentId) async {

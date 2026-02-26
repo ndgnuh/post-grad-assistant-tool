@@ -1,9 +1,9 @@
-import '../../utilities/strings.dart';
-import '../documents.dart';
-import '../main_database.dart';
-import 'common_widgets.dart';
-import 'pdf_utils.dart';
-import 'utilities/xlsx_builder.dart';
+import '../../../business/db_v2_providers.dart';
+import '../../../business/documents.dart';
+import '../../../business/documents/common_widgets.dart';
+import '../../../business/documents/pdf_utils.dart';
+import '../../../business/documents/xlsx_utils.dart';
+import '../../../utilities/strings.dart';
 
 class TeachingAssignmentDocument {
   final SemesterData semester;

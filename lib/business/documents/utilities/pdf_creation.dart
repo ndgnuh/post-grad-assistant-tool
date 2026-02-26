@@ -2,10 +2,10 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
 
-import '../../../gen/assets.gen.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:pdfrx_engine/pdfrx_engine.dart' as pdfrx;
 
+import '../../../core/assets.dart';
 import 'pdf_widgets.dart';
 
 const defaultBaseFontSize = 12.0 * pt;

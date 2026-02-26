@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 
-import '../../gen/assets.gen.dart';
+import '../../core/assets.dart';
 import '../../utilities/strings.dart';
 import '../db_v2_providers.dart';
 import 'common.dart';

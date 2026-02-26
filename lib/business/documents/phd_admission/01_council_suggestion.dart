@@ -1,5 +1,5 @@
+import '../../../core/assets.dart';
 import '../pdf_utils.dart';
-import '../../../gen/assets.gen.dart';
 import '../../../utilities/strings.dart';
 import 'package:flutter/services.dart';
 

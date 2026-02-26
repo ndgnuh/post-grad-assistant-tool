@@ -3,12 +3,12 @@ import '../business/documents.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../gen/assets.gen.dart';
 
 // import '../business/domain_objects.dart';
 import '../business/db_v2_providers.dart';
 
 import '../business/documents/utilities/docx_template.dart';
+import '../core/assets.dart';
 
 Future<XlsxFile> buildExcel(WidgetRef ref) async {
   final thesisIds = await ref.watch(trackedThesisIdsProvider.future);
