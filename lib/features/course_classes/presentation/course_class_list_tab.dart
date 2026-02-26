@@ -3,10 +3,10 @@ import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../custom_widgets.dart';
-import '../../business/db_v2_providers.dart';
-import '../course_pages/course_pages.dart';
-import 'course_class_pages.dart';
+import '../../../business/db_v2_providers.dart';
+import '../../../custom_widgets.dart';
+import '../../course_pages/course_pages.dart';
+import '../course_classes.dart';
 import 'providers.dart';
 import 'widgets.dart';
 
@@ -54,95 +54,6 @@ class CourseClassListTab extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _CourseClassesView extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final idsAsync = ref.watch(courseClassIdsProvider);
-    switch (idsAsync) {
-      case AsyncLoading():
-        return const CircularProgressIndicator();
-      case AsyncError(:final error):
-        return Text("Error: $error");
-      default:
-    }
-
-    final (ids, shouldPrompt) = idsAsync.value!;
-
-    if (shouldPrompt) {
-      return Center(child: Text("Vui lòng chọn đợt học"));
-    }
-
-    return ListView.separated(
-      separatorBuilder: (context, index) => Divider(),
-      itemCount: ids.length,
-      itemBuilder: (context, index) {
-        final classId = ids[index];
-        return _CourseClassTile(classId: classId);
-      },
-    );
-  }
-}
-
-class _CourseClassTile extends ConsumerWidget {
-  final int classId;
-  const _CourseClassTile({required this.classId});
-
-  void onTap(BuildContext context, WidgetRef ref) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => CourseClassDetailsPage.teachingAssignment(
-          classId: classId,
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final viewModelAsync = ref.watch(courseClassViewModelByIdProvider(classId));
-    switch (viewModelAsync) {
-      case AsyncLoading():
-        return ListTile(
-          title: Text("Loading..."),
-        );
-      case AsyncError(:final error):
-        return ListTile(
-          title: Text("Error: $error"),
-        );
-      default:
-    }
-
-    final viewModel = viewModelAsync.value!;
-    final courseClass = viewModel.courseClass;
-    final course = viewModel.course;
-    final teachers = viewModel.teachers;
-    final teacherNames = teachers.keys.map((t) => t.name).join(", ");
-    final url = courseClass.accessUrl;
-
-    final subtitles = [
-      if (teacherNames.isNotEmpty)
-        "Giảng viên: $teacherNames"
-      else
-        "Chưa phân công giảng viên",
-      "Số đăng ký: ${viewModel.registrationCount}",
-      "Trạng thái: ${courseClass.status?.label ?? "N/A"}",
-      if (url != null && url.isNotEmpty) "Nhóm lớp: $url",
-    ];
-
-    return ListTile(
-      title: Text("${course.id} - ${course.vietnameseName}"),
-      subtitle: Text(subtitles.join("\n")),
-      trailing: Icon(Icons.chevron_right),
-      onTap: () => showDialog(
-        context: context,
-        builder: (context) => _CourseClassActionDialog(
-          courseClass: viewModel,
-        ),
       ),
     );
   }
@@ -217,6 +128,95 @@ class _CourseClassActionDialog extends ConsumerWidget {
           onTap: null,
         ),
       ],
+    );
+  }
+}
+
+class _CourseClassesView extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final idsAsync = ref.watch(courseClassIdsProvider);
+    switch (idsAsync) {
+      case AsyncLoading():
+        return const CircularProgressIndicator();
+      case AsyncError(:final error):
+        return Text("Error: $error");
+      default:
+    }
+
+    final (ids, shouldPrompt) = idsAsync.value!;
+
+    if (shouldPrompt) {
+      return Center(child: Text("Vui lòng chọn đợt học"));
+    }
+
+    return ListView.separated(
+      separatorBuilder: (context, index) => Divider(),
+      itemCount: ids.length,
+      itemBuilder: (context, index) {
+        final classId = ids[index];
+        return _CourseClassTile(classId: classId);
+      },
+    );
+  }
+}
+
+class _CourseClassTile extends ConsumerWidget {
+  final int classId;
+  const _CourseClassTile({required this.classId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final viewModelAsync = ref.watch(courseClassViewModelByIdProvider(classId));
+    switch (viewModelAsync) {
+      case AsyncLoading():
+        return ListTile(
+          title: Text("Loading..."),
+        );
+      case AsyncError(:final error):
+        return ListTile(
+          title: Text("Error: $error"),
+        );
+      default:
+    }
+
+    final viewModel = viewModelAsync.value!;
+    final courseClass = viewModel.courseClass;
+    final course = viewModel.course;
+    final teachers = viewModel.teachers;
+    final teacherNames = teachers.keys.map((t) => t.name).join(", ");
+    final url = courseClass.accessUrl;
+
+    final subtitles = [
+      if (teacherNames.isNotEmpty)
+        "Giảng viên: $teacherNames"
+      else
+        "Chưa phân công giảng viên",
+      "Số đăng ký: ${viewModel.registrationCount}",
+      "Trạng thái: ${courseClass.status?.label ?? "N/A"}",
+      if (url != null && url.isNotEmpty) "Nhóm lớp: $url",
+    ];
+
+    return ListTile(
+      title: Text("${course.id} - ${course.vietnameseName}"),
+      subtitle: Text(subtitles.join("\n")),
+      trailing: Icon(Icons.chevron_right),
+      onTap: () => showDialog(
+        context: context,
+        builder: (context) => _CourseClassActionDialog(
+          courseClass: viewModel,
+        ),
+      ),
+    );
+  }
+
+  void onTap(BuildContext context, WidgetRef ref) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => CourseClassDetailsPage.teachingAssignment(
+          classId: classId,
+        ),
+      ),
     );
   }
 }

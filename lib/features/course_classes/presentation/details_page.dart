@@ -4,12 +4,12 @@ import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../business/db_v2_providers.dart';
-import '../../custom_tiles.dart';
-import '../../custom_widgets.dart';
-import '../course_pages/course_pages.dart';
-import '../semester_pages/semester_pages.dart';
-import '../teacher_pages/teacher_pages.dart';
+import '../../../business/db_v2_providers.dart';
+import '../../../custom_tiles.dart';
+import '../../../custom_widgets.dart';
+import '../../course_pages/course_pages.dart';
+import '../../semester_pages/semester_pages.dart';
+import '../../teacher_pages/teacher_pages.dart';
 import 'providers.dart';
 import 'teaching_assignment_tab.dart';
 

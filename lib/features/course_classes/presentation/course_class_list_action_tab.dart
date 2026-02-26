@@ -1,8 +1,3 @@
-import '../../business/copy_pasta.dart';
-import '../../business/db_v2_providers.dart';
-import '../../custom_widgets.dart';
-import 'teaching_assignment_providers.dart';
-import '../pages.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,8 +7,13 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'course_class_pages.dart';
+import '../../../business/copy_pasta.dart';
+import '../../../business/db_v2_providers.dart';
+import '../../../custom_widgets.dart';
+import '../../pages.dart';
+import '../course_classes.dart';
 import 'providers.dart';
+import 'teaching_assignment_providers.dart';
 import 'widgets.dart';
 
 class CourseClassActionTab extends StatelessWidget {
@@ -153,6 +153,36 @@ class CourseClassActionTab extends StatelessWidget {
   }
 }
 
+class EmailNotificationButtonBuilder extends ConsumerWidget {
+  final AsyncNotifierProvider<AsyncNotifier<Email?>, Email?> provider;
+  final Widget Function(BuildContext context, VoidCallback? callback) builder;
+
+  const EmailNotificationButtonBuilder({
+    super.key,
+    required this.provider,
+    required this.builder,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final messageAsync = ref.watch(provider);
+    switch (messageAsync) {
+      case AsyncLoading _:
+        return builder(context, null);
+      case AsyncError(:final error):
+        return Text("Error: $error");
+      case AsyncData(:final value):
+        if (value == null) return builder(context, null);
+        return builder(context, () {
+          showDialog(
+            context: context,
+            builder: (context) => EmailCopyDialog(email: value),
+          );
+        });
+    }
+  }
+}
+
 class _ClassAccessUrlNotificationButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -177,6 +207,72 @@ class _ClassAccessUrlNotificationButton extends ConsumerWidget {
         );
       },
       enabled: message != null,
+    );
+  }
+}
+
+class _TeachingAssignmentEmailButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final emailAsync = ref.watch(teachingAssignmentEmailProvider);
+    switch (emailAsync) {
+      case AsyncLoading():
+        return LinearProgressIndicator();
+      case AsyncError(:final error):
+        return ListTile(
+          title: Text('Email thông báo giảng dạy'),
+          subtitle: Text(error.toString()),
+        );
+      default:
+    }
+
+    final email = emailAsync.value;
+    return ListTile(
+      leading: const Icon(Symbols.email),
+      title: const Text('Email thông báo giảng dạy'),
+      subtitle: const Text('Xem và sao chép email thông báo giảng dạy'),
+      trailing: const Icon(Symbols.chevron_forward),
+      enabled: email != null,
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) => EmailCopyDialog(email: email!),
+        );
+      },
+    );
+  }
+}
+
+class _TeachingAssignmentPdfButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pdfFileAsync = ref.watch(teachingAssignmentPdfProvider);
+    switch (pdfFileAsync) {
+      case AsyncLoading():
+        return LinearProgressIndicator();
+      case AsyncError(:final error):
+        return ListTile(
+          title: Text('Bảng phân công'),
+          subtitle: Text(error.toString()),
+        );
+      default:
+    }
+
+    final pdfFile = pdfFileAsync.value;
+    return ListTile(
+      leading: const Icon(Symbols.docs),
+      title: const Text('Bảng phân công'),
+      subtitle: const Text('trước bảng phân công'),
+      trailing: const Icon(Symbols.chevron_forward),
+      enabled: pdfFile != null,
+      onTap: () async {
+        final nav = AppNavigator(context);
+        nav.toPdfPreviewPage(
+          title: pdfFile!.name,
+          pdfData: pdfFile.bytes,
+          sourceName: pdfFile.name,
+        );
+      },
     );
   }
 }
@@ -261,101 +357,5 @@ class _ToSemesterPageButton extends ConsumerWidget {
         nav.toSemesterDetailsPage(semesterId: semester!.id);
       },
     );
-  }
-}
-
-class _TeachingAssignmentPdfButton extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final pdfFileAsync = ref.watch(teachingAssignmentPdfProvider);
-    switch (pdfFileAsync) {
-      case AsyncLoading():
-        return LinearProgressIndicator();
-      case AsyncError(:final error):
-        return ListTile(
-          title: Text('Bảng phân công'),
-          subtitle: Text(error.toString()),
-        );
-      default:
-    }
-
-    final pdfFile = pdfFileAsync.value;
-    return ListTile(
-      leading: const Icon(Symbols.docs),
-      title: const Text('Bảng phân công'),
-      subtitle: const Text('trước bảng phân công'),
-      trailing: const Icon(Symbols.chevron_forward),
-      enabled: pdfFile != null,
-      onTap: () async {
-        final nav = AppNavigator(context);
-        nav.toPdfPreviewPage(
-          title: pdfFile!.name,
-          pdfData: pdfFile.bytes,
-          sourceName: pdfFile.name,
-        );
-      },
-    );
-  }
-}
-
-class _TeachingAssignmentEmailButton extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final emailAsync = ref.watch(teachingAssignmentEmailProvider);
-    switch (emailAsync) {
-      case AsyncLoading():
-        return LinearProgressIndicator();
-      case AsyncError(:final error):
-        return ListTile(
-          title: Text('Email thông báo giảng dạy'),
-          subtitle: Text(error.toString()),
-        );
-      default:
-    }
-
-    final email = emailAsync.value;
-    return ListTile(
-      leading: const Icon(Symbols.email),
-      title: const Text('Email thông báo giảng dạy'),
-      subtitle: const Text('Xem và sao chép email thông báo giảng dạy'),
-      trailing: const Icon(Symbols.chevron_forward),
-      enabled: email != null,
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (context) => EmailCopyDialog(email: email!),
-        );
-      },
-    );
-  }
-}
-
-class EmailNotificationButtonBuilder extends ConsumerWidget {
-  final AsyncNotifierProvider<AsyncNotifier<Email?>, Email?> provider;
-  final Widget Function(BuildContext context, VoidCallback? callback) builder;
-
-  const EmailNotificationButtonBuilder({
-    super.key,
-    required this.provider,
-    required this.builder,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final messageAsync = ref.watch(provider);
-    switch (messageAsync) {
-      case AsyncLoading _:
-        return builder(context, null);
-      case AsyncError(:final error):
-        return Text("Error: $error");
-      case AsyncData(:final value):
-        if (value == null) return builder(context, null);
-        return builder(context, () {
-          showDialog(
-            context: context,
-            builder: (context) => EmailCopyDialog(email: value),
-          );
-        });
-    }
   }
 }

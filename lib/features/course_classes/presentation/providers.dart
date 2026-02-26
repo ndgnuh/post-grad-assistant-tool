@@ -1,22 +1,29 @@
 import 'dart:async';
 
-import '../../utilities/strings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../business/copy_pasta.dart';
-import '../../business/db_v2_providers.dart';
-import '../../business/selection_models.dart';
+import '../../../business/copy_pasta.dart';
+import '../../../business/db_v2_providers.dart';
+import '../../../business/selection_models.dart';
+import '../../../utilities/strings.dart';
 
-final courseClassViewModelByIdProvider = AsyncNotifierProvider.family(
-  CourseClassViewModelByIdNotifier.new,
-);
+/// Return course class IDs for the selected semester
+/// along with a boolean indicating whether no semester is selected
+final courseClassIdsProvider = FutureProvider((ref) async {
+  final semesterSelection = await ref.watch(
+    semesterSelectionModelProvider.future,
+  );
+  final selectedSemester = semesterSelection.selected;
+  if (selectedSemester == null) return ([], true);
 
-final semesterSelectionModelProvider = AsyncNotifierProvider(
-  () => SemesterSelectionModelNotifier("course-class"),
-);
+  final courseClassIds = await ref.watch(
+    courseClassIdsBySemesterProvider(selectedSemester.id).future,
+  );
+  return (courseClassIds, false);
+});
 
 final courseClassUrlNotificationProvider = FutureProvider((Ref ref) async {
   final semesterSelection = await ref.watch(
@@ -58,20 +65,9 @@ Các thầy cô sẽ được add vào nhóm sau.
       .trim();
 });
 
-/// Return course class IDs for the selected semester
-/// along with a boolean indicating whether no semester is selected
-final courseClassIdsProvider = FutureProvider((ref) async {
-  final semesterSelection = await ref.watch(
-    semesterSelectionModelProvider.future,
-  );
-  final selectedSemester = semesterSelection.selected;
-  if (selectedSemester == null) return ([], true);
-
-  final courseClassIds = await ref.watch(
-    courseClassIdsBySemesterProvider(selectedSemester.id).future,
-  );
-  return (courseClassIds, false);
-});
+final courseClassViewModelByIdProvider = AsyncNotifierProvider.family(
+  CourseClassViewModelByIdNotifier.new,
+);
 
 final courseRegistrationMessageProvider = AsyncNotifierProvider(
   CourseRegistrationMessageNotifier.new,
@@ -79,6 +75,10 @@ final courseRegistrationMessageProvider = AsyncNotifierProvider(
 
 final gradeSubmissionAnnouncementProvider = AsyncNotifierProvider(
   GradeSubmissionAnnouncementNotifier.new,
+);
+
+final semesterSelectionModelProvider = AsyncNotifierProvider(
+  () => SemesterSelectionModelNotifier("course-class"),
 );
 
 final teachingAnnouncementProvider = AsyncNotifierProvider(
@@ -93,10 +93,6 @@ class CourseClassViewModel {
   final CourseData course;
   final int registrationCount;
 
-  String get className {
-    return courseClass.classId.replaceFirst(course.id, course.vietnameseName);
-  }
-
   const CourseClassViewModel({
     required this.semester,
     required this.courseClass,
@@ -104,6 +100,10 @@ class CourseClassViewModel {
     required this.course,
     this.registrationCount = 0,
   });
+
+  String get className {
+    return courseClass.classId.replaceFirst(course.id, course.vietnameseName);
+  }
 }
 
 class CourseClassViewModelByIdNotifier
@@ -150,10 +150,29 @@ class CourseClassViewModelByIdNotifier
   }
 }
 
-sealed class EmailToTeachersNotifier extends AsyncNotifier<Email?> {
-  String subject(SemesterData semester);
-  String body(SemesterData semester);
+class CourseRegistrationMessageNotifier extends AsyncNotifier<String?> {
+  @override
+  Future<String?> build() async {
+    // Selected semester
+    final semesterSelection = await ref.watch(
+      semesterSelectionModelProvider.future,
+    );
+    final selectedSemester = semesterSelection.selected;
+    if (selectedSemester == null) return null;
 
+    // If any semester is selected, returns the notification
+    final dateFmt = DateFormat("dd/MM/yyyy");
+    final semester = selectedSemester;
+    final semesterName = semester.id;
+    final registerFromString = dateFmt.format(semester.registrationBeginDate);
+    final registerToString = dateFmt.format(semester.registrationEndDate);
+
+    return "Đợt học $semesterName mở đăng ký từ $registerFromString đến $registerToString. Các bạn nhớ đăng ký học đúng thời gian nhé!";
+  }
+}
+
+sealed class EmailToTeachersNotifier extends AsyncNotifier<Email?> {
+  String body(SemesterData semester);
   @override
   Future<Email?> build() async {
     // Get selected semester
@@ -198,6 +217,8 @@ sealed class EmailToTeachersNotifier extends AsyncNotifier<Email?> {
       body: body(selectedSemester),
     );
   }
+
+  String subject(SemesterData semester);
 }
 
 class GradeSubmissionAnnouncementNotifier extends EmailToTeachersNotifier {
@@ -260,26 +281,5 @@ Nguyễn Đức Hùng""";
   @override
   String subject(SemesterData semester) {
     return "[Thông báo] Về việc giảng dạy cao học đợt học ${semester.id}";
-  }
-}
-
-class CourseRegistrationMessageNotifier extends AsyncNotifier<String?> {
-  @override
-  Future<String?> build() async {
-    // Selected semester
-    final semesterSelection = await ref.watch(
-      semesterSelectionModelProvider.future,
-    );
-    final selectedSemester = semesterSelection.selected;
-    if (selectedSemester == null) return null;
-
-    // If any semester is selected, returns the notification
-    final dateFmt = DateFormat("dd/MM/yyyy");
-    final semester = selectedSemester;
-    final semesterName = semester.id;
-    final registerFromString = dateFmt.format(semester.registrationBeginDate);
-    final registerToString = dateFmt.format(semester.registrationEndDate);
-
-    return "Đợt học $semesterName mở đăng ký từ $registerFromString đến $registerToString. Các bạn nhớ đăng ký học đúng thời gian nhé!";
   }
 }

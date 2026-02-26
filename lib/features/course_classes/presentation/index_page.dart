@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../custom_widgets.dart';
+import '../../../custom_widgets.dart';
 import 'course_class_list_action_tab.dart';
 import 'course_class_list_tab.dart';
 

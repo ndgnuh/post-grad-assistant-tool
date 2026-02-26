@@ -1,3 +1,7 @@
+/// FIXME: decouple this module
+/// FIXME: make the shortcut not requires context to initialize
+library;
+
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

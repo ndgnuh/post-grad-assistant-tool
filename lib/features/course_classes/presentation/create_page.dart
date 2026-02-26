@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 
-import '../../custom_widgets.dart';
+import '../../../custom_widgets.dart';
 
 class CourseClassCreatePage extends StatelessWidget {
   static const routeName = "/course_classes/create";

@@ -1,23 +1,23 @@
 import 'dart:async';
 
-import '../../business/copy_pasta.dart';
-import '../../business/documents.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../business/db_v2_providers.dart';
-import '../../business/selection_models.dart';
-import '_interpersonal.dart' as interpersonal;
+import '../../../business/copy_pasta.dart';
+import '../../../business/db_v2_providers.dart';
+import '../../../business/documents.dart';
+import '../../../business/selection_models.dart';
+import '../domain/_interpersonal.dart' as interpersonal;
 import 'providers.dart';
-
-/// Provide whether to use polite pronoun when addressing the selected teacher
-final politenessProvider = AsyncNotifierProvider.family(
-  PoliteNotifier.new,
-);
 
 /// Which candiddate teacher is selected on the UI
 final candidateSelectionProvider = AsyncNotifierProvider.family(
   CandidateSelectionNotifier.new,
+);
+
+/// Provide whether to use polite pronoun when addressing the selected teacher
+final politenessProvider = AsyncNotifierProvider.family(
+  PoliteNotifier.new,
 );
 
 final teachingAssignmentEmailProvider = FutureProvider<Email?>((ref) async {
@@ -105,16 +105,59 @@ $myName"""
   );
 });
 
+final teachingAssignmentModelProvider = FutureProvider((ref) async {
+  final semesterSelection = await ref.watch(
+    semesterSelectionModelProvider.future,
+  );
+  final semester = semesterSelection.selected;
+  if (semester == null) return null;
+
+  final courseClassIds = await ref.watch(
+    courseClassIdsBySemesterProvider(semester.id).future,
+  );
+
+  final courseClasses = <CourseClassData>[];
+  final mapTeachers = <int, List<TeacherData>>{};
+  final mapWeights = <int, List<double>>{};
+  final mapCourses = <int, CourseData>{};
+
+  for (final classId in courseClassIds) {
+    final courseClass = await ref.watch(
+      courseClassByIdProvider(classId).future,
+    );
+    if (!courseClass.courseId.startsWith("MI")) continue;
+
+    final course = await ref.watch(
+      courseByIdProvider(courseClass.courseId).future,
+    );
+    final assignment = await ref.watch(
+      teachingAssignmentsProvider(classId).future,
+    );
+    final teachers = [
+      for (final a in assignment)
+        await ref.watch(teacherByIdProvider(a.teacherId).future),
+    ];
+    final weights = [for (final a in assignment) a.weight];
+
+    courseClasses.add(courseClass);
+    mapCourses[classId] = course;
+    mapTeachers[classId] = teachers;
+    mapWeights[classId] = weights;
+  }
+
+  return TeachingAssignmentDocument(
+    semester: semester,
+    courseClasses: courseClasses,
+    mapCourses: mapCourses,
+    mapTeachers: mapTeachers,
+    mapWeights: mapWeights,
+  );
+});
+
 final teachingAssignmentPdfProvider = FutureProvider((ref) async {
   final model = await ref.watch(teachingAssignmentModelProvider.future);
   if (model == null) return null;
   return model.buildPdf(config: TeachingAssignmentDocument.defaultPdfConfig);
-});
-
-final teachingAssignmentXlsxProvider = FutureProvider((ref) async {
-  final model = await ref.watch(teachingAssignmentModelProvider.future);
-  if (model == null) return null;
-  return model.buildXlsx();
 });
 
 /// Provide the teachers assigned to
@@ -123,6 +166,12 @@ final teachingAssignmentXlsxProvider = FutureProvider((ref) async {
 final teachingAssignmentViewModelProvider = AsyncNotifierProvider.family(
   TeachingAssignmentViewModelNotifier.new,
 );
+
+final teachingAssignmentXlsxProvider = FutureProvider((ref) async {
+  final model = await ref.watch(teachingAssignmentModelProvider.future);
+  if (model == null) return null;
+  return model.buildXlsx();
+});
 
 final teachingInvitationMessageProvider = FutureProvider.family((
   ref,
@@ -200,21 +249,83 @@ class CandidateSelectionNotifier
   }
 }
 
+class PoliteNotifier extends AsyncNotifier<bool> {
+  final int courseClassId;
+  PoliteNotifier(this.courseClassId);
+
+  @override
+  Future<bool> build() async {
+    // Get selected teacher
+    final teacherSelectionModel = await ref.watch(
+      candidateSelectionProvider(courseClassId).future,
+    );
+    final selectedTeacher = teacherSelectionModel.selected;
+    if (selectedTeacher == null) return false;
+
+    // Get politeness preference
+    final key = politeKey(selectedTeacher.id);
+    final pref = await SharedPreferences.getInstance();
+    final politePref = pref.getBool(key);
+
+    // If pref is null, set to true
+    if (politePref == null) {
+      await pref.setBool(key, true);
+      return true;
+    }
+
+    return politePref;
+  }
+
+  String politeKey(int teacherId) => 'polite-pronoun/$teacherId';
+
+  void set(bool newValue) async {
+    // Update state
+    state = AsyncValue.data(newValue);
+
+    // Get selected teacher
+    final teacherSelectionModel = await ref.watch(
+      candidateSelectionProvider(courseClassId).future,
+    );
+    final selectedTeacher = teacherSelectionModel.selected;
+    if (selectedTeacher == null) return;
+    final key = politeKey(selectedTeacher.id);
+    final pref = await SharedPreferences.getInstance();
+    await pref.setBool(key, newValue);
+  }
+}
+
 class TeachingAssignmentViewModel {
   final int classId;
   final List<TeacherData> assignedTeachers;
   final List<double> weights;
-
-  double get totalWeight => weights.fold<double>(
-    0.0,
-    (previousValue, element) => previousValue + element,
-  );
 
   TeachingAssignmentViewModel({
     required this.classId,
     required this.assignedTeachers,
     required this.weights,
   });
+
+  List<TeachingAssignmentCompanion> get toCompanions {
+    final companions = <TeachingAssignmentCompanion>[];
+    for (int i = 0; i < assignedTeachers.length; i++) {
+      final teacher = assignedTeachers[i];
+      final weight = weights[i];
+      companions.add(
+        TeachingAssignmentCompanion.insert(
+          classId: classId,
+          teacherId: teacher.id,
+          weight: Value(weight),
+          sortOrder: Value(i),
+        ),
+      );
+    }
+    return companions;
+  }
+
+  double get totalWeight => weights.fold<double>(
+    0.0,
+    (previousValue, element) => previousValue + element,
+  );
 
   TeachingAssignmentViewModel addTeacher(TeacherData teacher, double weight) {
     if (assignedTeachers.contains(teacher)) {
@@ -254,23 +365,6 @@ class TeachingAssignmentViewModel {
       weights: newWeights,
     );
   }
-
-  List<TeachingAssignmentCompanion> get toCompanions {
-    final companions = <TeachingAssignmentCompanion>[];
-    for (int i = 0; i < assignedTeachers.length; i++) {
-      final teacher = assignedTeachers[i];
-      final weight = weights[i];
-      companions.add(
-        TeachingAssignmentCompanion.insert(
-          classId: classId,
-          teacherId: teacher.id,
-          weight: Value(weight),
-          sortOrder: Value(i),
-        ),
-      );
-    }
-    return companions;
-  }
 }
 
 /// Acts like a view model for teaching assignments
@@ -279,6 +373,12 @@ class TeachingAssignmentViewModelNotifier
   final int classId;
   bool dirty = false;
   TeachingAssignmentViewModelNotifier(this.classId);
+
+  void addTeacher(TeacherData teacher, [double weight = 1.0]) {
+    final model = state.value!;
+    state = AsyncData(model.addTeacher(teacher, weight));
+    dirty = true;
+  }
 
   @override
   FutureOr<TeachingAssignmentViewModel> build() async {
@@ -303,16 +403,13 @@ class TeachingAssignmentViewModelNotifier
     );
   }
 
-  void addTeacher(TeacherData teacher, [double weight = 1.0]) {
-    final model = state.value!;
-    state = AsyncData(model.addTeacher(teacher, weight));
-    dirty = true;
-  }
-
-  void setWeight(TeacherData teacher, double weight) {
-    final model = state.value!;
-    state = AsyncData(model.setWeight(teacher, weight));
-    dirty = true;
+  void commit() {
+    final companions = state.value!.toCompanions;
+    final notifier = ref.read(
+      teachingAssignmentByClassProvider(classId).notifier,
+    );
+    notifier.setAssignment(companions);
+    dirty = false;
   }
 
   void removeTeacher(TeacherData teacher) {
@@ -326,106 +423,9 @@ class TeachingAssignmentViewModelNotifier
     ref.invalidateSelf();
   }
 
-  void commit() {
-    final companions = state.value!.toCompanions;
-    final notifier = ref.read(
-      teachingAssignmentByClassProvider(classId).notifier,
-    );
-    notifier.setAssignment(companions);
-    dirty = false;
+  void setWeight(TeacherData teacher, double weight) {
+    final model = state.value!;
+    state = AsyncData(model.setWeight(teacher, weight));
+    dirty = true;
   }
 }
-
-class PoliteNotifier extends AsyncNotifier<bool> {
-  final int courseClassId;
-  PoliteNotifier(this.courseClassId);
-
-  String politeKey(int teacherId) => 'polite-pronoun/$teacherId';
-
-  @override
-  Future<bool> build() async {
-    // Get selected teacher
-    final teacherSelectionModel = await ref.watch(
-      candidateSelectionProvider(courseClassId).future,
-    );
-    final selectedTeacher = teacherSelectionModel.selected;
-    if (selectedTeacher == null) return false;
-
-    // Get politeness preference
-    final key = politeKey(selectedTeacher.id);
-    final pref = await SharedPreferences.getInstance();
-    final politePref = pref.getBool(key);
-
-    // If pref is null, set to true
-    if (politePref == null) {
-      await pref.setBool(key, true);
-      return true;
-    }
-
-    return politePref;
-  }
-
-  void set(bool newValue) async {
-    // Update state
-    state = AsyncValue.data(newValue);
-
-    // Get selected teacher
-    final teacherSelectionModel = await ref.watch(
-      candidateSelectionProvider(courseClassId).future,
-    );
-    final selectedTeacher = teacherSelectionModel.selected;
-    if (selectedTeacher == null) return;
-    final key = politeKey(selectedTeacher.id);
-    final pref = await SharedPreferences.getInstance();
-    await pref.setBool(key, newValue);
-  }
-}
-
-final teachingAssignmentModelProvider = FutureProvider((ref) async {
-  final semesterSelection = await ref.watch(
-    semesterSelectionModelProvider.future,
-  );
-  final semester = semesterSelection.selected;
-  if (semester == null) return null;
-
-  final courseClassIds = await ref.watch(
-    courseClassIdsBySemesterProvider(semester.id).future,
-  );
-
-  final courseClasses = <CourseClassData>[];
-  final mapTeachers = <int, List<TeacherData>>{};
-  final mapWeights = <int, List<double>>{};
-  final mapCourses = <int, CourseData>{};
-
-  for (final classId in courseClassIds) {
-    final courseClass = await ref.watch(
-      courseClassByIdProvider(classId).future,
-    );
-    if (!courseClass.courseId.startsWith("MI")) continue;
-
-    final course = await ref.watch(
-      courseByIdProvider(courseClass.courseId).future,
-    );
-    final assignment = await ref.watch(
-      teachingAssignmentsProvider(classId).future,
-    );
-    final teachers = [
-      for (final a in assignment)
-        await ref.watch(teacherByIdProvider(a.teacherId).future),
-    ];
-    final weights = [for (final a in assignment) a.weight];
-
-    courseClasses.add(courseClass);
-    mapCourses[classId] = course;
-    mapTeachers[classId] = teachers;
-    mapWeights[classId] = weights;
-  }
-
-  return TeachingAssignmentDocument(
-    semester: semester,
-    courseClasses: courseClasses,
-    mapCourses: mapCourses,
-    mapTeachers: mapTeachers,
-    mapWeights: mapWeights,
-  );
-});

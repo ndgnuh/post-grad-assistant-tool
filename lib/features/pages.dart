@@ -4,7 +4,7 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../business/documents/common.dart';
 import 'admission_pages/admission_pages.dart';
-import 'course_class_pages/course_class_pages.dart';
+import 'course_classes/course_classes.dart';
 import 'course_pages/course_pages.dart';
 import 'draft.dart' show DraftPage;
 import 'home_page/home_page.dart';

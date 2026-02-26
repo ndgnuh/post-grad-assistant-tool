@@ -1,12 +1,12 @@
-import '../../custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../business/db_v2_providers.dart';
-import '../../custom_tiles.dart';
+import '../../../business/db_v2_providers.dart';
+import '../../../custom_tiles.dart';
+import '../../../custom_widgets.dart';
 import 'teaching_assignment_providers.dart';
 
 class TeachingAssignmentTab extends StatelessWidget {
@@ -75,28 +75,6 @@ class TeachingAssignmentTab extends StatelessWidget {
   }
 }
 
-class _ResetButton extends ConsumerWidget {
-  final int courseClassId;
-  final Widget Function(BuildContext, VoidCallback) builder;
-
-  const _ResetButton({
-    required this.courseClassId,
-    required this.builder,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    onPress() {
-      final notifier = ref.read(
-        teachingAssignmentViewModelProvider(courseClassId).notifier,
-      );
-      notifier.reset();
-    }
-
-    return builder(context, onPress);
-  }
-}
-
 class _AddCurrentTeacherButton extends ConsumerWidget {
   final int courseClassId;
   final Widget Function(BuildContext, VoidCallback?) builder;
@@ -131,147 +109,6 @@ class _AddCurrentTeacherButton extends ConsumerWidget {
       );
       notifier.addTeacher(selected, 1.0);
     });
-  }
-}
-
-class _TeachingInvitationPanel extends ConsumerWidget {
-  final int classId;
-
-  const _TeachingInvitationPanel({required this.classId});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final viewModelAsync = ref.watch(
-      teachingAssignmentViewModelProvider(classId),
-    );
-    switch (viewModelAsync) {
-      case AsyncLoading():
-        return const Center(child: CircularProgressIndicator());
-      case AsyncError(:final error):
-        return Center(child: Text('Error: $error'));
-      case AsyncData(:final value):
-        return buildContent(context, ref, value);
-    }
-  }
-
-  Widget buildContent(
-    BuildContext context,
-    WidgetRef ref,
-    TeachingAssignmentViewModel viewModel,
-  ) {
-    // TODO: refactor this mess
-    final invitationState = ref.watch(
-      teachingInvitationMessageProvider(classId),
-    );
-    switch (invitationState) {
-      case AsyncLoading():
-        return const Center(child: CircularProgressIndicator());
-      case AsyncError(:final error):
-        return Center(child: Text('Error: $error'));
-      default:
-    }
-
-    final teacherSelectionAsync = ref.watch(
-      candidateSelectionProvider(classId),
-    );
-    switch (teacherSelectionAsync) {
-      case AsyncLoading():
-        return const Center(child: CircularProgressIndicator());
-      case AsyncError(:final error):
-        return Center(child: Text('Error: $error'));
-      default:
-    }
-
-    final teacher = teacherSelectionAsync.value!.selected;
-    final invitation = invitationState.value!;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        ListTile(title: Text("Mời giảng")),
-
-        ///
-        Card(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(height: context.gutterTiny),
-              _PolitenessSwitch(classId: classId),
-              Divider(),
-
-              //
-              ListTile(
-                title: Text("Văn mẫu"),
-                subtitle: Text(invitation),
-                onTap: () {
-                  final data = ClipboardData(text: invitation);
-                  Clipboard.setData(data);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Đã sao chép vào clipboard")),
-                  );
-                },
-                trailing: Icon(Symbols.content_copy),
-              ),
-
-              if (teacher != null) ...[
-                Divider(),
-                StringTile(
-                  trailing: Icon(Symbols.content_copy),
-                  leading: Icon(Symbols.phone),
-                  readOnly: true,
-                  title: ("Điện thoại"),
-                  initialValue: teacher.phoneNumber ?? "Chưa có",
-                ),
-              ],
-
-              if (teacher != null) ...[
-                Divider(),
-                StringTile(
-                  trailing: Icon(Symbols.content_copy),
-                  leading: Icon(Symbols.email),
-                  readOnly: true,
-                  title: ("Email"),
-                  initialValue: teacher.email ?? "Chưa có",
-                ),
-              ],
-              SizedBox(height: context.gutterTiny),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _PolitenessSwitch extends ConsumerWidget {
-  /// This is a bit anti-intuitive
-  /// As politeness is a preference for "teachers" not the "course clas"
-  const _PolitenessSwitch({required this.classId});
-
-  final int classId;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final politeAsync = ref.watch(politenessProvider(classId));
-    final value = switch (politeAsync) {
-      AsyncLoading() => true,
-      AsyncError() => true,
-      AsyncData(:final value) => value,
-    };
-
-    final politeSubtitle = value
-        ? "Sử dụng cách xưng hô lịch sự (Thầy/Cô)"
-        : "Sử dụng cách xưng hô thân mật (Anh/Chị)";
-
-    return SwitchListTile(
-      value: value,
-      title: Text("Lịch sự"),
-      subtitle: Text(politeSubtitle),
-      onChanged: (value) => {
-        ref.read(politenessProvider(classId).notifier).set(value),
-      },
-    );
   }
 }
 
@@ -462,6 +299,59 @@ class _CandidateTeachersSection extends ConsumerWidget {
   }
 }
 
+class _PolitenessSwitch extends ConsumerWidget {
+  final int classId;
+
+  /// This is a bit anti-intuitive
+  /// As politeness is a preference for "teachers" not the "course clas"
+  const _PolitenessSwitch({required this.classId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final politeAsync = ref.watch(politenessProvider(classId));
+    final value = switch (politeAsync) {
+      AsyncLoading() => true,
+      AsyncError() => true,
+      AsyncData(:final value) => value,
+    };
+
+    final politeSubtitle = value
+        ? "Sử dụng cách xưng hô lịch sự (Thầy/Cô)"
+        : "Sử dụng cách xưng hô thân mật (Anh/Chị)";
+
+    return SwitchListTile(
+      value: value,
+      title: Text("Lịch sự"),
+      subtitle: Text(politeSubtitle),
+      onChanged: (value) => {
+        ref.read(politenessProvider(classId).notifier).set(value),
+      },
+    );
+  }
+}
+
+class _ResetButton extends ConsumerWidget {
+  final int courseClassId;
+  final Widget Function(BuildContext, VoidCallback) builder;
+
+  const _ResetButton({
+    required this.courseClassId,
+    required this.builder,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    onPress() {
+      final notifier = ref.read(
+        teachingAssignmentViewModelProvider(courseClassId).notifier,
+      );
+      notifier.reset();
+    }
+
+    return builder(context, onPress);
+  }
+}
+
 class _SaveButton extends ConsumerWidget {
   final Widget Function(BuildContext, VoidCallback) builder;
   final int courseClassId;
@@ -502,6 +392,116 @@ class _SaveButton extends ConsumerWidget {
           const SnackBar(content: Text("Đã lưu phân công giảng dạy")),
         );
       },
+    );
+  }
+}
+
+class _TeachingInvitationPanel extends ConsumerWidget {
+  final int classId;
+
+  const _TeachingInvitationPanel({required this.classId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final viewModelAsync = ref.watch(
+      teachingAssignmentViewModelProvider(classId),
+    );
+    switch (viewModelAsync) {
+      case AsyncLoading():
+        return const Center(child: CircularProgressIndicator());
+      case AsyncError(:final error):
+        return Center(child: Text('Error: $error'));
+      case AsyncData(:final value):
+        return buildContent(context, ref, value);
+    }
+  }
+
+  Widget buildContent(
+    BuildContext context,
+    WidgetRef ref,
+    TeachingAssignmentViewModel viewModel,
+  ) {
+    // TODO: refactor this mess
+    final invitationState = ref.watch(
+      teachingInvitationMessageProvider(classId),
+    );
+    switch (invitationState) {
+      case AsyncLoading():
+        return const Center(child: CircularProgressIndicator());
+      case AsyncError(:final error):
+        return Center(child: Text('Error: $error'));
+      default:
+    }
+
+    final teacherSelectionAsync = ref.watch(
+      candidateSelectionProvider(classId),
+    );
+    switch (teacherSelectionAsync) {
+      case AsyncLoading():
+        return const Center(child: CircularProgressIndicator());
+      case AsyncError(:final error):
+        return Center(child: Text('Error: $error'));
+      default:
+    }
+
+    final teacher = teacherSelectionAsync.value!.selected;
+    final invitation = invitationState.value!;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ListTile(title: Text("Mời giảng")),
+
+        ///
+        Card(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(height: context.gutterTiny),
+              _PolitenessSwitch(classId: classId),
+              Divider(),
+
+              //
+              ListTile(
+                title: Text("Văn mẫu"),
+                subtitle: Text(invitation),
+                onTap: () {
+                  final data = ClipboardData(text: invitation);
+                  Clipboard.setData(data);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Đã sao chép vào clipboard")),
+                  );
+                },
+                trailing: Icon(Symbols.content_copy),
+              ),
+
+              if (teacher != null) ...[
+                Divider(),
+                StringTile(
+                  trailing: Icon(Symbols.content_copy),
+                  leading: Icon(Symbols.phone),
+                  readOnly: true,
+                  title: ("Điện thoại"),
+                  initialValue: teacher.phoneNumber ?? "Chưa có",
+                ),
+              ],
+
+              if (teacher != null) ...[
+                Divider(),
+                StringTile(
+                  trailing: Icon(Symbols.content_copy),
+                  leading: Icon(Symbols.email),
+                  readOnly: true,
+                  title: ("Email"),
+                  initialValue: teacher.email ?? "Chưa có",
+                ),
+              ],
+              SizedBox(height: context.gutterTiny),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
