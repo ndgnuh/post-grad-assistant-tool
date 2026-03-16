@@ -145,6 +145,7 @@ class _PhdStudentInfo extends ConsumerWidget {
     // Stauts line
     final studentStatus = switch (student.status) {
       StudentStatus.admission => "Đợi xét tuyển",
+      StudentStatus.admissionFailed => "Trượt xét tuyển",
       StudentStatus.normal => "Đang học",
       StudentStatus.studying => "Đang học",
       StudentStatus.quit => "Thôi học",

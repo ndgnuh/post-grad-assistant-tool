@@ -85,6 +85,12 @@ class FilteredAdmissionIdsNotifier extends AsyncNotifier<List<int>> {
             tbl.admissionType.equals(admissionType.value),
       );
     final students = await query.get();
+
+    /// Move to stream provider
+    if (ref.isFirstBuild) {
+      final stream = query.watch();
+      stream.listen((_) => ref.invalidateSelf());
+    }
     return students.map((e) => e.id).toList();
   }
 }
@@ -98,6 +104,12 @@ class StudentByIdNotifier extends AsyncNotifier<StudentData> {
     final db = await ref.watch(mainDatabaseProvider.future);
     final query = db.student.select()..where((tbl) => tbl.id.equals(studentId));
     final student = await query.getSingleOrNull();
+
+    /// TODO: use stream provider instead
+    if (ref.isFirstBuild) {
+      query.watch().listen((_) => ref.invalidateSelf());
+    }
+
     assert(student != null, 'Student with id $studentId not found');
     return student!;
   }

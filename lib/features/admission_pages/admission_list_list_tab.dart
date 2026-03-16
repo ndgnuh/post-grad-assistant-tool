@@ -67,7 +67,10 @@ class _AdmissionListTabViewState extends ConsumerState<AdmissionListTabView> {
                 body: ListBody(
                   children: [
                     for (final (i, student) in admissionList.indexed) ...[
-                      _StudentTile(index: i, student: student),
+                      _StudentTile(
+                        index: i,
+                        student: student,
+                      ),
                     ],
                   ],
                 ),
@@ -222,6 +225,23 @@ class _StudentTile extends ConsumerWidget {
               notifier.playPauseAdmission();
             },
             icon: Symbols.play_pause,
+          ),
+
+          MenuDialogItem(
+            title: "Đánh trượt",
+            icon: Symbols.cancel,
+            onTap: () async {
+              final db = await ref.read(mainDatabaseProvider.future);
+              final stmt = db.update(db.student);
+              stmt.where((r) => r.id.equals(student.id));
+              stmt.write(
+                StudentCompanion(
+                  status: Value(
+                    StudentStatus.admissionFailed,
+                  ),
+                ),
+              );
+            },
           ),
 
           MenuDialogItem(

@@ -5,7 +5,8 @@ enum GraduationRank {
   good('Giỏi', 'Giỏi'),
   fairlyGood('Khá', 'Khá'),
   average('Trung bình', 'Trung bình'),
-  poor('Yếu', 'Yếu');
+  poor('Yếu', 'Yếu')
+  ;
 
   final String label;
   final String value;
@@ -40,7 +41,9 @@ enum StudentStatus {
   studying("hoc", "Đang học"),
   quit("nghi", "Thôi học"),
   graduated("tn", "Đã tốt nghiệp"),
-  delayedAdmission("xt-pending", "Hoãn xét tuyển");
+  delayedAdmission("xt-pending", "Hoãn xét tuyển"),
+  admissionFailed("xt-fail", "Trượt xét tuyển")
+  ;
 
   final String value;
   final String label;
