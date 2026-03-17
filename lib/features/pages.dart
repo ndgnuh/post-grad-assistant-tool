@@ -150,70 +150,70 @@ class AppNavigator {
   );
 }
 
-final initialRoute = switch (kReleaseMode) {
-  true => HomePage.routeName,
+final initialRoute = "/";
+// true => HomePage.routeName,
 
-  // Document management features
-  // false => DocumentManagementPage.routeName,
-  // false => DocumentCreatePage.routeName,
+// Document management features
+// false => DocumentManagementPage.routeName,
+// false => DocumentCreatePage.routeName,
 
-  // false => DraftPage.routeName,
+// false => DraftPage.routeName,
 
-  // Settings
-  // false => InitialSetupPage.routeName,
-  // false => SettingsPage.routeName,
+// Settings
+// false => InitialSetupPage.routeName,
+// false => SettingsPage.routeName,
 
-  // Semester features
-  // false => SemesterListPage.routeName,
+// Semester features
+// false => SemesterListPage.routeName,
 
-  // Student features
-  // false => StudentListPage.routeName,
+// Student features
+// false => StudentListPage.routeName,
 
-  // Debug home page
-  // false => HomePage.routeName,
+// Debug home page
+// false => HomePage.routeName,
 
-  // Admission
-  // false => AdmissionListPage.routeName,
-  // false => AdmissionEnrollmentPage.routeName,
-  // false => AdmissionPaymentPage.routeName,
+// Admission
+// false => AdmissionListPage.routeName,
+// false => AdmissionEnrollmentPage.routeName,
+// false => AdmissionPaymentPage.routeName,
 
-  // Course classes features
-  // ====================
-  false => CourseClassListPage.routeName,
-  // false => CourseLimitingPage.routeName,
+// Course classes features
+// ====================
+// false => CourseClassListPage.routeName,
+// false => CourseLimitingPage.routeName,
 
-  // Course features
-  // false => CourseListPage.routeName,
+// Course features
+// false => CourseListPage.routeName,
 
-  // Thesis defends
-  // false => ThesisDefenseRegisterPage.routeName,
-  // false => msc_thesis.ThesisDefensePaymentPage.routeName,
-  // false => ThesisListPage.routeName,
-  // false => msc_thesis.ThesisEverythingPage.routeName,
-  // false => msc_thesis.ThesisDefenseRegisterPage.routeName,
-  // false => msc_thesis.MscThesisAssignmentPage.routeName,
-  // false => msc_thesis.MscThesisSelectionPage.routeName,
-  // false => ThesisCreatePage.routeName,
-  // false => ThesisDefensePaymentPage.routeName,
+// Thesis defends
+// false => ThesisDefenseRegisterPage.routeName,
+// false => msc_thesis.ThesisDefensePaymentPage.routeName,
+// false => ThesisListPage.routeName,
+// false => msc_thesis.ThesisEverythingPage.routeName,
+// false => msc_thesis.ThesisDefenseRegisterPage.routeName,
+// false => msc_thesis.MscThesisAssignmentPage.routeName,
+// false => msc_thesis.MscThesisSelectionPage.routeName,
+// false => ThesisCreatePage.routeName,
+// false => ThesisDefensePaymentPage.routeName,
 
-  // PhD students features
-  // false => PhdStudentListPage.routeName,
-  // false => PhdStudentCreatePage.routeName,
-  // false => phd_pages.PhdAdmissionPaymentPage.routeName,
+// PhD students features
+// false => PhdStudentListPage.routeName,
+// false => PhdStudentCreatePage.routeName,
+// false => phd_pages.PhdAdmissionPaymentPage.routeName,
 
-  // Teacher features
-  false => TeacherSearchPage.routeName,
+// Teacher features
+// false => TeacherSearchPage.routeName,
 
-  // false => DraftPage.routeName,
-  // false => PageCourseClassList.routeName,
-  // false => TeacherSearchPage.routeName,
-  // false => PageAcademicYearList.routeName,
-  // false => PhdStudentListPage.routeName,
-  // false => PhdStudentCreatePage.routeName,
+// false => DraftPage.routeName,
+// false => PageCourseClassList.routeName,
+// false => TeacherSearchPage.routeName,
+// false => PageAcademicYearList.routeName,
+// false => PhdStudentListPage.routeName,
+// false => PhdStudentCreatePage.routeName,
 
-  /* Courses related features */
-  // false => CourseLimitingPage.routeName,
-};
+/* Courses related features */
+// false => CourseLimitingPage.routeName,
+// };
 
 final routesBySections = <String, List<RouteItem>>{
   "Danh mục": [

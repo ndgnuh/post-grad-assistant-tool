@@ -1,10 +1,11 @@
 import 'dart:io' show Platform;
 
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:pdfrx/pdfrx.dart';
@@ -16,10 +17,10 @@ import 'business/db_v2_providers.dart';
 import 'core/router.dart';
 import 'features/pages.dart' as pages;
 import 'shortcuts.dart';
-import 'themes.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   pdfrxFlutterInitialize();
   if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
     await setupHotKeys();
@@ -218,17 +219,33 @@ class MyApp extends ConsumerWidget {
     );
     final locale = Locale('vi', 'VN');
 
+    if (kDebugMode) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        AppRouter().msc.toAdmissionCouncilCreatePage();
+      });
+    }
+
     return SafeArea(
       child: MaterialApp(
         scaffoldMessengerKey: messengerKey,
+        locale: const Locale('en', 'GB'),
+        supportedLocales: const [
+          Locale('en', 'GB'),
+          Locale('vi', 'VN'),
+        ],
+
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         // shortcuts: shortcuts,
         // actions: actions,
         navigatorKey: navigationKey,
-        locale: locale,
         darkTheme: darkTheme,
         theme: theme,
         themeMode: themeMode,
-        initialRoute: pages.initialLoadingRoute,
+        initialRoute: "/",
         debugShowMaterialGrid: false,
         debugShowCheckedModeBanner: false,
         onGenerateRoute: pages.onGenerateRoute,

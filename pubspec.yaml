@@ -30,6 +30,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   # UI Stuffs
   material_symbols_icons: ^4.2873.0
@@ -92,6 +94,7 @@ dependencies:
   pdfrx_engine: ^0.3.6
   window_manager: ^0.5.1
   flex_color_scheme: ^8.4.0
+  flutter_localization: ^0.3.3
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,4 @@
-import '../../business/copy_pasta.dart'
-    show Email, EmailCopyDialog;
+import '../../business/copy_pasta.dart' show Email, EmailCopyDialog;
 import '../../business/db_v2_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
@@ -7,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+import '../../core/router.dart';
 import '../../custom_widgets.dart';
 import '_download.dart';
 import '_forms.dart';
@@ -151,6 +151,17 @@ class _AdmissionActionTabViewState
                 ),
               ],
             ),
+          ),
+
+          CardSection(
+            title: "Danh mục",
+            children: [
+              ListTile(
+                title: Text("Hội đồng xét tuyển"),
+                subtitle: Text("Đi tới trang quản lý"),
+                onTap: () => AppRouter().msc.toAdmissionCouncilListPage(),
+              ),
+            ],
           ),
         ],
       ),
