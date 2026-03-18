@@ -125,7 +125,7 @@ class _TeacherListTile extends ConsumerWidget {
           subtitleTexts.add(value.university!);
         }
         if (value.falcuty != null) {
-          subtitleTexts.add("Email: ${value.falcuty!}");
+          subtitleTexts.add("Email: ${value.emails.join(', ')}");
         }
         if (value.phoneNumber != null) {
           subtitleTexts.add("SĐT: ${value.phoneNumber!}");

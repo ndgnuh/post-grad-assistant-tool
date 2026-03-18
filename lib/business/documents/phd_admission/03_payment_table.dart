@@ -19,6 +19,8 @@ class PhdAdmissionPaymentDocument {
     horizontalMargin: 0.75 * inch,
     verticalMargin: 1 * inch,
     baseFontSize: 11 * pt,
+    verticalTableCellPadding: 2 * pt,
+    horizontalTableCellPadding: 2 * pt,
   );
 
   Future<PdfFile> buildPdf(PdfConfig config) async {
@@ -98,9 +100,9 @@ class _PaymentTable extends StatelessWidget {
     final tableData = [
       (president, "Trưởng TB", 200_000),
       (secretary, "Thư ký TB", 200_000),
-      (firstMember, "Ủy viên", 150_000),
-      (secondMember, "Ủy viên", 150_000),
-      (thirdMember, "Ủy viên", 150_000),
+      (firstMember, "Ủy viên", 200_000),
+      (secondMember, "Ủy viên", 200_000),
+      (thirdMember, "Ủy viên", 200_000),
     ];
 
     return Column(
@@ -204,22 +206,22 @@ class _PaymentTable extends StatelessWidget {
 
             // TODO: use my-id setting in the DB
             // Nevermind: I'll remove myself
-            [
-              "6",
-              "Nguyễn Đức Hùng",
-              "Đại học Bách khoa Hà Nội",
-              "Người phục vụ*",
-              "150.000",
-            ],
+            // [
+            //   "6",
+            //   "Nguyễn Đức Hùng",
+            //   "Đại học Bách khoa Hà Nội",
+            //   "Người phục vụ*",
+            //   "150.000",
+            // ],
             ["", "Tổng cộng", "", "", "1.000.000", ""],
           ],
         ),
 
         // Notes on the helper
-        SizedBox(height: 3 * pt),
-        Text(
-          "*Phục vụ buổi chấm đề cương (nước, vệ sinh phòng, chuẩn bị hồ sơ thí sinh).",
-        ),
+        // SizedBox(height: 3 * pt),
+        // Text(
+        //   "*Phục vụ buổi chấm đề cương (nước, vệ sinh phòng, chuẩn bị hồ sơ thí sinh).",
+        // ),
 
         // Money in words
         SizedBox(height: 3 * pt),

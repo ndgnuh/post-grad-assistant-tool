@@ -220,9 +220,9 @@ class MyApp extends ConsumerWidget {
     final locale = Locale('vi', 'VN');
 
     if (kDebugMode) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        AppRouter().msc.toAdmissionCouncilCreatePage();
-      });
+      // WidgetsBinding.instance.addPostFrameCallback((_) {
+      //   AppRouter().msc.toAdmissionCouncilCreatePage();
+      // });
     }
 
     return SafeArea(
