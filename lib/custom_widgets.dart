@@ -1871,3 +1871,25 @@ class FramedSection extends StatelessWidget {
     );
   }
 }
+
+class PlatformAdaptiveLayout extends StatelessWidget {
+  final Widget mobile;
+  final Widget desktop;
+  final double cutoff;
+
+  const PlatformAdaptiveLayout({
+    super.key,
+    required this.mobile,
+    required this.desktop,
+    this.cutoff = 768,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.widthOf(context);
+    if (width < cutoff) {
+      return mobile;
+    }
+    return desktop;
+  }
+}
