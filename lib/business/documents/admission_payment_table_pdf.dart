@@ -251,7 +251,6 @@ class _AdmissionPaymentTable extends StatelessWidget {
     FontWeight fontWeight = FontWeight.normal,
   }) {
     return Container(
-      height: 1.1 * cm,
       padding: EdgeInsets.symmetric(horizontal: 3 * pt, vertical: 1.5 * pt),
       alignment: align,
       child: Text(

@@ -6,6 +6,7 @@ import 'package:pdf/pdf.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../../business/db_v2_providers.dart';
+import '../../business/documents/pdf_utils.dart';
 import '../../core/pdf_widgets.dart' as pw;
 
 final unassignedThesisProvider = AsyncNotifierProvider(
@@ -20,7 +21,7 @@ Future<Uint8List> buildThesisListPdf({
   required List<ThesisData> theses,
   required Map<ThesisData, TeacherData> supervisors,
 }) async {
-  final theme = await pw.defaultTheme(baseSize: 9);
+  final theme = await getPdfDefaultTheme(baseFontSize: 9.0);
   final pdf = pw.Document(theme: theme);
   final dateFormat = DateFormat("dd/MM/yyyy HH:mm:ss");
   final formattedDate = dateFormat.format(DateTime.now());

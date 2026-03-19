@@ -203,12 +203,10 @@ class EzTable<T> extends StatelessWidget {
   /// Create header widgets
   List<Widget> _headerWidgets(Context context) {
     final theme = Theme.of(context);
-    final headerWidgets = <Widget>[];
-
-    for (final (i, header) in headers.indexed) {
+    final headerWidgets = headers.indexed.map((entry) {
+      final (i, header) = entry;
       if (header is Widget) {
-        headers.add(header);
-        continue;
+        return header;
       }
 
       final headerWidget = Container(
@@ -224,8 +222,9 @@ class EzTable<T> extends StatelessWidget {
           ),
         ),
       );
-      headerWidgets.add(headerWidget);
-    }
+
+      return headerWidget;
+    }).toList();
 
     return headerWidgets;
   }

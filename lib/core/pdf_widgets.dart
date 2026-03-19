@@ -47,38 +47,38 @@ PdfPageFormat a4Landscape({
   );
 }
 
-final serifFonts = (
-  base: loadFont("assets/fonts/Times_New_Roman.ttf"),
-  bold: loadFont("assets/fonts/Times_New_Roman_Bold.ttf"),
-  italic: loadFont("assets/fonts/Times_New_Roman_Italic.ttf"),
-  boldItalic: loadFont("assets/fonts/Times_New_Roman_Bold_Italic.ttf"),
-);
+// final serifFonts = (
+//   base: loadFont("assets/fonts/Times_New_Roman.ttf"),
+//   bold: loadFont("assets/fonts/Times_New_Roman_Bold.ttf"),
+//   italic: loadFont("assets/fonts/Times_New_Roman_Italic.ttf"),
+//   boldItalic: loadFont("assets/fonts/Times_New_Roman_Bold_Italic.ttf"),
+// );
 
-Future<ThemeData> defaultTheme({double baseSize = 9.0}) async {
-  final defaultTextStyle = TextStyle(
-    font: await serifFonts.base,
-    fontItalic: await serifFonts.italic,
-    fontBoldItalic: await serifFonts.boldItalic,
-    fontBold: await serifFonts.bold,
-    fontSize: baseSize,
-  );
-  final boldTextStyle = defaultTextStyle.copyWith(
-    fontWeight: FontWeight.bold,
-  );
-
-  final theme = ThemeData(
-    defaultTextStyle: defaultTextStyle,
-    header0: boldTextStyle.copyWith(fontSize: baseSize + 10),
-    header1: boldTextStyle.copyWith(fontSize: baseSize + 8),
-    header2: boldTextStyle.copyWith(fontSize: baseSize + 6),
-    header3: boldTextStyle.copyWith(fontSize: baseSize + 4),
-    header4: boldTextStyle.copyWith(fontSize: baseSize + 2),
-    header5: boldTextStyle.copyWith(fontSize: baseSize),
-    paragraphStyle: defaultTextStyle,
-  );
-
-  return theme;
-}
+// Future<ThemeData> defaultTheme({double baseSize = 9.0}) async {
+//   final defaultTextStyle = TextStyle(
+//     font: await serifFonts.base,
+//     fontItalic: await serifFonts.italic,
+//     fontBoldItalic: await serifFonts.boldItalic,
+//     fontBold: await serifFonts.bold,
+//     fontSize: baseSize,
+//   );
+//   final boldTextStyle = defaultTextStyle.copyWith(
+//     fontWeight: FontWeight.bold,
+//   );
+//
+//   final theme = ThemeData(
+//     defaultTextStyle: defaultTextStyle,
+//     header0: boldTextStyle.copyWith(fontSize: baseSize + 10),
+//     header1: boldTextStyle.copyWith(fontSize: baseSize + 8),
+//     header2: boldTextStyle.copyWith(fontSize: baseSize + 6),
+//     header3: boldTextStyle.copyWith(fontSize: baseSize + 4),
+//     header4: boldTextStyle.copyWith(fontSize: baseSize + 2),
+//     header5: boldTextStyle.copyWith(fontSize: baseSize),
+//     paragraphStyle: defaultTextStyle,
+//   );
+//
+//   return theme;
+// }
 
 PdfPageFormat transpose(PdfPageFormat pageFormat) {
   final height = pageFormat.height;
@@ -287,6 +287,7 @@ class EzTopHeader extends StatelessWidget {
   }
 }
 
+@Deprecated("Use the one from business/documents/utilities.dart instead")
 class EzTable<T> extends StatelessWidget {
   final List<Object?> headers;
   final TableBorder? border;

@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import '../../business/db_v2_providers/teachers.dart';
+import '../../business/documents/pdf_utils.dart';
+import '../../business/documents/utilities/pdf_creation.dart';
 import '../../business/main_database.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +10,8 @@ import 'package:path/path.dart' as p;
 import 'package:pdf/pdf.dart';
 
 import '../../core/pdf_widgets.dart' as pw;
+
+const _baseFontSize = 9.0;
 
 extension _DateDmy on DateTime {
   String toDmy() {
@@ -86,33 +90,24 @@ Future<void> saveAdmissionForms({
   );
 }
 
-Future<pw.Document> _buildBang2DanhSachThiSinh({
+Future<void> _buildBang2DanhSachThiSinh({
   required List<StudentData> candidates,
   required String saveDirectory,
   required year,
 }) async {
-  final theme = await pw.defaultTheme(baseSize: 9.0);
-  final doc = pw.Document(
-    pageMode: PdfPageMode.fullscreen,
-    theme: theme,
-    title: "Bảng 2: Danh sách xét tuyển thạc sĩ nghiên cứu",
-    producer: "Nguyễn Đức Hùng",
-    author: "Nguyễn Đức Hùng",
-  );
+  final theme = await getPdfDefaultTheme(baseFontSize: 5.0);
 
-  final page = pw.MultiPage(
-    theme: theme,
-    pageFormat: PdfPageFormat(
-      297 * PdfPageFormat.mm,
-      210 * PdfPageFormat.mm,
-      marginAll: 0.25 * PdfPageFormat.inch,
-    ),
-    build: (context) {
+  final bytes = await buildMultiPageDocument(
+    baseFontSize: 10,
+    pageFormat: PdfPageFormat.a4.transpose,
+    margin: EdgeInsets.all(0.5 * inch),
+    build: (Context context) {
       final header = pw.EzTopHeader.fami().flushLeft();
 
       final title = pw.Center(
-        child: pw.BoldText(
+        child: Text(
           "DANH SÁCH THÍ SINH XÉT TUYỂN THẠC SĨ THEO ĐỊNH HƯỚNG NGHIÊN CỨU NĂM $year",
+          style: theme.header1,
         ),
       );
 
@@ -144,11 +139,26 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
         "Mã các HP\nđược miễn học",
       ];
 
-      final padding = pw.EdgeInsets.all(4);
-      final headerStyle = theme.defaultTextStyle.copyWith(
-        fontWeight: pw.FontWeight.bold,
-      );
-      final tbl = pw.Table(
+      final tbl = EzTable(
+        data: candidates,
+        rowBuilder: (idx, student) {
+          return [
+            (idx + 1).toString(),
+            student.admissionId ?? "",
+            student.name,
+            student.gender.toString(),
+            student.placeOfBirth ?? "",
+            student.bachelorUniversity ?? "",
+            student.bachelorProgram ?? "",
+            student.bachelorMajor ?? "-",
+            student.bachelorGraduationRank.toString(),
+            student.bachelorGraduationDate?.toDmy() ?? "",
+            student.masterMajor ?? "",
+            student.intendedSpecialization ?? "",
+            student.exemptedCourses ?? "",
+          ];
+        },
+        headers: headers,
         columnWidths: {
           0: pw.IntrinsicColumnWidth(),
           1: pw.IntrinsicColumnWidth(),
@@ -165,136 +175,20 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
           12: pw.IntrinsicColumnWidth(),
           13: pw.IntrinsicColumnWidth(),
         },
-        border: pw.TableBorder.all(),
-        children: [
-          pw.TableRow(
-            children: [
-              for (final col in headers)
-                pw.Container(
-                  height: PdfPageFormat.point * 10 * 5,
-                  alignment: pw.Alignment.center,
-                  padding: padding,
-                  child: pw.Center(
-                    child: pw.Text(
-                      col,
-                      textAlign: pw.TextAlign.center,
-                      maxLines: null,
-                      style: headerStyle,
-                      softWrap: false,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          for (final (i, hv) in candidates.indexed)
-            pw.TableRow(
-              children: [
-                pw.Container(
-                  padding: padding,
-                  child: pw.Text(
-                    (i + 1).toString(),
-                    textAlign: pw.TextAlign.center,
-                    softWrap: false,
-                  ),
-                ),
-                pw.Container(
-                  padding: padding,
-                  child: pw.Text(
-                    hv.admissionId ?? "",
-                    textAlign: pw.TextAlign.center,
-                    softWrap: false,
-                  ),
-                ),
-                pw.Container(
-                  padding: padding,
-                  child: pw.Text(
-                    hv.name,
-                    textAlign: pw.TextAlign.left,
-                    softWrap: false,
-                  ),
-                ),
-                pw.Container(
-                  padding: padding,
-                  child: pw.Text(
-                    hv.gender.toString(),
-                    textAlign: pw.TextAlign.center,
-                    softWrap: false,
-                  ),
-                ),
-                pw.Container(
-                  padding: padding,
-                  child: pw.Text(
-                    hv.placeOfBirth ?? "",
-                    textAlign: pw.TextAlign.center,
-                    softWrap: false,
-                  ),
-                ),
-                pw.Container(
-                  padding: padding,
-                  child: pw.Text(
-                    hv.bachelorUniversity ?? "",
-                    textAlign: pw.TextAlign.center,
-                  ),
-                ),
-                pw.Container(
-                  padding: padding,
-                  child: pw.Text(
-                    hv.bachelorProgram ?? "",
-                    textAlign: pw.TextAlign.center,
-                    softWrap: false,
-                  ),
-                ),
-                pw.Container(
-                  padding: padding,
-                  child: pw.Text(
-                    hv.bachelorMajor ?? "",
-                    textAlign: pw.TextAlign.center,
-                    softWrap: false,
-                  ),
-                ),
-                pw.Container(
-                  padding: padding,
-                  child: pw.Text(
-                    hv.bachelorGraduationRank.toString(),
-                    textAlign: pw.TextAlign.center,
-                    softWrap: false,
-                  ),
-                ),
-                pw.Container(
-                  padding: padding,
-                  child: pw.Text(
-                    hv.bachelorGraduationDate?.toDmy() ?? "",
-                    textAlign: pw.TextAlign.center,
-                    softWrap: false,
-                  ),
-                ),
-                pw.Container(
-                  padding: padding,
-                  child: pw.Text(
-                    hv.masterMajor ?? "",
-                    textAlign: pw.TextAlign.center,
-                    softWrap: false,
-                  ),
-                ),
-                pw.Container(
-                  padding: padding,
-                  child: pw.Text(
-                    hv.intendedSpecialization ?? "",
-                    textAlign: pw.TextAlign.center,
-                    softWrap: false,
-                  ),
-                ),
-                pw.Container(
-                  padding: padding,
-                  child: pw.Text(
-                    hv.exemptedCourses ?? "",
-                    softWrap: false,
-                    textAlign: pw.TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
-        ],
+        dataWraps: {
+          5: true,
+          7: true,
+        },
+        alignments: {
+          2: Alignment.centerLeft,
+          5: Alignment.centerLeft,
+          7: Alignment.centerLeft,
+        },
+        textAligns: {
+          2: TextAlign.left,
+          5: TextAlign.left,
+          7: TextAlign.left,
+        },
       );
 
       final spacing = pw.Divider(
@@ -313,36 +207,27 @@ Future<pw.Document> _buildBang2DanhSachThiSinh({
     },
   );
 
-  doc.addPage(page);
-
   final file = File(p.join(saveDirectory, "Bảng 2 danh sách thí sinh.pdf"));
-  await file.writeAsBytes(await doc.save());
-  return doc;
+  try {
+    await file.delete();
+  } finally {
+    await file.writeAsBytes(bytes);
+  }
 }
 
-Future<pw.Document> _buildBang3NhanXet({
+Future<void> _buildBang3NhanXet({
   required List<StudentData> candidates,
   required String saveDirectory,
   required TeacherData gv,
   required String role,
   required String year,
 }) async {
-  final theme = await pw.defaultTheme(baseSize: 9.0);
-  final doc = pw.Document(
-    pageMode: PdfPageMode.fullscreen,
-    theme: theme,
-    title: "Bảng 3: Đánh giá của thành viên tiểu ban - ${gv.name}",
-    producer: "Nguyễn Đức Hùng",
-    author: "Nguyễn Đức Hùng",
-  );
+  final theme = await getPdfDefaultTheme(baseFontSize: _baseFontSize);
 
-  final page = pw.Page(
-    theme: theme,
-    pageFormat: PdfPageFormat(
-      297 * PdfPageFormat.mm,
-      210 * PdfPageFormat.mm,
-      marginAll: 0.25 * PdfPageFormat.inch,
-    ),
+  final bytes = await buildMultiPageDocument(
+    baseFontSize: _baseFontSize,
+    pageFormat: PdfPageFormat.a4.transpose,
+    margin: EdgeInsets.all(0.5 * inch),
     build: (context) {
       final header = pw.EzTopHeader.fami().flushLeft();
 
@@ -417,27 +302,22 @@ Future<pw.Document> _buildBang3NhanXet({
         height: 5 * PdfPageFormat.mm,
         borderStyle: pw.BorderStyle.none,
       );
-      return pw.Column(
-        mainAxisAlignment: pw.MainAxisAlignment.start,
-        children: [
-          header,
-          spacing,
-          title,
-          spacing,
-          teacherInfo,
-          pw.Divider(
-            height: 2.5 * PdfPageFormat.mm,
-            borderStyle: pw.BorderStyle.none,
-          ),
-          tbl,
-          spacing,
-          footer,
-        ],
-      );
+      return [
+        header,
+        spacing,
+        title,
+        spacing,
+        teacherInfo,
+        pw.Divider(
+          height: 2.5 * PdfPageFormat.mm,
+          borderStyle: pw.BorderStyle.none,
+        ),
+        tbl,
+        spacing,
+        footer,
+      ];
     },
   );
-
-  doc.addPage(page);
 
   final file = File(
     p.join(
@@ -445,8 +325,12 @@ Future<pw.Document> _buildBang3NhanXet({
       "Bảng 3 ${gv.name}.pdf",
     ),
   );
-  await file.writeAsBytes(await doc.save());
-  return doc;
+  try {
+    await file.delete();
+  } finally {
+    await file.writeAsBytes(bytes);
+  }
+  return;
 }
 
 Future<pw.Document> _buildBang4TongHopCnths({
@@ -454,7 +338,7 @@ Future<pw.Document> _buildBang4TongHopCnths({
   required String saveDirectory,
   required String year,
 }) async {
-  final theme = await pw.defaultTheme(baseSize: 9.0);
+  final theme = await getPdfDefaultTheme(baseFontSize: _baseFontSize);
   final doc = pw.Document(
     pageMode: PdfPageMode.fullscreen,
     theme: theme,
@@ -495,7 +379,8 @@ Future<pw.Document> _buildBang4TongHopCnths({
         ],
       );
 
-      final tbl = pw.EzTable<StudentData>(
+      final tbl = EzTable<StudentData>(
+        padding: EdgeInsets.all(2 * pt),
         data: candidates,
         rowBuilder: (i, StudentData hv) => [
           (i + 1).toString(),
@@ -509,7 +394,7 @@ Future<pw.Document> _buildBang4TongHopCnths({
         ],
         headers: [
           "TT",
-          "Số hồ sơ",
+          "Số\nhồ sơ",
           "Họ tên thí sinh",
           "Ngày sinh",
           "Giới tính",
@@ -554,26 +439,16 @@ Future<pw.Document> _buildBang4TongHopCnths({
   return doc;
 }
 
-Future<pw.Document> _buildBang4TongHopKq({
+Future<void> _buildBang4TongHopKq({
   required List<StudentData> candidates,
   required String saveDirectory,
   required String year,
 }) async {
-  final theme = await pw.defaultTheme(baseSize: 9.0);
-  final doc = pw.Document(
-    pageMode: PdfPageMode.fullscreen,
-    theme: theme,
-    title: "Bảng 4: Tổng hợp kết quả tuyển sinh",
-    producer: "Nguyễn Đức Hùng",
-    author: "Nguyễn Đức Hùng",
-  );
-  final page = pw.Page(
-    theme: theme,
-    pageFormat: PdfPageFormat(
-      297 * PdfPageFormat.mm,
-      210 * PdfPageFormat.mm,
-      marginAll: 0.25 * PdfPageFormat.inch,
-    ),
+  // final theme = await getPdfDefaultTheme(baseFontSize: _baseFontSize);
+  final bytes = await buildMultiPageDocument(
+    baseFontSize: _baseFontSize,
+    pageFormat: PdfPageFormat.a4.landscape,
+    margin: EdgeInsets.all(0.5 * inch),
     build: (context) {
       final header = pw.EzTopHeader.fami().flushLeft();
 
@@ -607,8 +482,16 @@ Future<pw.Document> _buildBang4TongHopKq({
         "Ủy viên 2",
         "Ủy viên 3",
       ];
-      final tbl = pw.EzTable<StudentData>(
+      final cellPadding = EdgeInsets.all(3 * pt);
+      final tbl = EzTable<StudentData>(
+        alignments: {2: Alignment.centerLeft},
+        padding: cellPadding,
+        headerWrap: true,
         data: candidates,
+        columnWidths: {
+          2: FlexColumnWidth(),
+          4: FlexColumnWidth(),
+        },
         rowBuilder: (i, StudentData hv) => [
           (i + 1).toString(),
           hv.admissionId,
@@ -617,7 +500,8 @@ Future<pw.Document> _buildBang4TongHopKq({
           hv.gender.toString(),
           hv.masterMajor,
           hv.intendedSpecialization,
-          pw.EzTable<String>(
+          EzTable<String>(
+            padding: cellPadding,
             headerForeground: PdfColorGrey(1, 0),
             headers: subheaders,
             data: <String>[],
@@ -626,21 +510,25 @@ Future<pw.Document> _buildBang4TongHopKq({
         ],
         headers: [
           "TT",
-          "Số hồ sơ",
-          "Họ tên thí sinh",
+          "Số\nhồ sơ",
+          "Họ tên thí sinh",
           "Ngày sinh",
           "Giới tính",
-          "Chuyên ngành,\nchương trình đào tạo",
-          "Định hướng chuyên sâu\n(nếu có)",
+          "Chuyên ngành,\nchương trình đào tạo",
+          "Định hướng chuyên sâu\n(nếu có)",
           pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.center,
             children: [
-              pw.EzTable<String>(
+              EzTable<String>(
+                padding: cellPadding,
+                headerWrap: true,
                 headers: ["Điểm đánh giá của các thành viên tiểu ban"],
                 data: <String>[],
                 rowBuilder: (i, _) => <String>[],
               ),
-              pw.EzTable<String>(
+              EzTable<String>(
+                headerWrap: true,
+                padding: cellPadding,
                 headers: subheaders,
                 data: <String>[],
                 rowBuilder: (i, _) => <String>[],
@@ -655,26 +543,21 @@ Future<pw.Document> _buildBang4TongHopKq({
         height: 5 * PdfPageFormat.mm,
         borderStyle: pw.BorderStyle.none,
       );
-      return pw.Column(
-        mainAxisAlignment: pw.MainAxisAlignment.start,
-        children: [
-          header,
-          spacing,
-          title,
-          spacing,
-          pw.Divider(
-            height: 2.5 * PdfPageFormat.mm,
-            borderStyle: pw.BorderStyle.none,
-          ),
-          tbl,
-          spacing,
-          footer,
-        ],
-      );
+      return [
+        header,
+        spacing,
+        title,
+        spacing,
+        pw.Divider(
+          height: 2.5 * PdfPageFormat.mm,
+          borderStyle: pw.BorderStyle.none,
+        ),
+        tbl,
+        spacing,
+        footer,
+      ];
     },
   );
-
-  doc.addPage(page);
 
   final file = File(
     p.join(
@@ -682,6 +565,10 @@ Future<pw.Document> _buildBang4TongHopKq({
       "Bảng 4 tổng hợp kết quả đánh giá.pdf",
     ),
   );
-  await file.writeAsBytes(await doc.save());
-  return doc;
+  try {
+    await file.delete();
+  } finally {
+    await file.writeAsBytes(bytes);
+  }
+  return;
 }

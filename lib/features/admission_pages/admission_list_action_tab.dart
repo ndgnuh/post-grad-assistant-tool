@@ -267,15 +267,22 @@ class _ProfileDownloadButton extends StatelessWidget {
       ),
     );
 
+    final futures = <Future<void>>[];
     for (final student in students) {
-      await downloadAdmissionFiles(
+      final future = downloadAdmissionFiles(
         admissionId: student.admissionId!,
         studentName: student.name,
         saveDirectory: saveDirectory,
       );
-      messenger.clearSnackBars();
-      messenger.showMessage("Đã tải hồ sơ ${student.name}");
+      futures.add(future);
+
+      future.then((_) {
+        messenger.clearSnackBars();
+        messenger.showMessage("Đã tải hồ sơ ${student.name}");
+      });
     }
+
+    await Future.wait(futures);
 
     messenger.showSnackBar(
       SnackBar(

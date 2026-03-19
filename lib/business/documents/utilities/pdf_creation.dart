@@ -106,31 +106,52 @@ Future<Uint8List> buildSinglePageDocument({
 Future<TextStyle> getPdfDefaultTextStyle({
   double fontSize = defaultBaseFontSize,
 }) async {
-  final useTimes = true;
-  final serifFonts = switch (useTimes) {
-    false => (
-      base: loadFont(Assets.fonts.texGyreTermesRegular),
-      bold: loadFont(Assets.fonts.texGyreTermesBold),
-      italic: loadFont(Assets.fonts.texGyreTermesItalic),
-      boldItalic: loadFont(Assets.fonts.texGyreTermesBoldItalic),
-    ),
-    true => (
-      base: loadFont(Assets.fonts.timesNewRoman),
-      bold: loadFont(Assets.fonts.timesNewRomanBold),
-      italic: loadFont(Assets.fonts.timesNewRomanItalic),
-      boldItalic: loadFont(Assets.fonts.timesNewRomanBoldItalic),
-    ),
-  };
+  final serifFonts = (
+    base: await loadFont(Assets.fonts.texGyreTermesRegular),
+    bold: await loadFont(Assets.fonts.texGyreTermesBold),
+    italic: await loadFont(Assets.fonts.texGyreTermesItalic),
+    boldItalic: await loadFont(Assets.fonts.texGyreTermesBoldItalic),
+  );
+
+  /// Use times
+  // final serifFonts = (
+  //   base: await loadFont(Assets.fonts.timesNewRoman),
+  //   bold: await loadFont(Assets.fonts.timesNewRomanBold),
+  //   italic: await loadFont(Assets.fonts.timesNewRomanItalic),
+  //   boldItalic: await loadFont(Assets.fonts.timesNewRomanBoldItalic),
+  // );
 
   final defaultTextStyle = TextStyle(
-    font: await serifFonts.base,
-    fontItalic: await serifFonts.italic,
-    fontBoldItalic: await serifFonts.boldItalic,
-    fontBold: await serifFonts.bold,
+    font: serifFonts.base,
+    fontItalic: serifFonts.italic,
+    fontBoldItalic: serifFonts.boldItalic,
+    fontBold: serifFonts.bold,
     fontSize: fontSize,
   );
 
   return defaultTextStyle;
+}
+
+Future<ThemeData> getPdfDefaultTheme({double baseFontSize = 9.0}) async {
+  final defaultTextStyle = await getPdfDefaultTextStyle(
+    fontSize: defaultBaseFontSize,
+  );
+  final boldTextStyle = defaultTextStyle.copyWith(
+    fontWeight: FontWeight.bold,
+  );
+
+  final theme = ThemeData(
+    defaultTextStyle: defaultTextStyle,
+    header0: boldTextStyle.copyWith(fontSize: baseFontSize + 10),
+    header1: boldTextStyle.copyWith(fontSize: baseFontSize + 8),
+    header2: boldTextStyle.copyWith(fontSize: baseFontSize + 6),
+    header3: boldTextStyle.copyWith(fontSize: baseFontSize + 4),
+    header4: boldTextStyle.copyWith(fontSize: baseFontSize + 2),
+    header5: boldTextStyle.copyWith(fontSize: baseFontSize),
+    paragraphStyle: defaultTextStyle,
+  );
+
+  return theme;
 }
 
 /// Load a TTF font from asset path
