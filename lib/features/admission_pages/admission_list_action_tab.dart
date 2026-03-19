@@ -8,6 +8,7 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../core/router.dart';
 import '../../custom_widgets.dart';
+import '../gui/msc_admission/profile_downloading_screen.dart';
 import '_download.dart';
 import '_forms.dart';
 import 'admission_pages.dart';
@@ -83,6 +84,18 @@ class _AdmissionActionTabViewState
                     Expanded(child: _SavePaperworkButton()),
                     Expanded(child: _ProfileDownloadButton()),
                   ],
+                ),
+                OutlinedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            AdmissionProfileDownloadingScreen(),
+                      ),
+                    );
+                  },
+                  child: Text("Tới trang tải hồ sơ"),
                 ),
               ],
             ),

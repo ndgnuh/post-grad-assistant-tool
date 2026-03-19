@@ -4,7 +4,7 @@ import '../../../business/db_v2_providers.dart';
 
 extension AdmissionStudentDao on AppDatabase {
   /// List students
-  Stream<List<StudentData>> listAdmissionStudents({
+  Stream<List<StudentData>> watchAdmissionStudents({
     required final StudentStatus? status,
   }) {
     final stmt = select(student);
@@ -22,6 +22,18 @@ extension AdmissionStudentDao on AppDatabase {
       stmt.where((s) => s.status.equals(status.value));
     }
 
+    return stmt.watch();
+  }
+
+  /// Lấy ra những học viên thuộc diện phỏng vấn
+  /// Trả về một [Stream<List<StudentData>>], là stream danh sách ứng viên
+  Stream<List<StudentData>> watchInterviewCandidates() {
+    final stmt = select(student);
+    stmt.where(
+      (r) =>
+          r.status.equals(StudentStatus.admission.value) &
+          r.admissionType.equals(AdmissionType.interview.value),
+    );
     return stmt.watch();
   }
 }

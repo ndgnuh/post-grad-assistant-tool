@@ -202,10 +202,12 @@ class MyApp extends ConsumerWidget {
     final colorScheme = FlexScheme.blueM3;
     final subThemeData = FlexSubThemesData(
       inputDecoratorIsFilled: true,
-      buttonPadding: EdgeInsetsGeometry.symmetric(
-        vertical: context.gutterSmall,
-        horizontal: context.gutter,
+      buttonPadding: const EdgeInsetsGeometry.symmetric(
+        vertical: 16,
+        horizontal: 24,
       ),
+      useMaterial3Typography: true,
+      searchUseGlobalShape: true,
       defaultRadius: context.gutterSmall,
     );
 
@@ -217,7 +219,6 @@ class MyApp extends ConsumerWidget {
       scheme: colorScheme,
       subThemesData: subThemeData,
     );
-    final locale = Locale('vi', 'VN');
 
     if (kDebugMode) {
       // WidgetsBinding.instance.addPostFrameCallback((_) {

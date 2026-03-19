@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:drift/drift.dart';
+
 import '../../business/documents/pdf_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -207,10 +209,20 @@ final paymentRequestDocxProvider = FutureProvider((ref) async {
   return model.docx;
 });
 
-final paymentStudentIdsProvider = AsyncNotifierProvider.family(
-  (AdmissionCouncilData council) =>
-      StudentIdsNotifier(admissionCouncil: council),
-);
+final paymentStudentIdsProvider = StreamProvider.family((
+  ref,
+  AdmissionCouncilData council,
+) async* {
+  final db = await ref.watch(mainDatabaseProvider.future);
+  final stmt = db.select(db.student);
+  // FIXME: cách này hơi đần để phát hiện chưa thanh toán...
+  stmt.where(
+    (s) =>
+        s.admissionCouncilId.equals(council.id) &
+        s.status.isNotValue(StudentStatus.quit.value),
+  );
+  yield* stmt.map((s) => s.id).watch();
+});
 
 final saveDirectoryProvider = NotifierProvider(
   SaveDirectoryNotifier.new,
