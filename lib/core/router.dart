@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../features/course_classes/course_classes.dart';
+import '../features/course_pages/course_details_page.dart';
 import '../features/msc_admission/msc_admission.dart';
 
 final navigationKey = GlobalKey<NavigatorState>();
@@ -34,6 +36,9 @@ class AppRouter extends _BaseRouter {
   AppRouter([super.context]);
 
   MscRouter get msc => MscRouter(context);
+
+  void toCourseDetailsPage({required String courseId}) =>
+      simplePush(CourseDetailsPage(courseId: courseId));
 }
 
 /// Router for MSC pages

@@ -4,10 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../business/db_v2_providers.dart';
+import '../../../core/dialogs.dart';
+import '../../../core/router.dart';
 import '../../../custom_widgets.dart';
 import '../../course_pages/course_pages.dart';
 import '../course_classes.dart';
+import '../domain/dialogs.dart';
 import 'providers.dart';
+import 'teaching_assignment_tab.dart';
 import 'widgets.dart';
 
 class CourseClassListTab extends StatelessWidget {
@@ -47,7 +51,12 @@ class CourseClassListTab extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(height: context.gutterSmall),
-                  Expanded(child: _CourseClassesView()),
+                  Expanded(
+                    child: PlatformAdaptiveLayout(
+                      mobile: _CourseClassesListView(),
+                      desktop: _CourseClassTableView(),
+                    ),
+                  ),
                   SizedBox(height: context.gutterSmall),
                 ],
               ),
@@ -132,7 +141,111 @@ class _CourseClassActionDialog extends ConsumerWidget {
   }
 }
 
-class _CourseClassesView extends ConsumerWidget {
+class _CourseClassTableView extends ConsumerWidget {
+  final columns = [
+    DataColumn(label: Text("Mã lớp")),
+    DataColumn(label: Text("Mã học phần")),
+    DataColumn(label: Text("Tên lớp"), columnWidth: FlexColumnWidth()),
+    DataColumn(label: Text("ĐK")),
+    DataColumn(label: Text("Phân công"), columnWidth: FlexColumnWidth()),
+    DataColumn(label: Text("Phòng")),
+    DataColumn(label: Text("Ngày")),
+    DataColumn(label: Text("Tiết")),
+    DataColumn(label: Text("Trạng thái")),
+  ];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncClassList = ref.watch(classListBySemesterProvider);
+    switch (asyncClassList) {
+      case AsyncError(:final error, :final stackTrace):
+        return Text("Lỗi khi lấy dữ liệu: $error");
+      case AsyncLoading():
+        return Center(child: LinearProgressIndicator());
+      case AsyncValue(value: final viewModels):
+        if (viewModels == null) {
+          return Text("Chọn học kỳ trước");
+        }
+
+        final router = AppRouter();
+
+        return DataTable(
+          columns: columns,
+          rows: viewModels.map((viewModel) {
+            final courseClass = viewModel.courseClass;
+            final course = viewModel.course;
+
+            return DataRow(
+              cells: [
+                DataCell(Text(courseClass.classId)),
+                DataCell(
+                  InkWell(
+                    onTap: () =>
+                        router.toCourseDetailsPage(courseId: course.id),
+                    child: Text(course.id),
+                  ),
+                ),
+                DataCell(Text(viewModel.className)),
+                DataCell(Text(courseClass.registrationCount.toString())),
+                DataCell(
+                  InkWell(
+                    onTap: () => showDialog(
+                      context: context,
+                      builder: (context) => Dialog(
+                        child: TeachingAssignmentTab(classId: courseClass.id),
+                      ),
+                    ),
+                    child: Text(viewModel.teacherAssignmentString),
+                  ),
+                ),
+                DataCell(
+                  InkWell(
+                    onTap: () => showClassRoomUpdateDialog(
+                      context: context,
+                      courseClass: courseClass,
+                    ),
+                    child: Text(courseClass.classroom ?? "Chưa có"),
+                  ),
+                ),
+                DataCell(
+                  InkWell(
+                    onTap: () => showDayUpdateDialog(
+                      context: context,
+                      courseClass: courseClass,
+                    ),
+                    child: Text(courseClass.dayOfWeek?.label ?? "Chưa có"),
+                  ),
+                ),
+                DataCell(
+                  InkWell(
+                    onTap: () => showPeriodSelectionDialog(
+                      context: context,
+                      courseClass: courseClass,
+                    ),
+                    child: Text(viewModel.studyTime),
+                  ),
+                ),
+                DataCell(
+                  InkWell(
+                    onTap: () => showClassStatusUpdateDialog(
+                      context: context,
+                      courseClass: courseClass,
+                    ),
+                    child: Text(
+                      (courseClass.status ?? CourseClassStatus.normal).label,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
+        );
+    }
+  }
+}
+
+/// Xem danh sách lớp tín chỉ dưới dạng [ListView]
+class _CourseClassesListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final idsAsync = ref.watch(courseClassIdsProvider);

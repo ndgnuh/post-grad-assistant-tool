@@ -9,6 +9,25 @@ import '../../../business/copy_pasta.dart';
 import '../../../business/db_v2_providers.dart';
 import '../../../business/selection_models.dart';
 import '../../../utilities/strings.dart';
+import '../data/dao.dart';
+import '../data/dao.dart' as dao_module;
+
+final daoProvider = FutureProvider((ref) async {
+  final db = await ref.watch(mainDatabaseProvider.future);
+  return CourseClassDao(db);
+});
+
+final classListBySemesterProvider = StreamProvider((ref) async* {
+  final semesterModel = await ref.watch(semesterSelectionModelProvider.future);
+  final semester = semesterModel.selected;
+
+  if (semester == null) {
+    yield* Stream.value(<dao_module.CourseClassViewModel>[]);
+  }
+
+  final dao = await ref.watch(daoProvider.future);
+  yield* dao.watchClassListBySemester(semester: semester!);
+});
 
 /// Return course class IDs for the selected semester
 /// along with a boolean indicating whether no semester is selected

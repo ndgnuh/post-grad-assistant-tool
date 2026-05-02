@@ -58,3 +58,47 @@ class DayOfWeekConverter extends TypeConverter<DayOfWeek, int> {
   @override
   int toSql(DayOfWeek day) => day.value;
 }
+
+/// Giờ lên lớp.
+/// https://ctt.hust.edu.vn/DisplayWeb/DisplayBaiViet?baiviet=33321
+enum PeriodOfDay {
+  t1(6, 45, 7, 30),
+  t2(7, 30, 8, 15),
+  t3(8, 25, 9, 10),
+  t4(9, 20, 10, 5),
+  t5(10, 15, 11, 0),
+  t6(11, 0, 11, 45),
+  t7(12, 30, 13, 15),
+  t8(13, 15, 14, 0),
+  t9(14, 10, 14, 55),
+  t10(15, 5, 15, 50),
+  t11(16, 0, 16, 45),
+  t12(16, 45, 17, 30),
+  t13(17, 45, 18, 30),
+  t14(18, 30, 19, 15)
+  ;
+
+  final int startHour;
+  final int startMinute;
+  final int finishHour;
+  final int finishMinute;
+  const PeriodOfDay(
+    this.startHour,
+    this.startMinute,
+    this.finishHour,
+    this.finishMinute,
+  );
+
+  @override
+  String toString() {
+    final startHourStr = startHour.toString().padLeft(2, "0");
+    final startMinuteStr = startMinute.toString().padLeft(2, "0");
+    final startTimeStr = "$startHourStr:$startMinuteStr";
+    final finishHourStr = finishHour.toString().padLeft(2, "0");
+    final finishMinuteStr = finishMinute.toString().padLeft(2, "0");
+    final finishTimeStr = "$finishHourStr:$finishMinuteStr";
+    return "Tiết $value ($startTimeStr - $finishTimeStr)";
+  }
+
+  int get value => int.parse(name.replaceFirst("t", ""));
+}

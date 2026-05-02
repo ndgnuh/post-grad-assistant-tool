@@ -1872,6 +1872,7 @@ class FramedSection extends StatelessWidget {
   }
 }
 
+/// Adaptive layout for both mobile and desktop
 class PlatformAdaptiveLayout extends StatelessWidget {
   final Widget mobile;
   final Widget desktop;
