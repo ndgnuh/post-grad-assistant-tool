@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../business/main_database.dart';
 import '../../../core/sqlbuilder/_query.dart';
@@ -169,6 +170,15 @@ class CourseClassDao {
       endPeriod: finishValue,
     );
 
+    final stmt = db.update(db.courseClass);
+    stmt.where((r) => r.id.equals(classId));
+    stmt.write(companion);
+  }
+
+  void updateAccessUrl({required int classId, required String value}) async {
+    value = value.trim();
+    final updatedValue = value.isEmpty ? Value<String>.absent() : Value(value);
+    final companion = CourseClassCompanion(accessUrl: updatedValue);
     final stmt = db.update(db.courseClass);
     stmt.where((r) => r.id.equals(classId));
     stmt.write(companion);

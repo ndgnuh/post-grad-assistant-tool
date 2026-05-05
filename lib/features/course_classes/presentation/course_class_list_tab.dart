@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -147,6 +148,7 @@ class _CourseClassTableView extends ConsumerWidget {
     DataColumn(label: Text("Mã học phần")),
     DataColumn(label: Text("Tên lớp"), columnWidth: FlexColumnWidth()),
     DataColumn(label: Text("ĐK")),
+    DataColumn(label: Text("URL"), columnWidth: FlexColumnWidth()),
     DataColumn(label: Text("Phân công"), columnWidth: FlexColumnWidth()),
     DataColumn(label: Text("Phòng")),
     DataColumn(label: Text("Ngày")),
@@ -168,6 +170,7 @@ class _CourseClassTableView extends ConsumerWidget {
         }
 
         final router = AppRouter();
+        final messenger = ScaffoldMessenger.of(context);
 
         return DataTable(
           columns: columns,
@@ -185,8 +188,28 @@ class _CourseClassTableView extends ConsumerWidget {
                     child: Text(course.id),
                   ),
                 ),
-                DataCell(Text(viewModel.className)),
+                DataCell(
+                  InkWell(
+                    onTap: () {
+                      final data = ClipboardData(text: viewModel.className);
+                      Clipboard.setData(data);
+                      messenger.showSnackBar(
+                        SnackBar(content: Text("Đã copy tên lớp")),
+                      );
+                    },
+                    child: Text(viewModel.className),
+                  ),
+                ),
                 DataCell(Text(courseClass.registrationCount.toString())),
+                DataCell(
+                  InkWell(
+                    onTap: () => showAccessUrlUpdateDialog(
+                      context: context,
+                      courseClass: courseClass,
+                    ),
+                    child: Text(courseClass.accessUrl ?? "Chưa có"),
+                  ),
+                ),
                 DataCell(
                   InkWell(
                     onTap: () => showDialog(

@@ -13,6 +13,20 @@ Future<CourseClassDao> _getDao(BuildContext context) async {
   return dao;
 }
 
+void showAccessUrlUpdateDialog({
+  required BuildContext context,
+  required CourseClassData courseClass,
+}) async {
+  final dao = await _getDao(context);
+  final value = await showTextEditingDialog(
+    title: Text("Link truy cập"),
+    initialValue: courseClass.accessUrl,
+  );
+  if (value == null) return;
+
+  dao.updateAccessUrl(classId: courseClass.id, value: value);
+}
+
 void showClassRoomUpdateDialog({
   required BuildContext context,
   required CourseClassData courseClass,

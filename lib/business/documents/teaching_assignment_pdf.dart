@@ -363,12 +363,6 @@ void _sheetBuilder({
     ),
   );
 
-  /// Auto fit use the width of merged cells...
-  /// so some columns have to be set manually
-  /// Luckily it is the order column, so just eyeing it out works
-  sheet.setAllColumnAutoFit();
-  sheet.setColumnWidth(1, 6);
-
   /// Write headers
   sheet.setCell(
     cellIndex: CellIndex.indexByString("B1"),
@@ -429,6 +423,15 @@ void _sheetBuilder({
     ),
     value: TextCellValue("KHOA TOÁN - TIN"),
     style: normal.center.bold,
+  );
+
+  sheet.setAllColumnsAutoWidth(
+    startRow: 9,
+    endRow: 11 + rows.length,
+  );
+  sheet.escapeNewline(
+    startRow: 9,
+    endRow: 11 + rows.length,
   );
 }
 

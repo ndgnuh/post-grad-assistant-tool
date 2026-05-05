@@ -1,3 +1,6 @@
+/// TODO: Is this deprecated???? Some of the function is not called
+library;
+
 import '../../../business/db_v2_providers.dart';
 import '../../../business/documents.dart';
 import '../../../business/documents/common_widgets.dart';
@@ -410,7 +413,6 @@ void _sheetBuilder({
   /// Auto fit use the width of merged cells...
   /// so some columns have to be set manually
   /// Luckily it is the order column, so just eyeing it out works
-  sheet.setAllColumnAutoFit();
   sheet.setColumnWidth(1, 6);
 
   /// Write headers

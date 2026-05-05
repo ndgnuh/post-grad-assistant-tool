@@ -2,6 +2,7 @@
 library;
 
 import 'dart:isolate';
+import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:excel/excel.dart';
 
@@ -299,5 +300,138 @@ extension SheetHelpers on Sheet {
       final cell = this.cell(cellIndex);
       cell.cellStyle = style;
     }
+  }
+}
+
+/// This function is yanked from the source of excel package
+const _xlsxInternalPadding = 9.0;
+double _calcAutoWidth(
+  Data cell, {
+  double padding = 0.08,
+  double? characterWidth,
+}) {
+  characterWidth ??= 7.0;
+  final cellStr = cell.value.toString();
+  final int numChar;
+  if (cellStr.contains("\n")) {
+    numChar = cellStr
+        .split("\n")
+        .map((x) => x.length)
+        .reduce((a, b) => math.max(a, b));
+  } else {
+    numChar = cellStr.length;
+  }
+
+  double width = numChar * characterWidth + _xlsxInternalPadding + padding * 2;
+  width = (width / 7.5 * 255).round() / 256;
+
+  return width;
+}
+
+extension SheetAutoWidth on Sheet {
+  void setColumnAutoWidth({
+    required int columnIndex,
+    double padding = 0.08,
+    double? characterWidth,
+    int? startRow,
+    int? endRow,
+  }) {
+    startRow ??= 0;
+    endRow ??= maxRows;
+    double maxWidth = 0;
+
+    for (int rowIndex = startRow; rowIndex < endRow; rowIndex++) {
+      final cell = this.cell(
+        CellIndex.indexByColumnRow(
+          columnIndex: columnIndex,
+          rowIndex: rowIndex,
+        ),
+      );
+      final width = _calcAutoWidth(
+        cell,
+        padding: padding,
+        characterWidth: characterWidth,
+      );
+
+      maxWidth = math.max(maxWidth, width);
+      final cellStr = cell.value.toString();
+      print("Row ${rowIndex + 1}: [$cellStr] width $width");
+    }
+
+    print((columnIndex, maxWidth));
+    setColumnWidth(columnIndex, maxWidth);
+  }
+
+  void setAllColumnsAutoWidth({
+    double padding = 0.08,
+    double? characterWidth,
+    int? startRow,
+    int? endRow,
+    int? startColumn,
+    int? endColumn,
+  }) {
+    startColumn ??= 0;
+    endColumn ??= maxColumns;
+    for (
+      int columnIndex = startColumn;
+      columnIndex < endColumn;
+      columnIndex++
+    ) {
+      setColumnAutoWidth(
+        columnIndex: columnIndex,
+        padding: padding,
+        characterWidth: characterWidth,
+        startRow: startRow,
+        endRow: endRow,
+      );
+    }
+  }
+
+  void escapeNewline({
+    int? startRow,
+    int? endRow,
+    int? startColumn,
+    int? endColumn,
+  }) {
+    startRow ??= 0;
+    startColumn ??= 0;
+    endColumn ??= maxColumns;
+    endRow ??= maxRows;
+    for (
+      int columnIndex = startColumn;
+      columnIndex < endColumn;
+      columnIndex++
+    ) {
+      for (int rowIndex = startRow; rowIndex < endRow; rowIndex++) {
+        final cellIndex = CellIndex.indexByColumnRow(
+          columnIndex: columnIndex,
+          rowIndex: rowIndex,
+        );
+        final cellData = cell(cellIndex);
+        final cellText = cellData.value.toString();
+        if (cellText.contains("\n")) {
+          setCell(
+            cellIndex: cellIndex,
+            value: cellText.escapeNewlineXlsx(),
+          );
+        }
+      }
+    }
+  }
+}
+
+extension XlsxEscape on String {
+  FormulaCellValue escapeNewlineXlsx() {
+    // Replaces standard line feeds and carriage returns
+    final clean = replaceAll("\r\n", "\n");
+    final lines = clean.split("\n");
+    final escaped = lines
+        .map((String line) {
+          line = line.replaceAll("\"", "\\\"");
+          line = '"$line"';
+          return line;
+        })
+        .join("& CHAR(10) &");
+    return FormulaCellValue(escaped);
   }
 }

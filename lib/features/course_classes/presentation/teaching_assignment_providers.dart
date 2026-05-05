@@ -105,54 +105,47 @@ $myName"""
   );
 });
 
-final teachingAssignmentModelProvider = FutureProvider((ref) async {
-  final semesterSelection = await ref.watch(
-    semesterSelectionModelProvider.future,
-  );
-  final semester = semesterSelection.selected;
-  if (semester == null) return null;
+final teachingAssignmentModelProvider =
+    StreamProvider<TeachingAssignmentDocument?>(
+      (ref) async* {
+        final semesterSelection = await ref.watch(
+          semesterSelectionModelProvider.future,
+        );
+        final semester = semesterSelection.selected;
+        if (semester == null) yield* Stream.empty();
 
-  final courseClassIds = await ref.watch(
-    courseClassIdsBySemesterProvider(semester.id).future,
-  );
+        final dao = await ref.watch(daoProvider.future);
+        final stream = dao.watchClassListBySemester(semester: semester!);
 
-  final courseClasses = <CourseClassData>[];
-  final mapTeachers = <int, List<TeacherData>>{};
-  final mapWeights = <int, List<double>>{};
-  final mapCourses = <int, CourseData>{};
+        await for (final models in stream) {
+          final courseClasses = <CourseClassData>[];
+          final mapTeachers = <int, List<TeacherData>>{};
+          final mapWeights = <int, List<double>>{};
+          final mapCourses = <int, CourseData>{};
 
-  for (final classId in courseClassIds) {
-    final courseClass = await ref.watch(
-      courseClassByIdProvider(classId).future,
+          for (final model in models) {
+            final courseClass = model.courseClass;
+            final classId = courseClass.id;
+            final course = model.course;
+            final teachers = model.teachers;
+            final weights = model.teacherWeights;
+
+            courseClasses.add(courseClass);
+            mapCourses[classId] = course;
+            mapTeachers[classId] = teachers;
+            mapWeights[classId] = weights;
+          }
+
+          yield TeachingAssignmentDocument(
+            semester: semester,
+            courseClasses: courseClasses,
+            mapCourses: mapCourses,
+            mapTeachers: mapTeachers,
+            mapWeights: mapWeights,
+          );
+        }
+      },
     );
-    if (!courseClass.courseId.startsWith("MI")) continue;
-
-    final course = await ref.watch(
-      courseByIdProvider(courseClass.courseId).future,
-    );
-    final assignment = await ref.watch(
-      teachingAssignmentsProvider(classId).future,
-    );
-    final teachers = [
-      for (final a in assignment)
-        await ref.watch(teacherByIdProvider(a.teacherId).future),
-    ];
-    final weights = [for (final a in assignment) a.weight];
-
-    courseClasses.add(courseClass);
-    mapCourses[classId] = course;
-    mapTeachers[classId] = teachers;
-    mapWeights[classId] = weights;
-  }
-
-  return TeachingAssignmentDocument(
-    semester: semester,
-    courseClasses: courseClasses,
-    mapCourses: mapCourses,
-    mapTeachers: mapTeachers,
-    mapWeights: mapWeights,
-  );
-});
 
 final teachingAssignmentPdfProvider = FutureProvider((ref) async {
   final model = await ref.watch(teachingAssignmentModelProvider.future);

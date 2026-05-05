@@ -1,3 +1,6 @@
+/// Quy định giờ học và ngày học
+library;
+
 import 'package:drift/drift.dart';
 
 enum DayOfWeek implements Comparable {
@@ -61,6 +64,7 @@ class DayOfWeekConverter extends TypeConverter<DayOfWeek, int> {
 
 /// Giờ lên lớp.
 /// https://ctt.hust.edu.vn/DisplayWeb/DisplayBaiViet?baiviet=33321
+/// Thông tin từ chuyên viên: có vẻ có tiết thứ 15????
 enum PeriodOfDay {
   t1(6, 45, 7, 30),
   t2(7, 30, 8, 15),
@@ -75,7 +79,8 @@ enum PeriodOfDay {
   t11(16, 0, 16, 45),
   t12(16, 45, 17, 30),
   t13(17, 45, 18, 30),
-  t14(18, 30, 19, 15)
+  t14(18, 30, 19, 15),
+  t15(19, 15, 20, 00)
   ;
 
   final int startHour;
