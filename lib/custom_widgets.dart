@@ -928,11 +928,14 @@ class EzRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IntrinsicHeight(
-      child: Row(
+      child: Flex(
+        direction: Axis.horizontal,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: mainAxisAlignment,
         spacing: spacing ?? context.gutter,
-        children: children,
+        children: children.map((child) {
+          return Flexible(child: child);
+        }).toList(),
       ),
     );
   }

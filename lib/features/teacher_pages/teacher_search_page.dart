@@ -1,4 +1,3 @@
-import '../../shortcuts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,6 +5,8 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
+import '../../shortcuts.dart';
+import '../gui/gui.dart';
 import 'teacher_pages.dart';
 import 'teacher_search_providers.dart';
 
@@ -24,6 +25,18 @@ class TeacherSearchPage extends StatelessWidget {
           withTabBar: true,
           child: AppBar(
             title: Text("Giảng viên"),
+            actions: [
+              IconButton(
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddTeacherPage(),
+                    fullscreenDialog: true,
+                  ),
+                ),
+                icon: Icon(Symbols.add),
+              ),
+            ],
             bottom: TabBar(
               isScrollable: true,
               tabs: [
@@ -65,31 +78,21 @@ class TeacherSearchPage extends StatelessWidget {
   }
 }
 
-class _TeacherListView extends ConsumerWidget {
+class _SearchBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final idsAsync = ref.watch(teacherIdsProvider);
-    switch (idsAsync) {
-      case AsyncLoading():
-        return Center(child: CircularProgressIndicator());
-      case AsyncError(:final error):
-        return Text("Lỗi khi tải giảng viên: $error");
-      default:
-    }
+    final notifier = ref.read(searchQueryProvider.notifier);
 
-    final (needUserInput, ids) = idsAsync.value!;
-    if (needUserInput) {
-      return Center(child: Text("Vui lòng nhập từ khóa tìm kiếm."));
-    }
-
-    return ListView.separated(
-      shrinkWrap: true,
-      itemCount: ids.length,
-      separatorBuilder: (context, index) => Divider(),
-      itemBuilder: (context, index) {
-        final id = ids[index];
-        return _TeacherListTile(teacherId: id);
-      },
+    return TextField(
+      focusNode: _searchFocusNode,
+      controller: notifier.controller,
+      onChanged: (value) => notifier.debounceSet(value),
+      onSubmitted: (value) => notifier.set(value),
+      decoration: InputDecoration(
+        prefixIcon: Icon(Icons.search),
+        labelText: "Tìm giảng viên",
+        hintText: "Tên, mã số, bộ môn...",
+      ),
     );
   }
 }
@@ -147,21 +150,31 @@ class _TeacherListTile extends ConsumerWidget {
   }
 }
 
-class _SearchBar extends ConsumerWidget {
+class _TeacherListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notifier = ref.read(searchQueryProvider.notifier);
+    final idsAsync = ref.watch(teacherIdsProvider);
+    switch (idsAsync) {
+      case AsyncLoading():
+        return Center(child: CircularProgressIndicator());
+      case AsyncError(:final error):
+        return Text("Lỗi khi tải giảng viên: $error");
+      default:
+    }
 
-    return TextField(
-      focusNode: _searchFocusNode,
-      controller: notifier.controller,
-      onChanged: (value) => notifier.debounceSet(value),
-      onSubmitted: (value) => notifier.set(value),
-      decoration: InputDecoration(
-        prefixIcon: Icon(Icons.search),
-        labelText: "Tìm giảng viên",
-        hintText: "Tên, mã số, bộ môn...",
-      ),
+    final (needUserInput, ids) = idsAsync.value!;
+    if (needUserInput) {
+      return Center(child: Text("Vui lòng nhập từ khóa tìm kiếm."));
+    }
+
+    return ListView.separated(
+      shrinkWrap: true,
+      itemCount: ids.length,
+      separatorBuilder: (context, index) => Divider(),
+      itemBuilder: (context, index) {
+        final id = ids[index];
+        return _TeacherListTile(teacherId: id);
+      },
     );
   }
 }
