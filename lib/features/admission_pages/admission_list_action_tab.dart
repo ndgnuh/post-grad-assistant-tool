@@ -69,36 +69,38 @@ class _AdmissionActionTabViewState
           ),
 
           /// Download panel
-          FramedSection(
-            title: "Tải hồ sơ",
-            padding: EdgeInsets.all(context.gutter),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              spacing: context.gutter,
-              children: [
-                CouncilSelector(),
-                _SaveDirectoryPicker(),
-                Row(
-                  spacing: context.gutter,
-                  children: [
-                    Expanded(child: _SavePaperworkButton()),
-                    Expanded(child: _ProfileDownloadButton()),
-                  ],
-                ),
-                OutlinedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            AdmissionProfileDownloadingScreen(),
-                      ),
-                    );
-                  },
-                  child: Text("Tới trang tải hồ sơ"),
-                ),
-              ],
-            ),
+          Text(
+            "Tải hồ sơ",
+            style: TextStyle(fontSize: 24),
+          ),
+          Column(
+            spacing: context.gutter,
+            crossAxisAlignment: .stretch,
+            children: [
+              CouncilSelector(),
+              _SaveDirectoryPicker(),
+              Row(
+                spacing: context.gutter,
+                children: [
+                  Expanded(child: _SavePaperworkButton()),
+                  Expanded(child: _ProfileDownloadButton()),
+                ],
+              ),
+              OutlinedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AdmissionProfileDownloadingScreen(),
+                    ),
+                  );
+                },
+                child: Text("Tới trang tải hồ sơ"),
+              ),
+              Divider(),
+
+              _ManualDownloadForm(),
+            ],
           ),
 
           /// Interview
@@ -185,6 +187,113 @@ class _AdmissionActionTabViewState
     setState(() {
       expansionState[panelIndex] = isExpanded;
     });
+  }
+}
+
+class _ManualDownloadForm extends StatefulWidget {
+  @override
+  State<_ManualDownloadForm> createState() => _ManualDownloadFormState();
+}
+
+class _ManualDownloadFormState extends State<_ManualDownloadForm> {
+  final formKey = GlobalKey<FormState>();
+  final controller = TextEditingController();
+  final nameController = TextEditingController();
+  bool padOddPages = false;
+
+  String? validator(String? value) {
+    final ids = admissionIds;
+    if (ids == null) {
+      return "Nhập danh sách mã hồ sơ ngăn cách nhau bởi dấu phẩy";
+    }
+    if (ids.isEmpty) {
+      return "Không có hồ sơ để tải";
+    }
+
+    return null;
+  }
+
+  Set<int>? get admissionIds {
+    final parts = controller.text.split(RegExp("[;, ]"));
+    final ids = <int>{};
+    for (final part in parts) {
+      final id = int.tryParse(part);
+      if (id == null) {
+        return null;
+      }
+      ids.add(id);
+    }
+    return ids;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: formKey,
+      child: Column(
+        spacing: context.gutterSmall,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextFormField(
+            controller: nameController,
+            decoration: InputDecoration(
+              labelText: "Tên học viên",
+            ),
+          ),
+          TextFormField(
+            controller: controller,
+            validator: validator,
+            decoration: InputDecoration(
+              labelText: "Mã hồ sơ",
+            ),
+          ),
+          _SaveDirectoryPicker(),
+          CheckboxListTile(
+            title: Text("Đệm trang lẻ với trang trắng"),
+            value: padOddPages,
+            onChanged: (value) => setState(() {
+              padOddPages = value ?? (!padOddPages);
+            }),
+          ),
+          OutlinedButton(
+            onPressed: () async {
+              final ok = formKey.currentState!.validate();
+              if (!ok) return;
+
+              final ref = ProviderScope.containerOf(context);
+              final downloadDirectory = ref.read(downloadDirectoryProvider);
+              if (downloadDirectory == null) {
+                ScaffoldMessenger.of(context).showMessage("Chọn thư mục lưu");
+              }
+
+              final ids = admissionIds!;
+
+              final tasks = <Future>[];
+              for (final id in ids) {
+                final task = downloadAdmissionFiles(
+                  admissionId: id.toString(),
+                  studentName: nameController.text.trim(),
+                  saveDirectory: downloadDirectory!,
+                  padOddPages: padOddPages,
+                );
+
+                tasks.add(task);
+              }
+
+              final messenger = ScaffoldMessenger.of(context);
+              Future.wait(tasks)
+                  .then((_) => messenger.showMessage("Tải xuống thành công"))
+                  .onError(
+                    (error, stacktrace) => messenger.showMessage(
+                      "Tải xuống có lỗi $error:\n$stacktrace",
+                    ),
+                  );
+            },
+            child: Text("Tải hồ sơ thủ công"),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -286,6 +395,7 @@ class _ProfileDownloadButton extends StatelessWidget {
         admissionId: student.admissionId!,
         studentName: student.name,
         saveDirectory: saveDirectory,
+        padOddPages: true,
       );
       futures.add(future);
 

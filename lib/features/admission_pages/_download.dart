@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
-import '../../core/pdf_builder.bak/drafting.dart';
 import '../../utilities/strings.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -23,7 +22,7 @@ String bachelorDegreeUrl(Object? id) => "$baseTuyenSinhUrl/20172/$id.pdf";
 String degreeAppendixUrl(Object? id) => "$baseTuyenSinhUrl/20171/$id.pdf";
 
 Future<String> blankPdf() async {
-  final bytes = await createSinglePageDocument(build: (_) => SizedBox());
+  final bytes = await buildSinglePageDocument(build: (_) => SizedBox());
   final tmpDir = await getTemporaryDirectory();
   final tmpPath = p.join(tmpDir.path, "blank.pdf");
   await File(tmpPath).writeAsBytes(bytes);
@@ -71,10 +70,11 @@ Future<void> downloadAdmissionFiles({
   required String admissionId,
   required String studentName,
   required String saveDirectory,
+  required bool padOddPages,
 }) async {
   // Slugify
-  final name = studentName.toKebabCase();
-  final outputPath = p.join(saveDirectory, "$admissionId-$name.pdf");
+  final name = studentName.toPascalCase();
+  final outputPath = p.join(saveDirectory, "${admissionId}_$name.pdf");
   if (await File(outputPath).exists()) {
     print("File $outputPath already exists. Skipping download.");
     return;
@@ -116,13 +116,18 @@ Future<void> downloadAdmissionFiles({
     }
   }
 
-  final paddedOutputPaths = <String>[];
-  final blankPath = await blankPdf();
-  for (final (i, path) in outputPaths.indexed) {
-    paddedOutputPaths.add(path);
-    if (needPaddings[i]) {
-      paddedOutputPaths.add(blankPath);
+  final List<String> paddedOutputPaths;
+  if (padOddPages) {
+    paddedOutputPaths = [];
+    final blankPath = await blankPdf();
+    for (final (i, path) in outputPaths.indexed) {
+      paddedOutputPaths.add(path);
+      if (needPaddings[i]) {
+        paddedOutputPaths.add(blankPath);
+      }
     }
+  } else {
+    paddedOutputPaths = outputPaths;
   }
 
   final outputBytes = await combinePdfPages(
@@ -131,5 +136,11 @@ Future<void> downloadAdmissionFiles({
     ],
   );
 
+  /// Write the merged file
   await File(outputPath).writeAsBytes(outputBytes);
+
+  /// Clean up the partial files
+  Future.wait(
+    outputPaths.map((outputPath) => File(outputPath).delete()),
+  );
 }
