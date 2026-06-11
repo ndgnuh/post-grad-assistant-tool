@@ -344,6 +344,13 @@ class _TeacherDetailTab extends ConsumerWidget {
             onUpdate: (degree) =>
                 teacherNotifier.updateInfo(academicDegree: degree),
           ),
+          DateTile(
+            titleText: "Ngày nhận học vị",
+            leading: const Icon(null),
+            initialValue: teacher.academicDegreeReceiveDate,
+            onUpdate: (date) =>
+                teacherNotifier.updateInfo(academicDegreeReceiveDate: date),
+          ),
 
           // Thông tin liên hệ
           HeadingListTile(title: "Thông tin liên hệ"),

@@ -62,6 +62,7 @@ extension TeacherDao on AppDatabase {
     AcademicRank? academicRank,
     AcademicDegree? academicDegree,
     DateTime? dateOfBirth,
+    DateTime? academicDegreeReceiveDate,
   }) async {
     Value<String> toStringValue(String? input) {
       if (input == null) {
@@ -96,6 +97,10 @@ extension TeacherDao on AppDatabase {
       startTeachingYear: switch (startTeachingYear) {
         null => const Value.absent(),
         int y => Value(y),
+      },
+      academicDegreeReceiveDate: switch (academicDegreeReceiveDate) {
+        null => const Value.absent(),
+        DateTime date => Value(date),
       },
       dateOfBirth: switch (dateOfBirth) {
         null => const Value.absent(),

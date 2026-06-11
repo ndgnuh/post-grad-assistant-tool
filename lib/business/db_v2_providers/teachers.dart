@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../db_v2_providers.dart';
@@ -82,6 +81,7 @@ class TeacherByIdNotifier extends AsyncNotifier<TeacherData> {
     AcademicRank? academicRank,
     AcademicDegree? academicDegree,
     DateTime? dateOfBirth,
+    DateTime? academicDegreeReceiveDate,
   }) async {
     final db = await ref.read(mainDatabaseProvider.future);
     db.updateTeacher(
@@ -101,6 +101,7 @@ class TeacherByIdNotifier extends AsyncNotifier<TeacherData> {
       startTeachingYear: startTeachingYear,
       academicRank: academicRank,
       academicDegree: academicDegree,
+      academicDegreeReceiveDate: academicDegreeReceiveDate,
       dateOfBirth: dateOfBirth,
     );
   }
