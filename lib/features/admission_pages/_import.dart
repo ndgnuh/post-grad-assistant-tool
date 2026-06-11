@@ -84,7 +84,9 @@ String prettifyUniversity(String rawUniversity) {
 //   "xepLoaiTotNghiep_Bang1": "Giỏi",
 //   "xepLoaiTotNghiep_Bang2": ""
 // }
-Future<List<StudentCompanion>?> readProfilesFromJson() async {
+Future<List<StudentCompanion>> readProfilesFromJson({
+  required final AdmissionCouncilData council,
+}) async {
   final result = await FilePicker.platform.pickFiles(
     dialogTitle: "File danh sách",
     allowMultiple: false,
@@ -145,6 +147,7 @@ Future<List<StudentCompanion>?> readProfilesFromJson() async {
       masterMajor: Value(masterMajor),
       intendedSpecialization: Value(specializationOrientation),
       status: Value(StudentStatus.admission),
+      admissionCouncilId: Value(council.id),
     );
 
     parsed.add(companion);

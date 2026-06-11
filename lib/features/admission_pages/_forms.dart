@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import '../../business/db_v2_providers/teachers.dart';
 import '../../business/documents/pdf_utils.dart';
@@ -12,6 +13,15 @@ import 'package:pdf/pdf.dart';
 import '../../core/pdf_widgets.dart' as pw;
 
 const _baseFontSize = 9.0;
+
+extension Overwrite on File {
+  Future<void> overwrite(Uint8List bytes) async {
+    if (await exists()) {
+      await delete();
+    }
+    await writeAsBytes(bytes);
+  }
+}
 
 extension _DateDmy on DateTime {
   String toDmy() {
@@ -208,11 +218,8 @@ Future<void> _buildBang2DanhSachThiSinh({
   );
 
   final file = File(p.join(saveDirectory, "Bảng 2 danh sách thí sinh.pdf"));
-  try {
-    await file.delete();
-  } finally {
-    await file.writeAsBytes(bytes);
-  }
+
+  await file.overwrite(bytes);
 }
 
 Future<void> _buildBang3NhanXet({
@@ -325,12 +332,7 @@ Future<void> _buildBang3NhanXet({
       "Bảng 3 ${gv.name}.pdf",
     ),
   );
-  try {
-    await file.delete();
-  } finally {
-    await file.writeAsBytes(bytes);
-  }
-  return;
+  await file.overwrite(bytes);
 }
 
 Future<pw.Document> _buildBang4TongHopCnths({
@@ -435,7 +437,7 @@ Future<pw.Document> _buildBang4TongHopCnths({
       "Bảng 4 tổng hợp cn-ths.pdf",
     ),
   );
-  await file.writeAsBytes(await doc.save());
+  await file.overwrite(await doc.save());
   return doc;
 }
 
@@ -565,10 +567,6 @@ Future<void> _buildBang4TongHopKq({
       "Bảng 4 tổng hợp kết quả đánh giá.pdf",
     ),
   );
-  try {
-    await file.delete();
-  } finally {
-    await file.writeAsBytes(bytes);
-  }
+  await file.overwrite(bytes);
   return;
 }
