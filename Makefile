@@ -5,8 +5,12 @@ APK_OUTPUT ?= "build/app/outputs/flutter-apk/app-release.apk"
 GDK_SCALE := 2
 
 
+
 dev:
 	flutter run
+
+migration:
+	dart run drift_dev make-migrations
 
 dev-linux:
 	flutter run -d linux

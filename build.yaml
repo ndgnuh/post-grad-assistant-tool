@@ -1,0 +1,10 @@
+targets:
+  $default:
+    builders:
+      drift_dev:
+        options:
+          store_date_time_values_as_text: true
+          databases:
+            # Required: A name for the database and its path
+            main_database: ./lib/business/main_database.dart
+            file_database: ./lib/business/file_content_database.dart

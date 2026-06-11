@@ -6,11 +6,13 @@ import 'business_enums.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 import 'file_content_database.dart';
+import 'main_database.steps.dart';
 
 export './business_enums.dart';
 export 'package:drift/drift.dart' show Value;
 export 'package:drift/drift.dart' show TableStatements;
 
+part 'database_v1/tables.dart';
 part 'database_v1/thesis_dao.dart';
 part 'database_v1/phd_student_dao.dart';
 part 'database_v1/teacher_dao.dart';
@@ -35,19 +37,6 @@ extension AnyEmail on TeacherData {
     if (personalEmail != null) return personalEmail as String;
     throw AssertionError('Giảng viên $name không có');
   }
-
-  // String get nameWithTitle {
-  //   switch ((academicRank, academicDegree)) {
-  //     case (AcademicRank rank, AcademicDegree degree):
-  //       return '${rank.short} ${degree.short} $name';
-  //     case (AcademicRank rank, null):
-  //       return '${rank.short} $name';
-  //     case (null, AcademicDegree degree):
-  //       return '${degree.short} $name';
-  //     case (null, null):
-  //       return name;
-  //   }
-  // }
 
   List<String> get emails => [
     if (workEmail != null) workEmail as String,
@@ -101,18 +90,12 @@ extension TeacherTitles on TeacherData {
   }
 }
 
-@DriftDatabase(
-  include: {"database_v1.drift"},
-  queries: {
-    'searchTeacherIdsFts':
-        'SELECT id FROM teacher_fts WHERE teacher_fts MATCH ?;',
-  },
-)
+@DriftDatabase(tables: databaseTables)
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   static AppDatabase intialize(String databasePath) {
     final executor = driftDatabase(
@@ -285,6 +268,55 @@ class AppDatabase extends _$AppDatabase {
     if (kDebugMode) {
       print("Transaction state: $txn.");
     }
+  }
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onUpgrade: stepByStep(
+        from1To2: (m, schema) async {
+          // Create two new tables
+          m.createTable(schema.thesisDefenseRound);
+          m.createTable(schema.thesisDefenseCouncil);
+        },
+        from2To3: (m, schema) async {
+          print("Migrating");
+          m.addColumn(
+            schema.thesisDefenseCouncil,
+            schema.thesisDefenseCouncil.defenseRoundId,
+          );
+          m.renameColumn(
+            schema.admissionCouncil,
+            "member_1_id",
+            schema.admissionCouncil.member1Id,
+          );
+          m.renameColumn(
+            schema.admissionCouncil,
+            "member_2_id",
+            schema.admissionCouncil.member2Id,
+          );
+          m.renameColumn(
+            schema.admissionCouncil,
+            "member_3_id",
+            schema.admissionCouncil.member3Id,
+          );
+
+          /// Rename
+          final courseClass = schema.courseClass;
+          m.renameColumn(
+            courseClass,
+            "customBeginDate",
+            courseClass.customBeginDate,
+          );
+          m.renameColumn(
+            courseClass,
+            "customEndDate",
+            courseClass.customEndDate,
+          );
+          m.createAll();
+        },
+      ),
+    );
   }
 }
 

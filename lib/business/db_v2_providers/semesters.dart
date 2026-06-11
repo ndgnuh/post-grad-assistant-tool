@@ -51,7 +51,7 @@ class SemesterIdsNotifier extends AsyncNotifier<List<String>> {
       classBeginDate: classBeginDate,
       classEndDate: classEndDate,
       gradeSubmissionDeadline: gradeSubmissionDeadline,
-      sequence: Value(maxSequence + 1),
+      sequence: (maxSequence + 1),
     );
 
     db.semester.insertReturning(companion);

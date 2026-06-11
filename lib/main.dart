@@ -184,9 +184,15 @@ class MyApp extends ConsumerWidget {
 
   const MyApp({super.key});
 
+  // Future<void> test(WidgetRef ref) async {
+  //   final db = await ref.watch(mainDatabaseProvider.future);
+  //   db.select(db.thesisDefenseRound).get();
+  // }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkModeState = ref.watch(isDarkModeProvider);
+    // test(ref);
 
     /// FIXME: store theme mode directly instead of boolean
     final themeMode = switch (isDarkModeState) {
