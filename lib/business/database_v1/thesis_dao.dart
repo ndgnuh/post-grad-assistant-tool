@@ -29,6 +29,7 @@ extension ThesisDao on AppDatabase {
     return stmt;
   }
 
+  /// Cập nhật thông tin luận văn
   Future<void> updateThesis({
     required int id,
     String? vietnameseTitle,

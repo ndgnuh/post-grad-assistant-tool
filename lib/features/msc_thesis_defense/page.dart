@@ -1,5 +1,4 @@
 // TODO: refactor
-import '../../business/copy_pasta.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,11 +7,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+import '../../business/copy_pasta.dart';
 import '../../business/db_v2_providers/database.dart';
 import '../../business/db_v2_providers/thesis.dart';
 import '../../business/documents.dart';
 import '../../business/main_database.dart';
 import '../../business/view_models.dart';
+import '../../business/widgets/teacher_consumer.dart';
 import '../../custom_widgets.dart';
 import '../../shortcuts.dart';
 import '../pages.dart';
@@ -169,16 +170,16 @@ class _ModerateTab extends HookWidget {
                     );
                   },
                 ),
-                Consumer(
-                  builder: (context, ref, _) {
-                    final pdfAsync = ref.watch(councilSuggestionsPdfProvider);
-                    return _PdfPreviewButton(
-                      title: "Đề xuất hội đồng chấm luận văn",
-                      pdfAsync: pdfAsync,
-                    );
-                  },
-                ),
 
+                // Consumer(
+                //   builder: (context, ref, _) {
+                //     final pdfAsync = ref.watch(councilSuggestionPdfsProvider);
+                //     return _PdfPreviewButton(
+                //       title: "Đề xuất hội đồng chấm luận văn",
+                //       pdfAsync: pdfAsync,
+                //     );
+                //   },
+                // ),
                 DirectoryPicker(
                   name: "ho-so-bao-ve-luan-van",
                   labelText: "Thư mục lưu",
@@ -204,10 +205,12 @@ class _ModerateTab extends HookWidget {
                         return;
                       }
 
-                      final pdfFiles = await Future.wait([
-                        ref.read(scoreSheetsPdfProvider.future),
-                        ref.read(councilSuggestionsPdfProvider.future),
-                      ]);
+                      final pdfFiles = [
+                        await ref.read(scoreSheetsPdfProvider.future),
+                        ...(await ref.read(
+                          councilSuggestionPdfsProvider.future,
+                        )),
+                      ];
 
                       final docxFiles = [
                         ...(await ref.read(
@@ -359,6 +362,7 @@ class _PdfPreviewButton extends StatelessWidget {
   }
 }
 
+/// Đăng ký học viên vào danh sách bảo vệ
 class _ApplyTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -370,14 +374,187 @@ class _ApplyTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _StudentSearchAdd(),
-          Expanded(child: _StudentListView()),
+          Expanded(
+            child: PlatformAdaptiveLayout(
+              desktop: _DesktopStudentListView(),
+              mobile: _MobileStudentListView(),
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-class _StudentListView extends ConsumerWidget {
+/// TODO: a widget to provide a list of student thesis view models
+/// the other widget will pass a builder to this one
+/// and re-use the watching logic. No need to couple with
+/// riverpod anymore.
+sealed class DefenseStudentListConsumer extends ConsumerWidget {
+  const DefenseStudentListConsumer({super.key});
+
+  Widget dataBuilder(BuildContext context, List<ThesisData> studentIdList);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncValue = ref.watch(defendingThesesProvider);
+    switch (asyncValue) {
+      case AsyncLoading():
+        return Center(child: LinearProgressIndicator());
+      case AsyncError(:final error, :final stackTrace):
+        if (kDebugMode) {
+          print(stackTrace);
+        }
+        return Center(
+          child: Text("Lỗi tải danh sách học viên: $error"),
+        );
+      case AsyncData(value: final thesisList):
+        return dataBuilder(context, thesisList);
+    }
+  }
+}
+
+class _DesktopStudentListView extends DefenseStudentListConsumer {
+  static Widget teacherBuilder(_, TeacherData t) => Text(
+    t.name,
+    style: TextStyle(color: Colors.grey),
+  );
+  static Widget teacherRwBuilder(
+    int? id,
+    Function(AppDatabase, TeacherData) callback,
+  ) {
+    return DatabaseConsumer(
+      builder: (context, db) => SearchAnchor(
+        suggestionsBuilder: (context, controller) async {
+          final teachers = await db
+              .searchTeachers(searchText: controller.text)
+              .get();
+
+          final results = <Widget>[];
+          for (final teacher in teachers) {
+            final result = ListTile(
+              title: Text(teacher.name),
+              subtitle: Text(teacher.university ?? "Không rõ nơi công tác"),
+              onTap: () {
+                callback(db, teacher);
+                controller.closeView("");
+              },
+            );
+            results.add(result);
+          }
+          return results;
+        },
+        builder: (context, controller) {
+          final messenger = ScaffoldMessenger.of(context);
+          return switch (id) {
+            null => InkWell(
+              onTap: controller.openView,
+              child: Text("Chọn"),
+            ),
+            int id => TeacherConsumer(
+              id: id,
+              builder: (context, teacher) => Row(
+                mainAxisSize: .min,
+                children: [
+                  InkWell(
+                    onTap: controller.openView,
+                    child: Text("${teacher.name}\n${teacher.university}"),
+                  ),
+
+                  IconButton(
+                    onPressed: () {
+                      final data = ClipboardData(text: teacher.name);
+                      Clipboard.setData(data);
+                      messenger.showSnackBar(
+                        SnackBar(content: Text("Đã copy '${teacher.name}'")),
+                      );
+                    },
+                    icon: Icon(Symbols.content_copy),
+                  ),
+                ],
+              ),
+            ),
+          };
+        },
+      ),
+    );
+  }
+
+  @override
+  dataBuilder(BuildContext context, List<ThesisData> thesisList) {
+    final rows = thesisList.map((thesis) {
+      final student = StudentConsumer(
+        id: thesis.studentId!,
+        builder: (context, student) => Text(student.name),
+      );
+
+      final cohort = StudentConsumer(
+        id: thesis.studentId!,
+        builder: (context, student) => Text(student.cohort ?? "-"),
+      );
+      final supervisor = TeacherConsumer(
+        id: thesis.supervisorId,
+        builder: teacherBuilder,
+      );
+
+      final president = teacherRwBuilder(
+        thesis.presidentId,
+        (db, teacher) =>
+            db.updateThesis(id: thesis.id, presidentId: teacher.id),
+      );
+      final reviewer1 = teacherRwBuilder(
+        thesis.firstReviewerId,
+        (db, teacher) =>
+            db.updateThesis(id: thesis.id, firstReviewerId: teacher.id),
+      );
+      final reviewer2 = teacherRwBuilder(
+        thesis.secondReviewerId,
+        (db, teacher) =>
+            db.updateThesis(id: thesis.id, secondReviewerId: teacher.id),
+      );
+      final secretary = teacherRwBuilder(
+        thesis.secretaryId,
+        (db, teacher) =>
+            db.updateThesis(id: thesis.id, secretaryId: teacher.id),
+      );
+      final member = teacherRwBuilder(
+        thesis.memberId,
+        (db, teacher) => db.updateThesis(id: thesis.id, memberId: teacher.id),
+      );
+
+      return DataRow(
+        cells: [
+          DataCell(supervisor),
+          DataCell(cohort),
+          DataCell(student),
+          DataCell(president),
+          DataCell(reviewer1),
+          DataCell(reviewer2),
+          DataCell(secretary),
+          DataCell(member),
+        ],
+      );
+    });
+    return ExpandedScrollView(
+      child: DataTable(
+        dataRowMaxHeight: 60,
+        columns: [
+          DataColumn(label: Text("Hướng dẫn")),
+          DataColumn(label: Text("Khóa")),
+          DataColumn(label: Text("Học viên")),
+          DataColumn(label: Text("Chủ tịch")),
+          DataColumn(label: Text("Phản biện 1")),
+          DataColumn(label: Text("Phản biện 2")),
+          DataColumn(label: Text("Thư ký")),
+          DataColumn(label: Text("Ủy viên")),
+        ],
+        rows: rows.toList(),
+      ),
+    );
+  }
+}
+
+class _MobileStudentListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final studentIdsAsync = ref.watch(registeredStudentIdsProvider);

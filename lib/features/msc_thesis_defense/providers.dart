@@ -39,6 +39,41 @@ final registeredStudentIdsProvider = FutureProvider<List<int>>((ref) async {
   return ids;
 });
 
+final defendingThesesProvider = StreamProvider<List<ThesisData>>((
+  ref,
+) async* {
+  final AppDatabase db = await ref.watch(mainDatabaseProvider.future);
+
+  final studentIdStmt = db.select(db.student).join([
+    innerJoin(db.thesis, db.thesis.studentId.equalsExp(db.student.id)),
+    innerJoin(db.teacher, db.thesis.supervisorId.equalsExp(db.teacher.id)),
+  ]);
+
+  studentIdStmt.where(
+    db.thesis.studentId.isNotNull() &
+        (db.thesis.defenseStatus.equals(ThesisStatus.defenseApplied.value) |
+            db.thesis.defenseStatus.equals(ThesisStatus.defenseIntended.value) |
+            db.thesis.defenseStatus.equals(ThesisStatus.defenseApproved.value)),
+  );
+  studentIdStmt.addColumns([db.thesis.studentId]);
+  studentIdStmt.orderBy([
+    OrderingTerm.asc(db.teacher.teacherGroupId),
+    OrderingTerm.asc(db.thesis.supervisorId),
+    OrderingTerm.asc(db.student.cohort),
+  ]);
+
+  if (ref.isFirstBuild) {
+    studentIdStmt.watch().listen((event) {
+      ref.invalidateSelf();
+    });
+  }
+  final mapped = studentIdStmt.map((row) {
+    return row.readTable(db.thesis);
+  });
+
+  yield* mapped.watch();
+});
+
 /// Score sheets
 final scoreSheetsPdfProvider = FutureProvider<PdfFile>(
   (ref) async {
@@ -76,21 +111,20 @@ final councilDecisionDocxFilesProvider = FutureProvider(
 );
 
 /// Council suggestions
-final councilSuggestionsPdfProvider = FutureProvider<PdfFile>(
+final councilSuggestionPdfsProvider = FutureProvider<List<PdfFile>>(
   (ref) async {
     final ids = await ref.watch(registeredStudentIdsProvider.future);
-    final models = <ThesisViewModel>[];
+    final pdfs = <PdfFile>[];
     for (final studentId in ids) {
       final model = await ref.watch(
         ThesisViewModel.providerByStudentId(studentId).future,
       );
-      models.add(model);
-    }
 
-    return MscThesisCouncilSuggestionDocument.buildCombinedPdf(
-      models: models,
-      config: MscThesisCouncilSuggestionDocument.defaultPdfConfig,
-    );
+      final pdfModel = MscThesisCouncilSuggestionDocument(model: model);
+      final config = MscThesisCouncilSuggestionDocument.defaultPdfConfig;
+      pdfs.add(await pdfModel.buildPdf(config: config));
+    }
+    return pdfs;
   },
 );
 
