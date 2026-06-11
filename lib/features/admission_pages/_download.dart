@@ -17,6 +17,8 @@ String paperUrl(Object? id) => "$baseTuyenSinhUrl/20175/$id.pdf";
 
 String englishCertUrl(Object? id) => "$baseTuyenSinhUrl/20174/$id.pdf";
 
+String deCuongUrl(Object? id) => "$baseTuyenSinhUrl/20173/$id.pdf";
+
 String bachelorDegreeUrl(Object? id) => "$baseTuyenSinhUrl/20172/$id.pdf";
 
 String degreeAppendixUrl(Object? id) => "$baseTuyenSinhUrl/20171/$id.pdf";
@@ -85,6 +87,7 @@ Future<void> downloadAdmissionFiles({
     (englishCertUrl(admissionId), false),
     (degreeAppendixUrl(admissionId), false),
     (paperUrl(admissionId), true),
+    (deCuongUrl(admissionId), false),
   ];
 
   final names = [
@@ -92,6 +95,7 @@ Future<void> downloadAdmissionFiles({
     "$admissionId-$name-NgoaiNgu.pdf",
     "$admissionId-$name-BangDiem.pdf",
     "$admissionId-$name-BaiBao.pdf",
+    "$admissionId-$name-DeCuong.pdf",
   ];
 
   final outputPaths = <String>[];
