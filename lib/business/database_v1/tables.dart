@@ -330,15 +330,15 @@ class PhdStudent extends Table {
       .references(Teacher, #id)
       .nullable()();
   @ReferenceName("phd_admission_member_1")
-  late final admission1stMemberId = integer()
+  late final admissionMember1Id = integer()
       .references(Teacher, #id)
       .nullable()();
   @ReferenceName("phd_admission_member_2")
-  late final admission2ndMemberId = integer()
+  late final admissionMember2Id = integer()
       .references(Teacher, #id)
       .nullable()();
   @ReferenceName("phd_admission_member_3")
-  late final admission3rdMemberId = integer()
+  late final admissionMember3Id = integer()
       .references(Teacher, #id)
       .nullable()();
   @ReferenceName("phd_admission_helper")

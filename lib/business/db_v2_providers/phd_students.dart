@@ -107,9 +107,9 @@ class PhdStudentByIdNotifier extends AsyncNotifier<PhdStudentData> {
       PhdStudentCompanion(
         admissionPresidentId: absentIfNull(presidentId),
         admissionSecretaryId: absentIfNull(secretaryId),
-        admission1stMemberId: absentIfNull(member1Id),
-        admission2ndMemberId: absentIfNull(member2Id),
-        admission3rdMemberId: absentIfNull(member3Id),
+        admissionMember1Id: absentIfNull(member1Id),
+        admissionMember2Id: absentIfNull(member2Id),
+        admissionMember3Id: absentIfNull(member3Id),
       ),
     );
   }

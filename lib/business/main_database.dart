@@ -95,7 +95,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   static AppDatabase intialize(String databasePath) {
     final executor = driftDatabase(
@@ -270,8 +270,44 @@ class AppDatabase extends _$AppDatabase {
     }
   }
 
+  Future<bool> checkColumn({
+    required final String tableName,
+    required final String columnName,
+  }) async {
+    final result = await customSelect(
+      "SELECT COUNT(*) as cnt FROM pragma_table_info('$tableName') WHERE name = '$columnName'",
+    ).getSingle();
+    return (result.read<int>('cnt')) > 0;
+  }
+
   @override
   MigrationStrategy get migration {
+    Future<void> renameColumn(
+      Migrator m,
+      TableInfo table,
+      String oldName,
+      GeneratedColumn column,
+    ) async {
+      final hasColumn = await checkColumn(
+        tableName: table.actualTableName,
+        columnName: oldName,
+      );
+
+      if (!hasColumn) {
+        print("Column $oldName from ${table.actualTableName} not found");
+        return;
+      }
+
+      if (oldName == column.name) {
+        print(
+          "Column $oldName from ${table.actualTableName} has the same name as ${column}",
+        );
+        return;
+      }
+
+      await m.renameColumn(table, oldName, column);
+    }
+
     return MigrationStrategy(
       onUpgrade: stepByStep(
         from1To2: (m, schema) async {
@@ -285,17 +321,20 @@ class AppDatabase extends _$AppDatabase {
             schema.thesisDefenseCouncil,
             schema.thesisDefenseCouncil.defenseRoundId,
           );
-          m.renameColumn(
+          await renameColumn(
+            m,
             schema.admissionCouncil,
             "member_1_id",
             schema.admissionCouncil.member1Id,
           );
-          m.renameColumn(
+          await renameColumn(
+            m,
             schema.admissionCouncil,
             "member_2_id",
             schema.admissionCouncil.member2Id,
           );
-          m.renameColumn(
+          await renameColumn(
+            m,
             schema.admissionCouncil,
             "member_3_id",
             schema.admissionCouncil.member3Id,
@@ -313,10 +352,47 @@ class AppDatabase extends _$AppDatabase {
             "customEndDate",
             courseClass.customEndDate,
           );
+
           m.createAll();
+        },
+        from3To4: (m, schema) async {
+          print("Migrating from version 3 to 4");
+          final phdStudent = schema.phdStudent;
+          await renameColumn(
+            m,
+            phdStudent,
+            "admission_1st_member_id",
+            phdStudent.admissionMember1Id,
+          );
+          await renameColumn(
+            m,
+            phdStudent,
+            "admission_2nd_member_id",
+            phdStudent.admissionMember2Id,
+          );
+          await renameColumn(
+            m,
+            phdStudent,
+            "admission_3rd_member_id",
+            phdStudent.admissionMember3Id,
+          );
+          await m.createAll();
+          print("Done");
         },
       ),
     );
+  }
+}
+
+extension SafeRename on Migrator {
+  Future<void> safeRenameColumn(
+    TableInfo table,
+    String oldName,
+    GeneratedColumn column,
+  ) async {
+    if (column.name == "") {
+      await renameColumn(table, oldName, column);
+    }
   }
 }
 

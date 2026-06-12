@@ -105,13 +105,13 @@ Future<Uint8List?> buildDocx(WidgetRef ref) async {
     teacherByIdProvider(student.admissionSecretaryId!).future,
   );
   final firstMember = await ref.read(
-    teacherByIdProvider(student.admission1stMemberId!).future,
+    teacherByIdProvider(student.admissionMember1Id!).future,
   );
   final secondMember = await ref.read(
-    teacherByIdProvider(student.admission2ndMemberId!).future,
+    teacherByIdProvider(student.admissionMember2Id!).future,
   );
   final thirdMember = await ref.read(
-    teacherByIdProvider(student.admission3rdMemberId!).future,
+    teacherByIdProvider(student.admissionMember3Id!).future,
   );
   final supervisor = await ref.read(
     teacherByIdProvider(student.supervisorId).future,

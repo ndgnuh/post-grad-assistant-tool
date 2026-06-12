@@ -31,9 +31,9 @@ extension PhdStudentDao on AppDatabase {
     final companion = PhdStudentCompanion(
       admissionPresidentId: getValue(presidentId),
       admissionSecretaryId: getValue(secretaryId),
-      admission1stMemberId: getValue(member1Id),
-      admission2ndMemberId: getValue(member2Id),
-      admission3rdMemberId: getValue(member3Id),
+      admissionMember1Id: getValue(member1Id),
+      admissionMember2Id: getValue(member2Id),
+      admissionMember3Id: getValue(member3Id),
       admissionHelperId: getValue(helperId),
     );
     final updateStatement = phdStudent.update();

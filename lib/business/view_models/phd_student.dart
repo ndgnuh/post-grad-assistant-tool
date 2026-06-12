@@ -61,17 +61,17 @@ final _byIdProvider = FutureProvider.family<PhdStudentViewModel, int>((
     int id => await ref.watch(teacherByIdProvider(id).future),
   };
 
-  final admissionMember1 = switch (student.admission1stMemberId) {
+  final admissionMember1 = switch (student.admissionMember1Id) {
     null => null,
     int id => await ref.watch(teacherByIdProvider(id).future),
   };
 
-  final admissionMember2 = switch (student.admission2ndMemberId) {
+  final admissionMember2 = switch (student.admissionMember2Id) {
     null => null,
     int id => await ref.watch(teacherByIdProvider(id).future),
   };
 
-  final admissionMember3 = switch (student.admission3rdMemberId) {
+  final admissionMember3 = switch (student.admissionMember3Id) {
     null => null,
     int id => await ref.watch(teacherByIdProvider(id).future),
   };

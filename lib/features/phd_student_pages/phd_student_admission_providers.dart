@@ -35,9 +35,9 @@ final councilSuggestionModelProvider = FutureProvider.family((
 
   final president = await getIfNotNull(phdStudent.admissionPresidentId);
   final secretary = await getIfNotNull(phdStudent.admissionSecretaryId);
-  final firstMember = await getIfNotNull(phdStudent.admission1stMemberId);
-  final secondMember = await getIfNotNull(phdStudent.admission2ndMemberId);
-  final thirdMember = await getIfNotNull(phdStudent.admission3rdMemberId);
+  final firstMember = await getIfNotNull(phdStudent.admissionMember1Id);
+  final secondMember = await getIfNotNull(phdStudent.admissionMember2Id);
+  final thirdMember = await getIfNotNull(phdStudent.admissionMember3Id);
 
   if (president == null ||
       secretary == null ||
@@ -100,13 +100,13 @@ final admissionRecordDocxProvider = FutureProvider.family(
       teacherByIdProvider(student.admissionSecretaryId!).future,
     );
     final firstMember = await ref.read(
-      teacherByIdProvider(student.admission1stMemberId!).future,
+      teacherByIdProvider(student.admissionMember1Id!).future,
     );
     final secondMember = await ref.read(
-      teacherByIdProvider(student.admission2ndMemberId!).future,
+      teacherByIdProvider(student.admissionMember2Id!).future,
     );
     final thirdMember = await ref.read(
-      teacherByIdProvider(student.admission3rdMemberId!).future,
+      teacherByIdProvider(student.admissionMember3Id!).future,
     );
     final supervisor = await ref.read(
       teacherByIdProvider(student.supervisorId).future,
@@ -148,9 +148,9 @@ final paymentTablePdfProvider = FutureProvider.family((
   final student = await ref.watch(phdStudentByIdProvider(studentId).future);
   if (student.admissionPresidentId == null ||
       student.admissionSecretaryId == null ||
-      student.admission1stMemberId == null ||
-      student.admission2ndMemberId == null ||
-      student.admission3rdMemberId == null) {
+      student.admissionMember1Id == null ||
+      student.admissionMember2Id == null ||
+      student.admissionMember3Id == null) {
     return null;
   }
 
@@ -161,13 +161,13 @@ final paymentTablePdfProvider = FutureProvider.family((
     teacherByIdProvider(student.admissionSecretaryId!).future,
   );
   final member1 = await ref.watch(
-    teacherByIdProvider(student.admission1stMemberId!).future,
+    teacherByIdProvider(student.admissionMember1Id!).future,
   );
   final member2 = await ref.watch(
-    teacherByIdProvider(student.admission2ndMemberId!).future,
+    teacherByIdProvider(student.admissionMember2Id!).future,
   );
   final member3 = await ref.watch(
-    teacherByIdProvider(student.admission3rdMemberId!).future,
+    teacherByIdProvider(student.admissionMember3Id!).future,
   );
 
   final model = pdfs.PhdAdmissionPaymentDocument(

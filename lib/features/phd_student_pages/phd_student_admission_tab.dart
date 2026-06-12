@@ -1,15 +1,11 @@
-import 'dart:io';
-
 import '../../business/copy_pasta.dart';
 import '../../business/documents.dart';
 import '../document_pages/document_pages.dart';
-import '../../utilities/strings.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:path/path.dart' as path;
 
 import '../../business/db_v2_providers.dart';
 import '../../custom_widgets.dart';
@@ -167,7 +163,7 @@ class _PhdAdmissionTeacher extends ConsumerWidget {
     return _PhdAdmissionTeacher(
       title: "Ủy viên 1",
       studentId: studentId,
-      getTeacherId: (phd) => phd.admission1stMemberId,
+      getTeacherId: (phd) => phd.admissionMember1Id,
       onSelected: (notifier, id) => notifier.setAdmissionCouncil(member1Id: id),
     );
   }
@@ -176,7 +172,7 @@ class _PhdAdmissionTeacher extends ConsumerWidget {
     return _PhdAdmissionTeacher(
       title: "Ủy viên 2",
       studentId: studentId,
-      getTeacherId: (phd) => phd.admission2ndMemberId,
+      getTeacherId: (phd) => phd.admissionMember2Id,
       onSelected: (notifier, id) => notifier.setAdmissionCouncil(member2Id: id),
     );
   }
@@ -185,7 +181,7 @@ class _PhdAdmissionTeacher extends ConsumerWidget {
     return _PhdAdmissionTeacher(
       title: "Ủy viên 3",
       studentId: studentId,
-      getTeacherId: (phd) => phd.admission3rdMemberId,
+      getTeacherId: (phd) => phd.admissionMember2Id,
       onSelected: (notifier, id) => notifier.setAdmissionCouncil(member3Id: id),
     );
   }

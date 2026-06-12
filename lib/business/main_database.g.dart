@@ -8515,11 +8515,11 @@ class $PhdStudentTable extends PhdStudent
       'REFERENCES teacher (id)',
     ),
   );
-  static const VerificationMeta _admission1stMemberIdMeta =
-      const VerificationMeta('admission1stMemberId');
+  static const VerificationMeta _admissionMember1IdMeta =
+      const VerificationMeta('admissionMember1Id');
   @override
-  late final GeneratedColumn<int> admission1stMemberId = GeneratedColumn<int>(
-    'admission1st_member_id',
+  late final GeneratedColumn<int> admissionMember1Id = GeneratedColumn<int>(
+    'admission_member1_id',
     aliasedName,
     true,
     type: DriftSqlType.int,
@@ -8528,11 +8528,11 @@ class $PhdStudentTable extends PhdStudent
       'REFERENCES teacher (id)',
     ),
   );
-  static const VerificationMeta _admission2ndMemberIdMeta =
-      const VerificationMeta('admission2ndMemberId');
+  static const VerificationMeta _admissionMember2IdMeta =
+      const VerificationMeta('admissionMember2Id');
   @override
-  late final GeneratedColumn<int> admission2ndMemberId = GeneratedColumn<int>(
-    'admission2nd_member_id',
+  late final GeneratedColumn<int> admissionMember2Id = GeneratedColumn<int>(
+    'admission_member2_id',
     aliasedName,
     true,
     type: DriftSqlType.int,
@@ -8541,11 +8541,11 @@ class $PhdStudentTable extends PhdStudent
       'REFERENCES teacher (id)',
     ),
   );
-  static const VerificationMeta _admission3rdMemberIdMeta =
-      const VerificationMeta('admission3rdMemberId');
+  static const VerificationMeta _admissionMember3IdMeta =
+      const VerificationMeta('admissionMember3Id');
   @override
-  late final GeneratedColumn<int> admission3rdMemberId = GeneratedColumn<int>(
-    'admission3rd_member_id',
+  late final GeneratedColumn<int> admissionMember3Id = GeneratedColumn<int>(
+    'admission_member3_id',
     aliasedName,
     true,
     type: DriftSqlType.int,
@@ -8693,9 +8693,9 @@ class $PhdStudentTable extends PhdStudent
     majorSpecialization,
     admissionPresidentId,
     admissionSecretaryId,
-    admission1stMemberId,
-    admission2ndMemberId,
-    admission3rdMemberId,
+    admissionMember1Id,
+    admissionMember2Id,
+    admissionMember3Id,
     admissionHelperId,
     admissionPaymentStatus,
     admissionPaymentPolicy,
@@ -8834,30 +8834,30 @@ class $PhdStudentTable extends PhdStudent
         ),
       );
     }
-    if (data.containsKey('admission1st_member_id')) {
+    if (data.containsKey('admission_member1_id')) {
       context.handle(
-        _admission1stMemberIdMeta,
-        admission1stMemberId.isAcceptableOrUnknown(
-          data['admission1st_member_id']!,
-          _admission1stMemberIdMeta,
+        _admissionMember1IdMeta,
+        admissionMember1Id.isAcceptableOrUnknown(
+          data['admission_member1_id']!,
+          _admissionMember1IdMeta,
         ),
       );
     }
-    if (data.containsKey('admission2nd_member_id')) {
+    if (data.containsKey('admission_member2_id')) {
       context.handle(
-        _admission2ndMemberIdMeta,
-        admission2ndMemberId.isAcceptableOrUnknown(
-          data['admission2nd_member_id']!,
-          _admission2ndMemberIdMeta,
+        _admissionMember2IdMeta,
+        admissionMember2Id.isAcceptableOrUnknown(
+          data['admission_member2_id']!,
+          _admissionMember2IdMeta,
         ),
       );
     }
-    if (data.containsKey('admission3rd_member_id')) {
+    if (data.containsKey('admission_member3_id')) {
       context.handle(
-        _admission3rdMemberIdMeta,
-        admission3rdMemberId.isAcceptableOrUnknown(
-          data['admission3rd_member_id']!,
-          _admission3rdMemberIdMeta,
+        _admissionMember3IdMeta,
+        admissionMember3Id.isAcceptableOrUnknown(
+          data['admission_member3_id']!,
+          _admissionMember3IdMeta,
         ),
       );
     }
@@ -9012,17 +9012,17 @@ class $PhdStudentTable extends PhdStudent
         DriftSqlType.int,
         data['${effectivePrefix}admission_secretary_id'],
       ),
-      admission1stMemberId: attachedDatabase.typeMapping.read(
+      admissionMember1Id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}admission1st_member_id'],
+        data['${effectivePrefix}admission_member1_id'],
       ),
-      admission2ndMemberId: attachedDatabase.typeMapping.read(
+      admissionMember2Id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}admission2nd_member_id'],
+        data['${effectivePrefix}admission_member2_id'],
       ),
-      admission3rdMemberId: attachedDatabase.typeMapping.read(
+      admissionMember3Id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}admission3rd_member_id'],
+        data['${effectivePrefix}admission_member3_id'],
       ),
       admissionHelperId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -9104,9 +9104,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
   final enums.PhdSpecialization majorSpecialization;
   final int? admissionPresidentId;
   final int? admissionSecretaryId;
-  final int? admission1stMemberId;
-  final int? admission2ndMemberId;
-  final int? admission3rdMemberId;
+  final int? admissionMember1Id;
+  final int? admissionMember2Id;
+  final int? admissionMember3Id;
   final int? admissionHelperId;
   final enums.PaymentStatus admissionPaymentStatus;
   final int? admissionPaymentPolicy;
@@ -9134,9 +9134,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     required this.majorSpecialization,
     this.admissionPresidentId,
     this.admissionSecretaryId,
-    this.admission1stMemberId,
-    this.admission2ndMemberId,
-    this.admission3rdMemberId,
+    this.admissionMember1Id,
+    this.admissionMember2Id,
+    this.admissionMember3Id,
     this.admissionHelperId,
     required this.admissionPaymentStatus,
     this.admissionPaymentPolicy,
@@ -9191,14 +9191,14 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     if (!nullToAbsent || admissionSecretaryId != null) {
       map['admission_secretary_id'] = Variable<int>(admissionSecretaryId);
     }
-    if (!nullToAbsent || admission1stMemberId != null) {
-      map['admission1st_member_id'] = Variable<int>(admission1stMemberId);
+    if (!nullToAbsent || admissionMember1Id != null) {
+      map['admission_member1_id'] = Variable<int>(admissionMember1Id);
     }
-    if (!nullToAbsent || admission2ndMemberId != null) {
-      map['admission2nd_member_id'] = Variable<int>(admission2ndMemberId);
+    if (!nullToAbsent || admissionMember2Id != null) {
+      map['admission_member2_id'] = Variable<int>(admissionMember2Id);
     }
-    if (!nullToAbsent || admission3rdMemberId != null) {
-      map['admission3rd_member_id'] = Variable<int>(admission3rdMemberId);
+    if (!nullToAbsent || admissionMember3Id != null) {
+      map['admission_member3_id'] = Variable<int>(admissionMember3Id);
     }
     if (!nullToAbsent || admissionHelperId != null) {
       map['admission_helper_id'] = Variable<int>(admissionHelperId);
@@ -9262,15 +9262,15 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       admissionSecretaryId: admissionSecretaryId == null && nullToAbsent
           ? const Value.absent()
           : Value(admissionSecretaryId),
-      admission1stMemberId: admission1stMemberId == null && nullToAbsent
+      admissionMember1Id: admissionMember1Id == null && nullToAbsent
           ? const Value.absent()
-          : Value(admission1stMemberId),
-      admission2ndMemberId: admission2ndMemberId == null && nullToAbsent
+          : Value(admissionMember1Id),
+      admissionMember2Id: admissionMember2Id == null && nullToAbsent
           ? const Value.absent()
-          : Value(admission2ndMemberId),
-      admission3rdMemberId: admission3rdMemberId == null && nullToAbsent
+          : Value(admissionMember2Id),
+      admissionMember3Id: admissionMember3Id == null && nullToAbsent
           ? const Value.absent()
-          : Value(admission3rdMemberId),
+          : Value(admissionMember3Id),
       admissionHelperId: admissionHelperId == null && nullToAbsent
           ? const Value.absent()
           : Value(admissionHelperId),
@@ -9322,15 +9322,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       admissionSecretaryId: serializer.fromJson<int?>(
         json['admissionSecretaryId'],
       ),
-      admission1stMemberId: serializer.fromJson<int?>(
-        json['admission1stMemberId'],
-      ),
-      admission2ndMemberId: serializer.fromJson<int?>(
-        json['admission2ndMemberId'],
-      ),
-      admission3rdMemberId: serializer.fromJson<int?>(
-        json['admission3rdMemberId'],
-      ),
+      admissionMember1Id: serializer.fromJson<int?>(json['admissionMember1Id']),
+      admissionMember2Id: serializer.fromJson<int?>(json['admissionMember2Id']),
+      admissionMember3Id: serializer.fromJson<int?>(json['admissionMember3Id']),
       admissionHelperId: serializer.fromJson<int?>(json['admissionHelperId']),
       admissionPaymentStatus: serializer.fromJson<enums.PaymentStatus>(
         json['admissionPaymentStatus'],
@@ -9373,9 +9367,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       ),
       'admissionPresidentId': serializer.toJson<int?>(admissionPresidentId),
       'admissionSecretaryId': serializer.toJson<int?>(admissionSecretaryId),
-      'admission1stMemberId': serializer.toJson<int?>(admission1stMemberId),
-      'admission2ndMemberId': serializer.toJson<int?>(admission2ndMemberId),
-      'admission3rdMemberId': serializer.toJson<int?>(admission3rdMemberId),
+      'admissionMember1Id': serializer.toJson<int?>(admissionMember1Id),
+      'admissionMember2Id': serializer.toJson<int?>(admissionMember2Id),
+      'admissionMember3Id': serializer.toJson<int?>(admissionMember3Id),
       'admissionHelperId': serializer.toJson<int?>(admissionHelperId),
       'admissionPaymentStatus': serializer.toJson<enums.PaymentStatus>(
         admissionPaymentStatus,
@@ -9408,9 +9402,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     enums.PhdSpecialization? majorSpecialization,
     Value<int?> admissionPresidentId = const Value.absent(),
     Value<int?> admissionSecretaryId = const Value.absent(),
-    Value<int?> admission1stMemberId = const Value.absent(),
-    Value<int?> admission2ndMemberId = const Value.absent(),
-    Value<int?> admission3rdMemberId = const Value.absent(),
+    Value<int?> admissionMember1Id = const Value.absent(),
+    Value<int?> admissionMember2Id = const Value.absent(),
+    Value<int?> admissionMember3Id = const Value.absent(),
     Value<int?> admissionHelperId = const Value.absent(),
     enums.PaymentStatus? admissionPaymentStatus,
     Value<int?> admissionPaymentPolicy = const Value.absent(),
@@ -9444,15 +9438,15 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     admissionSecretaryId: admissionSecretaryId.present
         ? admissionSecretaryId.value
         : this.admissionSecretaryId,
-    admission1stMemberId: admission1stMemberId.present
-        ? admission1stMemberId.value
-        : this.admission1stMemberId,
-    admission2ndMemberId: admission2ndMemberId.present
-        ? admission2ndMemberId.value
-        : this.admission2ndMemberId,
-    admission3rdMemberId: admission3rdMemberId.present
-        ? admission3rdMemberId.value
-        : this.admission3rdMemberId,
+    admissionMember1Id: admissionMember1Id.present
+        ? admissionMember1Id.value
+        : this.admissionMember1Id,
+    admissionMember2Id: admissionMember2Id.present
+        ? admissionMember2Id.value
+        : this.admissionMember2Id,
+    admissionMember3Id: admissionMember3Id.present
+        ? admissionMember3Id.value
+        : this.admissionMember3Id,
     admissionHelperId: admissionHelperId.present
         ? admissionHelperId.value
         : this.admissionHelperId,
@@ -9508,15 +9502,15 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
       admissionSecretaryId: data.admissionSecretaryId.present
           ? data.admissionSecretaryId.value
           : this.admissionSecretaryId,
-      admission1stMemberId: data.admission1stMemberId.present
-          ? data.admission1stMemberId.value
-          : this.admission1stMemberId,
-      admission2ndMemberId: data.admission2ndMemberId.present
-          ? data.admission2ndMemberId.value
-          : this.admission2ndMemberId,
-      admission3rdMemberId: data.admission3rdMemberId.present
-          ? data.admission3rdMemberId.value
-          : this.admission3rdMemberId,
+      admissionMember1Id: data.admissionMember1Id.present
+          ? data.admissionMember1Id.value
+          : this.admissionMember1Id,
+      admissionMember2Id: data.admissionMember2Id.present
+          ? data.admissionMember2Id.value
+          : this.admissionMember2Id,
+      admissionMember3Id: data.admissionMember3Id.present
+          ? data.admissionMember3Id.value
+          : this.admissionMember3Id,
       admissionHelperId: data.admissionHelperId.present
           ? data.admissionHelperId.value
           : this.admissionHelperId,
@@ -9567,9 +9561,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
           ..write('majorSpecialization: $majorSpecialization, ')
           ..write('admissionPresidentId: $admissionPresidentId, ')
           ..write('admissionSecretaryId: $admissionSecretaryId, ')
-          ..write('admission1stMemberId: $admission1stMemberId, ')
-          ..write('admission2ndMemberId: $admission2ndMemberId, ')
-          ..write('admission3rdMemberId: $admission3rdMemberId, ')
+          ..write('admissionMember1Id: $admissionMember1Id, ')
+          ..write('admissionMember2Id: $admissionMember2Id, ')
+          ..write('admissionMember3Id: $admissionMember3Id, ')
           ..write('admissionHelperId: $admissionHelperId, ')
           ..write('admissionPaymentStatus: $admissionPaymentStatus, ')
           ..write('admissionPaymentPolicy: $admissionPaymentPolicy, ')
@@ -9602,9 +9596,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
     majorSpecialization,
     admissionPresidentId,
     admissionSecretaryId,
-    admission1stMemberId,
-    admission2ndMemberId,
-    admission3rdMemberId,
+    admissionMember1Id,
+    admissionMember2Id,
+    admissionMember3Id,
     admissionHelperId,
     admissionPaymentStatus,
     admissionPaymentPolicy,
@@ -9637,9 +9631,9 @@ class PhdStudentData extends DataClass implements Insertable<PhdStudentData> {
           other.majorSpecialization == this.majorSpecialization &&
           other.admissionPresidentId == this.admissionPresidentId &&
           other.admissionSecretaryId == this.admissionSecretaryId &&
-          other.admission1stMemberId == this.admission1stMemberId &&
-          other.admission2ndMemberId == this.admission2ndMemberId &&
-          other.admission3rdMemberId == this.admission3rdMemberId &&
+          other.admissionMember1Id == this.admissionMember1Id &&
+          other.admissionMember2Id == this.admissionMember2Id &&
+          other.admissionMember3Id == this.admissionMember3Id &&
           other.admissionHelperId == this.admissionHelperId &&
           other.admissionPaymentStatus == this.admissionPaymentStatus &&
           other.admissionPaymentPolicy == this.admissionPaymentPolicy &&
@@ -9669,9 +9663,9 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
   final Value<enums.PhdSpecialization> majorSpecialization;
   final Value<int?> admissionPresidentId;
   final Value<int?> admissionSecretaryId;
-  final Value<int?> admission1stMemberId;
-  final Value<int?> admission2ndMemberId;
-  final Value<int?> admission3rdMemberId;
+  final Value<int?> admissionMember1Id;
+  final Value<int?> admissionMember2Id;
+  final Value<int?> admissionMember3Id;
   final Value<int?> admissionHelperId;
   final Value<enums.PaymentStatus> admissionPaymentStatus;
   final Value<int?> admissionPaymentPolicy;
@@ -9699,9 +9693,9 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     this.majorSpecialization = const Value.absent(),
     this.admissionPresidentId = const Value.absent(),
     this.admissionSecretaryId = const Value.absent(),
-    this.admission1stMemberId = const Value.absent(),
-    this.admission2ndMemberId = const Value.absent(),
-    this.admission3rdMemberId = const Value.absent(),
+    this.admissionMember1Id = const Value.absent(),
+    this.admissionMember2Id = const Value.absent(),
+    this.admissionMember3Id = const Value.absent(),
     this.admissionHelperId = const Value.absent(),
     this.admissionPaymentStatus = const Value.absent(),
     this.admissionPaymentPolicy = const Value.absent(),
@@ -9730,9 +9724,9 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     required enums.PhdSpecialization majorSpecialization,
     this.admissionPresidentId = const Value.absent(),
     this.admissionSecretaryId = const Value.absent(),
-    this.admission1stMemberId = const Value.absent(),
-    this.admission2ndMemberId = const Value.absent(),
-    this.admission3rdMemberId = const Value.absent(),
+    this.admissionMember1Id = const Value.absent(),
+    this.admissionMember2Id = const Value.absent(),
+    this.admissionMember3Id = const Value.absent(),
     this.admissionHelperId = const Value.absent(),
     this.admissionPaymentStatus = const Value.absent(),
     this.admissionPaymentPolicy = const Value.absent(),
@@ -9769,9 +9763,9 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     Expression<String>? majorSpecialization,
     Expression<int>? admissionPresidentId,
     Expression<int>? admissionSecretaryId,
-    Expression<int>? admission1stMemberId,
-    Expression<int>? admission2ndMemberId,
-    Expression<int>? admission3rdMemberId,
+    Expression<int>? admissionMember1Id,
+    Expression<int>? admissionMember2Id,
+    Expression<int>? admissionMember3Id,
     Expression<int>? admissionHelperId,
     Expression<String>? admissionPaymentStatus,
     Expression<int>? admissionPaymentPolicy,
@@ -9804,12 +9798,12 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
         'admission_president_id': admissionPresidentId,
       if (admissionSecretaryId != null)
         'admission_secretary_id': admissionSecretaryId,
-      if (admission1stMemberId != null)
-        'admission1st_member_id': admission1stMemberId,
-      if (admission2ndMemberId != null)
-        'admission2nd_member_id': admission2ndMemberId,
-      if (admission3rdMemberId != null)
-        'admission3rd_member_id': admission3rdMemberId,
+      if (admissionMember1Id != null)
+        'admission_member1_id': admissionMember1Id,
+      if (admissionMember2Id != null)
+        'admission_member2_id': admissionMember2Id,
+      if (admissionMember3Id != null)
+        'admission_member3_id': admissionMember3Id,
       if (admissionHelperId != null) 'admission_helper_id': admissionHelperId,
       if (admissionPaymentStatus != null)
         'admission_payment_status': admissionPaymentStatus,
@@ -9843,9 +9837,9 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     Value<enums.PhdSpecialization>? majorSpecialization,
     Value<int?>? admissionPresidentId,
     Value<int?>? admissionSecretaryId,
-    Value<int?>? admission1stMemberId,
-    Value<int?>? admission2ndMemberId,
-    Value<int?>? admission3rdMemberId,
+    Value<int?>? admissionMember1Id,
+    Value<int?>? admissionMember2Id,
+    Value<int?>? admissionMember3Id,
     Value<int?>? admissionHelperId,
     Value<enums.PaymentStatus>? admissionPaymentStatus,
     Value<int?>? admissionPaymentPolicy,
@@ -9875,9 +9869,9 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
       majorSpecialization: majorSpecialization ?? this.majorSpecialization,
       admissionPresidentId: admissionPresidentId ?? this.admissionPresidentId,
       admissionSecretaryId: admissionSecretaryId ?? this.admissionSecretaryId,
-      admission1stMemberId: admission1stMemberId ?? this.admission1stMemberId,
-      admission2ndMemberId: admission2ndMemberId ?? this.admission2ndMemberId,
-      admission3rdMemberId: admission3rdMemberId ?? this.admission3rdMemberId,
+      admissionMember1Id: admissionMember1Id ?? this.admissionMember1Id,
+      admissionMember2Id: admissionMember2Id ?? this.admissionMember2Id,
+      admissionMember3Id: admissionMember3Id ?? this.admissionMember3Id,
       admissionHelperId: admissionHelperId ?? this.admissionHelperId,
       admissionPaymentStatus:
           admissionPaymentStatus ?? this.admissionPaymentStatus,
@@ -9953,14 +9947,14 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
     if (admissionSecretaryId.present) {
       map['admission_secretary_id'] = Variable<int>(admissionSecretaryId.value);
     }
-    if (admission1stMemberId.present) {
-      map['admission1st_member_id'] = Variable<int>(admission1stMemberId.value);
+    if (admissionMember1Id.present) {
+      map['admission_member1_id'] = Variable<int>(admissionMember1Id.value);
     }
-    if (admission2ndMemberId.present) {
-      map['admission2nd_member_id'] = Variable<int>(admission2ndMemberId.value);
+    if (admissionMember2Id.present) {
+      map['admission_member2_id'] = Variable<int>(admissionMember2Id.value);
     }
-    if (admission3rdMemberId.present) {
-      map['admission3rd_member_id'] = Variable<int>(admission3rdMemberId.value);
+    if (admissionMember3Id.present) {
+      map['admission_member3_id'] = Variable<int>(admissionMember3Id.value);
     }
     if (admissionHelperId.present) {
       map['admission_helper_id'] = Variable<int>(admissionHelperId.value);
@@ -10026,9 +10020,9 @@ class PhdStudentCompanion extends UpdateCompanion<PhdStudentData> {
           ..write('majorSpecialization: $majorSpecialization, ')
           ..write('admissionPresidentId: $admissionPresidentId, ')
           ..write('admissionSecretaryId: $admissionSecretaryId, ')
-          ..write('admission1stMemberId: $admission1stMemberId, ')
-          ..write('admission2ndMemberId: $admission2ndMemberId, ')
-          ..write('admission3rdMemberId: $admission3rdMemberId, ')
+          ..write('admissionMember1Id: $admissionMember1Id, ')
+          ..write('admissionMember2Id: $admissionMember2Id, ')
+          ..write('admissionMember3Id: $admissionMember3Id, ')
           ..write('admissionHelperId: $admissionHelperId, ')
           ..write('admissionPaymentStatus: $admissionPaymentStatus, ')
           ..write('admissionPaymentPolicy: $admissionPaymentPolicy, ')
@@ -14435,13 +14429,13 @@ final class $$TeacherTableReferences
         db.phdStudent,
         aliasName: $_aliasNameGenerator(
           db.teacher.id,
-          db.phdStudent.admission1stMemberId,
+          db.phdStudent.admissionMember1Id,
         ),
       );
 
   $$PhdStudentTableProcessedTableManager get phd_admission_member_1 {
     final manager = $$PhdStudentTableTableManager($_db, $_db.phdStudent).filter(
-      (f) => f.admission1stMemberId.id.sqlEquals($_itemColumn<int>('id')!),
+      (f) => f.admissionMember1Id.id.sqlEquals($_itemColumn<int>('id')!),
     );
 
     final cache = $_typedResult.readTableOrNull(
@@ -14458,13 +14452,13 @@ final class $$TeacherTableReferences
         db.phdStudent,
         aliasName: $_aliasNameGenerator(
           db.teacher.id,
-          db.phdStudent.admission2ndMemberId,
+          db.phdStudent.admissionMember2Id,
         ),
       );
 
   $$PhdStudentTableProcessedTableManager get phd_admission_member_2 {
     final manager = $$PhdStudentTableTableManager($_db, $_db.phdStudent).filter(
-      (f) => f.admission2ndMemberId.id.sqlEquals($_itemColumn<int>('id')!),
+      (f) => f.admissionMember2Id.id.sqlEquals($_itemColumn<int>('id')!),
     );
 
     final cache = $_typedResult.readTableOrNull(
@@ -14481,13 +14475,13 @@ final class $$TeacherTableReferences
         db.phdStudent,
         aliasName: $_aliasNameGenerator(
           db.teacher.id,
-          db.phdStudent.admission3rdMemberId,
+          db.phdStudent.admissionMember3Id,
         ),
       );
 
   $$PhdStudentTableProcessedTableManager get phd_admission_member_3 {
     final manager = $$PhdStudentTableTableManager($_db, $_db.phdStudent).filter(
-      (f) => f.admission3rdMemberId.id.sqlEquals($_itemColumn<int>('id')!),
+      (f) => f.admissionMember3Id.id.sqlEquals($_itemColumn<int>('id')!),
     );
 
     final cache = $_typedResult.readTableOrNull(
@@ -15252,7 +15246,7 @@ class $$TeacherTableFilterComposer
       composer: this,
       getCurrentColumn: (t) => t.id,
       referencedTable: $db.phdStudent,
-      getReferencedColumn: (t) => t.admission1stMemberId,
+      getReferencedColumn: (t) => t.admissionMember1Id,
       builder:
           (
             joinBuilder, {
@@ -15277,7 +15271,7 @@ class $$TeacherTableFilterComposer
       composer: this,
       getCurrentColumn: (t) => t.id,
       referencedTable: $db.phdStudent,
-      getReferencedColumn: (t) => t.admission2ndMemberId,
+      getReferencedColumn: (t) => t.admissionMember2Id,
       builder:
           (
             joinBuilder, {
@@ -15302,7 +15296,7 @@ class $$TeacherTableFilterComposer
       composer: this,
       getCurrentColumn: (t) => t.id,
       referencedTable: $db.phdStudent,
-      getReferencedColumn: (t) => t.admission3rdMemberId,
+      getReferencedColumn: (t) => t.admissionMember3Id,
       builder:
           (
             joinBuilder, {
@@ -16195,7 +16189,7 @@ class $$TeacherTableAnnotationComposer
       composer: this,
       getCurrentColumn: (t) => t.id,
       referencedTable: $db.phdStudent,
-      getReferencedColumn: (t) => t.admission1stMemberId,
+      getReferencedColumn: (t) => t.admissionMember1Id,
       builder:
           (
             joinBuilder, {
@@ -16220,7 +16214,7 @@ class $$TeacherTableAnnotationComposer
       composer: this,
       getCurrentColumn: (t) => t.id,
       referencedTable: $db.phdStudent,
-      getReferencedColumn: (t) => t.admission2ndMemberId,
+      getReferencedColumn: (t) => t.admissionMember2Id,
       builder:
           (
             joinBuilder, {
@@ -16245,7 +16239,7 @@ class $$TeacherTableAnnotationComposer
       composer: this,
       getCurrentColumn: (t) => t.id,
       referencedTable: $db.phdStudent,
-      getReferencedColumn: (t) => t.admission3rdMemberId,
+      getReferencedColumn: (t) => t.admissionMember3Id,
       builder:
           (
             joinBuilder, {
@@ -17095,7 +17089,7 @@ class $$TeacherTableTableManager
                               ).phd_admission_member_1,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.admission1stMemberId == item.id,
+                                (e) => e.admissionMember1Id == item.id,
                               ),
                           typedResults: items,
                         ),
@@ -17116,7 +17110,7 @@ class $$TeacherTableTableManager
                               ).phd_admission_member_2,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.admission2ndMemberId == item.id,
+                                (e) => e.admissionMember2Id == item.id,
                               ),
                           typedResults: items,
                         ),
@@ -17137,7 +17131,7 @@ class $$TeacherTableTableManager
                               ).phd_admission_member_3,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.admission3rdMemberId == item.id,
+                                (e) => e.admissionMember3Id == item.id,
                               ),
                           typedResults: items,
                         ),
@@ -22487,9 +22481,9 @@ typedef $$PhdStudentTableCreateCompanionBuilder =
       required enums.PhdSpecialization majorSpecialization,
       Value<int?> admissionPresidentId,
       Value<int?> admissionSecretaryId,
-      Value<int?> admission1stMemberId,
-      Value<int?> admission2ndMemberId,
-      Value<int?> admission3rdMemberId,
+      Value<int?> admissionMember1Id,
+      Value<int?> admissionMember2Id,
+      Value<int?> admissionMember3Id,
       Value<int?> admissionHelperId,
       Value<enums.PaymentStatus> admissionPaymentStatus,
       Value<int?> admissionPaymentPolicy,
@@ -22519,9 +22513,9 @@ typedef $$PhdStudentTableUpdateCompanionBuilder =
       Value<enums.PhdSpecialization> majorSpecialization,
       Value<int?> admissionPresidentId,
       Value<int?> admissionSecretaryId,
-      Value<int?> admission1stMemberId,
-      Value<int?> admission2ndMemberId,
-      Value<int?> admission3rdMemberId,
+      Value<int?> admissionMember1Id,
+      Value<int?> admissionMember2Id,
+      Value<int?> admissionMember3Id,
       Value<int?> admissionHelperId,
       Value<enums.PaymentStatus> admissionPaymentStatus,
       Value<int?> admissionPaymentPolicy,
@@ -22599,63 +22593,57 @@ final class $$PhdStudentTableReferences
     );
   }
 
-  static $TeacherTable _admission1stMemberIdTable(_$AppDatabase db) =>
+  static $TeacherTable _admissionMember1IdTable(_$AppDatabase db) =>
       db.teacher.createAlias(
-        $_aliasNameGenerator(db.phdStudent.admission1stMemberId, db.teacher.id),
+        $_aliasNameGenerator(db.phdStudent.admissionMember1Id, db.teacher.id),
       );
 
-  $$TeacherTableProcessedTableManager? get admission1stMemberId {
-    final $_column = $_itemColumn<int>('admission1st_member_id');
+  $$TeacherTableProcessedTableManager? get admissionMember1Id {
+    final $_column = $_itemColumn<int>('admission_member1_id');
     if ($_column == null) return null;
     final manager = $$TeacherTableTableManager(
       $_db,
       $_db.teacher,
     ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(
-      _admission1stMemberIdTable($_db),
-    );
+    final item = $_typedResult.readTableOrNull(_admissionMember1IdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
     );
   }
 
-  static $TeacherTable _admission2ndMemberIdTable(_$AppDatabase db) =>
+  static $TeacherTable _admissionMember2IdTable(_$AppDatabase db) =>
       db.teacher.createAlias(
-        $_aliasNameGenerator(db.phdStudent.admission2ndMemberId, db.teacher.id),
+        $_aliasNameGenerator(db.phdStudent.admissionMember2Id, db.teacher.id),
       );
 
-  $$TeacherTableProcessedTableManager? get admission2ndMemberId {
-    final $_column = $_itemColumn<int>('admission2nd_member_id');
+  $$TeacherTableProcessedTableManager? get admissionMember2Id {
+    final $_column = $_itemColumn<int>('admission_member2_id');
     if ($_column == null) return null;
     final manager = $$TeacherTableTableManager(
       $_db,
       $_db.teacher,
     ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(
-      _admission2ndMemberIdTable($_db),
-    );
+    final item = $_typedResult.readTableOrNull(_admissionMember2IdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
     );
   }
 
-  static $TeacherTable _admission3rdMemberIdTable(_$AppDatabase db) =>
+  static $TeacherTable _admissionMember3IdTable(_$AppDatabase db) =>
       db.teacher.createAlias(
-        $_aliasNameGenerator(db.phdStudent.admission3rdMemberId, db.teacher.id),
+        $_aliasNameGenerator(db.phdStudent.admissionMember3Id, db.teacher.id),
       );
 
-  $$TeacherTableProcessedTableManager? get admission3rdMemberId {
-    final $_column = $_itemColumn<int>('admission3rd_member_id');
+  $$TeacherTableProcessedTableManager? get admissionMember3Id {
+    final $_column = $_itemColumn<int>('admission_member3_id');
     if ($_column == null) return null;
     final manager = $$TeacherTableTableManager(
       $_db,
       $_db.teacher,
     ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(
-      _admission3rdMemberIdTable($_db),
-    );
+    final item = $_typedResult.readTableOrNull(_admissionMember3IdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -22940,10 +22928,10 @@ class $$PhdStudentTableFilterComposer
     return composer;
   }
 
-  $$TeacherTableFilterComposer get admission1stMemberId {
+  $$TeacherTableFilterComposer get admissionMember1Id {
     final $$TeacherTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.admission1stMemberId,
+      getCurrentColumn: (t) => t.admissionMember1Id,
       referencedTable: $db.teacher,
       getReferencedColumn: (t) => t.id,
       builder:
@@ -22963,10 +22951,10 @@ class $$PhdStudentTableFilterComposer
     return composer;
   }
 
-  $$TeacherTableFilterComposer get admission2ndMemberId {
+  $$TeacherTableFilterComposer get admissionMember2Id {
     final $$TeacherTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.admission2ndMemberId,
+      getCurrentColumn: (t) => t.admissionMember2Id,
       referencedTable: $db.teacher,
       getReferencedColumn: (t) => t.id,
       builder:
@@ -22986,10 +22974,10 @@ class $$PhdStudentTableFilterComposer
     return composer;
   }
 
-  $$TeacherTableFilterComposer get admission3rdMemberId {
+  $$TeacherTableFilterComposer get admissionMember3Id {
     final $$TeacherTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.admission3rdMemberId,
+      getCurrentColumn: (t) => t.admissionMember3Id,
       referencedTable: $db.teacher,
       getReferencedColumn: (t) => t.id,
       builder:
@@ -23276,10 +23264,10 @@ class $$PhdStudentTableOrderingComposer
     return composer;
   }
 
-  $$TeacherTableOrderingComposer get admission1stMemberId {
+  $$TeacherTableOrderingComposer get admissionMember1Id {
     final $$TeacherTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.admission1stMemberId,
+      getCurrentColumn: (t) => t.admissionMember1Id,
       referencedTable: $db.teacher,
       getReferencedColumn: (t) => t.id,
       builder:
@@ -23299,10 +23287,10 @@ class $$PhdStudentTableOrderingComposer
     return composer;
   }
 
-  $$TeacherTableOrderingComposer get admission2ndMemberId {
+  $$TeacherTableOrderingComposer get admissionMember2Id {
     final $$TeacherTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.admission2ndMemberId,
+      getCurrentColumn: (t) => t.admissionMember2Id,
       referencedTable: $db.teacher,
       getReferencedColumn: (t) => t.id,
       builder:
@@ -23322,10 +23310,10 @@ class $$PhdStudentTableOrderingComposer
     return composer;
   }
 
-  $$TeacherTableOrderingComposer get admission3rdMemberId {
+  $$TeacherTableOrderingComposer get admissionMember3Id {
     final $$TeacherTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.admission3rdMemberId,
+      getCurrentColumn: (t) => t.admissionMember3Id,
       referencedTable: $db.teacher,
       getReferencedColumn: (t) => t.id,
       builder:
@@ -23598,10 +23586,10 @@ class $$PhdStudentTableAnnotationComposer
     return composer;
   }
 
-  $$TeacherTableAnnotationComposer get admission1stMemberId {
+  $$TeacherTableAnnotationComposer get admissionMember1Id {
     final $$TeacherTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.admission1stMemberId,
+      getCurrentColumn: (t) => t.admissionMember1Id,
       referencedTable: $db.teacher,
       getReferencedColumn: (t) => t.id,
       builder:
@@ -23621,10 +23609,10 @@ class $$PhdStudentTableAnnotationComposer
     return composer;
   }
 
-  $$TeacherTableAnnotationComposer get admission2ndMemberId {
+  $$TeacherTableAnnotationComposer get admissionMember2Id {
     final $$TeacherTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.admission2ndMemberId,
+      getCurrentColumn: (t) => t.admissionMember2Id,
       referencedTable: $db.teacher,
       getReferencedColumn: (t) => t.id,
       builder:
@@ -23644,10 +23632,10 @@ class $$PhdStudentTableAnnotationComposer
     return composer;
   }
 
-  $$TeacherTableAnnotationComposer get admission3rdMemberId {
+  $$TeacherTableAnnotationComposer get admissionMember3Id {
     final $$TeacherTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.admission3rdMemberId,
+      getCurrentColumn: (t) => t.admissionMember3Id,
       referencedTable: $db.teacher,
       getReferencedColumn: (t) => t.id,
       builder:
@@ -23779,9 +23767,9 @@ class $$PhdStudentTableTableManager
             bool cohort,
             bool admissionPresidentId,
             bool admissionSecretaryId,
-            bool admission1stMemberId,
-            bool admission2ndMemberId,
-            bool admission3rdMemberId,
+            bool admissionMember1Id,
+            bool admissionMember2Id,
+            bool admissionMember3Id,
             bool admissionHelperId,
             bool admissionPaymentPolicy,
             bool supervisorId,
@@ -23819,9 +23807,9 @@ class $$PhdStudentTableTableManager
                     const Value.absent(),
                 Value<int?> admissionPresidentId = const Value.absent(),
                 Value<int?> admissionSecretaryId = const Value.absent(),
-                Value<int?> admission1stMemberId = const Value.absent(),
-                Value<int?> admission2ndMemberId = const Value.absent(),
-                Value<int?> admission3rdMemberId = const Value.absent(),
+                Value<int?> admissionMember1Id = const Value.absent(),
+                Value<int?> admissionMember2Id = const Value.absent(),
+                Value<int?> admissionMember3Id = const Value.absent(),
                 Value<int?> admissionHelperId = const Value.absent(),
                 Value<enums.PaymentStatus> admissionPaymentStatus =
                     const Value.absent(),
@@ -23850,9 +23838,9 @@ class $$PhdStudentTableTableManager
                 majorSpecialization: majorSpecialization,
                 admissionPresidentId: admissionPresidentId,
                 admissionSecretaryId: admissionSecretaryId,
-                admission1stMemberId: admission1stMemberId,
-                admission2ndMemberId: admission2ndMemberId,
-                admission3rdMemberId: admission3rdMemberId,
+                admissionMember1Id: admissionMember1Id,
+                admissionMember2Id: admissionMember2Id,
+                admissionMember3Id: admissionMember3Id,
                 admissionHelperId: admissionHelperId,
                 admissionPaymentStatus: admissionPaymentStatus,
                 admissionPaymentPolicy: admissionPaymentPolicy,
@@ -23883,9 +23871,9 @@ class $$PhdStudentTableTableManager
                 required enums.PhdSpecialization majorSpecialization,
                 Value<int?> admissionPresidentId = const Value.absent(),
                 Value<int?> admissionSecretaryId = const Value.absent(),
-                Value<int?> admission1stMemberId = const Value.absent(),
-                Value<int?> admission2ndMemberId = const Value.absent(),
-                Value<int?> admission3rdMemberId = const Value.absent(),
+                Value<int?> admissionMember1Id = const Value.absent(),
+                Value<int?> admissionMember2Id = const Value.absent(),
+                Value<int?> admissionMember3Id = const Value.absent(),
                 Value<int?> admissionHelperId = const Value.absent(),
                 Value<enums.PaymentStatus> admissionPaymentStatus =
                     const Value.absent(),
@@ -23914,9 +23902,9 @@ class $$PhdStudentTableTableManager
                 majorSpecialization: majorSpecialization,
                 admissionPresidentId: admissionPresidentId,
                 admissionSecretaryId: admissionSecretaryId,
-                admission1stMemberId: admission1stMemberId,
-                admission2ndMemberId: admission2ndMemberId,
-                admission3rdMemberId: admission3rdMemberId,
+                admissionMember1Id: admissionMember1Id,
+                admissionMember2Id: admissionMember2Id,
+                admissionMember3Id: admissionMember3Id,
                 admissionHelperId: admissionHelperId,
                 admissionPaymentStatus: admissionPaymentStatus,
                 admissionPaymentPolicy: admissionPaymentPolicy,
@@ -23941,9 +23929,9 @@ class $$PhdStudentTableTableManager
                 cohort = false,
                 admissionPresidentId = false,
                 admissionSecretaryId = false,
-                admission1stMemberId = false,
-                admission2ndMemberId = false,
-                admission3rdMemberId = false,
+                admissionMember1Id = false,
+                admissionMember2Id = false,
+                admissionMember3Id = false,
                 admissionHelperId = false,
                 admissionPaymentPolicy = false,
                 supervisorId = false,
@@ -24010,44 +23998,44 @@ class $$PhdStudentTableTableManager
                                   )
                                   as T;
                         }
-                        if (admission1stMemberId) {
+                        if (admissionMember1Id) {
                           state =
                               state.withJoin(
                                     currentTable: table,
-                                    currentColumn: table.admission1stMemberId,
+                                    currentColumn: table.admissionMember1Id,
                                     referencedTable: $$PhdStudentTableReferences
-                                        ._admission1stMemberIdTable(db),
+                                        ._admissionMember1IdTable(db),
                                     referencedColumn:
                                         $$PhdStudentTableReferences
-                                            ._admission1stMemberIdTable(db)
+                                            ._admissionMember1IdTable(db)
                                             .id,
                                   )
                                   as T;
                         }
-                        if (admission2ndMemberId) {
+                        if (admissionMember2Id) {
                           state =
                               state.withJoin(
                                     currentTable: table,
-                                    currentColumn: table.admission2ndMemberId,
+                                    currentColumn: table.admissionMember2Id,
                                     referencedTable: $$PhdStudentTableReferences
-                                        ._admission2ndMemberIdTable(db),
+                                        ._admissionMember2IdTable(db),
                                     referencedColumn:
                                         $$PhdStudentTableReferences
-                                            ._admission2ndMemberIdTable(db)
+                                            ._admissionMember2IdTable(db)
                                             .id,
                                   )
                                   as T;
                         }
-                        if (admission3rdMemberId) {
+                        if (admissionMember3Id) {
                           state =
                               state.withJoin(
                                     currentTable: table,
-                                    currentColumn: table.admission3rdMemberId,
+                                    currentColumn: table.admissionMember3Id,
                                     referencedTable: $$PhdStudentTableReferences
-                                        ._admission3rdMemberIdTable(db),
+                                        ._admissionMember3IdTable(db),
                                     referencedColumn:
                                         $$PhdStudentTableReferences
-                                            ._admission3rdMemberIdTable(db)
+                                            ._admissionMember3IdTable(db)
                                             .id,
                                   )
                                   as T;
@@ -24136,9 +24124,9 @@ typedef $$PhdStudentTableProcessedTableManager =
         bool cohort,
         bool admissionPresidentId,
         bool admissionSecretaryId,
-        bool admission1stMemberId,
-        bool admission2ndMemberId,
-        bool admission3rdMemberId,
+        bool admissionMember1Id,
+        bool admissionMember2Id,
+        bool admissionMember3Id,
         bool admissionHelperId,
         bool admissionPaymentPolicy,
         bool supervisorId,
