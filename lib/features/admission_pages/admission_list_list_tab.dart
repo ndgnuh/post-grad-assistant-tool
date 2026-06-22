@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -204,7 +205,8 @@ class _StudentTile extends ConsumerWidget {
     );
   }
 
-  void showPerStudentActions(BuildContext context, WidgetRef ref) {
+  void showPerStudentActions(BuildContext context, WidgetRef ref) async {
+    final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
     showDialog(
       context: context,
@@ -214,6 +216,46 @@ class _StudentTile extends ConsumerWidget {
             title: "Chi tiết",
             onTap: null,
             icon: Symbols.info,
+          ),
+
+          MenuDialogItem(
+            title: "Copy email",
+            onTap: () async {
+              switch (student.personalEmail ?? student.schoolEmail) {
+                case String value:
+                  final data = ClipboardData(text: value);
+                  await Clipboard.setData(data);
+                  messenger.showSnackBar(
+                    SnackBar(content: Text('Đã copy $value')),
+                  );
+                  break;
+                default:
+                  messenger.showSnackBar(
+                    SnackBar(content: Text('Không có email để copy')),
+                  );
+              }
+            },
+            icon: Symbols.email,
+          ),
+
+          MenuDialogItem(
+            title: "Copy số điện thoại",
+            onTap: () async {
+              switch (student.phone) {
+                case String value:
+                  final data = ClipboardData(text: value);
+                  await Clipboard.setData(data);
+                  messenger.showSnackBar(
+                    SnackBar(content: Text('Đã copy $value')),
+                  );
+                  break;
+                default:
+                  messenger.showSnackBar(
+                    SnackBar(content: Text('Không có SDT để copy')),
+                  );
+              }
+            },
+            icon: Symbols.phone,
           ),
 
           MenuDialogItem(
