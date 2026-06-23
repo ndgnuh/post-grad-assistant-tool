@@ -7,6 +7,7 @@ import 'admission_pages/admission_pages.dart';
 import 'course_classes/course_classes.dart';
 import 'course_pages/course_pages.dart';
 import 'draft.dart' show DraftPage;
+import 'gui/pages/admission_rounds_list.dart';
 import 'home_page/home_page.dart';
 import 'phd_student_pages/phd_student_pages.dart';
 import 'semester_pages/semester_pages.dart';
@@ -269,6 +270,12 @@ final routesBySections = <String, List<RouteItem>>{
       subtitle: null,
     ),
     (
+      route: AdmissionRoundManagePage.routeName,
+      label: "Xét tuyển (V2)",
+      icon: Symbols.person_add,
+      subtitle: null,
+    ),
+    (
       route: AdmissionPaymentPage.routeName,
       label: "Thanh toán xét tuyển",
       icon: Symbols.attach_money,
@@ -497,6 +504,9 @@ Widget buildRoute(BuildContext context, RouteSettings settings) {
         default:
           return ErrorPage(error: "Unknown error");
       }
+
+    case AdmissionRoundManagePage.routeName:
+      return const AdmissionRoundManagePage();
 
     default:
       return HomePage();

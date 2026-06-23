@@ -1,3 +1,8 @@
+import 'package:riverpod/riverpod.dart';
+
+import 'db_v2_providers/database.dart';
+import 'main_database.dart';
+
 export 'db_v2_providers/admission_council.dart';
 export 'db_v2_providers/local_preferences.dart';
 export 'db_v2_providers/cohorts.dart';
@@ -14,3 +19,11 @@ export 'db_v2_providers/teaching_registration.dart';
 export 'db_v2_providers/thesis.dart';
 export 'db_v2_providers/documents.dart';
 export 'main_database.dart';
+
+final admissionProfileByIdProvider = StreamProvider.family(
+  (ref, int id) async* {
+    final db = await ref.watch(mainDatabaseProvider.future);
+    final stmt = db.getAdmissionProfiles(id: id);
+    yield* stmt.watchSingle();
+  },
+);

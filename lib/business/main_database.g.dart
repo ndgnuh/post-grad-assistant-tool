@@ -3415,6 +3415,1338 @@ class AdmissionCouncilCompanion extends UpdateCompanion<AdmissionCouncilData> {
   }
 }
 
+class $AdmissionRoundTable extends AdmissionRound
+    with TableInfo<$AdmissionRoundTable, AdmissionRoundData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AdmissionRoundTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _monthMeta = const VerificationMeta('month');
+  @override
+  late final GeneratedColumn<int> month = GeneratedColumn<int>(
+    'month',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _yearMeta = const VerificationMeta('year');
+  @override
+  late final GeneratedColumn<int> year = GeneratedColumn<int>(
+    'year',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _admissionCouncilIdMeta =
+      const VerificationMeta('admissionCouncilId');
+  @override
+  late final GeneratedColumn<int> admissionCouncilId = GeneratedColumn<int>(
+    'admission_council_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES admission_council (id)',
+    ),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, month, year, admissionCouncilId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'admission_round';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AdmissionRoundData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('month')) {
+      context.handle(
+        _monthMeta,
+        month.isAcceptableOrUnknown(data['month']!, _monthMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_monthMeta);
+    }
+    if (data.containsKey('year')) {
+      context.handle(
+        _yearMeta,
+        year.isAcceptableOrUnknown(data['year']!, _yearMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_yearMeta);
+    }
+    if (data.containsKey('admission_council_id')) {
+      context.handle(
+        _admissionCouncilIdMeta,
+        admissionCouncilId.isAcceptableOrUnknown(
+          data['admission_council_id']!,
+          _admissionCouncilIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_admissionCouncilIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AdmissionRoundData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AdmissionRoundData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      month: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}month'],
+      )!,
+      year: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year'],
+      )!,
+      admissionCouncilId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}admission_council_id'],
+      )!,
+    );
+  }
+
+  @override
+  $AdmissionRoundTable createAlias(String alias) {
+    return $AdmissionRoundTable(attachedDatabase, alias);
+  }
+}
+
+class AdmissionRoundData extends DataClass
+    implements Insertable<AdmissionRoundData> {
+  final int id;
+  final int month;
+  final int year;
+  final int admissionCouncilId;
+  const AdmissionRoundData({
+    required this.id,
+    required this.month,
+    required this.year,
+    required this.admissionCouncilId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['month'] = Variable<int>(month);
+    map['year'] = Variable<int>(year);
+    map['admission_council_id'] = Variable<int>(admissionCouncilId);
+    return map;
+  }
+
+  AdmissionRoundCompanion toCompanion(bool nullToAbsent) {
+    return AdmissionRoundCompanion(
+      id: Value(id),
+      month: Value(month),
+      year: Value(year),
+      admissionCouncilId: Value(admissionCouncilId),
+    );
+  }
+
+  factory AdmissionRoundData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AdmissionRoundData(
+      id: serializer.fromJson<int>(json['id']),
+      month: serializer.fromJson<int>(json['month']),
+      year: serializer.fromJson<int>(json['year']),
+      admissionCouncilId: serializer.fromJson<int>(json['admissionCouncilId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'month': serializer.toJson<int>(month),
+      'year': serializer.toJson<int>(year),
+      'admissionCouncilId': serializer.toJson<int>(admissionCouncilId),
+    };
+  }
+
+  AdmissionRoundData copyWith({
+    int? id,
+    int? month,
+    int? year,
+    int? admissionCouncilId,
+  }) => AdmissionRoundData(
+    id: id ?? this.id,
+    month: month ?? this.month,
+    year: year ?? this.year,
+    admissionCouncilId: admissionCouncilId ?? this.admissionCouncilId,
+  );
+  AdmissionRoundData copyWithCompanion(AdmissionRoundCompanion data) {
+    return AdmissionRoundData(
+      id: data.id.present ? data.id.value : this.id,
+      month: data.month.present ? data.month.value : this.month,
+      year: data.year.present ? data.year.value : this.year,
+      admissionCouncilId: data.admissionCouncilId.present
+          ? data.admissionCouncilId.value
+          : this.admissionCouncilId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AdmissionRoundData(')
+          ..write('id: $id, ')
+          ..write('month: $month, ')
+          ..write('year: $year, ')
+          ..write('admissionCouncilId: $admissionCouncilId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, month, year, admissionCouncilId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AdmissionRoundData &&
+          other.id == this.id &&
+          other.month == this.month &&
+          other.year == this.year &&
+          other.admissionCouncilId == this.admissionCouncilId);
+}
+
+class AdmissionRoundCompanion extends UpdateCompanion<AdmissionRoundData> {
+  final Value<int> id;
+  final Value<int> month;
+  final Value<int> year;
+  final Value<int> admissionCouncilId;
+  const AdmissionRoundCompanion({
+    this.id = const Value.absent(),
+    this.month = const Value.absent(),
+    this.year = const Value.absent(),
+    this.admissionCouncilId = const Value.absent(),
+  });
+  AdmissionRoundCompanion.insert({
+    this.id = const Value.absent(),
+    required int month,
+    required int year,
+    required int admissionCouncilId,
+  }) : month = Value(month),
+       year = Value(year),
+       admissionCouncilId = Value(admissionCouncilId);
+  static Insertable<AdmissionRoundData> custom({
+    Expression<int>? id,
+    Expression<int>? month,
+    Expression<int>? year,
+    Expression<int>? admissionCouncilId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (month != null) 'month': month,
+      if (year != null) 'year': year,
+      if (admissionCouncilId != null)
+        'admission_council_id': admissionCouncilId,
+    });
+  }
+
+  AdmissionRoundCompanion copyWith({
+    Value<int>? id,
+    Value<int>? month,
+    Value<int>? year,
+    Value<int>? admissionCouncilId,
+  }) {
+    return AdmissionRoundCompanion(
+      id: id ?? this.id,
+      month: month ?? this.month,
+      year: year ?? this.year,
+      admissionCouncilId: admissionCouncilId ?? this.admissionCouncilId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (month.present) {
+      map['month'] = Variable<int>(month.value);
+    }
+    if (year.present) {
+      map['year'] = Variable<int>(year.value);
+    }
+    if (admissionCouncilId.present) {
+      map['admission_council_id'] = Variable<int>(admissionCouncilId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AdmissionRoundCompanion(')
+          ..write('id: $id, ')
+          ..write('month: $month, ')
+          ..write('year: $year, ')
+          ..write('admissionCouncilId: $admissionCouncilId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AdmissionProfileTable extends AdmissionProfile
+    with TableInfo<$AdmissionProfileTable, AdmissionProfileData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AdmissionProfileTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _phoneNumberMeta = const VerificationMeta(
+    'phoneNumber',
+  );
+  @override
+  late final GeneratedColumn<String> phoneNumber = GeneratedColumn<String>(
+    'phone_number',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _emailsMeta = const VerificationMeta('emails');
+  @override
+  late final GeneratedColumn<String> emails = GeneratedColumn<String>(
+    'emails',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<enums.Gender, String> gender =
+      GeneratedColumn<String>(
+        'gender',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<enums.Gender>($AdmissionProfileTable.$convertergender);
+  static const VerificationMeta _dateOfBirthMeta = const VerificationMeta(
+    'dateOfBirth',
+  );
+  @override
+  late final GeneratedColumn<DateTime> dateOfBirth = GeneratedColumn<DateTime>(
+    'date_of_birth',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _flTypeMeta = const VerificationMeta('flType');
+  @override
+  late final GeneratedColumn<String> flType = GeneratedColumn<String>(
+    'fl_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _flRankMeta = const VerificationMeta('flRank');
+  @override
+  late final GeneratedColumn<int> flRank = GeneratedColumn<int>(
+    'fl_rank',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bachelorUniversityMeta =
+      const VerificationMeta('bachelorUniversity');
+  @override
+  late final GeneratedColumn<String> bachelorUniversity =
+      GeneratedColumn<String>(
+        'bachelor_university',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _bachelorMajorMeta = const VerificationMeta(
+    'bachelorMajor',
+  );
+  @override
+  late final GeneratedColumn<String> bachelorMajor = GeneratedColumn<String>(
+    'bachelor_major',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bachelorProgramMeta = const VerificationMeta(
+    'bachelorProgram',
+  );
+  @override
+  late final GeneratedColumn<String> bachelorProgram = GeneratedColumn<String>(
+    'bachelor_program',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bachelorGraduationRankMeta =
+      const VerificationMeta('bachelorGraduationRank');
+  @override
+  late final GeneratedColumn<String> bachelorGraduationRank =
+      GeneratedColumn<String>(
+        'bachelor_graduation_rank',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _bachelorGraduationDateMeta =
+      const VerificationMeta('bachelorGraduationDate');
+  @override
+  late final GeneratedColumn<DateTime> bachelorGraduationDate =
+      GeneratedColumn<DateTime>(
+        'bachelor_graduation_date',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _intendedSpecializationMeta =
+      const VerificationMeta('intendedSpecialization');
+  @override
+  late final GeneratedColumn<String> intendedSpecialization =
+      GeneratedColumn<String>(
+        'intended_specialization',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _exemptedCoursesMeta = const VerificationMeta(
+    'exemptedCourses',
+  );
+  @override
+  late final GeneratedColumn<String> exemptedCourses = GeneratedColumn<String>(
+    'exempted_courses',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _hasPublicationMeta = const VerificationMeta(
+    'hasPublication',
+  );
+  @override
+  late final GeneratedColumn<bool> hasPublication = GeneratedColumn<bool>(
+    'has_publication',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("has_publication" IN (0, 1))',
+    ),
+    clientDefault: () => false,
+  );
+  static const VerificationMeta _admissionRoundIdMeta = const VerificationMeta(
+    'admissionRoundId',
+  );
+  @override
+  late final GeneratedColumn<int> admissionRoundId = GeneratedColumn<int>(
+    'admission_round_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES admission_round (id)',
+    ),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    name,
+    phoneNumber,
+    emails,
+    gender,
+    dateOfBirth,
+    id,
+    flType,
+    flRank,
+    bachelorUniversity,
+    bachelorMajor,
+    bachelorProgram,
+    bachelorGraduationRank,
+    bachelorGraduationDate,
+    intendedSpecialization,
+    exemptedCourses,
+    hasPublication,
+    admissionRoundId,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'admission_profile';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AdmissionProfileData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('phone_number')) {
+      context.handle(
+        _phoneNumberMeta,
+        phoneNumber.isAcceptableOrUnknown(
+          data['phone_number']!,
+          _phoneNumberMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_phoneNumberMeta);
+    }
+    if (data.containsKey('emails')) {
+      context.handle(
+        _emailsMeta,
+        emails.isAcceptableOrUnknown(data['emails']!, _emailsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_emailsMeta);
+    }
+    if (data.containsKey('date_of_birth')) {
+      context.handle(
+        _dateOfBirthMeta,
+        dateOfBirth.isAcceptableOrUnknown(
+          data['date_of_birth']!,
+          _dateOfBirthMeta,
+        ),
+      );
+    }
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('fl_type')) {
+      context.handle(
+        _flTypeMeta,
+        flType.isAcceptableOrUnknown(data['fl_type']!, _flTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_flTypeMeta);
+    }
+    if (data.containsKey('fl_rank')) {
+      context.handle(
+        _flRankMeta,
+        flRank.isAcceptableOrUnknown(data['fl_rank']!, _flRankMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_flRankMeta);
+    }
+    if (data.containsKey('bachelor_university')) {
+      context.handle(
+        _bachelorUniversityMeta,
+        bachelorUniversity.isAcceptableOrUnknown(
+          data['bachelor_university']!,
+          _bachelorUniversityMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_bachelorUniversityMeta);
+    }
+    if (data.containsKey('bachelor_major')) {
+      context.handle(
+        _bachelorMajorMeta,
+        bachelorMajor.isAcceptableOrUnknown(
+          data['bachelor_major']!,
+          _bachelorMajorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_bachelorMajorMeta);
+    }
+    if (data.containsKey('bachelor_program')) {
+      context.handle(
+        _bachelorProgramMeta,
+        bachelorProgram.isAcceptableOrUnknown(
+          data['bachelor_program']!,
+          _bachelorProgramMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_bachelorProgramMeta);
+    }
+    if (data.containsKey('bachelor_graduation_rank')) {
+      context.handle(
+        _bachelorGraduationRankMeta,
+        bachelorGraduationRank.isAcceptableOrUnknown(
+          data['bachelor_graduation_rank']!,
+          _bachelorGraduationRankMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_bachelorGraduationRankMeta);
+    }
+    if (data.containsKey('bachelor_graduation_date')) {
+      context.handle(
+        _bachelorGraduationDateMeta,
+        bachelorGraduationDate.isAcceptableOrUnknown(
+          data['bachelor_graduation_date']!,
+          _bachelorGraduationDateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_bachelorGraduationDateMeta);
+    }
+    if (data.containsKey('intended_specialization')) {
+      context.handle(
+        _intendedSpecializationMeta,
+        intendedSpecialization.isAcceptableOrUnknown(
+          data['intended_specialization']!,
+          _intendedSpecializationMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_intendedSpecializationMeta);
+    }
+    if (data.containsKey('exempted_courses')) {
+      context.handle(
+        _exemptedCoursesMeta,
+        exemptedCourses.isAcceptableOrUnknown(
+          data['exempted_courses']!,
+          _exemptedCoursesMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_exemptedCoursesMeta);
+    }
+    if (data.containsKey('has_publication')) {
+      context.handle(
+        _hasPublicationMeta,
+        hasPublication.isAcceptableOrUnknown(
+          data['has_publication']!,
+          _hasPublicationMeta,
+        ),
+      );
+    }
+    if (data.containsKey('admission_round_id')) {
+      context.handle(
+        _admissionRoundIdMeta,
+        admissionRoundId.isAcceptableOrUnknown(
+          data['admission_round_id']!,
+          _admissionRoundIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_admissionRoundIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AdmissionProfileData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AdmissionProfileData(
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      phoneNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone_number'],
+      )!,
+      emails: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}emails'],
+      )!,
+      gender: $AdmissionProfileTable.$convertergender.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}gender'],
+        )!,
+      ),
+      dateOfBirth: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date_of_birth'],
+      ),
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      flType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}fl_type'],
+      )!,
+      flRank: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}fl_rank'],
+      )!,
+      bachelorUniversity: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bachelor_university'],
+      )!,
+      bachelorMajor: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bachelor_major'],
+      )!,
+      bachelorProgram: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bachelor_program'],
+      )!,
+      bachelorGraduationRank: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bachelor_graduation_rank'],
+      )!,
+      bachelorGraduationDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}bachelor_graduation_date'],
+      )!,
+      intendedSpecialization: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}intended_specialization'],
+      )!,
+      exemptedCourses: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}exempted_courses'],
+      )!,
+      hasPublication: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}has_publication'],
+      )!,
+      admissionRoundId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}admission_round_id'],
+      )!,
+    );
+  }
+
+  @override
+  $AdmissionProfileTable createAlias(String alias) {
+    return $AdmissionProfileTable(attachedDatabase, alias);
+  }
+
+  static TypeConverter<enums.Gender, String> $convertergender =
+      const enums.GenderConverter();
+}
+
+class AdmissionProfileData extends DataClass
+    implements Insertable<AdmissionProfileData> {
+  final String name;
+  final String phoneNumber;
+  final String emails;
+  final enums.Gender gender;
+  final DateTime? dateOfBirth;
+
+  /// This ID can be auto incremented or be input from the system
+  final int id;
+
+  /// Foreign language
+  final String flType;
+  final int flRank;
+
+  /// Bachelor major
+  final String bachelorUniversity;
+  final String bachelorMajor;
+  final String bachelorProgram;
+  final String bachelorGraduationRank;
+  final DateTime bachelorGraduationDate;
+  final String intendedSpecialization;
+  final String exemptedCourses;
+  final bool hasPublication;
+
+  /// Rounds
+  final int admissionRoundId;
+  const AdmissionProfileData({
+    required this.name,
+    required this.phoneNumber,
+    required this.emails,
+    required this.gender,
+    this.dateOfBirth,
+    required this.id,
+    required this.flType,
+    required this.flRank,
+    required this.bachelorUniversity,
+    required this.bachelorMajor,
+    required this.bachelorProgram,
+    required this.bachelorGraduationRank,
+    required this.bachelorGraduationDate,
+    required this.intendedSpecialization,
+    required this.exemptedCourses,
+    required this.hasPublication,
+    required this.admissionRoundId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['name'] = Variable<String>(name);
+    map['phone_number'] = Variable<String>(phoneNumber);
+    map['emails'] = Variable<String>(emails);
+    {
+      map['gender'] = Variable<String>(
+        $AdmissionProfileTable.$convertergender.toSql(gender),
+      );
+    }
+    if (!nullToAbsent || dateOfBirth != null) {
+      map['date_of_birth'] = Variable<DateTime>(dateOfBirth);
+    }
+    map['id'] = Variable<int>(id);
+    map['fl_type'] = Variable<String>(flType);
+    map['fl_rank'] = Variable<int>(flRank);
+    map['bachelor_university'] = Variable<String>(bachelorUniversity);
+    map['bachelor_major'] = Variable<String>(bachelorMajor);
+    map['bachelor_program'] = Variable<String>(bachelorProgram);
+    map['bachelor_graduation_rank'] = Variable<String>(bachelorGraduationRank);
+    map['bachelor_graduation_date'] = Variable<DateTime>(
+      bachelorGraduationDate,
+    );
+    map['intended_specialization'] = Variable<String>(intendedSpecialization);
+    map['exempted_courses'] = Variable<String>(exemptedCourses);
+    map['has_publication'] = Variable<bool>(hasPublication);
+    map['admission_round_id'] = Variable<int>(admissionRoundId);
+    return map;
+  }
+
+  AdmissionProfileCompanion toCompanion(bool nullToAbsent) {
+    return AdmissionProfileCompanion(
+      name: Value(name),
+      phoneNumber: Value(phoneNumber),
+      emails: Value(emails),
+      gender: Value(gender),
+      dateOfBirth: dateOfBirth == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dateOfBirth),
+      id: Value(id),
+      flType: Value(flType),
+      flRank: Value(flRank),
+      bachelorUniversity: Value(bachelorUniversity),
+      bachelorMajor: Value(bachelorMajor),
+      bachelorProgram: Value(bachelorProgram),
+      bachelorGraduationRank: Value(bachelorGraduationRank),
+      bachelorGraduationDate: Value(bachelorGraduationDate),
+      intendedSpecialization: Value(intendedSpecialization),
+      exemptedCourses: Value(exemptedCourses),
+      hasPublication: Value(hasPublication),
+      admissionRoundId: Value(admissionRoundId),
+    );
+  }
+
+  factory AdmissionProfileData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AdmissionProfileData(
+      name: serializer.fromJson<String>(json['name']),
+      phoneNumber: serializer.fromJson<String>(json['phoneNumber']),
+      emails: serializer.fromJson<String>(json['emails']),
+      gender: serializer.fromJson<enums.Gender>(json['gender']),
+      dateOfBirth: serializer.fromJson<DateTime?>(json['dateOfBirth']),
+      id: serializer.fromJson<int>(json['id']),
+      flType: serializer.fromJson<String>(json['flType']),
+      flRank: serializer.fromJson<int>(json['flRank']),
+      bachelorUniversity: serializer.fromJson<String>(
+        json['bachelorUniversity'],
+      ),
+      bachelorMajor: serializer.fromJson<String>(json['bachelorMajor']),
+      bachelorProgram: serializer.fromJson<String>(json['bachelorProgram']),
+      bachelorGraduationRank: serializer.fromJson<String>(
+        json['bachelorGraduationRank'],
+      ),
+      bachelorGraduationDate: serializer.fromJson<DateTime>(
+        json['bachelorGraduationDate'],
+      ),
+      intendedSpecialization: serializer.fromJson<String>(
+        json['intendedSpecialization'],
+      ),
+      exemptedCourses: serializer.fromJson<String>(json['exemptedCourses']),
+      hasPublication: serializer.fromJson<bool>(json['hasPublication']),
+      admissionRoundId: serializer.fromJson<int>(json['admissionRoundId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'name': serializer.toJson<String>(name),
+      'phoneNumber': serializer.toJson<String>(phoneNumber),
+      'emails': serializer.toJson<String>(emails),
+      'gender': serializer.toJson<enums.Gender>(gender),
+      'dateOfBirth': serializer.toJson<DateTime?>(dateOfBirth),
+      'id': serializer.toJson<int>(id),
+      'flType': serializer.toJson<String>(flType),
+      'flRank': serializer.toJson<int>(flRank),
+      'bachelorUniversity': serializer.toJson<String>(bachelorUniversity),
+      'bachelorMajor': serializer.toJson<String>(bachelorMajor),
+      'bachelorProgram': serializer.toJson<String>(bachelorProgram),
+      'bachelorGraduationRank': serializer.toJson<String>(
+        bachelorGraduationRank,
+      ),
+      'bachelorGraduationDate': serializer.toJson<DateTime>(
+        bachelorGraduationDate,
+      ),
+      'intendedSpecialization': serializer.toJson<String>(
+        intendedSpecialization,
+      ),
+      'exemptedCourses': serializer.toJson<String>(exemptedCourses),
+      'hasPublication': serializer.toJson<bool>(hasPublication),
+      'admissionRoundId': serializer.toJson<int>(admissionRoundId),
+    };
+  }
+
+  AdmissionProfileData copyWith({
+    String? name,
+    String? phoneNumber,
+    String? emails,
+    enums.Gender? gender,
+    Value<DateTime?> dateOfBirth = const Value.absent(),
+    int? id,
+    String? flType,
+    int? flRank,
+    String? bachelorUniversity,
+    String? bachelorMajor,
+    String? bachelorProgram,
+    String? bachelorGraduationRank,
+    DateTime? bachelorGraduationDate,
+    String? intendedSpecialization,
+    String? exemptedCourses,
+    bool? hasPublication,
+    int? admissionRoundId,
+  }) => AdmissionProfileData(
+    name: name ?? this.name,
+    phoneNumber: phoneNumber ?? this.phoneNumber,
+    emails: emails ?? this.emails,
+    gender: gender ?? this.gender,
+    dateOfBirth: dateOfBirth.present ? dateOfBirth.value : this.dateOfBirth,
+    id: id ?? this.id,
+    flType: flType ?? this.flType,
+    flRank: flRank ?? this.flRank,
+    bachelorUniversity: bachelorUniversity ?? this.bachelorUniversity,
+    bachelorMajor: bachelorMajor ?? this.bachelorMajor,
+    bachelorProgram: bachelorProgram ?? this.bachelorProgram,
+    bachelorGraduationRank:
+        bachelorGraduationRank ?? this.bachelorGraduationRank,
+    bachelorGraduationDate:
+        bachelorGraduationDate ?? this.bachelorGraduationDate,
+    intendedSpecialization:
+        intendedSpecialization ?? this.intendedSpecialization,
+    exemptedCourses: exemptedCourses ?? this.exemptedCourses,
+    hasPublication: hasPublication ?? this.hasPublication,
+    admissionRoundId: admissionRoundId ?? this.admissionRoundId,
+  );
+  AdmissionProfileData copyWithCompanion(AdmissionProfileCompanion data) {
+    return AdmissionProfileData(
+      name: data.name.present ? data.name.value : this.name,
+      phoneNumber: data.phoneNumber.present
+          ? data.phoneNumber.value
+          : this.phoneNumber,
+      emails: data.emails.present ? data.emails.value : this.emails,
+      gender: data.gender.present ? data.gender.value : this.gender,
+      dateOfBirth: data.dateOfBirth.present
+          ? data.dateOfBirth.value
+          : this.dateOfBirth,
+      id: data.id.present ? data.id.value : this.id,
+      flType: data.flType.present ? data.flType.value : this.flType,
+      flRank: data.flRank.present ? data.flRank.value : this.flRank,
+      bachelorUniversity: data.bachelorUniversity.present
+          ? data.bachelorUniversity.value
+          : this.bachelorUniversity,
+      bachelorMajor: data.bachelorMajor.present
+          ? data.bachelorMajor.value
+          : this.bachelorMajor,
+      bachelorProgram: data.bachelorProgram.present
+          ? data.bachelorProgram.value
+          : this.bachelorProgram,
+      bachelorGraduationRank: data.bachelorGraduationRank.present
+          ? data.bachelorGraduationRank.value
+          : this.bachelorGraduationRank,
+      bachelorGraduationDate: data.bachelorGraduationDate.present
+          ? data.bachelorGraduationDate.value
+          : this.bachelorGraduationDate,
+      intendedSpecialization: data.intendedSpecialization.present
+          ? data.intendedSpecialization.value
+          : this.intendedSpecialization,
+      exemptedCourses: data.exemptedCourses.present
+          ? data.exemptedCourses.value
+          : this.exemptedCourses,
+      hasPublication: data.hasPublication.present
+          ? data.hasPublication.value
+          : this.hasPublication,
+      admissionRoundId: data.admissionRoundId.present
+          ? data.admissionRoundId.value
+          : this.admissionRoundId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AdmissionProfileData(')
+          ..write('name: $name, ')
+          ..write('phoneNumber: $phoneNumber, ')
+          ..write('emails: $emails, ')
+          ..write('gender: $gender, ')
+          ..write('dateOfBirth: $dateOfBirth, ')
+          ..write('id: $id, ')
+          ..write('flType: $flType, ')
+          ..write('flRank: $flRank, ')
+          ..write('bachelorUniversity: $bachelorUniversity, ')
+          ..write('bachelorMajor: $bachelorMajor, ')
+          ..write('bachelorProgram: $bachelorProgram, ')
+          ..write('bachelorGraduationRank: $bachelorGraduationRank, ')
+          ..write('bachelorGraduationDate: $bachelorGraduationDate, ')
+          ..write('intendedSpecialization: $intendedSpecialization, ')
+          ..write('exemptedCourses: $exemptedCourses, ')
+          ..write('hasPublication: $hasPublication, ')
+          ..write('admissionRoundId: $admissionRoundId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    name,
+    phoneNumber,
+    emails,
+    gender,
+    dateOfBirth,
+    id,
+    flType,
+    flRank,
+    bachelorUniversity,
+    bachelorMajor,
+    bachelorProgram,
+    bachelorGraduationRank,
+    bachelorGraduationDate,
+    intendedSpecialization,
+    exemptedCourses,
+    hasPublication,
+    admissionRoundId,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AdmissionProfileData &&
+          other.name == this.name &&
+          other.phoneNumber == this.phoneNumber &&
+          other.emails == this.emails &&
+          other.gender == this.gender &&
+          other.dateOfBirth == this.dateOfBirth &&
+          other.id == this.id &&
+          other.flType == this.flType &&
+          other.flRank == this.flRank &&
+          other.bachelorUniversity == this.bachelorUniversity &&
+          other.bachelorMajor == this.bachelorMajor &&
+          other.bachelorProgram == this.bachelorProgram &&
+          other.bachelorGraduationRank == this.bachelorGraduationRank &&
+          other.bachelorGraduationDate == this.bachelorGraduationDate &&
+          other.intendedSpecialization == this.intendedSpecialization &&
+          other.exemptedCourses == this.exemptedCourses &&
+          other.hasPublication == this.hasPublication &&
+          other.admissionRoundId == this.admissionRoundId);
+}
+
+class AdmissionProfileCompanion extends UpdateCompanion<AdmissionProfileData> {
+  final Value<String> name;
+  final Value<String> phoneNumber;
+  final Value<String> emails;
+  final Value<enums.Gender> gender;
+  final Value<DateTime?> dateOfBirth;
+  final Value<int> id;
+  final Value<String> flType;
+  final Value<int> flRank;
+  final Value<String> bachelorUniversity;
+  final Value<String> bachelorMajor;
+  final Value<String> bachelorProgram;
+  final Value<String> bachelorGraduationRank;
+  final Value<DateTime> bachelorGraduationDate;
+  final Value<String> intendedSpecialization;
+  final Value<String> exemptedCourses;
+  final Value<bool> hasPublication;
+  final Value<int> admissionRoundId;
+  const AdmissionProfileCompanion({
+    this.name = const Value.absent(),
+    this.phoneNumber = const Value.absent(),
+    this.emails = const Value.absent(),
+    this.gender = const Value.absent(),
+    this.dateOfBirth = const Value.absent(),
+    this.id = const Value.absent(),
+    this.flType = const Value.absent(),
+    this.flRank = const Value.absent(),
+    this.bachelorUniversity = const Value.absent(),
+    this.bachelorMajor = const Value.absent(),
+    this.bachelorProgram = const Value.absent(),
+    this.bachelorGraduationRank = const Value.absent(),
+    this.bachelorGraduationDate = const Value.absent(),
+    this.intendedSpecialization = const Value.absent(),
+    this.exemptedCourses = const Value.absent(),
+    this.hasPublication = const Value.absent(),
+    this.admissionRoundId = const Value.absent(),
+  });
+  AdmissionProfileCompanion.insert({
+    required String name,
+    required String phoneNumber,
+    required String emails,
+    required enums.Gender gender,
+    this.dateOfBirth = const Value.absent(),
+    this.id = const Value.absent(),
+    required String flType,
+    required int flRank,
+    required String bachelorUniversity,
+    required String bachelorMajor,
+    required String bachelorProgram,
+    required String bachelorGraduationRank,
+    required DateTime bachelorGraduationDate,
+    required String intendedSpecialization,
+    required String exemptedCourses,
+    this.hasPublication = const Value.absent(),
+    required int admissionRoundId,
+  }) : name = Value(name),
+       phoneNumber = Value(phoneNumber),
+       emails = Value(emails),
+       gender = Value(gender),
+       flType = Value(flType),
+       flRank = Value(flRank),
+       bachelorUniversity = Value(bachelorUniversity),
+       bachelorMajor = Value(bachelorMajor),
+       bachelorProgram = Value(bachelorProgram),
+       bachelorGraduationRank = Value(bachelorGraduationRank),
+       bachelorGraduationDate = Value(bachelorGraduationDate),
+       intendedSpecialization = Value(intendedSpecialization),
+       exemptedCourses = Value(exemptedCourses),
+       admissionRoundId = Value(admissionRoundId);
+  static Insertable<AdmissionProfileData> custom({
+    Expression<String>? name,
+    Expression<String>? phoneNumber,
+    Expression<String>? emails,
+    Expression<String>? gender,
+    Expression<DateTime>? dateOfBirth,
+    Expression<int>? id,
+    Expression<String>? flType,
+    Expression<int>? flRank,
+    Expression<String>? bachelorUniversity,
+    Expression<String>? bachelorMajor,
+    Expression<String>? bachelorProgram,
+    Expression<String>? bachelorGraduationRank,
+    Expression<DateTime>? bachelorGraduationDate,
+    Expression<String>? intendedSpecialization,
+    Expression<String>? exemptedCourses,
+    Expression<bool>? hasPublication,
+    Expression<int>? admissionRoundId,
+  }) {
+    return RawValuesInsertable({
+      if (name != null) 'name': name,
+      if (phoneNumber != null) 'phone_number': phoneNumber,
+      if (emails != null) 'emails': emails,
+      if (gender != null) 'gender': gender,
+      if (dateOfBirth != null) 'date_of_birth': dateOfBirth,
+      if (id != null) 'id': id,
+      if (flType != null) 'fl_type': flType,
+      if (flRank != null) 'fl_rank': flRank,
+      if (bachelorUniversity != null) 'bachelor_university': bachelorUniversity,
+      if (bachelorMajor != null) 'bachelor_major': bachelorMajor,
+      if (bachelorProgram != null) 'bachelor_program': bachelorProgram,
+      if (bachelorGraduationRank != null)
+        'bachelor_graduation_rank': bachelorGraduationRank,
+      if (bachelorGraduationDate != null)
+        'bachelor_graduation_date': bachelorGraduationDate,
+      if (intendedSpecialization != null)
+        'intended_specialization': intendedSpecialization,
+      if (exemptedCourses != null) 'exempted_courses': exemptedCourses,
+      if (hasPublication != null) 'has_publication': hasPublication,
+      if (admissionRoundId != null) 'admission_round_id': admissionRoundId,
+    });
+  }
+
+  AdmissionProfileCompanion copyWith({
+    Value<String>? name,
+    Value<String>? phoneNumber,
+    Value<String>? emails,
+    Value<enums.Gender>? gender,
+    Value<DateTime?>? dateOfBirth,
+    Value<int>? id,
+    Value<String>? flType,
+    Value<int>? flRank,
+    Value<String>? bachelorUniversity,
+    Value<String>? bachelorMajor,
+    Value<String>? bachelorProgram,
+    Value<String>? bachelorGraduationRank,
+    Value<DateTime>? bachelorGraduationDate,
+    Value<String>? intendedSpecialization,
+    Value<String>? exemptedCourses,
+    Value<bool>? hasPublication,
+    Value<int>? admissionRoundId,
+  }) {
+    return AdmissionProfileCompanion(
+      name: name ?? this.name,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      emails: emails ?? this.emails,
+      gender: gender ?? this.gender,
+      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
+      id: id ?? this.id,
+      flType: flType ?? this.flType,
+      flRank: flRank ?? this.flRank,
+      bachelorUniversity: bachelorUniversity ?? this.bachelorUniversity,
+      bachelorMajor: bachelorMajor ?? this.bachelorMajor,
+      bachelorProgram: bachelorProgram ?? this.bachelorProgram,
+      bachelorGraduationRank:
+          bachelorGraduationRank ?? this.bachelorGraduationRank,
+      bachelorGraduationDate:
+          bachelorGraduationDate ?? this.bachelorGraduationDate,
+      intendedSpecialization:
+          intendedSpecialization ?? this.intendedSpecialization,
+      exemptedCourses: exemptedCourses ?? this.exemptedCourses,
+      hasPublication: hasPublication ?? this.hasPublication,
+      admissionRoundId: admissionRoundId ?? this.admissionRoundId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (phoneNumber.present) {
+      map['phone_number'] = Variable<String>(phoneNumber.value);
+    }
+    if (emails.present) {
+      map['emails'] = Variable<String>(emails.value);
+    }
+    if (gender.present) {
+      map['gender'] = Variable<String>(
+        $AdmissionProfileTable.$convertergender.toSql(gender.value),
+      );
+    }
+    if (dateOfBirth.present) {
+      map['date_of_birth'] = Variable<DateTime>(dateOfBirth.value);
+    }
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (flType.present) {
+      map['fl_type'] = Variable<String>(flType.value);
+    }
+    if (flRank.present) {
+      map['fl_rank'] = Variable<int>(flRank.value);
+    }
+    if (bachelorUniversity.present) {
+      map['bachelor_university'] = Variable<String>(bachelorUniversity.value);
+    }
+    if (bachelorMajor.present) {
+      map['bachelor_major'] = Variable<String>(bachelorMajor.value);
+    }
+    if (bachelorProgram.present) {
+      map['bachelor_program'] = Variable<String>(bachelorProgram.value);
+    }
+    if (bachelorGraduationRank.present) {
+      map['bachelor_graduation_rank'] = Variable<String>(
+        bachelorGraduationRank.value,
+      );
+    }
+    if (bachelorGraduationDate.present) {
+      map['bachelor_graduation_date'] = Variable<DateTime>(
+        bachelorGraduationDate.value,
+      );
+    }
+    if (intendedSpecialization.present) {
+      map['intended_specialization'] = Variable<String>(
+        intendedSpecialization.value,
+      );
+    }
+    if (exemptedCourses.present) {
+      map['exempted_courses'] = Variable<String>(exemptedCourses.value);
+    }
+    if (hasPublication.present) {
+      map['has_publication'] = Variable<bool>(hasPublication.value);
+    }
+    if (admissionRoundId.present) {
+      map['admission_round_id'] = Variable<int>(admissionRoundId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AdmissionProfileCompanion(')
+          ..write('name: $name, ')
+          ..write('phoneNumber: $phoneNumber, ')
+          ..write('emails: $emails, ')
+          ..write('gender: $gender, ')
+          ..write('dateOfBirth: $dateOfBirth, ')
+          ..write('id: $id, ')
+          ..write('flType: $flType, ')
+          ..write('flRank: $flRank, ')
+          ..write('bachelorUniversity: $bachelorUniversity, ')
+          ..write('bachelorMajor: $bachelorMajor, ')
+          ..write('bachelorProgram: $bachelorProgram, ')
+          ..write('bachelorGraduationRank: $bachelorGraduationRank, ')
+          ..write('bachelorGraduationDate: $bachelorGraduationDate, ')
+          ..write('intendedSpecialization: $intendedSpecialization, ')
+          ..write('exemptedCourses: $exemptedCourses, ')
+          ..write('hasPublication: $hasPublication, ')
+          ..write('admissionRoundId: $admissionRoundId')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $StudentTable extends Student with TableInfo<$StudentTable, StudentData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -12810,6 +14142,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $AdmissionCouncilTable admissionCouncil = $AdmissionCouncilTable(
     this,
   );
+  late final $AdmissionRoundTable admissionRound = $AdmissionRoundTable(this);
+  late final $AdmissionProfileTable admissionProfile = $AdmissionProfileTable(
+    this,
+  );
   late final $StudentTable student = $StudentTable(this);
   late final $SemesterTable semester = $SemesterTable(this);
   late final $CourseTable course = $CourseTable(this);
@@ -12843,6 +14179,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     teacherGroup,
     teacher,
     admissionCouncil,
+    admissionRound,
+    admissionProfile,
     student,
     semester,
     course,
@@ -17529,6 +18867,27 @@ final class $$AdmissionCouncilTableReferences
     );
   }
 
+  static MultiTypedResultKey<$AdmissionRoundTable, List<AdmissionRoundData>>
+  _admissionRoundRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.admissionRound,
+    aliasName: $_aliasNameGenerator(
+      db.admissionCouncil.id,
+      db.admissionRound.admissionCouncilId,
+    ),
+  );
+
+  $$AdmissionRoundTableProcessedTableManager get admissionRoundRefs {
+    final manager = $$AdmissionRoundTableTableManager($_db, $_db.admissionRound)
+        .filter(
+          (f) => f.admissionCouncilId.id.sqlEquals($_itemColumn<int>('id')!),
+        );
+
+    final cache = $_typedResult.readTableOrNull(_admissionRoundRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
   static MultiTypedResultKey<$StudentTable, List<StudentData>>
   _studentRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.student,
@@ -17692,6 +19051,31 @@ class $$AdmissionCouncilTableFilterComposer
           ),
     );
     return composer;
+  }
+
+  Expression<bool> admissionRoundRefs(
+    Expression<bool> Function($$AdmissionRoundTableFilterComposer f) f,
+  ) {
+    final $$AdmissionRoundTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.admissionRound,
+      getReferencedColumn: (t) => t.admissionCouncilId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AdmissionRoundTableFilterComposer(
+            $db: $db,
+            $table: $db.admissionRound,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
   }
 
   Expression<bool> studentRefs(
@@ -18005,6 +19389,31 @@ class $$AdmissionCouncilTableAnnotationComposer
     return composer;
   }
 
+  Expression<T> admissionRoundRefs<T extends Object>(
+    Expression<T> Function($$AdmissionRoundTableAnnotationComposer a) f,
+  ) {
+    final $$AdmissionRoundTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.admissionRound,
+      getReferencedColumn: (t) => t.admissionCouncilId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AdmissionRoundTableAnnotationComposer(
+            $db: $db,
+            $table: $db.admissionRound,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
   Expression<T> studentRefs<T extends Object>(
     Expression<T> Function($$StudentTableAnnotationComposer a) f,
   ) {
@@ -18050,6 +19459,7 @@ class $$AdmissionCouncilTableTableManager
             bool member1Id,
             bool member2Id,
             bool member3Id,
+            bool admissionRoundRefs,
             bool studentRefs,
           })
         > {
@@ -18126,11 +19536,15 @@ class $$AdmissionCouncilTableTableManager
                 member1Id = false,
                 member2Id = false,
                 member3Id = false,
+                admissionRoundRefs = false,
                 studentRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
-                  explicitlyWatchedTables: [if (studentRefs) db.student],
+                  explicitlyWatchedTables: [
+                    if (admissionRoundRefs) db.admissionRound,
+                    if (studentRefs) db.student,
+                  ],
                   addJoins:
                       <
                         T extends TableManagerState<
@@ -18227,6 +19641,27 @@ class $$AdmissionCouncilTableTableManager
                       },
                   getPrefetchedDataCallback: (items) async {
                     return [
+                      if (admissionRoundRefs)
+                        await $_getPrefetchedData<
+                          AdmissionCouncilData,
+                          $AdmissionCouncilTable,
+                          AdmissionRoundData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$AdmissionCouncilTableReferences
+                              ._admissionRoundRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$AdmissionCouncilTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).admissionRoundRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.admissionCouncilId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                       if (studentRefs)
                         await $_getPrefetchedData<
                           AdmissionCouncilData,
@@ -18274,8 +19709,1001 @@ typedef $$AdmissionCouncilTableProcessedTableManager =
         bool member1Id,
         bool member2Id,
         bool member3Id,
+        bool admissionRoundRefs,
         bool studentRefs,
       })
+    >;
+typedef $$AdmissionRoundTableCreateCompanionBuilder =
+    AdmissionRoundCompanion Function({
+      Value<int> id,
+      required int month,
+      required int year,
+      required int admissionCouncilId,
+    });
+typedef $$AdmissionRoundTableUpdateCompanionBuilder =
+    AdmissionRoundCompanion Function({
+      Value<int> id,
+      Value<int> month,
+      Value<int> year,
+      Value<int> admissionCouncilId,
+    });
+
+final class $$AdmissionRoundTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $AdmissionRoundTable,
+          AdmissionRoundData
+        > {
+  $$AdmissionRoundTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $AdmissionCouncilTable _admissionCouncilIdTable(_$AppDatabase db) =>
+      db.admissionCouncil.createAlias(
+        $_aliasNameGenerator(
+          db.admissionRound.admissionCouncilId,
+          db.admissionCouncil.id,
+        ),
+      );
+
+  $$AdmissionCouncilTableProcessedTableManager get admissionCouncilId {
+    final $_column = $_itemColumn<int>('admission_council_id')!;
+
+    final manager = $$AdmissionCouncilTableTableManager(
+      $_db,
+      $_db.admissionCouncil,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_admissionCouncilIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$AdmissionProfileTable, List<AdmissionProfileData>>
+  _admissionProfileRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.admissionProfile,
+    aliasName: $_aliasNameGenerator(
+      db.admissionRound.id,
+      db.admissionProfile.admissionRoundId,
+    ),
+  );
+
+  $$AdmissionProfileTableProcessedTableManager get admissionProfileRefs {
+    final manager = $$AdmissionProfileTableTableManager(
+      $_db,
+      $_db.admissionProfile,
+    ).filter((f) => f.admissionRoundId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _admissionProfileRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$AdmissionRoundTableFilterComposer
+    extends Composer<_$AppDatabase, $AdmissionRoundTable> {
+  $$AdmissionRoundTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get month => $composableBuilder(
+    column: $table.month,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$AdmissionCouncilTableFilterComposer get admissionCouncilId {
+    final $$AdmissionCouncilTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.admissionCouncilId,
+      referencedTable: $db.admissionCouncil,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AdmissionCouncilTableFilterComposer(
+            $db: $db,
+            $table: $db.admissionCouncil,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> admissionProfileRefs(
+    Expression<bool> Function($$AdmissionProfileTableFilterComposer f) f,
+  ) {
+    final $$AdmissionProfileTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.admissionProfile,
+      getReferencedColumn: (t) => t.admissionRoundId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AdmissionProfileTableFilterComposer(
+            $db: $db,
+            $table: $db.admissionProfile,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$AdmissionRoundTableOrderingComposer
+    extends Composer<_$AppDatabase, $AdmissionRoundTable> {
+  $$AdmissionRoundTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get month => $composableBuilder(
+    column: $table.month,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$AdmissionCouncilTableOrderingComposer get admissionCouncilId {
+    final $$AdmissionCouncilTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.admissionCouncilId,
+      referencedTable: $db.admissionCouncil,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AdmissionCouncilTableOrderingComposer(
+            $db: $db,
+            $table: $db.admissionCouncil,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AdmissionRoundTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AdmissionRoundTable> {
+  $$AdmissionRoundTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get month =>
+      $composableBuilder(column: $table.month, builder: (column) => column);
+
+  GeneratedColumn<int> get year =>
+      $composableBuilder(column: $table.year, builder: (column) => column);
+
+  $$AdmissionCouncilTableAnnotationComposer get admissionCouncilId {
+    final $$AdmissionCouncilTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.admissionCouncilId,
+      referencedTable: $db.admissionCouncil,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AdmissionCouncilTableAnnotationComposer(
+            $db: $db,
+            $table: $db.admissionCouncil,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> admissionProfileRefs<T extends Object>(
+    Expression<T> Function($$AdmissionProfileTableAnnotationComposer a) f,
+  ) {
+    final $$AdmissionProfileTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.admissionProfile,
+      getReferencedColumn: (t) => t.admissionRoundId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AdmissionProfileTableAnnotationComposer(
+            $db: $db,
+            $table: $db.admissionProfile,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$AdmissionRoundTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AdmissionRoundTable,
+          AdmissionRoundData,
+          $$AdmissionRoundTableFilterComposer,
+          $$AdmissionRoundTableOrderingComposer,
+          $$AdmissionRoundTableAnnotationComposer,
+          $$AdmissionRoundTableCreateCompanionBuilder,
+          $$AdmissionRoundTableUpdateCompanionBuilder,
+          (AdmissionRoundData, $$AdmissionRoundTableReferences),
+          AdmissionRoundData,
+          PrefetchHooks Function({
+            bool admissionCouncilId,
+            bool admissionProfileRefs,
+          })
+        > {
+  $$AdmissionRoundTableTableManager(
+    _$AppDatabase db,
+    $AdmissionRoundTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AdmissionRoundTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AdmissionRoundTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AdmissionRoundTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> month = const Value.absent(),
+                Value<int> year = const Value.absent(),
+                Value<int> admissionCouncilId = const Value.absent(),
+              }) => AdmissionRoundCompanion(
+                id: id,
+                month: month,
+                year: year,
+                admissionCouncilId: admissionCouncilId,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int month,
+                required int year,
+                required int admissionCouncilId,
+              }) => AdmissionRoundCompanion.insert(
+                id: id,
+                month: month,
+                year: year,
+                admissionCouncilId: admissionCouncilId,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$AdmissionRoundTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({admissionCouncilId = false, admissionProfileRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (admissionProfileRefs) db.admissionProfile,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (admissionCouncilId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.admissionCouncilId,
+                                    referencedTable:
+                                        $$AdmissionRoundTableReferences
+                                            ._admissionCouncilIdTable(db),
+                                    referencedColumn:
+                                        $$AdmissionRoundTableReferences
+                                            ._admissionCouncilIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (admissionProfileRefs)
+                        await $_getPrefetchedData<
+                          AdmissionRoundData,
+                          $AdmissionRoundTable,
+                          AdmissionProfileData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$AdmissionRoundTableReferences
+                              ._admissionProfileRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$AdmissionRoundTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).admissionProfileRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.admissionRoundId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$AdmissionRoundTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AdmissionRoundTable,
+      AdmissionRoundData,
+      $$AdmissionRoundTableFilterComposer,
+      $$AdmissionRoundTableOrderingComposer,
+      $$AdmissionRoundTableAnnotationComposer,
+      $$AdmissionRoundTableCreateCompanionBuilder,
+      $$AdmissionRoundTableUpdateCompanionBuilder,
+      (AdmissionRoundData, $$AdmissionRoundTableReferences),
+      AdmissionRoundData,
+      PrefetchHooks Function({
+        bool admissionCouncilId,
+        bool admissionProfileRefs,
+      })
+    >;
+typedef $$AdmissionProfileTableCreateCompanionBuilder =
+    AdmissionProfileCompanion Function({
+      required String name,
+      required String phoneNumber,
+      required String emails,
+      required enums.Gender gender,
+      Value<DateTime?> dateOfBirth,
+      Value<int> id,
+      required String flType,
+      required int flRank,
+      required String bachelorUniversity,
+      required String bachelorMajor,
+      required String bachelorProgram,
+      required String bachelorGraduationRank,
+      required DateTime bachelorGraduationDate,
+      required String intendedSpecialization,
+      required String exemptedCourses,
+      Value<bool> hasPublication,
+      required int admissionRoundId,
+    });
+typedef $$AdmissionProfileTableUpdateCompanionBuilder =
+    AdmissionProfileCompanion Function({
+      Value<String> name,
+      Value<String> phoneNumber,
+      Value<String> emails,
+      Value<enums.Gender> gender,
+      Value<DateTime?> dateOfBirth,
+      Value<int> id,
+      Value<String> flType,
+      Value<int> flRank,
+      Value<String> bachelorUniversity,
+      Value<String> bachelorMajor,
+      Value<String> bachelorProgram,
+      Value<String> bachelorGraduationRank,
+      Value<DateTime> bachelorGraduationDate,
+      Value<String> intendedSpecialization,
+      Value<String> exemptedCourses,
+      Value<bool> hasPublication,
+      Value<int> admissionRoundId,
+    });
+
+final class $$AdmissionProfileTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $AdmissionProfileTable,
+          AdmissionProfileData
+        > {
+  $$AdmissionProfileTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $AdmissionRoundTable _admissionRoundIdTable(_$AppDatabase db) =>
+      db.admissionRound.createAlias(
+        $_aliasNameGenerator(
+          db.admissionProfile.admissionRoundId,
+          db.admissionRound.id,
+        ),
+      );
+
+  $$AdmissionRoundTableProcessedTableManager get admissionRoundId {
+    final $_column = $_itemColumn<int>('admission_round_id')!;
+
+    final manager = $$AdmissionRoundTableTableManager(
+      $_db,
+      $_db.admissionRound,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_admissionRoundIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$AdmissionProfileTableFilterComposer
+    extends Composer<_$AppDatabase, $AdmissionProfileTable> {
+  $$AdmissionProfileTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get phoneNumber => $composableBuilder(
+    column: $table.phoneNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get emails => $composableBuilder(
+    column: $table.emails,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<enums.Gender, enums.Gender, String>
+  get gender => $composableBuilder(
+    column: $table.gender,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<DateTime> get dateOfBirth => $composableBuilder(
+    column: $table.dateOfBirth,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get flType => $composableBuilder(
+    column: $table.flType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get flRank => $composableBuilder(
+    column: $table.flRank,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bachelorUniversity => $composableBuilder(
+    column: $table.bachelorUniversity,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bachelorMajor => $composableBuilder(
+    column: $table.bachelorMajor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bachelorProgram => $composableBuilder(
+    column: $table.bachelorProgram,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bachelorGraduationRank => $composableBuilder(
+    column: $table.bachelorGraduationRank,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get bachelorGraduationDate => $composableBuilder(
+    column: $table.bachelorGraduationDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get intendedSpecialization => $composableBuilder(
+    column: $table.intendedSpecialization,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get exemptedCourses => $composableBuilder(
+    column: $table.exemptedCourses,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get hasPublication => $composableBuilder(
+    column: $table.hasPublication,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$AdmissionRoundTableFilterComposer get admissionRoundId {
+    final $$AdmissionRoundTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.admissionRoundId,
+      referencedTable: $db.admissionRound,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AdmissionRoundTableFilterComposer(
+            $db: $db,
+            $table: $db.admissionRound,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AdmissionProfileTableOrderingComposer
+    extends Composer<_$AppDatabase, $AdmissionProfileTable> {
+  $$AdmissionProfileTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get phoneNumber => $composableBuilder(
+    column: $table.phoneNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get emails => $composableBuilder(
+    column: $table.emails,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get gender => $composableBuilder(
+    column: $table.gender,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get dateOfBirth => $composableBuilder(
+    column: $table.dateOfBirth,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get flType => $composableBuilder(
+    column: $table.flType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get flRank => $composableBuilder(
+    column: $table.flRank,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bachelorUniversity => $composableBuilder(
+    column: $table.bachelorUniversity,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bachelorMajor => $composableBuilder(
+    column: $table.bachelorMajor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bachelorProgram => $composableBuilder(
+    column: $table.bachelorProgram,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bachelorGraduationRank => $composableBuilder(
+    column: $table.bachelorGraduationRank,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get bachelorGraduationDate => $composableBuilder(
+    column: $table.bachelorGraduationDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get intendedSpecialization => $composableBuilder(
+    column: $table.intendedSpecialization,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get exemptedCourses => $composableBuilder(
+    column: $table.exemptedCourses,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get hasPublication => $composableBuilder(
+    column: $table.hasPublication,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$AdmissionRoundTableOrderingComposer get admissionRoundId {
+    final $$AdmissionRoundTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.admissionRoundId,
+      referencedTable: $db.admissionRound,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AdmissionRoundTableOrderingComposer(
+            $db: $db,
+            $table: $db.admissionRound,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AdmissionProfileTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AdmissionProfileTable> {
+  $$AdmissionProfileTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get phoneNumber => $composableBuilder(
+    column: $table.phoneNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get emails =>
+      $composableBuilder(column: $table.emails, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<enums.Gender, String> get gender =>
+      $composableBuilder(column: $table.gender, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get dateOfBirth => $composableBuilder(
+    column: $table.dateOfBirth,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get flType =>
+      $composableBuilder(column: $table.flType, builder: (column) => column);
+
+  GeneratedColumn<int> get flRank =>
+      $composableBuilder(column: $table.flRank, builder: (column) => column);
+
+  GeneratedColumn<String> get bachelorUniversity => $composableBuilder(
+    column: $table.bachelorUniversity,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get bachelorMajor => $composableBuilder(
+    column: $table.bachelorMajor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get bachelorProgram => $composableBuilder(
+    column: $table.bachelorProgram,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get bachelorGraduationRank => $composableBuilder(
+    column: $table.bachelorGraduationRank,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get bachelorGraduationDate => $composableBuilder(
+    column: $table.bachelorGraduationDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get intendedSpecialization => $composableBuilder(
+    column: $table.intendedSpecialization,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get exemptedCourses => $composableBuilder(
+    column: $table.exemptedCourses,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get hasPublication => $composableBuilder(
+    column: $table.hasPublication,
+    builder: (column) => column,
+  );
+
+  $$AdmissionRoundTableAnnotationComposer get admissionRoundId {
+    final $$AdmissionRoundTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.admissionRoundId,
+      referencedTable: $db.admissionRound,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AdmissionRoundTableAnnotationComposer(
+            $db: $db,
+            $table: $db.admissionRound,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AdmissionProfileTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AdmissionProfileTable,
+          AdmissionProfileData,
+          $$AdmissionProfileTableFilterComposer,
+          $$AdmissionProfileTableOrderingComposer,
+          $$AdmissionProfileTableAnnotationComposer,
+          $$AdmissionProfileTableCreateCompanionBuilder,
+          $$AdmissionProfileTableUpdateCompanionBuilder,
+          (AdmissionProfileData, $$AdmissionProfileTableReferences),
+          AdmissionProfileData,
+          PrefetchHooks Function({bool admissionRoundId})
+        > {
+  $$AdmissionProfileTableTableManager(
+    _$AppDatabase db,
+    $AdmissionProfileTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AdmissionProfileTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AdmissionProfileTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AdmissionProfileTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> name = const Value.absent(),
+                Value<String> phoneNumber = const Value.absent(),
+                Value<String> emails = const Value.absent(),
+                Value<enums.Gender> gender = const Value.absent(),
+                Value<DateTime?> dateOfBirth = const Value.absent(),
+                Value<int> id = const Value.absent(),
+                Value<String> flType = const Value.absent(),
+                Value<int> flRank = const Value.absent(),
+                Value<String> bachelorUniversity = const Value.absent(),
+                Value<String> bachelorMajor = const Value.absent(),
+                Value<String> bachelorProgram = const Value.absent(),
+                Value<String> bachelorGraduationRank = const Value.absent(),
+                Value<DateTime> bachelorGraduationDate = const Value.absent(),
+                Value<String> intendedSpecialization = const Value.absent(),
+                Value<String> exemptedCourses = const Value.absent(),
+                Value<bool> hasPublication = const Value.absent(),
+                Value<int> admissionRoundId = const Value.absent(),
+              }) => AdmissionProfileCompanion(
+                name: name,
+                phoneNumber: phoneNumber,
+                emails: emails,
+                gender: gender,
+                dateOfBirth: dateOfBirth,
+                id: id,
+                flType: flType,
+                flRank: flRank,
+                bachelorUniversity: bachelorUniversity,
+                bachelorMajor: bachelorMajor,
+                bachelorProgram: bachelorProgram,
+                bachelorGraduationRank: bachelorGraduationRank,
+                bachelorGraduationDate: bachelorGraduationDate,
+                intendedSpecialization: intendedSpecialization,
+                exemptedCourses: exemptedCourses,
+                hasPublication: hasPublication,
+                admissionRoundId: admissionRoundId,
+              ),
+          createCompanionCallback:
+              ({
+                required String name,
+                required String phoneNumber,
+                required String emails,
+                required enums.Gender gender,
+                Value<DateTime?> dateOfBirth = const Value.absent(),
+                Value<int> id = const Value.absent(),
+                required String flType,
+                required int flRank,
+                required String bachelorUniversity,
+                required String bachelorMajor,
+                required String bachelorProgram,
+                required String bachelorGraduationRank,
+                required DateTime bachelorGraduationDate,
+                required String intendedSpecialization,
+                required String exemptedCourses,
+                Value<bool> hasPublication = const Value.absent(),
+                required int admissionRoundId,
+              }) => AdmissionProfileCompanion.insert(
+                name: name,
+                phoneNumber: phoneNumber,
+                emails: emails,
+                gender: gender,
+                dateOfBirth: dateOfBirth,
+                id: id,
+                flType: flType,
+                flRank: flRank,
+                bachelorUniversity: bachelorUniversity,
+                bachelorMajor: bachelorMajor,
+                bachelorProgram: bachelorProgram,
+                bachelorGraduationRank: bachelorGraduationRank,
+                bachelorGraduationDate: bachelorGraduationDate,
+                intendedSpecialization: intendedSpecialization,
+                exemptedCourses: exemptedCourses,
+                hasPublication: hasPublication,
+                admissionRoundId: admissionRoundId,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$AdmissionProfileTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({admissionRoundId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (admissionRoundId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.admissionRoundId,
+                                referencedTable:
+                                    $$AdmissionProfileTableReferences
+                                        ._admissionRoundIdTable(db),
+                                referencedColumn:
+                                    $$AdmissionProfileTableReferences
+                                        ._admissionRoundIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$AdmissionProfileTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AdmissionProfileTable,
+      AdmissionProfileData,
+      $$AdmissionProfileTableFilterComposer,
+      $$AdmissionProfileTableOrderingComposer,
+      $$AdmissionProfileTableAnnotationComposer,
+      $$AdmissionProfileTableCreateCompanionBuilder,
+      $$AdmissionProfileTableUpdateCompanionBuilder,
+      (AdmissionProfileData, $$AdmissionProfileTableReferences),
+      AdmissionProfileData,
+      PrefetchHooks Function({bool admissionRoundId})
     >;
 typedef $$StudentTableCreateCompanionBuilder =
     StudentCompanion Function({
@@ -27548,6 +29976,10 @@ class $AppDatabaseManager {
       $$TeacherTableTableManager(_db, _db.teacher);
   $$AdmissionCouncilTableTableManager get admissionCouncil =>
       $$AdmissionCouncilTableTableManager(_db, _db.admissionCouncil);
+  $$AdmissionRoundTableTableManager get admissionRound =>
+      $$AdmissionRoundTableTableManager(_db, _db.admissionRound);
+  $$AdmissionProfileTableTableManager get admissionProfile =>
+      $$AdmissionProfileTableTableManager(_db, _db.admissionProfile);
   $$StudentTableTableManager get student =>
       $$StudentTableTableManager(_db, _db.student);
   $$SemesterTableTableManager get semester =>

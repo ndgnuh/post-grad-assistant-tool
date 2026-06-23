@@ -16,6 +16,7 @@ part 'database_v1/tables.dart';
 part 'database_v1/thesis_dao.dart';
 part 'database_v1/phd_student_dao.dart';
 part 'database_v1/teacher_dao.dart';
+part 'database_v1/admission_dao.dart';
 part 'main_database.g.dart';
 
 extension DocumentInformation on DocumentData {
