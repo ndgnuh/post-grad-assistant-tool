@@ -8,6 +8,8 @@ const databaseTables = [
   Document,
   Cohort,
   AdmissionCouncil,
+  AdmissionRound,
+  AdmissionProfile,
   Student,
   Semester,
   Course,
@@ -26,6 +28,48 @@ const databaseTables = [
   ThesisDefenseRound,
   ThesisDefenseCouncil,
 ];
+
+/// Thông tin thông dụng cho profile
+mixin ProfileMixin on Table {
+  TextColumn get name => text()();
+  TextColumn get phoneNumber => text()();
+  TextColumn get emails => text()();
+  TextColumn get gender => text().map(const GenderConverter())();
+  DateTimeColumn get dateOfBirth => dateTime().nullable()();
+}
+
+/// Đợt tuyển sinh thạc sĩ
+/// Chia riêng ra để truy vết dễ hơn
+class AdmissionRound extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get month => integer()();
+  IntColumn get year => integer()();
+  IntColumn get admissionCouncilId =>
+      integer().references(AdmissionCouncil, #id)();
+}
+
+/// Hồ sơ tuyển sinh thạc sĩ, tách biệt với NCS
+class AdmissionProfile extends Table with ProfileMixin {
+  /// This ID can be auto incremented or be input from the system
+  IntColumn get id => integer().autoIncrement()();
+
+  /// Foreign language
+  TextColumn get flType => text()();
+  IntColumn get flRank => integer()();
+
+  /// Bachelor major
+  TextColumn get bachelorUniversity => text()();
+  TextColumn get bachelorMajor => text()();
+  TextColumn get bachelorProgram => text()();
+  TextColumn get bachelorGraduationRank => text()();
+  DateTimeColumn get bachelorGraduationDate => dateTime()();
+  TextColumn get intendedSpecialization => text()();
+  TextColumn get exemptedCourses => text()();
+  BoolColumn get hasPublication => boolean().clientDefault(() => false)();
+
+  /// Rounds
+  IntColumn get admissionRoundId => integer().references(AdmissionRound, #id)();
+}
 
 /// Một đợt bảo vệ sẽ bao gồm nhiều hội đồng
 class ThesisDefenseRound extends Table {

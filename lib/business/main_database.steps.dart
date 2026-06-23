@@ -4496,10 +4496,1190 @@ i1.GeneratedColumn<int> _column_271(String aliasedName) =>
       type: i1.DriftSqlType.int,
       $customConstraints: 'NULL REFERENCES teacher(id)',
     );
+
+final class Schema5 extends i0.VersionedSchema {
+  Schema5({required super.database}) : super(version: 5);
+  @override
+  late final List<i1.DatabaseSchemaEntity> entities = [
+    preference,
+    documentRole,
+    document,
+    cohort,
+    teacherGroup,
+    teacher,
+    admissionCouncil,
+    admissionRound,
+    admissionProfile,
+    student,
+    semester,
+    course,
+    thesis,
+    academicGroup,
+    phdCohort,
+    phdAdmissionPaymentPolicy,
+    phdStudent,
+    teachingRegistration,
+    courseLimiting,
+    courseClass,
+    teachingAssignment,
+    studyRegistration,
+    thesisDefenseRound,
+    thesisDefenseCouncil,
+  ];
+  late final Shape0 preference = Shape0(
+    source: i0.VersionedTable(
+      entityName: 'preference',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY("key")'],
+      columns: [_column_160, _column_161],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape22 documentRole = Shape22(
+    source: i0.VersionedTable(
+      entityName: 'document_role',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_2, _column_3, _column_162, _column_163],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape23 document = Shape23(
+    source: i0.VersionedTable(
+      entityName: 'document',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_2,
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_164,
+        _column_165,
+        _column_166,
+        _column_127,
+        _column_128,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape24 cohort = Shape24(
+    source: i0.VersionedTable(
+      entityName: 'cohort',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [_column_167, _column_168],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape4 teacherGroup = Shape4(
+    source: i0.VersionedTable(
+      entityName: 'teacher_group',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_2, _column_3],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape25 teacher = Shape25(
+    source: i0.VersionedTable(
+      entityName: 'teacher',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_2,
+        _column_169,
+        _column_3,
+        _column_170,
+        _column_171,
+        _column_172,
+        _column_18,
+        _column_173,
+        _column_174,
+        _column_175,
+        _column_176,
+        _column_177,
+        _column_178,
+        _column_179,
+        _column_180,
+        _column_181,
+        _column_182,
+        _column_183,
+        _column_184,
+        _column_185,
+        _column_186,
+        _column_187,
+        _column_188,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape26 admissionCouncil = Shape26(
+    source: i0.VersionedTable(
+      entityName: 'admission_council',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_2,
+        _column_36,
+        _column_37,
+        _column_38,
+        _column_189,
+        _column_190,
+        _column_191,
+        _column_42,
+        _column_192,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape36 admissionRound = Shape36(
+    source: i0.VersionedTable(
+      entityName: 'admission_round',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_2, _column_272, _column_273, _column_274],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape37 admissionProfile = Shape37(
+    source: i0.VersionedTable(
+      entityName: 'admission_profile',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_3,
+        _column_275,
+        _column_276,
+        _column_18,
+        _column_181,
+        _column_2,
+        _column_277,
+        _column_278,
+        _column_279,
+        _column_280,
+        _column_281,
+        _column_282,
+        _column_283,
+        _column_284,
+        _column_285,
+        _column_286,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape27 student = Shape27(
+    source: i0.VersionedTable(
+      entityName: 'student',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_2,
+        _column_193,
+        _column_194,
+        _column_195,
+        _column_3,
+        _column_181,
+        _column_196,
+        _column_197,
+        _column_177,
+        _column_179,
+        _column_198,
+        _column_199,
+        _column_200,
+        _column_201,
+        _column_202,
+        _column_203,
+        _column_204,
+        _column_205,
+        _column_206,
+        _column_207,
+        _column_208,
+        _column_209,
+        _column_210,
+        _column_211,
+        _column_212,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape28 semester = Shape28(
+    source: i0.VersionedTable(
+      entityName: 'semester',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_167,
+        _column_213,
+        _column_214,
+        _column_215,
+        _column_216,
+        _column_268,
+        _column_218,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape9 course = Shape9(
+    source: i0.VersionedTable(
+      entityName: 'course',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_167,
+        _column_70,
+        _column_71,
+        _column_72,
+        _column_73,
+        _column_74,
+        _column_75,
+        _column_76,
+        _column_77,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape29 thesis = Shape29(
+    source: i0.VersionedTable(
+      entityName: 'thesis',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_2,
+        _column_78,
+        _column_219,
+        _column_220,
+        _column_221,
+        _column_222,
+        _column_223,
+        _column_224,
+        _column_225,
+        _column_86,
+        _column_87,
+        _column_226,
+        _column_227,
+        _column_228,
+        _column_229,
+        _column_230,
+        _column_231,
+        _column_232,
+        _column_233,
+        _column_95,
+        _column_96,
+        _column_234,
+        _column_235,
+        _column_236,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape11 academicGroup = Shape11(
+    source: i0.VersionedTable(
+      entityName: 'academic_group',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_2, _column_3, _column_186],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape30 phdCohort = Shape30(
+    source: i0.VersionedTable(
+      entityName: 'phd_cohort',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(cohort)'],
+      columns: [_column_237, _column_127, _column_128],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape13 phdAdmissionPaymentPolicy = Shape13(
+    source: i0.VersionedTable(
+      entityName: 'phd_admission_payment_policy',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_2, _column_101, _column_102, _column_103, _column_104],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape35 phdStudent = Shape35(
+    source: i0.VersionedTable(
+      entityName: 'phd_student',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_2,
+        _column_105,
+        _column_238,
+        _column_239,
+        _column_240,
+        _column_3,
+        _column_109,
+        _column_181,
+        _column_197,
+        _column_110,
+        _column_111,
+        _column_241,
+        _column_242,
+        _column_114,
+        _column_243,
+        _column_244,
+        _column_269,
+        _column_270,
+        _column_271,
+        _column_248,
+        _column_121,
+        _column_249,
+        _column_123,
+        _column_78,
+        _column_219,
+        _column_250,
+        _column_127,
+        _column_128,
+        _column_129,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape15 teachingRegistration = Shape15(
+    source: i0.VersionedTable(
+      entityName: 'teaching_registration',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(teacher_id, course_id)'],
+      columns: [_column_130, _column_131],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape16 courseLimiting = Shape16(
+    source: i0.VersionedTable(
+      entityName: 'course_limiting',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(course_id, semester_id)'],
+      columns: [_column_131, _column_132],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape32 courseClass = Shape32(
+    source: i0.VersionedTable(
+      entityName: 'course_class',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_2,
+        _column_133,
+        _column_134,
+        _column_251,
+        _column_136,
+        _column_252,
+        _column_253,
+        _column_254,
+        _column_140,
+        _column_255,
+        _column_256,
+        _column_257,
+        _column_258,
+        _column_259,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape18 teachingAssignment = Shape18(
+    source: i0.VersionedTable(
+      entityName: 'teaching_assignment',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(class_id, teacher_id)'],
+      columns: [_column_146, _column_130, _column_147, _column_148],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape19 studyRegistration = Shape19(
+    source: i0.VersionedTable(
+      entityName: 'study_registration',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(class_id, student_id)'],
+      columns: [_column_146, _column_149, _column_260, _column_261],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape33 thesisDefenseRound = Shape33(
+    source: i0.VersionedTable(
+      entityName: 'thesis_defense_round',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_2, _column_262],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape34 thesisDefenseCouncil = Shape34(
+    source: i0.VersionedTable(
+      entityName: 'thesis_defense_council',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_263,
+        _column_2,
+        _column_264,
+        _column_265,
+        _column_266,
+        _column_267,
+        _column_223,
+        _column_224,
+        _column_228,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+}
+
+class Shape36 extends i0.VersionedTable {
+  Shape36({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<int> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get month =>
+      columnsByName['month']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get year =>
+      columnsByName['year']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get admissionCouncilId =>
+      columnsByName['admission_council_id']! as i1.GeneratedColumn<int>;
+}
+
+i1.GeneratedColumn<int> _column_272(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'month',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<int> _column_273(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'year',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<int> _column_274(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'admission_council_id',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL REFERENCES admission_council(id)',
+    );
+
+class Shape37 extends i0.VersionedTable {
+  Shape37({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get name =>
+      columnsByName['name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get phoneNumber =>
+      columnsByName['phone_number']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get emails =>
+      columnsByName['emails']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get gender =>
+      columnsByName['gender']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get dateOfBirth =>
+      columnsByName['date_of_birth']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get flType =>
+      columnsByName['fl_type']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get flRank =>
+      columnsByName['fl_rank']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get bachelorUniversity =>
+      columnsByName['bachelor_university']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get bachelorMajor =>
+      columnsByName['bachelor_major']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get bachelorProgram =>
+      columnsByName['bachelor_program']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get bachelorGraduationRank =>
+      columnsByName['bachelor_graduation_rank']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get bachelorGraduationDate =>
+      columnsByName['bachelor_graduation_date']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get intendedSpecialization =>
+      columnsByName['intended_specialization']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get exemptedCourses =>
+      columnsByName['exempted_courses']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get hasPublication =>
+      columnsByName['has_publication']! as i1.GeneratedColumn<int>;
+}
+
+i1.GeneratedColumn<String> _column_275(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'phone_number',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_276(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'emails',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_277(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'fl_type',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<int> _column_278(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'fl_rank',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_279(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'bachelor_university',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_280(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'bachelor_major',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_281(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'bachelor_program',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_282(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'bachelor_graduation_rank',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_283(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'bachelor_graduation_date',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_284(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'intended_specialization',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_285(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'exempted_courses',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<int> _column_286(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'has_publication',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL CHECK (has_publication IN (0, 1))',
+    );
+
+final class Schema6 extends i0.VersionedSchema {
+  Schema6({required super.database}) : super(version: 6);
+  @override
+  late final List<i1.DatabaseSchemaEntity> entities = [
+    preference,
+    documentRole,
+    document,
+    cohort,
+    teacherGroup,
+    teacher,
+    admissionCouncil,
+    admissionRound,
+    admissionProfile,
+    student,
+    semester,
+    course,
+    thesis,
+    academicGroup,
+    phdCohort,
+    phdAdmissionPaymentPolicy,
+    phdStudent,
+    teachingRegistration,
+    courseLimiting,
+    courseClass,
+    teachingAssignment,
+    studyRegistration,
+    thesisDefenseRound,
+    thesisDefenseCouncil,
+  ];
+  late final Shape0 preference = Shape0(
+    source: i0.VersionedTable(
+      entityName: 'preference',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY("key")'],
+      columns: [_column_160, _column_161],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape22 documentRole = Shape22(
+    source: i0.VersionedTable(
+      entityName: 'document_role',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_2, _column_3, _column_162, _column_163],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape23 document = Shape23(
+    source: i0.VersionedTable(
+      entityName: 'document',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_2,
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_164,
+        _column_165,
+        _column_166,
+        _column_127,
+        _column_128,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape24 cohort = Shape24(
+    source: i0.VersionedTable(
+      entityName: 'cohort',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [_column_167, _column_168],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape4 teacherGroup = Shape4(
+    source: i0.VersionedTable(
+      entityName: 'teacher_group',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_2, _column_3],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape25 teacher = Shape25(
+    source: i0.VersionedTable(
+      entityName: 'teacher',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_2,
+        _column_169,
+        _column_3,
+        _column_170,
+        _column_171,
+        _column_172,
+        _column_18,
+        _column_173,
+        _column_174,
+        _column_175,
+        _column_176,
+        _column_177,
+        _column_178,
+        _column_179,
+        _column_180,
+        _column_181,
+        _column_182,
+        _column_183,
+        _column_184,
+        _column_185,
+        _column_186,
+        _column_187,
+        _column_188,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape26 admissionCouncil = Shape26(
+    source: i0.VersionedTable(
+      entityName: 'admission_council',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_2,
+        _column_36,
+        _column_37,
+        _column_38,
+        _column_189,
+        _column_190,
+        _column_191,
+        _column_42,
+        _column_192,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape36 admissionRound = Shape36(
+    source: i0.VersionedTable(
+      entityName: 'admission_round',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_2, _column_272, _column_273, _column_274],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape38 admissionProfile = Shape38(
+    source: i0.VersionedTable(
+      entityName: 'admission_profile',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_3,
+        _column_275,
+        _column_276,
+        _column_18,
+        _column_181,
+        _column_2,
+        _column_277,
+        _column_278,
+        _column_279,
+        _column_280,
+        _column_281,
+        _column_282,
+        _column_283,
+        _column_284,
+        _column_285,
+        _column_286,
+        _column_287,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape27 student = Shape27(
+    source: i0.VersionedTable(
+      entityName: 'student',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_2,
+        _column_193,
+        _column_194,
+        _column_195,
+        _column_3,
+        _column_181,
+        _column_196,
+        _column_197,
+        _column_177,
+        _column_179,
+        _column_198,
+        _column_199,
+        _column_200,
+        _column_201,
+        _column_202,
+        _column_203,
+        _column_204,
+        _column_205,
+        _column_206,
+        _column_207,
+        _column_208,
+        _column_209,
+        _column_210,
+        _column_211,
+        _column_212,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape28 semester = Shape28(
+    source: i0.VersionedTable(
+      entityName: 'semester',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_167,
+        _column_213,
+        _column_214,
+        _column_215,
+        _column_216,
+        _column_268,
+        _column_218,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape9 course = Shape9(
+    source: i0.VersionedTable(
+      entityName: 'course',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_167,
+        _column_70,
+        _column_71,
+        _column_72,
+        _column_73,
+        _column_74,
+        _column_75,
+        _column_76,
+        _column_77,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape29 thesis = Shape29(
+    source: i0.VersionedTable(
+      entityName: 'thesis',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_2,
+        _column_78,
+        _column_219,
+        _column_220,
+        _column_221,
+        _column_222,
+        _column_223,
+        _column_224,
+        _column_225,
+        _column_86,
+        _column_87,
+        _column_226,
+        _column_227,
+        _column_228,
+        _column_229,
+        _column_230,
+        _column_231,
+        _column_232,
+        _column_233,
+        _column_95,
+        _column_96,
+        _column_234,
+        _column_235,
+        _column_236,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape11 academicGroup = Shape11(
+    source: i0.VersionedTable(
+      entityName: 'academic_group',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_2, _column_3, _column_186],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape30 phdCohort = Shape30(
+    source: i0.VersionedTable(
+      entityName: 'phd_cohort',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(cohort)'],
+      columns: [_column_237, _column_127, _column_128],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape13 phdAdmissionPaymentPolicy = Shape13(
+    source: i0.VersionedTable(
+      entityName: 'phd_admission_payment_policy',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_2, _column_101, _column_102, _column_103, _column_104],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape35 phdStudent = Shape35(
+    source: i0.VersionedTable(
+      entityName: 'phd_student',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_2,
+        _column_105,
+        _column_238,
+        _column_239,
+        _column_240,
+        _column_3,
+        _column_109,
+        _column_181,
+        _column_197,
+        _column_110,
+        _column_111,
+        _column_241,
+        _column_242,
+        _column_114,
+        _column_243,
+        _column_244,
+        _column_269,
+        _column_270,
+        _column_271,
+        _column_248,
+        _column_121,
+        _column_249,
+        _column_123,
+        _column_78,
+        _column_219,
+        _column_250,
+        _column_127,
+        _column_128,
+        _column_129,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape15 teachingRegistration = Shape15(
+    source: i0.VersionedTable(
+      entityName: 'teaching_registration',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(teacher_id, course_id)'],
+      columns: [_column_130, _column_131],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape16 courseLimiting = Shape16(
+    source: i0.VersionedTable(
+      entityName: 'course_limiting',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(course_id, semester_id)'],
+      columns: [_column_131, _column_132],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape32 courseClass = Shape32(
+    source: i0.VersionedTable(
+      entityName: 'course_class',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_2,
+        _column_133,
+        _column_134,
+        _column_251,
+        _column_136,
+        _column_252,
+        _column_253,
+        _column_254,
+        _column_140,
+        _column_255,
+        _column_256,
+        _column_257,
+        _column_258,
+        _column_259,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape18 teachingAssignment = Shape18(
+    source: i0.VersionedTable(
+      entityName: 'teaching_assignment',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(class_id, teacher_id)'],
+      columns: [_column_146, _column_130, _column_147, _column_148],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape19 studyRegistration = Shape19(
+    source: i0.VersionedTable(
+      entityName: 'study_registration',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(class_id, student_id)'],
+      columns: [_column_146, _column_149, _column_260, _column_261],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape33 thesisDefenseRound = Shape33(
+    source: i0.VersionedTable(
+      entityName: 'thesis_defense_round',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_2, _column_262],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape34 thesisDefenseCouncil = Shape34(
+    source: i0.VersionedTable(
+      entityName: 'thesis_defense_council',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_263,
+        _column_2,
+        _column_264,
+        _column_265,
+        _column_266,
+        _column_267,
+        _column_223,
+        _column_224,
+        _column_228,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+}
+
+class Shape38 extends i0.VersionedTable {
+  Shape38({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get name =>
+      columnsByName['name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get phoneNumber =>
+      columnsByName['phone_number']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get emails =>
+      columnsByName['emails']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get gender =>
+      columnsByName['gender']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get dateOfBirth =>
+      columnsByName['date_of_birth']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get flType =>
+      columnsByName['fl_type']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get flRank =>
+      columnsByName['fl_rank']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get bachelorUniversity =>
+      columnsByName['bachelor_university']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get bachelorMajor =>
+      columnsByName['bachelor_major']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get bachelorProgram =>
+      columnsByName['bachelor_program']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get bachelorGraduationRank =>
+      columnsByName['bachelor_graduation_rank']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get bachelorGraduationDate =>
+      columnsByName['bachelor_graduation_date']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get intendedSpecialization =>
+      columnsByName['intended_specialization']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get exemptedCourses =>
+      columnsByName['exempted_courses']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get hasPublication =>
+      columnsByName['has_publication']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get admissionRoundId =>
+      columnsByName['admission_round_id']! as i1.GeneratedColumn<int>;
+}
+
+i1.GeneratedColumn<int> _column_287(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'admission_round_id',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL REFERENCES admission_round(id)',
+    );
 i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
   required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
   required Future<void> Function(i1.Migrator m, Schema4 schema) from3To4,
+  required Future<void> Function(i1.Migrator m, Schema5 schema) from4To5,
+  required Future<void> Function(i1.Migrator m, Schema6 schema) from5To6,
 }) {
   return (currentVersion, database) async {
     switch (currentVersion) {
@@ -4518,6 +5698,16 @@ i0.MigrationStepWithVersion migrationSteps({
         final migrator = i1.Migrator(database, schema);
         await from3To4(migrator, schema);
         return 4;
+      case 4:
+        final schema = Schema5(database: database);
+        final migrator = i1.Migrator(database, schema);
+        await from4To5(migrator, schema);
+        return 5;
+      case 5:
+        final schema = Schema6(database: database);
+        final migrator = i1.Migrator(database, schema);
+        await from5To6(migrator, schema);
+        return 6;
       default:
         throw ArgumentError.value('Unknown migration from $currentVersion');
     }
@@ -4528,10 +5718,14 @@ i1.OnUpgrade stepByStep({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
   required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
   required Future<void> Function(i1.Migrator m, Schema4 schema) from3To4,
+  required Future<void> Function(i1.Migrator m, Schema5 schema) from4To5,
+  required Future<void> Function(i1.Migrator m, Schema6 schema) from5To6,
 }) => i0.VersionedSchema.stepByStepHelper(
   step: migrationSteps(
     from1To2: from1To2,
     from2To3: from2To3,
     from3To4: from3To4,
+    from4To5: from4To5,
+    from5To6: from5To6,
   ),
 );

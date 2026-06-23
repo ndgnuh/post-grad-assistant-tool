@@ -95,7 +95,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 6;
 
   static AppDatabase intialize(String databasePath) {
     final executor = driftDatabase(
@@ -378,6 +378,18 @@ class AppDatabase extends _$AppDatabase {
           );
           await m.createAll();
           print("Done");
+        },
+        from4To5: (m, schema) async {
+          await m.createAll();
+          print("[4 -> 5] Done");
+        },
+        from5To6: (m, schema) async {
+          await m.createAll();
+          await m.addColumn(
+            schema.admissionProfile,
+            schema.admissionProfile.admissionRoundId,
+          );
+          print("[5 -> 6] Done");
         },
       ),
     );
