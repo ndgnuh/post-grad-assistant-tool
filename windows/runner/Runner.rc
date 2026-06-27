@@ -92,7 +92,7 @@ BEGIN
             VALUE "CompanyName", "com.example" "\0"
             VALUE "FileDescription", "fami_tools" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "fami_tools" "\0"
+            VALUE "InternalName", "com.ndgnuh.fami_pgms" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
             VALUE "OriginalFilename", "fami_tools.exe" "\0"
             VALUE "ProductName", "fami_tools" "\0"
