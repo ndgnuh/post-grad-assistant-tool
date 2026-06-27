@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:super_clipboard/super_clipboard.dart';
+
 import '../../custom_tiles.dart';
 import 'course_details_page.dart';
 import '../../utilities/strings.dart';
@@ -381,6 +383,47 @@ class _ActionTabView extends ConsumerWidget {
       messager.showSnackBar(snackBar);
     }
 
+    void copyCourseForm({required final List<CourseData> courses}) {
+      final body = StringBuffer();
+      body.writeln("<h1>Bình chọn học phần tự chọn</h1>");
+      body.writeln("<h2>Đợt ... học kỳ ...</h2>");
+      body.writeln("<ol type='1'>");
+      body.writeln("<li>");
+      body.writeln(
+        "Các bạn chọn các học phần mình muốn học trong hai đợt học tới",
+      );
+      body.writeln("</li>");
+      body.writeln("<ol type='A'>");
+      for (final course in courses) {
+        body.writeln("<li>");
+        body.writeln(course.id);
+        body.write(" - ");
+        body.write(course.vietnameseName);
+        body.writeln("</li>");
+      }
+      body.writeln("</ol>");
+      body.writeln("</ol>");
+      final content = body.toString();
+
+      // Copy to clipboard
+      final mClipboard = SystemClipboard.instance;
+      switch (mClipboard) {
+        case SystemClipboard clipboard:
+          final item = DataWriterItem();
+          item.add(Formats.htmlText(content));
+          clipboard.write([item]);
+          final snackBar = SnackBar(
+            content: Text("Đã sao chép ${courses.length} học phần"),
+          );
+          messager.showSnackBar(snackBar);
+        case null:
+          final snackBar = SnackBar(
+            content: Text("Không truy cập được clipboard"),
+          );
+          messager.showSnackBar(snackBar);
+      }
+    }
+
     final formWorkActions = [
       ListTile(
         title: Text("Bình chọn học phần tự chọn"),
@@ -396,6 +439,31 @@ class _ActionTabView extends ConsumerWidget {
         ),
         leading: Icon(Symbols.content_copy),
         onTap: () => copyCourseNameList(model.notVvailableForVoteCourses),
+      ),
+
+      ListTile(
+        title: Text("Bình chọn học phần tự chọn (form docx)"),
+        subtitle: Text(
+          "Copy danh sách học phần tự chọn có thể mở để import lên form",
+        ),
+        leading: Icon(Symbols.content_copy),
+        trailing: IconButton(
+          onPressed: () => showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text("Hướng dẫn"),
+              content: Text(
+                "Copy rồi paste vào file .docx, sau đó cho lên trên Microsoft Form và import",
+              ),
+            ),
+          ),
+          icon: CircleAvatar(
+            child: Icon(Symbols.question_mark_rounded),
+          ),
+        ),
+        onTap: () => copyCourseForm(
+          courses: model.availableForVoteCourses,
+        ),
       ),
     ];
 
